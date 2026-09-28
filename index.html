@@ -703,4 +703,30 @@ setTimeout(renderHome,0);
 })();
 </script>
 
+
+<!-- HC_DATA_SAFETY_V13 -->
+<style>
+.ds13status{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ds13box{background:#091419;border:1px solid #22363e;border-radius:15px;padding:12px}.ds13box small{color:var(--muted)}.ds13box b{display:block;margin-top:4px}.ds13drop{border:1px dashed #3b535d;border-radius:16px;padding:16px;text-align:center;background:#091419}.ds13good{color:var(--lime)}.ds13warn{color:var(--amber)}@media(max-width:520px){.ds13status{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){'use strict';
+const META='hc_data_safety_v13',PREFIX='hc_',APP='HOCKEY COACH';
+const load=(k,d)=>{try{let v=JSON.parse(localStorage.getItem(k)||'null');return v??d}catch(e){return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let meta=load(META,{version:13,lastBackupAt:null,lastRestoreAt:null});
+let main=document.querySelector('main'),sec=document.getElementById('dataSafety');if(!sec){sec=document.createElement('section');sec.id='dataSafety';sec.className='hidden';main.appendChild(sec)}
+function keys(){let a=[];for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k&&k.startsWith(PREFIX)&&k!==META)a.push(k)}return a.sort()}
+function payload(){let data={};keys().forEach(k=>data[k]=localStorage.getItem(k));return{app:APP,format:'hc-backup',schemaVersion:13,exportedAt:new Date().toISOString(),itemCount:Object.keys(data).length,data}}
+function fmt(v){if(!v)return'まだありません';try{return new Date(v).toLocaleString('ja-JP')}catch(e){return v}}
+function render(msg){meta=load(META,meta);sec.innerHTML=`<div class="card"><div class="section-kicker">DATA SAFETY · V13</div><h2 style="margin:0">チームデータを守る</h2><div class="hint"><b>現在の保存先はこの端末です。</b> 端末変更やブラウザデータ削除に備えて、定期的にバックアップしてください。バックアップはクラウド同期やログイン保護の代わりではありません。</div></div><div class="ds13status"><div class="ds13box"><small>保存データ</small><b>${keys().length} 項目</b><div class="desc">HOCKEY COACHのデータだけを対象</div></div><div class="ds13box"><small>最終バックアップ</small><b class="${meta.lastBackupAt?'ds13good':'ds13warn'}">${fmt(meta.lastBackupAt)}</b></div></div><div class="card"><h3 style="margin-top:0">1 · バックアップを書き出す</h3><div class="desc">分析・練習・試合・METHOD・PLAYER VOICEなど、端末内のHOCKEY COACHデータを1つのJSONファイルに保存します。</div><button class="btn" style="width:100%;margin-top:12px" onclick="HC13.exportBackup()">バックアップを書き出す</button></div><div class="card"><h3 style="margin-top:0">2 · バックアップを確認して復元</h3><div class="ds13drop"><b>バックアップファイルを選択</b><div class="desc" style="margin:5px 0 12px">いきなり上書きせず、内容を検証してから復元します。</div><input id="ds13file" type="file" accept="application/json,.json" class="input" onchange="HC13.preview(this.files[0])"></div><div id="ds13preview" style="margin-top:12px"></div></div>${msg?`<div class="card"><b class="ds13good">${msg}</b></div>`:''}`;show('dataSafety')}
+function download(){let p=payload(),blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a'),d=new Date().toISOString().slice(0,10);a.href=u;a.download=`hockey-coach-backup-${d}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);meta.lastBackupAt=new Date().toISOString();save(META,meta);render('バックアップを書き出しました。ファイルアプリなど安全な場所に保管してください。')}
+function validate(o){if(!o||o.app!==APP||o.format!=='hc-backup'||!o.data||typeof o.data!=='object')throw new Error('HOCKEY COACHのバックアップとして確認できません。');let ks=Object.keys(o.data);if(!ks.length)throw new Error('復元できるデータがありません。');if(ks.some(k=>!k.startsWith(PREFIX)))throw new Error('HOCKEY COACH以外のデータが含まれています。');ks.forEach(k=>{if(typeof o.data[k]!=='string')throw new Error('バックアップ形式が正しくありません。');try{JSON.parse(o.data[k])}catch(e){throw new Error('壊れているデータがあります：'+k)}});return ks}
+let pending=null;
+function preview(file){if(!file)return;let r=new FileReader();r.onload=()=>{let box=document.getElementById('ds13preview');try{let o=JSON.parse(r.result),ks=validate(o);pending=o;box.innerHTML=`<div class="linkbox"><b>復元前チェック OK</b><div class="desc">作成：${fmt(o.exportedAt)} ／ ${ks.length}項目</div><div class="notice" style="margin-top:10px">現在のデータは消しません。同じキーだけバックアップ内容で更新し、それ以外の現在データは残します。</div><button class="btn" style="width:100%;margin-top:10px" onclick="HC13.restore()">確認して復元する</button></div>`}catch(e){pending=null;box.innerHTML=`<div class="notice"><b>復元できません</b><br>${String(e.message||e)}</div>`}};r.onerror=()=>alert('ファイルを読み込めませんでした');r.readAsText(file)}
+function restore(){if(!pending)return alert('先にバックアップファイルを選択してください。');if(!confirm('確認済みのバックアップを復元します。現在のデータは可能な限り残します。続けますか？'))return;try{validate(pending);Object.entries(pending.data).forEach(([k,v])=>localStorage.setItem(k,v));meta=load(META,{version:13});meta.lastRestoreAt=new Date().toISOString();save(META,meta);pending=null;alert('復元しました。画面を更新して最新データを読み込みます。');location.reload()}catch(e){alert('復元に失敗しました：'+(e.message||e))}}
+window.HC13={open:()=>render(),exportBackup:download,preview,restore};
+if(window.HC2){const om=HC2.more;HC2.more=function(){om();setTimeout(()=>{let q=document.querySelector('#hc2body .quick-grid');if(q&&!q.querySelector('[data-ds13]'))q.insertAdjacentHTML('beforeend','<div class="quick-card" data-ds13 onclick="HC2.close();HC13.open()"><div class="ico">⇩</div><b>DATA SAFETY</b><small>バックアップ・復元</small></div>')},0)}}
+if(window.HCSEC){const old=HCSEC.open;HCSEC.open=function(){old();setTimeout(()=>{let s=document.getElementById('security');if(s&&!s.querySelector('[data-ds13link]'))s.insertAdjacentHTML('beforeend','<div class="card" data-ds13link><div class="section-kicker">DATA SAFETY</div><b>端末データをバックアップ</b><div class="desc">クラウド化前でも、データ消失に備えられます。</div><button class="btn secondary" style="margin-top:10px" onclick="HC13.open()">バックアップを開く</button></div>')},0)}}
+})();
+</script>
+
 </body></html>
