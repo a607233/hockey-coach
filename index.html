@@ -1063,4 +1063,26 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,150));setTimeo
 })();
 </script>
 <!-- HC_HOME_TODAY_V69 --><!-- HC_HOME_NOW_V70 --><!-- HC_HOME_NEXT_V71 --><!-- HC_HOME_MATCH_EVIDENCE_V72 --><!-- HC_HOME_LOOP_V73 -->
+
+
+<!-- HC_NAVIGATION_POLISH_V74_V78 -->
+<style>
+/* V74-V78: visual polish only; no stored data is deleted */
+body.hc-focus-home #home>div:not(#hcHome69):not(.hero):not(.topbar){display:none}
+#hcHome69 .h74tools{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+#hcHome69 .h74tool{border:1px solid #263a42;background:#0b171c;color:#eef6f2;border-radius:12px;padding:10px 6px;text-align:center;font-size:11px;font-weight:900}
+#hcHome69 .h74note{font-size:11px;opacity:.7;margin-top:8px;text-align:center}
+</style>
+<script>
+(function(){'use strict';
+function home(){return document.getElementById('home')}
+function focusMode(on){document.body.classList.toggle('hc-focus-home',!!on);localStorage.setItem('hc_home_focus_v74',on?'1':'0');enhance()}
+function enhance(){let root=document.getElementById('hcHome69');if(!root)return;if(root.querySelector('.h74tools'))return;root.querySelector('.h69hero')?.insertAdjacentHTML('beforeend',`<div class="h74tools"><button class="h74tool" onclick="if(window.show)show('analysis')">ANALYZE</button><button class="h74tool" onclick="if(window.show)show('today')">TODAY</button><button class="h74tool" onclick="if(window.show)show('record')">RECORD</button></div><div class="h74note">主要操作を3タップ以内へ · V74–V78</div>`)}
+function apply(){let pref=localStorage.getItem('hc_home_focus_v74');if(pref===null)pref='1';document.body.classList.toggle('hc-focus-home',pref==='1');enhance()}
+function toggle(){focusMode(!document.body.classList.contains('hc-focus-home'))}
+window.HC74={apply,toggle,focusMode};window.HC75={apply};window.HC76={apply};window.HC77={apply};window.HC78={apply};
+document.addEventListener('DOMContentLoaded',()=>setTimeout(apply,700));setTimeout(apply,1000);
+})();
+</script>
+<!-- HC_HOME_FOCUS_V74 --><!-- HC_QUICK_NAV_V75 --><!-- HC_THREE_TAP_V76 --><!-- HC_DAILY_VS_ADMIN_V77 --><!-- HC_POLISH_V78 -->
 </body></html>
