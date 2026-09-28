@@ -931,4 +931,35 @@ if(window.HC2){const o=HC2.more;HC2.more=function(){o();setTimeout(()=>{let q=do
 })();
 </script>
 <!-- HC_PRINCIPLE_MATCH_V39 --><!-- HC_CONSTRAINT_BUILDER_V40 --><!-- HC_EMERGING_BEHAVIOR_V41 --><!-- HC_COACH_QUESTIONS_V42 --><!-- HC_SESSION_BRIDGE_V43 -->
+
+
+<!-- HC_DECISION_ENGINE_RECOVERY_V34_V38 -->
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}};
+function tm(x){let v=x?.date||x?.createdAt||0,q=typeof v==='number'?v:new Date(v).getTime();return isFinite(q)?q:0}
+function priority(){let a=L('hc_analysis_history_v1',[]);a=Array.isArray(a)?a.sort((x,y)=>tm(y)-tm(x)):[];let z=a[0]||{},q=z?.priorities?.[0];return{name:q?.name||z?.priority||'優先課題を分析から決める',id:q?.issueId||q?.id||z?.priorityIssueId||'',analysis:z}}
+function causes(n){if(n.includes('ロスト後'))return['1st DFの開始','中央保護','WIN / DELAY / RECOVER'];if(n.includes('奪取後'))return['奪う前の認知','1stパス','GO / HOLD / RESET'];return['配置','認知・判断','タイミング']}
+function kpis(n){if(n.includes('ロスト後'))return['4秒以内奪回率','4秒以内前進阻止率','適正判断率'];if(n.includes('奪取後'))return['奪取後4秒以内前進率','GO/HOLD/RESET適正判断率'];return['再分析スコア','成功行動の再現回数']}
+function questions(n){return[`「${n}」が成功した時、何が見えていた？`,'相手が変わったら何を変える？','成功を再現するため誰がいつ動く？']}
+window.HC34=Object.assign(window.HC34||{},{priority,causes});window.HC35=window.HC35||{};window.HC36=window.HC36||{};window.HC37={kpis};window.HC38={questions};
+})();
+</script>
+<!-- HC_CAUSE_HYPOTHESIS_V34 --><!-- HC_PRINCIPLE_BRIDGE_V35 --><!-- HC_TRAINING_REASONER_V36 --><!-- HC_KPI_BRIDGE_V37 --><!-- HC_PLAYER_QUESTION_V38 -->
+
+
+<!-- HC_TRAINING_DESIGNER_BUNDLE_V44_V48 -->
+<style>
+.td44{border-color:#34526b!important}.tdg{display:grid;grid-template-columns:1fr 1fr;gap:9px}.tdb{background:#091419;border:1px solid #22363e;border-radius:14px;padding:12px}.tdtag{font-size:9px;font-weight:950;padding:5px 7px;border-radius:999px;background:#173142;color:#aee9ff}.tdval{font-size:22px;color:var(--lime);font-weight:950}.tdnote{border-left:3px solid var(--blue);padding:9px 11px;background:#0a1519;margin-top:8px}@media(max-width:520px){.tdg{grid-template-columns:1fr 1fr}}</style>
+<script>
+(function(){'use strict';const E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])),P=()=>window.HC34?.priority?.()||{name:'優先課題'};
+function calc(){let players=+(document.getElementById('tdPlayers')?.value||12),w=+(document.getElementById('tdW')?.value||30),h=+(document.getElementById('tdH')?.value||40),mins=+(document.getElementById('tdMin')?.value||12),gk=document.getElementById('tdGK')?.checked,area=w*h/Math.max(players,1);let load=area<80?'高密度・判断が速い':area<140?'中密度・試合に近い':'低密度・時間とスペースが多い';let effect=area<80?'プレッシャー下の認知・素早いサポート':area<140?'原理原則と判断の再現':'前進・幅・長いランニング';return{players,w,h,mins,gk,area:Math.round(area),load,effect}}
+let main=document.querySelector('main'),sec=document.getElementById('designer44');if(!sec){sec=document.createElement('section');sec.id='designer44';sec.className='hidden';main.appendChild(sec)}
+function O(){let p=P();sec.innerHTML=`<div class="card td44"><div class="section-kicker">TRAINING DESIGNER · V44–V48</div><h2>${E(p.name)}</h2><div class="desc">人数・広さ・時間・GKを変えた時、「何が起きやすくなるか」を見ながら練習を設計します。</div></div><div class="card"><span class="tdtag">ENVIRONMENT · V44</span><div class="tdg"><div class="field"><label>人数</label><input id="tdPlayers" class="input" type="number" value="12"></div><div class="field"><label>時間（分）</label><input id="tdMin" class="input" type="number" value="12"></div><div class="field"><label>幅 m</label><input id="tdW" class="input" type="number" value="30"></div><div class="field"><label>長さ m</label><input id="tdH" class="input" type="number" value="40"></div></div><label style="display:block;margin:8px 0"><input id="tdGK" type="checkbox" checked> GKあり</label><button class="btn" style="width:100%" onclick="HC44.calc()">設計を分析</button></div><div id="tdResult"></div>`;show('designer44');setTimeout(run,0)}
+function run(){let x=calc(),p=P(),r=document.getElementById('tdResult');if(!r)return;r.innerHTML=`<div class="card"><span class="tdtag">SPACE LOAD · V45</span><div class="tdg"><div class="tdb"><small>1人あたり面積</small><div class="tdval">${x.area}㎡</div></div><div class="tdb"><small>環境</small><b>${E(x.load)}</b></div></div><div class="tdnote">${E(x.effect)}</div></div><div class="card"><span class="tdtag">GK EFFECT · V46</span><b>${x.gk?'GKあり：ゴール方向・フィニッシュ・ゴール保護の情報を残す':'GKなし：方向づけやゾーン得点で目的を明確にする'}</b></div><div class="card"><span class="tdtag">DOSAGE · V47</span><div class="tdnote">${x.mins<=8?'短い反復。強度を上げやすい。':x.mins<=15?'判断の反復と修正を両立しやすい。':'疲労で判断が変わるため、途中で観察ポイントを確認。'}</div></div><div class="card"><span class="tdtag">COACH CHECK · V48</span><h3>成功の見方</h3><div class="desc">「メニューをこなした」ではなく、${E(p.name)}につながる判断が繰り返し現れたかを見る。</div><button class="btn secondary" style="width:100%;margin-top:9px" onclick="HC39?.open?HC39.open():show('home')">CONSTRAINT DESIGNへ戻る</button></div>`}
+window.HC44={open:O,calc:run};window.HC45={calc};window.HC46={calc};window.HC47={calc};window.HC48={calc};
+if(window.HC2){const o=HC2.more;HC2.more=function(){o();setTimeout(()=>{let q=document.querySelector('#hc2body .quick-grid');if(q&&!q.querySelector('[data-td44]'))q.insertAdjacentHTML('beforeend','<div class="quick-card" data-td44 onclick="HC2.close();HC44.open()"><div class="ico">▦</div><b>TRAINING DESIGNER</b><small>人数×広さ×時間×GK</small></div>')},0)}}
+})();
+</script>
+<!-- HC_ENVIRONMENT_DESIGN_V44 --><!-- HC_SPACE_LOAD_V45 --><!-- HC_GK_EFFECT_V46 --><!-- HC_DOSAGE_V47 --><!-- HC_COACH_CHECK_V48 -->
 </body></html>
