@@ -963,4 +963,30 @@ if(window.HC2){const o=HC2.more;HC2.more=function(){o();setTimeout(()=>{let q=do
 </script>
 <!-- HC_ENVIRONMENT_DESIGN_V44 --><!-- HC_SPACE_LOAD_V45 --><!-- HC_GK_EFFECT_V46 --><!-- HC_DOSAGE_V47 --><!-- HC_COACH_CHECK_V48 -->
 <!-- HC_RECOVERY_STABLE_V48 -->
+
+
+<!-- HC_SAFE_SESSION_BUILDER_V49_V53 -->
+<style>
+#hcSessionBuilder{position:fixed;inset:0;z-index:9999;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcSessionBuilder .sbwrap{max-width:720px;margin:auto}.sbh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sbg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.sbb{background:#0d1a20;border:1px solid #263a42;border-radius:14px;padding:12px}
+.sbi{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:10px;font-size:16px}
+.sbt{display:inline-block;font-size:10px;font-weight:900;padding:5px 8px;border-radius:999px;background:#243817;color:#dfff91}.sbstep{margin:12px 0;padding:14px;background:#0b171c;border:1px solid #22363e;border-radius:16px}
+.sbbtn{width:100%;padding:13px;border:0;border-radius:12px;background:#b8ff45;color:#071014;font-weight:950;font-size:15px}.sbsub{background:#17252b;color:#eef6f2;margin-top:7px}.sbwhy{border-left:3px solid #b8ff45;padding:9px 11px;background:#081216;margin-top:8px}
+@media(max-width:520px){.sbg{grid-template-columns:1fr 1fr}}
+</style>
+<div id="hcSessionBuilder"><div class="sbwrap" id="hcSBBody"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function context(){let f=L('hc_foundation_v2',{});return{players:+(f.attendance||18),gk:+(f.gkToday??2),mins:+(f.plannedMinutes||100)}}
+function focus(){return window.HC34?.priority?.()?.name||'現在の優先課題'}
+function prescription(n,p,g,m){let size=p>=16?'30×40m前後・2面化も検討':p>=10?'28×36m前後':'22×30m前後';let rule=n.includes('ロスト後')?'ロストから4秒：WIN / DELAY / RECOVER':n.includes('奪取後')?'奪取から4秒：GO / HOLD / RESET':n.includes('プレッシング')?'誘導方向と奪取トリガーを1つ共有':'狙う判断が繰り返し起こる制約を1つ';let kpi=n.includes('ロスト後')?'4秒以内奪回率 / 前進阻止率':n.includes('奪取後')?'奪取後4秒以内前進率 / 適正判断率':'成功行動の再現回数 / 再分析スコア';return{size,rule,kpi,gk:g>0?'GKをゴール方向の情報として使う':'ゲート・ゾーン得点で方向を作る',block:Math.max(12,Math.round(m*.3))}}
+function open(){let c=context(),f=focus(),b=document.getElementById('hcSBBody');b.innerHTML=`<div class="sbh"><div><span class="sbt">SAFE SESSION BUILDER · V49–V53</span><h2>今日の練習を組み立てる</h2></div><button onclick="HC49.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="sbstep"><b>1｜TODAY CONDITIONS · V49</b><div class="sbg" style="margin-top:10px"><div><small>選手</small><input id="sbP" class="sbi" type="number" value="${c.players}"></div><div><small>GK</small><input id="sbG" class="sbi" type="number" value="${c.gk}"></div><div><small>時間</small><input id="sbM" class="sbi" type="number" value="${c.mins}"></div></div></div><div class="sbstep"><b>2｜FOCUS · V50</b><div class="sbwhy">${E(f)}</div></div><button class="sbbtn" onclick="HC49.build()">SESSIONを作る</button><div id="sbOut"></div>`;document.getElementById('hcSessionBuilder').style.display='block'}
+function build(){let p=+document.getElementById('sbP').value||1,g=+document.getElementById('sbG').value||0,m=+document.getElementById('sbM').value||60,f=focus(),x=prescription(f,p,g,m),o=document.getElementById('sbOut');o.innerHTML=`<div class="sbstep"><span class="sbt">DESIGN · V51</span><h3>主課題 ${x.block}分の設計案</h3><div class="sbb"><small>SPACE</small><br><b>${E(x.size)}</b></div><div class="sbb" style="margin-top:7px"><small>CONSTRAINT</small><br><b>${E(x.rule)}</b></div><div class="sbb" style="margin-top:7px"><small>GK</small><br><b>${E(x.gk)}</b></div></div><div class="sbstep"><span class="sbt">VERIFY · V52</span><div class="sbwhy"><b>KPI</b><br>${E(x.kpi)}</div><div class="sbwhy"><b>選手への問い</b><br>何が見えたから、その判断を選んだ？</div></div><div class="sbstep"><span class="sbt">NEXT · V53</span><div>この案をたたき台にTODAYで最終調整します。自動上書きはしません。</div><button class="sbbtn sbsub" onclick="HC49.close();if(window.show)show('today')">TODAYを開く</button></div>`}
+function close(){document.getElementById('hcSessionBuilder').style.display='none'}
+window.HC49={open,build,close};window.HC50={focus};window.HC51={prescription};window.HC52={verify:prescription};window.HC53={open};
+})();
+</script>
+<!-- HC_SAFE_CONTEXT_V49 --><!-- HC_SAFE_FOCUS_V50 --><!-- HC_SAFE_DESIGN_V51 --><!-- HC_SAFE_VERIFY_V52 --><!-- HC_SAFE_TODAY_BRIDGE_V53 -->
 </body></html>
