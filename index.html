@@ -1085,4 +1085,46 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(apply,700));setTimeo
 })();
 </script>
 <!-- HC_HOME_FOCUS_V74 --><!-- HC_QUICK_NAV_V75 --><!-- HC_THREE_TAP_V76 --><!-- HC_DAILY_VS_ADMIN_V77 --><!-- HC_POLISH_V78 -->
+
+
+<!-- HC_UI_REPAIR_V79_V83 -->
+<style>
+#hcHome69 .hc79edit{width:100%;margin-top:7px;padding:9px;border:1px solid #38505a;border-radius:10px;background:#142229;color:#eef6f2;font-weight:900}
+</style>
+<script>
+(function(){'use strict';
+function refreshHome(){
+  if(window.HC69?.mount) HC69.mount();
+  setTimeout(()=>{ if(window.HC69?.render)HC69.render(); addPeopleButton(); if(window.HC74?.apply)HC74.apply(); },30);
+}
+function addPeopleButton(){
+  let root=document.getElementById('hcHome69'); if(!root)return;
+  let box=root.querySelector('.h69grid .h69box'); if(!box||box.querySelector('.hc79edit'))return;
+  box.insertAdjacentHTML('beforeend','<button class="hc79edit" onclick="HC79.people()">今日の人数を変更</button>');
+}
+function people(){ if(window.HC2?.people)HC2.people(); }
+const prevShow=window.show;
+if(typeof prevShow==='function') window.show=function(id){
+  prevShow(id);
+  if(id==='home') setTimeout(refreshHome,40);
+};
+if(window.HC2?.savePeople){
+  const oldSave=HC2.savePeople.bind(HC2);
+  HC2.savePeople=function(){ oldSave(); setTimeout(refreshHome,40); };
+}
+if(window.HC2?.time){
+  const oldTime=HC2.time.bind(HC2);
+  HC2.time=function(){ oldTime(); setTimeout(refreshHome,40); };
+}
+function cleanStray(){
+  [...document.body.childNodes].filter(n=>n.nodeType===3).forEach(n=>{
+    if(n.textContent.trim()==='\\n'||n.textContent.trim()==='\\r\\n')n.remove();
+  });
+}
+window.HC79={people,refreshHome};window.HC80={refreshHome};window.HC81={cleanStray};window.HC82={refreshHome};window.HC83={refreshHome};
+document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{refreshHome();cleanStray()},900));
+setTimeout(()=>{refreshHome();cleanStray()},1200);
+})();
+</script>
+<!-- HC_PEOPLE_UX_V79 --><!-- HC_HOME_RETURN_FIX_V80 --><!-- HC_STRAY_TEXT_FIX_V81 --><!-- HC_STATE_REFRESH_V82 --><!-- HC_UI_STABILITY_V83 -->
 </body></html>
