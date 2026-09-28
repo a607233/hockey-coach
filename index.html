@@ -840,4 +840,35 @@ const prev=window.show;window.show=function(id){prev(id);setTimeout(()=>{applyWr
 <!-- HC_EXPLICIT_VERIFICATION_V19 -->
 <!-- HC_SYSTEM_HEALTH_V20 -->
 
+
+
+<!-- HC_STABILITY_BUNDLE_V21_V24 -->
+<style>
+.hc24grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.hc24box{background:#091419;border:1px solid #22363e;border-radius:15px;padding:12px}.hc24box small{display:block;color:var(--muted)}.hc24box b{display:block;margin-top:4px}.hc24ok{color:var(--lime)}@media(max-width:520px){.hc24grid{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){'use strict';
+const load=(k,d)=>{try{let v=JSON.parse(localStorage.getItem(k)||'null');return v??d}catch(e){return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function rawContext(){let a=load('hc_architecture_v14',{}),r=load('hc_seasons_v15',{}),sid=r.currentSeasonId||a.seasonId||'',ss=(r.seasons||[]).find(x=>x.id===sid)||{};return{teamId:a.teamId||'',seasonId:sid,seasonName:ss.name||a.seasonName||'SEASON'}}
+function stabilizeSchema(){let a=load('hc_architecture_v14',{}),f=load('hc_foundation_v2',{}),changed=false;if((+a.schemaVersion||0)<21){a.schemaVersion=21;changed=true}if((+f.schemaVersion||0)<21){f.schemaVersion=21;save('hc_foundation_v2',f)}if(changed)save('hc_architecture_v14',a);return a}
+function stampRecord(x){if(!x||typeof x!=='object')return x;let c=rawContext();if(!x.teamId)x.teamId=c.teamId;if(!x.seasonId)x.seasonId=c.seasonId;if((+x.schemaVersion||0)<22)x.schemaVersion=22;return x}
+function migrateRecords(){let a=load('hc_training_records',[]),changed=false;if(!Array.isArray(a))return 0;let c=rawContext();a.forEach(x=>{if(!x||typeof x!=='object')return;if(!x.teamId){x.teamId=c.teamId;changed=true}if(!x.seasonId){x.seasonId=c.seasonId;changed=true}if((+x.schemaVersion||0)<22){x.schemaVersion=22;changed=true}});if(changed)save('hc_training_records',a);try{if(Array.isArray(window.records)){window.records.forEach(stampRecord)}}catch(e){}return a.length}
+function patchFinish(){if(typeof window.finishTraining!=='function'||window.finishTraining.__hc22)return;let old=window.finishTraining;let fn=function(){let r=old.apply(this,arguments);try{if(Array.isArray(records)){records.forEach(stampRecord);save('hc_training_records',records)}}catch(e){migrateRecords()}return r};fn.__hc22=true;window.finishTraining=fn}
+function sf(a){let sid=rawContext().seasonId;return Array.isArray(a)?a.filter(x=>!sid||!x?.seasonId||x.seasonId===sid):[]}
+function patchViews(){if(typeof window.renderHistory==='function'&&!window.renderHistory.__hc23){let old=window.renderHistory;let fn=function(){let all=records;try{records=sf(all);return old.apply(this,arguments)}finally{records=all}};fn.__hc23=true;window.renderHistory=fn}if(typeof window.renderGrowth==='function'&&!window.renderGrowth.__hc23){let old=window.renderGrowth;let fn=function(){let all=records;try{records=sf(all);return old.apply(this,arguments)}finally{records=all}};fn.__hc23=true;window.renderGrowth=fn}}
+function patchHC14(){if(!window.HC14||typeof HC14.context!=='function'||HC14.context.__hc21)return;let old=HC14.context;let fn=function(){let r=old.apply(this,arguments);let a=stabilizeSchema();return Object.assign({},r,{schemaVersion:a.schemaVersion})};fn.__hc21=true;HC14.context=fn}
+let main=document.querySelector('main'),sec=document.getElementById('stability24');if(!sec){sec=document.createElement('section');sec.id='stability24';sec.className='hidden';main.appendChild(sec)}
+function health(){stabilizeSchema();let n=migrateRecords(),c=rawContext(),a=load('hc_architecture_v14',{}),rr=sf(load('hc_training_records',[]));sec.innerHTML=`<div class="card"><div class="section-kicker">STABILITY CHECK · V24</div><h2 style="margin:0">シーズン基盤を固定する</h2><div class="hint">V17〜V20を実データ保存まで再点検し、練習記録のseasonIdが次回保存で消えないよう補強しました。</div></div><div class="hc24grid"><div class="hc24box"><small>SCHEMA</small><b class="hc24ok">V${esc(a.schemaVersion||21)}</b></div><div class="hc24box"><small>CURRENT SEASON</small><b class="hc24ok">${esc(c.seasonName)}</b></div><div class="hc24box"><small>TRAINING RECORDS</small><b>${rr.length}件</b></div><div class="hc24box"><small>RECORD MIGRATION</small><b class="hc24ok">${n}件 CHECKED</b></div></div><div class="card"><b>V21 → V24</b><div class="desc" style="line-height:1.9;margin-top:7px">V21 Schema安定化 ／ V22 練習記録のSeason永続化 ／ V23 HISTORY・GROWTHのSeason表示補強 ／ V24 System Check</div></div>`;show('stability24')}
+window.HC24={open:health,check(){patchHC14();stabilizeSchema();migrateRecords();patchFinish();patchViews()}};
+HC24.check();setTimeout(()=>HC24.check(),180);
+if(window.HC2){const om=HC2.more;HC2.more=function(){om();setTimeout(()=>{let q=document.querySelector('#hc2body .quick-grid');if(q&&!q.querySelector('[data-hc24]'))q.insertAdjacentHTML('beforeend','<div class="quick-card" data-hc24 onclick="HC2.close();HC24.open()"><div class="ico">◆</div><b>STABILITY</b><small>V21–V24 基盤点検</small></div>')},0)}}
+const prev=window.show;window.show=function(id){prev(id);setTimeout(()=>HC24.check(),0)};
+})();
+</script>
+<!-- HC_SCHEMA_STABILITY_V21 -->
+<!-- HC_TRAINING_RECORD_SEASON_V22 -->
+<!-- HC_SEASON_VIEW_HARDENING_V23 -->
+<!-- HC_STABILITY_CHECK_V24 -->
+
 </body></html>
