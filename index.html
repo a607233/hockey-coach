@@ -779,5 +779,31 @@ if(window.HC2){const om=HC2.more;HC2.more=function(){om();setTimeout(()=>{let q=
 const prev=window.show;window.show=function(id){prev(id);if(id==='home')setTimeout(homeBadge,0)};ensure();setTimeout(homeBadge,0);
 })();
 </script>
+\n\n<!-- HC_SEASON_DATA_FILTER_V16 -->
+<style>.s16scope{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:9px 11px;border:1px solid #2a3d45;border-radius:13px;background:#091419;margin-bottom:10px}.s16scope b{color:var(--lime)}.s16pill{font-size:9px;font-weight:950;letter-spacing:.8px;color:#071014;background:var(--lime);padding:5px 7px;border-radius:999px}</style>
+<script>
+(function(){'use strict';
+const load=(k,d)=>{try{let v=JSON.parse(localStorage.getItem(k)||'null');return v??d}catch(e){return d}};
+function sid(){try{return window.HC15?.current()?.id||window.HC14?.context()?.seasonId||''}catch(e){return''}}
+function sname(){try{return window.HC15?.current()?.name||window.HC14?.context()?.seasonName||'SEASON'}catch(e){return'SEASON'}}
+function belongs(x){let s=sid();return !s||!x||!x.seasonId||x.seasonId===s}
+function filter(a){return Array.isArray(a)?a.filter(belongs):[]}
+function tag(root){let el=typeof root==='string'?document.getElementById(root):root;if(!el||el.querySelector(':scope > .s16scope'))return;let d=document.createElement('div');d.className='s16scope';d.innerHTML='<div><small class="muted">DISPLAY SCOPE</small><b style="display:block">'+String(sname()).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))+'</b></div><span class="s16pill">SEASON</span>';el.prepend(d)}
+function patchStorageRenderer(obj,name,keys,root){if(!obj||typeof obj[name]!=='function'||obj[name].__s16)return;let old=obj[name];let fn=function(){let originals={};try{keys.forEach(k=>{originals[k]=localStorage.getItem(k);let v=load(k,null);if(Array.isArray(v))localStorage.setItem(k,JSON.stringify(filter(v)))});return old.apply(this,arguments)}finally{keys.forEach(k=>{if(originals[k]===null||originals[k]===undefined)localStorage.removeItem(k);else localStorage.setItem(k,originals[k])});setTimeout(()=>tag(root),0)}};fn.__s16=true;obj[name]=fn}
+function apply(){
+ patchStorageRenderer(window.HC9,'voices',['hc_player_voice_v1'],'playerVoice');
+ patchStorageRenderer(window.HC9,'compare',['hc_player_voice_v1','hc_analysis_history_v1'],'playerVoice');
+ patchStorageRenderer(window.HC9,'listDiscoveries',['hc_team_discovery_v1'],'discovery');
+ patchStorageRenderer(window.HC11,'open',['hc_team_discovery_v1','hc_analysis_history_v1'],'discovery');
+ if(window.HC12)patchStorageRenderer(window.HC12,'verify',['hc_team_discovery_v1','hc_analysis_history_v1'],'discovery');
+ if(window.HC3)patchStorageRenderer(window.HC3,'matches',['hc_matches_v3'],'matches');
+}
+function home(){let h=document.getElementById('home');if(h)tag(h)}
+window.HC16={seasonId:sid,seasonName:sname,filter,belongs,apply};
+apply();setTimeout(apply,100);setTimeout(home,120);
+const prev=window.show;window.show=function(id){prev(id);setTimeout(()=>{apply();if(id==='home')home();if(['matches','playerVoice','discovery','growth','history'].includes(id))tag(id)},0)};
+if(window.HC15&&HC15.switchTo){const sw=HC15.switchTo;HC15.switchTo=function(){return sw.apply(this,arguments)}}
+})();
+</script>
 
 </body></html>
