@@ -871,4 +871,33 @@ const prev=window.show;window.show=function(id){prev(id);setTimeout(()=>HC24.che
 <!-- HC_SEASON_VIEW_HARDENING_V23 -->
 <!-- HC_STABILITY_CHECK_V24 -->
 
+
+
+<!-- HC_COACH_COCKPIT_BUNDLE_V25_V28 -->
+<style>
+.cc25{border-color:#365038!important}.cc25grid{display:grid;grid-template-columns:1.25fr .75fr;gap:10px}.cc25box{background:#091419;border:1px solid #22363e;border-radius:15px;padding:12px}.cc25box small{display:block;color:var(--muted);margin-bottom:4px}.cc25focus{font-size:22px;line-height:1.15}.cc25flow{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.cc25flow span{font-size:9px;font-weight:900;letter-spacing:.6px;padding:5px 7px;border-radius:999px;background:#142229;color:#8ea0a8}.cc25flow span.on{background:var(--lime);color:#071014}.cc25signal{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.cc25signal div{background:#0a1419;border:1px solid #203039;border-radius:12px;padding:9px}.cc25signal b{display:block;color:var(--lime);font-size:18px}.cc25match{border-left:3px solid var(--blue)}.cc25week{border-left:3px solid var(--lime)}@media(max-width:520px){.cc25grid{grid-template-columns:1fr}.cc25signal{grid-template-columns:1fr 1fr}}
+</style>
+<script>
+(function(){'use strict';
+const load=(k,d)=>{try{let v=JSON.parse(localStorage.getItem(k)||'null');return v??d}catch(e){return d}},esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function ctx(){let a=window.HC14?.context?.()||load('hc_architecture_v14',{}),s=window.HC15?.current?.()||{};return{teamId:a.teamId||'',seasonId:s.id||a.seasonId||'',seasonName:s.name||a.seasonName||'SEASON'}}
+function arr(k){let a=load(k,[]),c=ctx();return Array.isArray(a)?a.filter(x=>x&&(!c.seasonId||!x.seasonId||x.seasonId===c.seasonId)):[]}
+function time(x){let v=x?.date||x?.createdAt||x?.updatedAt||0,t=typeof v==='number'?v:new Date(v).getTime();return Number.isFinite(t)?t:0}
+function latest(k){return arr(k).sort((a,b)=>time(b)-time(a))[0]||null}
+function issueName(id){let x=arr('hc_issues_v3').find(q=>q.id===id);return x?.name||''}
+function latestAnalysis(){return latest('hc_analysis_history_v1')}
+function focus(){let d=latest('hc_team_discovery_v1');if(d){let n=issueName(d.issueId);return{title:n||d.text||'TEAM DISCOVERYを検証',why:d.why||d.text||'選手とコーチの発見から設定',source:'DISCOVERY',d}}let a=latestAnalysis();let p=a?.priorities?.[0];return{title:p?.name||a?.priority||'まずチーム分析を行う',why:p?'最新分析の優先課題':'現在地を32項目で確認します',source:a?'ANALYSIS':'START',a}}
+function nextAction(f){let d=f.d;if(!d)return f.a?{label:'WHYを確認して練習へ',go:"show('result')",step:'WHY'}:{label:'チーム分析を始める',go:"show('analysis')",step:'ANALYZE'};if(!d.issueId)return{label:'発見を課題につなぐ',go:`HC10.action('${d.id}')`,step:'WHY'};if(!d.trainingId)return{label:'原則・練習を選ぶ',go:`HC10.action('${d.id}')`,step:'TRAIN'};if(!d.verificationAnalysisId)return{label:'練習後に再分析して検証',go:'HC19.open()',step:'VERIFY'};return{label:'検証結果から次の課題へ',go:'HC19.open()',step:'NEXT'}}
+function nextMatch(){let now=new Date();now.setHours(0,0,0,0);return arr('hc_matches_v3').filter(x=>{let d=new Date((x.date||'')+'T00:00:00');return !isNaN(d)&&d>=now}).sort((a,b)=>String(a.date).localeCompare(String(b.date)))[0]||null}
+function recentRecords(days=7){let cut=Date.now()-days*86400000;return arr('hc_training_records').filter(x=>time(x)>=cut)}
+function render(){let h=document.getElementById('home');if(!h)return;document.getElementById('cc25')?.remove();let f=focus(),n=nextAction(f),a=latestAnalysis(),voices=arr('hc_player_voice_v1'),rec=recentRecords(7),m=nextMatch(),mins=rec.reduce((z,x)=>z+(+x.minutes||0),0),under=rec.filter(x=>+x.understand).map(x=>+x.understand),ach=rec.filter(x=>+x.achieve).map(x=>+x.achieve),u=under.length?(under.reduce((x,y)=>x+y,0)/under.length).toFixed(1):'—',ac=ach.length?(ach.reduce((x,y)=>x+y,0)/ach.length).toFixed(1):'—';let el=document.createElement('div');el.id='cc25';el.innerHTML=`<div class="card cc25"><div class="section-kicker">COACH DECISION · V25</div><div class="cc25grid"><div><small class="muted">TODAY'S FOCUS</small><b class="cc25focus">${esc(f.title)}</b><div class="desc" style="margin-top:6px">WHY｜${esc(f.why)}</div><div class="cc25flow">${['ANALYZE','WHY','TRAIN','VERIFY','NEXT'].map(x=>`<span class="${x===n.step?'on':''}">${x}</span>`).join('')}</div></div><div class="cc25box"><small>NEXT ACTION</small><b>${esc(n.label)}</b><button class="btn small" style="width:100%;margin-top:10px" onclick="${n.go}">ここから進める →</button></div></div><div class="cc25signal"><div><small>最新分析</small><b>${a?.avg?Number(a.avg).toFixed(1):'—'}</b></div><div><small>7日間練習</small><b>${rec.length}</b><small>${mins} min</small></div><div><small>PLAYER VOICE</small><b>${voices.length}</b></div></div></div><div class="card cc25match"><div class="section-kicker">MATCH READINESS · V27</div>${m?`<div class="row"><div><b>${esc(m.opponent||'NEXT MATCH')}</b><div class="desc">${esc(m.date||'')} ${m.competition?'｜'+esc(m.competition):''}</div></div><span class="badge">NEXT</span></div><div class="hint"><b>試合前フォーカス：</b> ${esc(f.title)}<br><span class="desc">分析→練習→試合で同じテーマを追います。</span></div>`:`<b>次の試合は未登録です</b><div class="desc">MATCHに日程を登録すると、今日の重点課題と接続します。</div>`}</div><div class="card cc25week"><div class="section-kicker">WEEKLY EVIDENCE · V26/V28</div><div class="cc25grid"><div><b>今週、何を積み上げた？</b><div class="desc" style="margin-top:5px">練習 ${rec.length}回・${mins}分 ／ 理解度 ${u} ／ 達成度 ${ac}</div></div><div><button class="btn secondary small" style="width:100%" onclick="show('growth')">GROWTHを見る</button><button class="btn secondary small" style="width:100%;margin-top:6px" onclick="HC9?.voices?HC9.voices():show('home')">VOICEを見る</button></div></div><div class="hint">時間を積んだだけで「成長」とは判定しません。分析・KPI・選手の声・再分析を合わせて確認します。</div></div>`;let hero=h.querySelector('.hero');if(hero)hero.after(el);else h.prepend(el)}
+window.HC25={render,focus,nextAction};window.HC26={recentRecords};window.HC27={nextMatch};window.HC28={render};
+const prev=window.show;window.show=function(id){prev(id);if(id==='home')setTimeout(render,0)};setTimeout(render,180);
+})();
+</script>
+<!-- HC_COACH_DECISION_V25 -->
+<!-- HC_WEEKLY_EVIDENCE_V26 -->
+<!-- HC_MATCH_READINESS_V27 -->
+<!-- HC_WEEKLY_REVIEW_V28 -->
+
 </body></html>
