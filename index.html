@@ -989,4 +989,22 @@ window.HC49={open,build,close};window.HC50={focus};window.HC51={prescription};wi
 })();
 </script>
 <!-- HC_SAFE_CONTEXT_V49 --><!-- HC_SAFE_FOCUS_V50 --><!-- HC_SAFE_DESIGN_V51 --><!-- HC_SAFE_VERIFY_V52 --><!-- HC_SAFE_TODAY_BRIDGE_V53 -->
+
+
+<!-- HC_SESSION_CANDIDATES_V54_V58 -->
+<style>
+#hcSB54{position:fixed;inset:0;z-index:10000;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcSB54 .w{max-width:720px;margin:auto}.c54{background:#0b171c;border:1px solid #263a42;border-radius:15px;padding:13px;margin:9px 0}.t54{font-size:10px;font-weight:950;padding:5px 8px;border-radius:999px;background:#263817;color:#dfff91}.b54{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.s54{background:#17252b;color:#eef6f2}.why54{border-left:3px solid #b8ff45;padding:8px 10px;background:#081216;margin-top:7px}</style>
+<div id="hcSB54"><div class="w" id="hcSB54b"></div></div>
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function F(){return window.HC34?.priority?.()?.name||'現在の優先課題'} function C(){let f=L('hc_foundation_v2',{});return{p:+(f.attendance||18),g:+(f.gkToday??2),m:+(f.plannedMinutes||100)}}
+function lib(){let a=L('hc_training_library_v1',L('hc_training_library',[]));return Array.isArray(a)?a:[]}
+function cand(){let f=F(),w=f.split(/[・／\s]/).filter(x=>x.length>1),a=lib().map(x=>({x,s:w.reduce((n,z)=>n+(JSON.stringify(x).includes(z)?2:0),0)})).sort((a,b)=>b.s-a.s).slice(0,3).map(o=>o.x);if(!a.length)a=[{name:'Constraint Game',purpose:'優先課題が繰り返し現れるゲーム'},{name:'Small-Sided Game',purpose:'関与回数と判断回数を増やす'},{name:'Game',purpose:'試合環境で転移を確認する'}];return a}
+function spec(i){let c=C(),f=F(),dense=i===0?'やや狭く':i===1?'標準':'やや広く',rule=f.includes('ロスト後')?'ロスト後4秒 WIN / DELAY / RECOVER':f.includes('奪取後')?'奪取後4秒 GO / HOLD / RESET':'狙う行動が出る制約を1つ',q='何が見えたから、その判断を選んだ？',k=f.includes('ロスト後')?'4秒以内奪回率 / 前進阻止率':f.includes('奪取後')?'奪取後4秒以内前進率 / 適正判断率':'成功行動の再現回数 / 再分析スコア';return{space:`${dense}設定し、${c.p}人の関与回数を確保`,rule,q,k,g:c.g?`GK ${c.g}人をゴール方向の情報として活用`:'ゾーン/ゲートで方向を作る'}}
+function open(){let a=cand(),c=C(),f=F(),b=document.getElementById('hcSB54b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><span class="t54">SESSION CANDIDATES · V54–V58</span><h2>練習候補を比較する</h2></div><button onclick="HC54.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="c54"><b>${E(f)}</b><div>今日：${c.p}人 / GK${c.g} / ${c.m}分</div></div>${a.map((x,i)=>{let z=spec(i);return `<div class="c54"><span class="t54">CANDIDATE ${i+1}</span><h3>${E(x.name||x.title||'TRAINING')}</h3><div>${E(x.purpose||x.desc||'')}</div><div class="why54"><b>WHY · V55</b><br>${E(f)}を、試合に近い情報の中で反復するため。</div><div class="why54"><b>DESIGN · V56</b><br>${E(z.space)}<br>${E(z.g)}<br>制約：${E(z.rule)}</div><div class="why54"><b>QUESTION · V57</b><br>${E(z.q)}</div><div class="why54"><b>KPI · V58</b><br>${E(z.k)}</div><button class="b54" onclick="HC54.pick(${i})">この候補を採用</button></div>`}).join('')}<button class="b54 s54" onclick="HC54.close()">閉じる</button>`;document.getElementById('hcSB54').style.display='block'}
+function pick(i){let a=cand(),z=spec(i),c=C(),rec={id:'sb_'+Date.now(),createdAt:new Date().toISOString(),focus:F(),training:a[i],design:z,context:c,status:'candidate'};localStorage.setItem('hc_session_candidate_v54',JSON.stringify(rec));let b=document.getElementById('hcSB54b');b.insertAdjacentHTML('afterbegin','<div class="c54"><b>✓ 候補を保存しました</b><div>まだTODAYは上書きしていません。指導者が確認してから採用できます。</div></div>')}
+function close(){document.getElementById('hcSB54').style.display='none'}window.HC54={open,close,pick,candidates:cand};window.HC55={focus:F};window.HC56={spec};window.HC57={spec};window.HC58={spec};
+})();
+</script>
+<!-- HC_CANDIDATES_V54 --><!-- HC_WHY_V55 --><!-- HC_ADAPTIVE_DESIGN_V56 --><!-- HC_PLAYER_PROMPT_V57 --><!-- HC_KPI_V58 -->
 </body></html>
