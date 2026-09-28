@@ -806,4 +806,38 @@ if(window.HC15&&HC15.switchTo){const sw=HC15.switchTo;HC15.switchTo=function(){r
 })();
 </script>
 
+
+
+<!-- HC_RELEASE_BUNDLE_V17_V20 -->
+<style>
+.hcReleaseGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.hcReleaseBox{background:#091419;border:1px solid #22363e;border-radius:15px;padding:12px}.hcReleaseBox small{display:block;color:var(--muted)}.hcReleaseBox b{display:block;margin-top:4px}.hcOk{color:var(--lime)}.hcWarn{color:var(--amber)}@media(max-width:520px){.hcReleaseGrid{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){'use strict';
+const load=(k,d)=>{try{let v=JSON.parse(localStorage.getItem(k)||'null');return v??d}catch(e){return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function context(){let a=window.HC14?.context?.()||load('hc_architecture_v14',{}),s=window.HC15?.current?.()||{};return{teamId:a.teamId||'',seasonId:s.id||a.seasonId||'',seasonName:s.name||a.seasonName||'SEASON'}}
+function stampNew(key,beforeIds){let a=load(key,[]),c=context(),changed=false;if(!Array.isArray(a))return;a.forEach(x=>{if(!x||typeof x!=='object'||beforeIds.has(x.id))return;if(!x.teamId){x.teamId=c.teamId;changed=true}if(!x.seasonId){x.seasonId=c.seasonId;changed=true}if(!x.schemaVersion||x.schemaVersion<17){x.schemaVersion=17;changed=true}if(!x.createdAt)x.createdAt=Date.now()});if(changed)save(key,a)}
+function wrap(obj,name,key){if(!obj||typeof obj[name]!=='function'||obj[name].__hc17)return;let old=obj[name];let fn=function(){let a=load(key,[]),ids=new Set(Array.isArray(a)?a.map(x=>x?.id).filter(Boolean):[]),r=old.apply(this,arguments);stampNew(key,ids);return r};fn.__hc17=true;obj[name]=fn}
+function applyWrites(){wrap(window,'analyze','hc_analysis_history_v1');wrap(window,'finishTraining','hc_training_records');wrap(window.HC3,'saveMatch','hc_matches_v3');wrap(window.HC9,'saveVoice','hc_player_voice_v1');wrap(window.HC9,'saveDiscovery','hc_team_discovery_v1')}
+function seasonFilter(a){let sid=context().seasonId;return Array.isArray(a)?a.filter(x=>!sid||!x?.seasonId||x.seasonId===sid):[]}
+function applyRecordViews(){if(typeof window.renderHistory==='function'&&!window.renderHistory.__hc18){let old=window.renderHistory;let fn=function(){let all=records;try{records=seasonFilter(all);return old.apply(this,arguments)}finally{records=all}};fn.__hc18=true;window.renderHistory=fn}if(typeof window.renderGrowth==='function'&&!window.renderGrowth.__hc18){let old=window.renderGrowth;let fn=function(){let all=records;try{records=seasonFilter(all);return old.apply(this,arguments)}finally{records=all}};fn.__hc18=true;window.renderGrowth=fn}}
+function analysisTime(a){let t=new Date(a?.date||a?.createdAt||0).getTime();return Number.isFinite(t)?t:0}
+function verifyScreen(){let ds=seasonFilter(load('hc_team_discovery_v1',[])).slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)),aa=seasonFilter(load('hc_analysis_history_v1',[])).slice().sort((a,b)=>analysisTime(b)-analysisTime(a)),el=document.getElementById('discovery');if(!el)return;el.innerHTML=`<div class="card"><div class="section-kicker">VERIFICATION LINK · V19</div><h2 style="margin:0">どの再分析で検証する？</h2><div class="hint">「最新の分析だから」ではなく、コーチが検証に使う分析を選びます。因果関係を自動で断定しません。</div></div>`+(ds.length?ds.map(d=>{let base=aa.find(a=>a.id===d.baselineAnalysisId),cands=aa.filter(a=>a.id!==base?.id&&analysisTime(a)>analysisTime(base||{date:0})),sel=d.verificationAnalysisId||'';return `<div class="card"><span class="badge">${esc(d.text||'TEAM DISCOVERY')}</span><div class="field"><label>検証に使う分析</label><select class="select" onchange="HC19.pick('${d.id}',this.value)"><option value="">選択してください</option>${cands.map(a=>`<option value="${esc(a.id)}" ${a.id===sel?'selected':''}>${esc(new Date(a.date||a.createdAt||Date.now()).toLocaleDateString('ja-JP'))}｜総合 ${Number(a.avg||0).toFixed(1)}</option>`).join('')}</select></div><div class="desc">BEFORE ${base?.avg?Number(base.avg).toFixed(1):'—'} → AFTER ${sel&&aa.find(a=>a.id===sel)?.avg?Number(aa.find(a=>a.id===sel).avg).toFixed(1):'—'}</div><textarea class="textarea" style="margin-top:10px" placeholder="何が変わった？ 現場では何が見えた？" onchange="HC19.note('${d.id}',this.value)">${esc(d.verifyNote||'')}</textarea></div>`}).join(''):'<div class="card empty">このシーズンにはTEAM DISCOVERYがありません。</div>');show('discovery')}
+function mutateDiscovery(id,fn){let a=load('hc_team_discovery_v1',[]),d=a.find(x=>x.id===id);if(!d)return;fn(d);d.updatedAt=Date.now();save('hc_team_discovery_v1',a)}
+window.HC19={open:verifyScreen,pick(id,v){mutateDiscovery(id,d=>d.verificationAnalysisId=v);verifyScreen()},note(id,v){mutateDiscovery(id,d=>d.verifyNote=v)}};
+let main=document.querySelector('main'),sec=document.getElementById('release20');if(!sec){sec=document.createElement('section');sec.id='release20';sec.className='hidden';main.appendChild(sec)}
+function release(){let c=context(),keys=['hc_matches_v3','hc_analysis_history_v1','hc_training_records','hc_player_voice_v1','hc_team_discovery_v1'],counts={};keys.forEach(k=>counts[k]=seasonFilter(load(k,[])).length);let b=load('hc_data_safety_v13',{});sec.innerHTML=`<div class="card"><div class="section-kicker">SYSTEM HEALTH · V20</div><h2 style="margin:0">HOCKEY COACH 基盤チェック</h2><div class="hint">現在のシーズンだけを対象に、保存・表示・検証の接続状態を確認します。</div></div><div class="hcReleaseGrid"><div class="hcReleaseBox"><small>SEASON</small><b class="hcOk">${esc(c.seasonName)}</b></div><div class="hcReleaseBox"><small>WRITE SCOPE</small><b class="hcOk">V17 ACTIVE</b></div><div class="hcReleaseBox"><small>RECORD / GROWTH</small><b class="hcOk">V18 FILTER</b></div><div class="hcReleaseBox"><small>VERIFY LINK</small><b class="hcOk">V19 SELECTABLE</b></div></div><div class="card"><b>このシーズンのデータ</b><div class="desc" style="line-height:1.9;margin-top:7px">試合 ${counts.hc_matches_v3} ／ 分析 ${counts.hc_analysis_history_v1} ／ 練習記録 ${counts.hc_training_records} ／ VOICE ${counts.hc_player_voice_v1} ／ DISCOVERY ${counts.hc_team_discovery_v1}</div></div><div class="card"><b>DATA SAFETY</b><div class="desc">最終バックアップ：${b.lastBackupAt?esc(new Date(b.lastBackupAt).toLocaleString('ja-JP')):'まだありません'}</div><button class="btn secondary" style="margin-top:10px" onclick="HC13.open()">バックアップを開く</button></div>`;show('release20')}
+window.HC20={open:release};
+applyWrites();applyRecordViews();setTimeout(()=>{applyWrites();applyRecordViews()},150);
+if(window.HC11)HC11.open=verifyScreen;
+if(window.HC2){const om=HC2.more;HC2.more=function(){om();setTimeout(()=>{let q=document.querySelector('#hc2body .quick-grid');if(q&&!q.querySelector('[data-hc20]'))q.insertAdjacentHTML('beforeend','<div class="quick-card" data-hc20 onclick="HC2.close();HC20.open()"><div class="ico">✓</div><b>SYSTEM HEALTH</b><small>V17–V20 基盤チェック</small></div>')},0)}}
+const prev=window.show;window.show=function(id){prev(id);setTimeout(()=>{applyWrites();applyRecordViews()},0)};
+})();
+</script>
+<!-- HC_SEASON_WRITE_SCOPE_V17 -->
+<!-- HC_RECORD_GROWTH_FILTER_V18 -->
+<!-- HC_EXPLICIT_VERIFICATION_V19 -->
+<!-- HC_SYSTEM_HEALTH_V20 -->
+
 </body></html>
