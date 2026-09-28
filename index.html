@@ -917,4 +917,41 @@ if(window.HC2){const o=HC2.more;HC2.more=function(){o();setTimeout(()=>{let q=do
 })();
 </script>
 <!-- HC_MATCH_DAY_V29 --><!-- HC_PREMATCH_PLAN_V30 --><!-- HC_SIDELINE_CAPTURE_V31 --><!-- HC_POSTMATCH_ANALYSIS_V32 --><!-- HC_NEXT_PRACTICE_BRIDGE_V33 -->
+
+
+<!-- HC_DECISION_ENGINE_BUNDLE_V34_V38 -->
+<style>
+.de34{border-color:#38563c!important}.de34grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.de34box{background:#091419;border:1px solid #22363e;border-radius:14px;padding:12px}.de34box small{display:block;color:var(--muted);margin-bottom:4px}.de34why{border-left:3px solid var(--lime);padding-left:10px;margin:10px 0}.de34tag{display:inline-block;font-size:9px;font-weight:950;padding:5px 7px;border-radius:999px;background:#1b3324;color:#cfffaa;margin:2px}.de34q{background:#0b151a;border:1px solid #243740;border-radius:13px;padding:11px;margin-top:8px}.de34score{font-size:24px;color:var(--lime);font-weight:950}@media(max-width:520px){.de34grid{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function C(){let a=window.HC14?.context?.()||L('hc_architecture_v14',{}),ss=window.HC15?.current?.()||{};return{seasonId:ss.id||a.seasonId||'',seasonName:ss.name||a.seasonName||'SEASON'}}
+function A(k){let c=C(),a=L(k,[]);return Array.isArray(a)?a.filter(x=>x&&(!c.seasonId||!x.seasonId||x.seasonId===c.seasonId)):[]}
+function tm(x){let v=x?.date||x?.createdAt||x?.updatedAt||0,q=typeof v==='number'?v:new Date(v).getTime();return isFinite(q)?q:0}
+function latest(k){return A(k).sort((a,b)=>tm(b)-tm(a))[0]||null}
+function priority(){let a=latest('hc_analysis_history_v1'),p=a?.priorities?.[0],issues=A('hc_issues_v3');let id=p?.issueId||p?.id||a?.priorityIssueId||'',it=issues.find(x=>x.id===id);return{name:p?.name||it?.name||a?.priority||'優先課題を分析から決める',id:id||it?.id||'',analysis:a}}
+const causeMap={
+'前進構造':['受け手の立ち位置が同じレーンに重なる','ボール保持者の前方選択肢が少ない','サポートの到着が遅い'],
+'優位性の創出':['相手を動かす前にプレーしている','3人目の関与が少ない','数的優位を位置的優位へ変換できていない'],
+'攻撃方向の変更':['逆サイドを見る前に縦へ急いでいる','幅を取る選手の準備が遅い','相手を片側へ寄せ切れていない'],
+'サークル攻略':['侵入後にゴール方向の優先順位が曖昧','ボール保持者へのサポート角度が少ない','フィニッシュ前の人数配置が整っていない'],
+'攻撃時リスク管理':['前進時に後方のバランスが崩れる','ロスト地点周辺の即時守備人数が不足','攻撃参加と残る人数の基準が曖昧'],
+'守備ブロック':['中央とゴールの保護が遅い','ライン間が広がる','カバーの距離が遠い'],
+'プレッシング':['1st DFの誘導方向が共有されていない','2nd DFが連動できていない','奪取トリガーが曖昧'],
+'ゴール前守備':['ボールとゴールを同時に守れていない','マーク受け渡しが遅い','リバウンドへの準備が不足'],
+'ロスト後4秒':['最初の守備者が遅れる','中央保護よりボールへ全員が寄る','WIN / DELAY / RECOVERの判断が揃わない'],
+'奪取後4秒':['奪う前の認知が不足','1stパスの方向が限定される','GO / HOLD / RESETの判断基準が揃わない']
+};
+function causes(n){for(let k in causeMap)if(n.includes(k)||k.includes(n))return causeMap[k];return['技術だけでなく、認知・配置・タイミングを確認する','個人のミスとチーム構造を分けて観察する','再現する状況を練習で作り原因を確かめる']}
+function trainings(p){let lib=L('hc_training_library_v1',L('hc_training_library',[]));if(!Array.isArray(lib))lib=[];let words=p.name.split(/[・／\\s]/).filter(x=>x.length>1);let scored=lib.map(x=>{let text=JSON.stringify(x),sc=words.reduce((n,w)=>n+(text.includes(w)?2:0),0);if(p.id&&text.includes(p.id))sc+=5;return{x,sc}}).filter(o=>o.sc>0).sort((a,b)=>b.sc-a.sc).slice(0,3).map(o=>o.x);return scored}
+function kpis(n){if(n.includes('ロスト後'))return['4秒以内奪回率','4秒以内前進阻止率','WIN / DELAY / RECOVER適正判断率'];if(n.includes('奪取後'))return['奪取後4秒以内前進率','GO / HOLD / RESET適正判断率','奪取後の前向き1stパス率'];if(n.includes('プレッシング'))return['狙った方向への誘導率','2nd DF連動率','狙ったエリアでの奪取回数'];if(n.includes('サークル'))return['サークル侵入→シュート率','侵入時のサポート人数','ゴール前2次攻撃回数'];return['該当項目の再分析スコア','成功行動の再現回数','選手の判断理由を説明できた割合']}
+function questions(n){return[`「${n}」がうまくいった瞬間、何が見えていた？`,`相手の配置が変わったら、次に何を変える？`,`成功した形をもう一度起こすために、誰が・いつ・どこへ動く？`]}
+let main=document.querySelector('main'),sec=document.getElementById('decision34');if(!sec){sec=document.createElement('section');sec.id='decision34';sec.className='hidden';main.appendChild(sec)}
+function render(){let p=priority(),cs=causes(p.name),tr=trainings(p),ks=kpis(p.name),qs=questions(p.name);sec.innerHTML=`<div class="card de34"><div class="section-kicker">COACHING DECISION ENGINE · V34–V38</div><h2 style="margin:0">${E(p.name)}</h2><div class="desc">低評価だから練習を決めるのではなく、WHY → 原理原則 → 練習 → KPI → 選手の問いへ進みます。</div></div><div class="card"><span class="de34tag">WHY · V34</span><h3>まず原因仮説を分ける</h3>${cs.map((x,i)=>`<div class="de34why"><b>仮説 ${i+1}</b><div class="desc">${E(x)}</div></div>`).join('')}<div class="hint">これは「答え」ではありません。映像・選手の声・再現練習で確かめる候補です。</div></div><div class="card"><span class="de34tag">PRINCIPLE · V35</span><h3>原理原則につなぐ</h3><div class="desc">METHODに登録している原理原則と照合し、課題名ではなく「どんな判断・行動を増やすか」を共有します。</div><button class="btn secondary" style="width:100%;margin-top:10px" onclick="show('method')">HOCKEY METHODを開く</button></div><div class="card"><span class="de34tag">TRAIN · V36</span><h3>練習候補</h3>${tr.length?tr.map((x,i)=>`<div class="de34box" style="margin-top:8px"><small>CANDIDATE ${i+1}</small><b>${E(x.name||x.title||'TRAINING')}</b><div class="desc">${E(x.purpose||x.desc||'')}</div></div>`).join(''):`<div class="hint">一致する登録練習がまだ少ないため、TRAINING LIBRARYでこの課題に紐づく練習を育てます。</div>`}<button class="btn" style="width:100%;margin-top:10px" onclick="show('library')">TRAINING LIBRARYへ</button></div><div class="card"><span class="de34tag">KPI · V37</span><div class="de34grid">${ks.map(x=>`<div class="de34box"><small>MEASURE</small><b>${E(x)}</b></div>`).join('')}</div><div class="hint">練習時間ではなく、試合・再分析で行動が変わったかを確認します。</div></div><div class="card"><span class="de34tag">PLAYER QUESTION · V38</span><h3>選手に答えを渡しすぎない</h3>${qs.map(x=>`<div class="de34q">${E(x)}</div>`).join('')}<button class="btn secondary" style="width:100%;margin-top:10px" onclick="HC9?.voices?HC9.voices():show('home')">PLAYER VOICEへ</button></div>`;show('decision34')}
+window.HC34={open:render,priority,causes};window.HC35={open:render};window.HC36={trainings};window.HC37={kpis};window.HC38={questions};
+if(window.HC2){const o=HC2.more;HC2.more=function(){o();setTimeout(()=>{let q=document.querySelector('#hc2body .quick-grid');if(q&&!q.querySelector('[data-de34]'))q.insertAdjacentHTML('beforeend','<div class="quick-card" data-de34 onclick="HC2.close();HC34.open()"><div class="ico">🧠</div><b>DECISION ENGINE</b><small>WHY→原理→練習→KPI→問い</small></div>')},0)}}
+})();
+</script>
+<!-- HC_CAUSE_HYPOTHESIS_V34 --><!-- HC_PRINCIPLE_BRIDGE_V35 --><!-- HC_TRAINING_REASONER_V36 --><!-- HC_KPI_BRIDGE_V37 --><!-- HC_PLAYER_QUESTION_V38 -->
 </body></html>
