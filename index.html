@@ -146,4 +146,316 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').cat
  updateContext();
 })();
 </script>
+
+<!-- ANALYSIS_SHEETS_SAFE_V1 -->
+<script>
+/* HOCKEY COACH - Safe Update Pack 1
+   Multiple analysis sheets + bug fixes
+   Existing localStorage data is preserved.
+*/
+(function () {
+  'use strict';
+
+  const SHEETS_KEY = 'hc_analysis_sheets_v1';
+  const ACTIVE_KEY = 'hc_analysis_active_v1';
+  const clone = v => JSON.parse(JSON.stringify(v));
+
+  // ---- Safe helpers -------------------------------------------------------
+  function itemId(x){ return Array.isArray(x) ? x[0] : x.id; }
+  function itemPhase(x){ return Array.isArray(x) ? x[1] : x.phase; }
+  function itemName(x){ return Array.isArray(x) ? x[2] : x.name; }
+  function itemDesc(x){ return Array.isArray(x) ? (x[3] || '') : (x.desc || ''); }
+  function esc(v){
+    return String(v ?? '').replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[m]);
+  }
+  function saveSheets(){
+    localStorage.setItem(SHEETS_KEY, JSON.stringify(sheets));
+    localStorage.setItem(ACTIVE_KEY, activeId);
+  }
+
+  // ---- Analysis sheets ---------------------------------------------------
+  const originalItems = clone(DATA.items);
+  let sheets;
+  try { sheets = JSON.parse(localStorage.getItem(SHEETS_KEY) || 'null'); } catch(e) {}
+  if (!Array.isArray(sheets) || !sheets.length) {
+    sheets = [{
+      id:'standard-32',
+      name:'標準｜試合分析32項目',
+      standard:true,
+      archived:false,
+      items:originalItems,
+      createdAt:Date.now()
+    }];
+    localStorage.setItem(SHEETS_KEY, JSON.stringify(sheets));
+  }
+
+  let activeId = localStorage.getItem(ACTIVE_KEY) ||
+                 (sheets.find(s => !s.archived) || {}).id || 'standard-32';
+
+  function activeSheet(){
+    return sheets.find(s => s.id === activeId && !s.archived) ||
+           sheets.find(s => !s.archived);
+  }
+
+  function applySheet(){
+    const s = activeSheet();
+    if (!s) return;
+    DATA.items = clone(s.items);
+    // Keep old scores. Only the visible questions change.
+    if (typeof renderTabs === 'function') renderTabs();
+    if (typeof renderQuestions === 'function') renderQuestions();
+  }
+
+  const main = document.querySelector('main');
+  if (main && !document.getElementById('analysisSheets')) {
+    const section = document.createElement('section');
+    section.id = 'analysisSheets';
+    section.className = 'hidden';
+    section.innerHTML = `
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="section-kicker">ANALYSIS SHEETS</div>
+            <h2 style="margin:0">分析シート管理</h2>
+            <p class="muted">目的に合わせて分析項目を使い分けます。</p>
+          </div>
+          <button class="btn" onclick="HCAS.newSheet()">＋ 新規</button>
+        </div>
+        <div class="hint">
+          標準32項目は保護されています。複製したシートは自由に編集できます。
+          過去の保存データは削除しません。
+        </div>
+        <div id="hcAsList" style="display:grid;gap:10px;margin-top:12px"></div>
+      </div>`;
+    main.appendChild(section);
+  }
+
+  function injectSelector(){
+    const host = document.querySelector('#analysis .card');
+    if (!host) return;
+    document.getElementById('hcAsToolbar')?.remove();
+    const s = activeSheet();
+    const div = document.createElement('div');
+    div.id = 'hcAsToolbar';
+    div.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0';
+    div.innerHTML = `
+      <select class="select" style="flex:1;min-width:190px" onchange="HCAS.select(this.value)">
+        ${sheets.filter(x=>!x.archived).map(x =>
+          `<option value="${esc(x.id)}" ${x.id===s?.id?'selected':''}>${esc(x.name)}</option>`
+        ).join('')}
+      </select>
+      <button class="btn secondary small" onclick="show('analysisSheets')">シート管理</button>`;
+    const tabsEl = host.querySelector('#tabs');
+    host.insertBefore(div, tabsEl);
+  }
+
+  function renderManager(){
+    const el = document.getElementById('hcAsList');
+    if (!el) return;
+    const live = sheets.filter(x=>!x.archived);
+    el.innerHTML = live.map(s => `
+      <div class="traincard" style="${s.id===activeId?'border-color:#d7ff39':''}">
+        <div class="row">
+          <div>
+            <b>${esc(s.name)}</b>
+            <div class="desc">${s.items.length}項目${s.standard?' ・ 標準':''}</div>
+          </div>
+          <span class="badge">${s.id===activeId?'使用中':'シート'}</span>
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn secondary small" onclick="HCAS.select('${s.id}')">使用する</button>
+          <button class="btn secondary small" onclick="HCAS.duplicate('${s.id}')">複製</button>
+          ${s.standard ? '' : `
+            <button class="btn secondary small" onclick="HCAS.rename('${s.id}')">名称変更</button>
+            <button class="btn secondary small" onclick="HCAS.addItem('${s.id}')">項目追加</button>
+            <button class="btn secondary small" onclick="HCAS.editItem('${s.id}')">項目編集</button>
+            <button class="btn secondary small" onclick="HCAS.archive('${s.id}')">アーカイブ</button>`}
+        </div>
+      </div>`).join('');
+  }
+
+  window.HCAS = {
+    select(id){
+      if (!sheets.some(s=>s.id===id && !s.archived)) return;
+      activeId = id;
+      saveSheets();
+      applySheet();
+      injectSelector();
+      renderManager();
+      show('analysis');
+    },
+    newSheet(){
+      const name = prompt('新しい分析シート名', '新しい分析シート');
+      if (!name?.trim()) return;
+      const s = {id:'as-'+Date.now(), name:name.trim(), standard:false,
+                 archived:false, items:[], createdAt:Date.now()};
+      sheets.push(s); activeId=s.id; saveSheets(); renderManager();
+    },
+    duplicate(id){
+      const src=sheets.find(s=>s.id===id); if(!src) return;
+      const name=prompt('複製するシート名', src.name.replace('標準｜','')+' コピー');
+      if(!name?.trim()) return;
+      const s={id:'as-'+Date.now(),name:name.trim(),standard:false,archived:false,
+               items:clone(src.items),createdAt:Date.now()};
+      sheets.push(s); activeId=s.id; saveSheets(); applySheet(); renderManager(); injectSelector();
+    },
+    rename(id){
+      const s=sheets.find(x=>x.id===id); if(!s || s.standard) return;
+      const name=prompt('シート名',s.name);
+      if(name?.trim()){s.name=name.trim();saveSheets();renderManager();injectSelector();}
+    },
+    addItem(id){
+      const s=sheets.find(x=>x.id===id); if(!s || s.standard) return;
+      const phase=prompt('フェーズ', '攻撃'); if(!phase?.trim()) return;
+      const name=prompt('項目名', ''); if(!name?.trim()) return;
+      const code=prompt('表示コード（例 A11）', 'X'+(s.items.length+1));
+      const desc=prompt('評価する内容・説明', '') || '';
+      const uid='C'+Date.now();
+      s.items.push([uid, phase.trim(), name.trim(), desc, code?.trim()||uid]);
+      saveSheets(); if(id===activeId) applySheet(); renderManager();
+    },
+    editItem(id){
+      const s=sheets.find(x=>x.id===id); if(!s || s.standard || !s.items.length) return;
+      const menu=s.items.map((x,i)=>`${i+1}. ${itemPhase(x)}｜${itemName(x)}`).join('\n');
+      const n=Number(prompt('編集する番号\n'+menu,''));
+      if(!n || n<1 || n>s.items.length) return;
+      const x=s.items[n-1];
+      const phase=prompt('フェーズ',itemPhase(x)); if(!phase) return;
+      const name=prompt('項目名',itemName(x)); if(!name) return;
+      const desc=prompt('説明',itemDesc(x)) ?? itemDesc(x);
+      // Stable internal ID is preserved.
+      s.items[n-1]=[itemId(x),phase.trim(),name.trim(),desc];
+      saveSheets(); if(id===activeId) applySheet(); renderManager();
+    },
+    archive(id){
+      const s=sheets.find(x=>x.id===id); if(!s || s.standard) return;
+      if(!confirm('このシートをアーカイブしますか？\n保存済みデータは削除されません。')) return;
+      s.archived=true;
+      if(activeId===id) activeId=(sheets.find(x=>!x.archived)||{}).id;
+      saveSheets(); applySheet(); renderManager(); injectSelector();
+    },
+    render:renderManager
+  };
+
+  // ---- Existing rendering bugs ------------------------------------------
+  // Three old functions referenced a non-existent variable "t".
+  window.renderMoves = function(){
+    moveList.innerHTML = moves.length ? moves.map(m=>`
+      <div class="traincard">
+        ${m.image?`<img src="${m.image}" class="coverimg">`:''}
+        <div class="trainhead"><div><b>${m.favorite?'★ ':''}${esc(m.name)}</b>
+        <div class="desc">${esc(moveCats.find(c=>c.id===m.cat)?.name||'未設定')} ・ ${m.minutes||0}分 ・ ${esc(m.sets||'')}</div></div>
+        <span class="badge">${esc(m.purpose||'動作改善')}</span></div>
+        <div class="desc" style="margin-top:8px">${esc(m.notes||'')}</div>
+        <div class="actions" style="margin-top:10px">
+          ${m.video?`<button class="btn secondary small" onclick="window.open('${esc(m.video)}','_blank')">▶ 動画</button>`:''}
+          <button class="btn secondary small" onclick="toggleFav('${m.id}')">${m.favorite?'★ お気に入り':'☆ お気に入り'}</button>
+          <button class="btn secondary small" onclick="addMoveToToday('${m.id}')">＋ 今日に追加</button>
+          <button class="btn secondary small" onclick="openMoveEditor('${m.id}')">編集</button>
+        </div>
+      </div>`).join('') :
+      '<div class="empty">まだ動作改善メニューがありません。<br>「＋ メニュー」から追加してください。</div>';
+  };
+
+  window.renderMeetings = function(){
+    meetingList.innerHTML = meetings.length ? meetings.map(m=>`
+      <div class="traincard">
+        <div class="trainhead"><div><b>${esc(m.name)}</b>
+        <div class="desc">${esc(m.date||'')} ・ ${esc(categoryName(m.category))}</div></div>
+        <span class="badge">${esc(categoryName(m.category))}</span></div>
+        <div class="linkbox"><b>つながり</b><div class="desc">
+        課題：${esc((m.clusters||[]).join(' ／ ')||'未設定')}<br>
+        原則：${esc((m.principles||[]).join(' ／ ')||'未設定')}</div></div>
+        <div class="desc" style="margin-top:8px">${esc(m.body||'')}</div>
+        <div class="actions" style="margin-top:10px"><button class="btn secondary small" onclick="openMeetingEditor('${m.id}')">編集</button></div>
+      </div>`).join('') :
+      '<div class="empty">まだミーティング記録がありません。<br>「＋ ミーティング」から追加できます。</div>';
+  };
+
+  window.renderHistory = function(){
+    historyCount.textContent=records.length+'回';
+    historyList.innerHTML=records.length ? records.map(r=>`
+      <div class="traincard">
+        <div class="trainhead"><div><b>${esc(r.date)}</b><div class="desc">合計 ${r.minutes||0}分</div></div>
+        <span class="badge">理解 ${r.understand||'-'}/5 ・ 達成 ${r.achieve||'-'}/5</span></div>
+        <div class="linkbox">${(r.items||[]).map(x=>`${esc(x.type)}：${esc(x.name)}（${x.minutes||0}分）`).join('<br>')}</div>
+        ${r.kpi?`<div class="item"><b>KPI</b><div class="desc">${esc(r.kpi)}</div></div>`:''}
+        ${r.good?`<div class="item"><b>よかったこと</b><div class="desc">${esc(r.good)}</div></div>`:''}
+        ${r.next?`<div class="item"><b>次回</b><div class="desc">${esc(r.next)}</div></div>`:''}
+        ${r.memo?`<div class="item"><b>コーチメモ</b><div class="desc">${esc(r.memo)}</div></div>`:''}
+      </div>`).join('') :
+      '<div class="empty">まだ練習記録がありません。<br>「今日のトレーニング」から記録できます。</div>';
+  };
+
+  // Fix WHY: current build used undefined "ratings" and object-style item fields.
+  window.openWhy = function(i){
+    const ranked=Object.entries(DATA.clusters).map(([name,ids])=>{
+      const vals=ids.map(id=>+scores[id]||0).filter(Boolean);
+      const av=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:5;
+      return {name,ids,av,low:ids.filter(id=>(+scores[id]||5)<=2)};
+    }).filter(c=>c.ids.some(id=>scores[id])).sort((a,b)=>a.av-b.av);
+    const c=ranked[i]||ranked[0]; if(!c) return show('result');
+    const pri=PRINCIPLES[c.name]||[];
+    const q=method.find(x=>(x.clusters||[]).includes(c.name))?.question||'この場面で、何を見て判断する？';
+    const tr=trainings.filter(t=>(t.clusters||[]).includes(c.name)).slice(0,3);
+    const kp=DATA.kpi[c.name]||[];
+    const names=c.low.map(id=>{const x=DATA.items.find(v=>itemId(v)===id)||originalItems.find(v=>itemId(v)===id);return x?itemName(x):id;});
+    whyBody.innerHTML=`<div class="card"><div class="section-kicker">WHY THIS PRIORITY?</div>
+      <div class="row"><h2 style="margin:0">${esc(c.name)}</h2><span class="badge">${c.av.toFixed(1)} / 5</span></div>
+      <div class="whyflow" style="margin-top:16px">
+        <div class="whybox"><b>① なぜ？</b><div class="desc">低評価：${esc(names.join(' ／ ')||'関連項目の総合評価から抽出')}</div></div>
+        <div class="whyarrow">↓</div><div class="whybox"><b>② 関連原則</b><div class="desc">${esc(pri.join(' ／ ')||'メソッド管理で設定')}</div></div>
+        <div class="whyarrow">↓</div><div class="whybox"><b>③ 選手への問い</b><div>${esc(q)}</div></div>
+        <div class="whyarrow">↓</div><div class="whybox"><b>④ おすすめ練習</b><div class="desc">${esc(tr.map(x=>x.name).join(' ／ ')||'関連練習を登録してください')}</div></div>
+        <div class="whyarrow">↓</div><div class="whybox"><b>⑤ 成果を測るKPI</b><div class="desc">${esc(kp.join(' ／ ')||'KPIを設定')}</div></div>
+      </div><div class="actions" style="margin-top:16px"><button class="btn" onclick="show('today')">今日の練習へ</button>
+      <button class="btn secondary" onclick="show('result')">分析結果へ戻る</button></div></div>`;
+    show('why');
+  };
+
+  // Make result coverage dynamic for custom sheets.
+  const oldRenderResult = window.renderResult;
+  if (typeof oldRenderResult === 'function') {
+    window.renderResult = function(){
+      oldRenderResult();
+      const cov=document.getElementById('coverage');
+      if(cov){
+        const rated=DATA.items.filter(x=>scores[itemId(x)]);
+        cov.textContent=`評価済み ${rated.length} / ${DATA.items.length}項目`;
+      }
+      document.querySelectorAll('#priorities .priority').forEach((el,i)=>{
+        const b=el.querySelector('button');
+        if(b){b.textContent='なぜこの課題？';b.onclick=()=>openWhy(i);}
+      });
+    };
+  }
+
+  // Hook navigation without deleting existing behavior.
+  const oldShow = window.show;
+  window.show = function(id){
+    oldShow(id);
+    if(id==='analysis'){ injectSelector(); applySheet(); }
+    if(id==='analysisSheets') renderManager();
+  };
+
+  // Add management entry to HOME once.
+  const home=document.getElementById('home');
+  if(home && !document.getElementById('hcAnalysisSheetHome')){
+    const c=document.createElement('div');
+    c.id='hcAnalysisSheetHome'; c.className='card';
+    c.innerHTML=`<div class="section-kicker">ANALYSIS SYSTEM</div>
+      <div class="row"><div><h3 style="margin:0">分析シート</h3>
+      <div class="desc">標準32項目＋目的別シートを管理</div></div>
+      <button class="btn secondary" onclick="show('analysisSheets')">シート管理</button></div>`;
+    home.appendChild(c);
+  }
+
+  applySheet();
+  injectSelector();
+  renderManager();
+})();
+
+</script>
 </body></html>
