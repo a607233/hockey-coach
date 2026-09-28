@@ -567,4 +567,30 @@ const oldMatchesShow=window.show;window.show=function(id){oldMatchesShow(id);if(
 })();
 </script>
 
+\n<!-- HC_TEAM_GROWTH_V8 -->
+<style>
+.g8grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.g8stat{background:#091419;border:1px solid #22363e;border-radius:16px;padding:13px}.g8stat small{color:var(--muted)}.g8stat b{display:block;font-size:25px;color:var(--lime);margin-top:4px}.g8row{padding:11px 0;border-top:1px solid #1c2c33}.g8row:first-child{border-top:0}.g8delta{font-weight:950}.g8up{color:var(--lime)}.g8down{color:#ff8b8b}.g8flat{color:#9badb4}.g8bar{height:7px;background:#17262d;border-radius:9px;overflow:hidden;margin-top:6px}.g8bar span{display:block;height:100%;background:var(--lime);border-radius:9px}.g8tag{display:inline-block;font-size:10px;border:1px solid #31454e;border-radius:999px;padding:3px 6px;color:#b6c4c9;margin:3px 3px 0 0}@media(min-width:700px){.g8grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+<script>
+(function(){'use strict';
+ const AK='hc_analysis_history_v1';
+ function load(k,d){try{let v=JSON.parse(localStorage.getItem(k)||'null');return v??d}catch(e){return d}}
+ function analyses(){let a=load(AK,[]);return Array.isArray(a)?a:[]}
+ function recs(){try{return Array.isArray(records)?records:load('hc_training_records',[])}catch(e){return load('hc_training_records',[])}}
+ function ts(x){let d=new Date(x);return isNaN(d)?0:d.getTime()}
+ function fmtDelta(v){if(v===null||!isFinite(v))return '<span class="g8flat">—</span>';let cls=v>.04?'g8up':v<-.04?'g8down':'g8flat',arrow=v>.04?'↑':v<-.04?'↓':'→';return `<span class="g8delta ${cls}">${arrow} ${v>0?'+':''}${v.toFixed(1)}</span>`}
+ function clusterAvg(snap,name){let ids=(DATA.clusters&&DATA.clusters[name])||[], vals=ids.map(id=>+(snap.scores||{})[id]).filter(v=>v>0);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null}
+ function recentMinutesForCluster(name,days=14){let cut=Date.now()-days*86400000,total=0;recs().forEach(r=>{let rt=ts((r.date||'').replace(/\\//g,'-'));if(rt&&rt<cut)return;(r.items||[]).forEach(it=>{let tr;try{tr=trainings.find(t=>t.id===it.source||t.name===it.name)}catch(e){}if(tr&&(tr.clusters||[]).includes(name))total+=+it.minutes||0})});return total}
+ function principleCoverage(days=14){let cut=Date.now()-days*86400000,map={};try{method.filter(x=>x.active!==false).forEach(x=>map[x.name]=0)}catch(e){}recs().forEach(r=>{let rt=ts((r.date||'').replace(/\\//g,'-'));if(rt&&rt<cut)return;(r.items||[]).forEach(it=>{let tr;try{tr=trainings.find(t=>t.id===it.source||t.name===it.name)}catch(e){};(tr?.principles||[]).forEach(p=>map[p]=(map[p]||0)+(+it.minutes||0))})});return map}
+ function render(){let h=analyses(),rs=recs(),latest=h[0],prev=h[1];let total=rs.reduce((a,r)=>a+(+r.minutes||0),0),ach=rs.length?rs.reduce((a,r)=>a+(+r.achieve||0),0)/rs.length:null;let overallDelta=latest&&prev&&latest.avg&&prev.avg?(+latest.avg)-(+prev.avg):null;let clusters=Object.keys(DATA.clusters||{}).map(name=>{let now=latest?clusterAvg(latest,name):null,before=prev?clusterAvg(prev,name):null;return{name,now,before,delta:now!==null&&before!==null?now-before:null,mins:recentMinutesForCluster(name)}});let improving=clusters.filter(x=>x.delta!==null).sort((a,b)=>b.delta-a.delta).slice(0,3),attention=clusters.filter(x=>x.now!==null).sort((a,b)=>(a.now-b.now)||((a.mins||0)-(b.mins||0))).slice(0,3);let cov=principleCoverage(),untouched=Object.entries(cov).filter(x=>x[1]===0).map(x=>x[0]).slice(0,6);let priorities=latest?.priorities||[];let body=document.getElementById('growthBody');if(!body)return;body.innerHTML=`<div class="g8grid"><div class="g8stat"><small>分析回数</small><b>${h.length}</b><small>snapshots</small></div><div class="g8stat"><small>最新総合評価</small><b>${latest?.avg?Number(latest.avg).toFixed(1):'—'}</b><small>/ 5 ${fmtDelta(overallDelta)}</small></div><div class="g8stat"><small>練習記録</small><b>${rs.length}</b><small>${total} min</small></div><div class="g8stat"><small>平均達成度</small><b>${ach!==null?ach.toFixed(1):'—'}</b><small>/ 5</small></div></div>
+ <div class="card"><div class="section-kicker">ANALYSIS TREND</div><h3 style="margin:0">前回から何が変わった？</h3>${h.length<2?'<div class="hint">分析が2回以上たまると、前回との変化を自動比較します。</div>':improving.map(x=>`<div class="g8row"><div class="row"><b>${x.name}</b>${fmtDelta(x.delta)}</div><div class="desc">${x.before.toFixed(1)} → ${x.now.toFixed(1)} / 5 ・ 直近14日 ${x.mins}分</div></div>`).join('')}</div>
+ <div class="card"><div class="section-kicker">CURRENT PRIORITY</div><h3 style="margin:0">いま見るべき課題</h3>${priorities.length?priorities.slice(0,3).map((p,i)=>`<div class="g8row"><div class="row"><b>${i+1}. ${p.name}</b><span class="badge">${Number(p.av).toFixed(1)} / 5</span></div><div class="desc">直近14日の関連練習 ${recentMinutesForCluster(p.name)}分</div></div>`).join(''):'<div class="hint">分析すると優先課題TOP3がここに表示されます。</div>'}</div>
+ <div class="card"><div class="section-kicker">WATCH LIST</div><h3 style="margin:0">取り組み量と評価を分けて見る</h3>${attention.map(x=>`<div class="g8row"><div class="row"><b>${x.name}</b><span>${x.now!==null?x.now.toFixed(1):'—'} / 5</span></div><div class="g8bar"><span style="width:${Math.min(100,(x.mins||0)/90*100)}%"></span></div><div class="desc">直近14日 ${x.mins}分 ${x.delta!==null?'・変化 '+(x.delta>0?'+':'')+x.delta.toFixed(1):''}</div></div>`).join('')||'<div class="hint">分析データがたまると表示されます。</div>'}</div>
+ <div class="card"><div class="section-kicker">COVERAGE</div><h3 style="margin:0">最近扱えていない原則</h3><div class="desc">直近14日の練習記録と、練習ライブラリの原則リンクから判定します。</div><div style="margin-top:9px">${untouched.length?untouched.map(x=>`<span class="g8tag">${x}</span>`).join(''):'<span class="g8tag">十分にカバーされています</span>'}</div></div>
+ <div class="hint"><b>読み方：</b> 練習時間が多い＝成長、とは判定しません。「分析評価の変化」と「取り組み量」を別々に表示します。</div>`}
+ const old=window.renderGrowth;window.renderGrowth=render;
+ const os=window.show;window.show=function(id){os(id);if(id==='growth')setTimeout(render,0)};
+})();
+</script>
+
 </body></html>
