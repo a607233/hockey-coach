@@ -729,4 +729,29 @@ if(window.HCSEC){const old=HCSEC.open;HCSEC.open=function(){old();setTimeout(()=
 })();
 </script>
 
+
+
+<!-- HC_TEAM_DATA_ARCHITECTURE_V14 -->
+<style>
+.arch14grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.arch14box{background:#091419;border:1px solid #22363e;border-radius:15px;padding:12px}.arch14box small{color:var(--muted);display:block}.arch14box b{display:block;margin-top:4px}.arch14ok{color:var(--lime)}@media(max-width:520px){.arch14grid{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){'use strict';
+const K='hc_architecture_v14',FK='hc_foundation_v2';
+const load=(k,d)=>{try{let v=JSON.parse(localStorage.getItem(k)||'null');return v??d}catch(e){return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+function slug(s){return String(s||'team').toLowerCase().replace(/[^a-z0-9\u3040-\u30ff\u3400-\u9fff]+/g,'-').replace(/^-|-$/g,'').slice(0,36)||'team'}
+function stable(prefix,seed){let h=2166136261,t=String(seed||'default');for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return prefix+'-'+(h>>>0).toString(36)}
+function foundation(){return load(FK,{})||{}}
+function ensure(){let f=foundation(),a=load(K,null),changed=false;if(!a||typeof a!=='object'){a={schemaVersion:14,teamId:stable('team',f.teamName||f.seasonName||'hockey-coach'),teamName:f.teamName||'MY TEAM',seasonId:stable('season',(f.seasonName||'SEASON')+'|'+(f.seasonStart||'')),seasonName:f.seasonName||'SEASON',migratedAt:new Date().toISOString(),migration:'legacy-local-v14'};changed=true}else{if(!a.teamId){a.teamId=stable('team',a.teamName||f.teamName||'hockey-coach');changed=true}if(!a.seasonId){a.seasonId=stable('season',(a.seasonName||f.seasonName||'SEASON')+'|'+(f.seasonStart||''));changed=true}if(a.schemaVersion!==14){a.schemaVersion=14;changed=true}}if(changed)save(K,a);return a}
+const COLLECTIONS=['hc_analysis_history_v1','hc_matches_v3','hc_issues_v3','hc_player_voice_v1','hc_team_discovery_v1'];
+function migrateCollections(){let a=ensure(),report={records:0,collections:0};COLLECTIONS.forEach(k=>{let v=load(k,null);if(!Array.isArray(v))return;let changed=false;v.forEach(x=>{if(!x||typeof x!=='object')return;if(!x.teamId){x.teamId=a.teamId;changed=true}if(!x.seasonId){x.seasonId=a.seasonId;changed=true}if(!x.schemaVersion){x.schemaVersion=14;changed=true}report.records++});if(changed){save(k,v);report.collections++}});let f=foundation();if(f&&typeof f==='object'){let ch=false;if(!f.teamId){f.teamId=a.teamId;ch=true}if(!f.seasonId){f.seasonId=a.seasonId;ch=true}if(!f.schemaVersion){f.schemaVersion=14;ch=true}if(ch)save(FK,f)}return report}
+let main=document.querySelector('main'),sec=document.getElementById('architecture14');if(!sec){sec=document.createElement('section');sec.id='architecture14';sec.className='hidden';main.appendChild(sec)}
+function render(){let a=ensure(),r=migrateCollections();sec.innerHTML=`<div class="card"><div class="section-kicker">TEAM DATA ARCHITECTURE · V14</div><h2 style="margin:0">クラウド化の前に、データの住所をつくる</h2><div class="hint"><b>既存データは削除しません。</b> 今あるデータにチーム・シーズンの識別情報を追加し、将来の複数チーム／過去シーズン／権限管理に備えます。</div></div><div class="arch14grid"><div class="arch14box"><small>TEAM</small><b class="arch14ok">${a.teamName}</b><div class="desc">${a.teamId}</div></div><div class="arch14box"><small>SEASON</small><b class="arch14ok">${a.seasonName}</b><div class="desc">${a.seasonId}</div></div><div class="arch14box"><small>DATA SCHEMA</small><b>V${a.schemaVersion}</b><div class="desc">将来の移行を管理するバージョン</div></div><div class="arch14box"><small>MIGRATION</small><b class="arch14ok">READY</b><div class="desc">確認 ${r.records}件 ／ 今回更新 ${r.collections}領域</div></div></div><div class="card"><div class="section-kicker">IMPORTANT</div><b>これはログインやクラウド同期ではありません</b><div class="desc" style="line-height:1.7;margin-top:5px">端末内データに「どのチーム・どのシーズンか」を持たせる基礎工事です。本格運用では、認証とサーバー側の権限制御を別途実装します。</div></div>`;show('architecture14')}
+window.HC14={open:render,context:ensure,migrate:migrateCollections};
+ensure();migrateCollections();
+if(window.HC2){const om=HC2.more;HC2.more=function(){om();setTimeout(()=>{let q=document.querySelector('#hc2body .quick-grid');if(q&&!q.querySelector('[data-arch14]'))q.insertAdjacentHTML('beforeend','<div class="quick-card" data-arch14 onclick="HC2.close();HC14.open()"><div class="ico">⌘</div><b>DATA ARCHITECTURE</b><small>Team・Season基盤</small></div>')},0)}}
+if(window.HC13){const old=HC13.open;HC13.open=function(){old();setTimeout(()=>{let s=document.getElementById('dataSafety');if(s&&!s.querySelector('[data-arch14link]'))s.insertAdjacentHTML('beforeend','<div class="card" data-arch14link><div class="section-kicker">DATA ARCHITECTURE · V14</div><b>Team / Season識別基盤：準備済み</b><div class="desc">バックアップにもV14の識別情報が含まれます。</div><button class="btn secondary" style="margin-top:10px" onclick="HC14.open()">データ基盤を確認</button></div>')},0)}}
+})();
+</script>
+
 </body></html>
