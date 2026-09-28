@@ -1046,4 +1046,21 @@ window.HC64={open,close,go,context:ctx};window.HC65={context:ctx};window.HC66={n
 })();
 </script>
 <!-- HC_COCKPIT_TODAY_V64 --><!-- HC_COCKPIT_NOW_V65 --><!-- HC_COCKPIT_NEXT_V66 --><!-- HC_COCKPIT_EVIDENCE_V67 --><!-- HC_COCKPIT_LOOP_V68 -->
+
+
+<!-- HC_HOME_COMMAND_CENTER_V69_V73 -->
+<style>
+#hcHome69{margin:12px 0}.h69hero{background:linear-gradient(145deg,#0b171c,#101f18);border:1px solid #39552b;border-radius:18px;padding:15px}.h69tag{font-size:10px;font-weight:950;padding:5px 8px;border-radius:999px;background:#263817;color:#dfff91}.h69grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.h69box{background:#081216;border:1px solid #22363e;border-radius:13px;padding:11px}.h69next{border:1px solid #b8ff45}.h69btn{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.h69flow{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.h69flow span{font-size:9px;font-weight:900;background:#142229;border-radius:999px;padding:5px 7px}</style>
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function data(){let x=window.HC64?.context?.()||{},ms=L('hc_matches_v3',[]),today=new Date().toISOString().slice(0,10),m=(Array.isArray(ms)?ms:[]).filter(z=>(z.date||'')>=today).sort((a,b)=>String(a.date).localeCompare(String(b.date)))[0],loops=x.loops||[],last=loops[loops.length-1];return{x,m,last}}
+function action(x){if(window.HC66?.next)return HC66.next(x);return['ANALYZE','現在地を分析する','analysis']}
+function go(k){if(k==='candidate'){window.HC54?.open();return}if(k==='adopt'||k==='record'){window.HC59?.open();return}if(window.show)show(k)}
+function render(){let d=data(),x=d.x,n=action(x),root=document.getElementById('hcHome69');if(!root)return;root.innerHTML=`<div class="h69hero"><span class="h69tag">COACH COMMAND CENTER · V69–V73</span><h2 style="margin:9px 0 3px">今日、何をする？</h2><div class="h69grid"><div class="h69box"><small>TODAY · V69</small><br><b>${x.p||18}人 / GK${x.g??2} / ${x.m||100}分</b></div><div class="h69box"><small>NOW · V70</small><br><b>${E(x.focus||'分析から優先課題を決める')}</b></div></div><div class="h69box h69next" style="margin-top:8px"><small>NEXT ACTION · V71</small><h3 style="margin:4px 0">${E(n[0])}</h3><div>${E(n[1])}</div><button class="h69btn" onclick="HC69.go('${n[2]}')">ここから進む</button></div><div class="h69grid"><div class="h69box"><small>MATCH · V72</small><br><b>${d.m?E(d.m.opponent||'NEXT MATCH'):'次戦未登録'}</b><div style="font-size:11px;opacity:.75">${d.m?E(d.m.date||''):''}</div></div><div class="h69box"><small>EVIDENCE · V72</small><br><b>${d.last?'KPI '+d.last.score+'/5':'記録待ち'}</b><div style="font-size:11px;opacity:.75">${d.last&&d.last.playerVoice?'VOICEあり':'PLAYER VOICE'}</div></div></div><div class="h69flow"><span>ANALYZE</span><span>WHY</span><span>DESIGN</span><span>TRAIN</span><span>RECORD</span><span>VERIFY</span><span>NEXT</span></div><button class="h69btn" style="background:#17252b;color:#eef6f2" onclick="HC64.open()">COCKPIT詳細</button></div>`}
+function mount(){let home=document.getElementById('home')||document.querySelector('main section:not(.hidden)');if(!home)return;let old=document.getElementById('hcHome69');if(!old){old=document.createElement('div');old.id='hcHome69';home.insertBefore(old,home.firstChild)}render()}
+window.HC69={render,mount,go};window.HC70={render};window.HC71={go};window.HC72={render};window.HC73={render};
+document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,150));setTimeout(mount,500);
+})();
+</script>
+<!-- HC_HOME_TODAY_V69 --><!-- HC_HOME_NOW_V70 --><!-- HC_HOME_NEXT_V71 --><!-- HC_HOME_MATCH_EVIDENCE_V72 --><!-- HC_HOME_LOOP_V73 -->
 </body></html>
