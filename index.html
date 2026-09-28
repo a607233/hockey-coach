@@ -1007,4 +1007,26 @@ function close(){document.getElementById('hcSB54').style.display='none'}window.H
 })();
 </script>
 <!-- HC_CANDIDATES_V54 --><!-- HC_WHY_V55 --><!-- HC_ADAPTIVE_DESIGN_V56 --><!-- HC_PLAYER_PROMPT_V57 --><!-- HC_KPI_V58 -->
+
+
+<!-- HC_SAFE_ADOPTION_LOOP_V59_V63 -->
+<style>
+#hcAdopt59{position:fixed;inset:0;z-index:10001;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcAdopt59 .aw{max-width:720px;margin:auto}.a59{background:#0b171c;border:1px solid #263a42;border-radius:15px;padding:13px;margin:9px 0}
+.at59{font-size:10px;font-weight:950;padding:5px 8px;border-radius:999px;background:#263817;color:#dfff91}.ab59{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.as59{background:#17252b;color:#eef6f2}.aw59{border-left:3px solid #b8ff45;padding:8px 10px;background:#081216;margin-top:7px}</style>
+<div id="hcAdopt59"><div class="aw" id="hcAdopt59b"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function candidate(){return L('hc_session_candidate_v54',null)}
+function open(){let c=candidate(),b=document.getElementById('hcAdopt59b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><span class="at59">SAFE ADOPTION · V59–V63</span><h2>TODAYへ採用する前に確認</h2></div><button onclick="HC59.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div>${!c?`<div class="a59">保存された練習候補がありません。SESSION CANDIDATESで候補を選んでください。</div>`:`<div class="a59"><span class="at59">PREVIEW · V59</span><h3>${E(c.training?.name||c.training?.title||'TRAINING')}</h3><div>${E(c.focus)}</div><div class="aw59"><b>CONSTRAINT</b><br>${E(c.design?.rule)}</div><div class="aw59"><b>KPI</b><br>${E(c.design?.k)}</div><div class="aw59"><b>QUESTION</b><br>${E(c.design?.q)}</div></div><div class="a59"><span class="at59">CONFIRM · V60</span><div>この段階では既存TODAYを変更していません。確定すると「採用済みプラン」として別領域に保存します。</div><button class="ab59" onclick="HC59.confirm()">この内容で確定</button></div>`}<button class="ab59 as59" onclick="HC59.close()">閉じる</button>`;document.getElementById('hcAdopt59').style.display='block'}
+function confirm(){let c=candidate();if(!c)return;let x={...c,adoptedAt:new Date().toISOString(),status:'adopted'};S('hc_today_adopted_v60',x);renderDone(x)}
+function renderDone(x){let b=document.getElementById('hcAdopt59b');b.innerHTML=`<div class="a59"><span class="at59">ADOPTED · V60</span><h2>採用プランを保存しました</h2><div>${E(x.training?.name||x.training?.title||'TRAINING')}</div><div class="aw59">既存TODAYのデータは上書きしていません。</div></div><div class="a59"><span class="at59">EXECUTE · V61</span><div>実施後に「できたか」だけでなく、狙った判断が現れたかを記録します。</div><button class="ab59" onclick="HC59.record()">実施結果を記録</button></div><button class="ab59 as59" onclick="HC59.close();if(window.show)show('today')">TODAYを見る</button>`}
+function record(){let x=L('hc_today_adopted_v60',null),b=document.getElementById('hcAdopt59b');if(!x)return;b.innerHTML=`<div class="a59"><span class="at59">RECORD · V62</span><h2>実施後の確認</h2><label>KPI達成度 1〜5</label><input id="aScore" type="range" min="1" max="5" value="3" style="width:100%"><label>選手の気づき・一言</label><textarea id="aVoice" style="width:100%;min-height:90px;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:10px"></textarea><button class="ab59" onclick="HC59.saveRecord()">保存して次へ</button></div>`}
+function saveRecord(){let x=L('hc_today_adopted_v60',null);if(!x)return;let r={id:'loop_'+Date.now(),createdAt:new Date().toISOString(),candidateId:x.id,focus:x.focus,training:x.training?.name||x.training?.title||'',kpi:x.design?.k||'',score:+(document.getElementById('aScore')?.value||3),playerVoice:document.getElementById('aVoice')?.value||'',status:'verified'};let a=L('hc_session_loop_v63',[]);if(!Array.isArray(a))a=[];a.push(r);S('hc_session_loop_v63',a);let b=document.getElementById('hcAdopt59b');b.innerHTML=`<div class="a59"><span class="at59">VERIFY → NEXT · V63</span><h2>成長ループを記録しました</h2><div class="aw59"><b>KPI評価：</b>${r.score}/5</div><div class="aw59"><b>PLAYER VOICE：</b>${E(r.playerVoice||'未入力')}</div><div>次の再分析では、この記録と試合での変化を照らし合わせます。練習したこと自体を「成長」とは判定しません。</div><button class="ab59" onclick="HC59.close();if(window.show)show('analysis')">再分析へ</button></div>`}
+function close(){document.getElementById('hcAdopt59').style.display='none'}
+window.HC59={open,close,confirm,record,saveRecord};window.HC60={confirm};window.HC61={open};window.HC62={record};window.HC63={saveRecord};
+})();
+</script>
+<!-- HC_ADOPTION_PREVIEW_V59 --><!-- HC_ADOPTION_CONFIRM_V60 --><!-- HC_EXECUTE_V61 --><!-- HC_LOOP_RECORD_V62 --><!-- HC_VERIFY_NEXT_V63 -->
 </body></html>
