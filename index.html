@@ -1029,4 +1029,21 @@ window.HC59={open,close,confirm,record,saveRecord};window.HC60={confirm};window.
 })();
 </script>
 <!-- HC_ADOPTION_PREVIEW_V59 --><!-- HC_ADOPTION_CONFIRM_V60 --><!-- HC_EXECUTE_V61 --><!-- HC_LOOP_RECORD_V62 --><!-- HC_VERIFY_NEXT_V63 -->
+
+
+<!-- HC_COACH_COCKPIT_SAFE_V64_V68 -->
+<style>
+#hcCockpit64{position:fixed;inset:0;z-index:10002;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcCockpit64 .cw{max-width:720px;margin:auto}.ccard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:10px 0}.ctag{font-size:10px;font-weight:950;padding:5px 8px;border-radius:999px;background:#263817;color:#dfff91}.cnext{border:1px solid #b8ff45}.cbtn{width:100%;padding:13px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.csub{background:#17252b;color:#eef6f2}.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cstat{background:#081216;border-radius:12px;padding:11px}.cnum{font-size:22px;font-weight:950;color:#b8ff45}</style>
+<div id="hcCockpit64"><div class="cw" id="hcCockpit64b"></div></div>
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function ctx(){let f=L('hc_foundation_v2',{}),a=L('hc_today_adopted_v60',null),c=L('hc_session_candidate_v54',null),loops=L('hc_session_loop_v63',[]);return{p:+(f.attendance||18),g:+(f.gkToday??2),m:+(f.plannedMinutes||100),focus:window.HC34?.priority?.()?.name||'分析から優先課題を決める',adopted:a,candidate:c,loops:Array.isArray(loops)?loops:[]}}
+function next(x){if(!x.focus||x.focus==='分析から優先課題を決める')return['ANALYZE','現在地を分析する',"analysis"];if(!x.candidate)return['DESIGN','練習候補をつくる','candidate'];if(!x.adopted)return['DECIDE','候補を確認して採用する','adopt'];let last=x.loops[x.loops.length-1];if(!last||last.candidateId!==x.adopted.id)return['RECORD','実施結果とPLAYER VOICEを残す','record'];return['VERIFY','次の試合・再分析で変化を確かめる','analysis']}
+function open(){let x=ctx(),n=next(x),last=x.loops[x.loops.length-1],b=document.getElementById('hcCockpit64b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><span class="ctag">COACH COCKPIT · V64–V68</span><h2>今日、何をする？</h2></div><button onclick="HC64.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="ccard"><span class="ctag">TODAY · V64</span><div class="cgrid" style="margin-top:9px"><div class="cstat"><small>PLAYERS</small><div class="cnum">${x.p}</div></div><div class="cstat"><small>GK / TIME</small><div class="cnum">${x.g} / ${x.m}</div></div></div></div><div class="ccard"><span class="ctag">NOW · V65</span><h3>${E(x.focus)}</h3><div>現在のチーム課題を、今日の判断基準にします。</div></div><div class="ccard cnext"><span class="ctag">NEXT ACTION · V66</span><h2>${n[0]}</h2><div>${E(n[1])}</div><button class="cbtn" onclick="HC64.go('${n[2]}')">ここから進む</button></div><div class="ccard"><span class="ctag">EVIDENCE · V67</span><div class="cgrid"><div class="cstat"><small>LOOP RECORDS</small><div class="cnum">${x.loops.length}</div></div><div class="cstat"><small>LAST KPI</small><div class="cnum">${last?last.score+'/5':'—'}</div></div></div><div style="margin-top:8px">${last&&last.playerVoice?'PLAYER VOICE：'+E(last.playerVoice):'PLAYER VOICEは実施後に残します。'}</div></div><div class="ccard"><span class="ctag">DEVELOPMENT LOOP · V68</span><div>ANALYZE → WHY → DESIGN → TRAIN → RECORD → VERIFY → NEXT</div><div style="margin-top:7px;font-size:12px;opacity:.75">練習量ではなく、試合での変化まで確認します。</div></div><button class="cbtn csub" onclick="HC64.close()">閉じる</button>`;document.getElementById('hcCockpit64').style.display='block'}
+function go(k){close();if(k==='candidate'){window.HC54?.open();return}if(k==='adopt'){window.HC59?.open();return}if(k==='record'){window.HC59?.open();setTimeout(()=>window.HC59?.record(),50);return}if(window.show)show(k)}
+function close(){document.getElementById('hcCockpit64').style.display='none'}
+window.HC64={open,close,go,context:ctx};window.HC65={context:ctx};window.HC66={next};window.HC67={context:ctx};window.HC68={open};
+})();
+</script>
+<!-- HC_COCKPIT_TODAY_V64 --><!-- HC_COCKPIT_NOW_V65 --><!-- HC_COCKPIT_NEXT_V66 --><!-- HC_COCKPIT_EVIDENCE_V67 --><!-- HC_COCKPIT_LOOP_V68 -->
 </body></html>
