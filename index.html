@@ -2595,4 +2595,27 @@ window.HCQR={open,close,issue,share,copy,accept,current:null};setTimeout(accept,
 </script>
 <!-- HC_V2_03_QR_ROLE_LINK --><!-- HC_V2_03_SECURE_TOKEN_INVITE -->
 
+
+<!-- HC_V2_04_QR_INVITE_PRIORITY_FIX -->
+<script>
+(function(){'use strict';
+function forceQrInvite(){
+ const root=document.getElementById('hcV2TeamManagerBody'); if(!root)return;
+ const cards=[...root.querySelectorAll('.tmc')];
+ const invite=cards.find(c=>(c.textContent||'').includes('INVITE') || (c.textContent||'').includes('メンバーを招待') || (c.textContent||'').includes('QR・専用URLで招待'));
+ if(invite){
+   invite.innerHTML='<div class="tmk">INVITE</div><div class="tmt">QR・専用URLで招待</div><div class="tms">メールアドレスは不要。役割を選ぶだけです。</div><button class="tmb" id="hcQrInviteMainBtn">＋ メンバーを招待</button>';
+   const b=document.getElementById('hcQrInviteMainBtn'); if(b)b.onclick=()=>window.HCQR?.open?.();
+ }
+ const pending=cards.find(c=>(c.textContent||'').includes('PENDING') || (c.textContent||'').includes('招待準備'));
+ if(pending) pending.style.display='none';
+}
+const prev=window.HCV2TEAM?.open;
+if(prev) window.HCV2TEAM.open=async function(){await prev.apply(this,arguments);setTimeout(forceQrInvite,180);setTimeout(forceQrInvite,500)};
+window.HCQRInviteFix=forceQrInvite;
+setTimeout(forceQrInvite,2500);
+})();
+</script>
+<!-- HC_V2_04_QR_INVITE_BUTTON_FIX --><!-- HC_V2_04_HIDE_LEGACY_EMAIL_INVITES -->
+
 </body></html>
