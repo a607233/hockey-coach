@@ -1911,4 +1911,31 @@ function verify(){window.HC295?.open?.()}window.HC325={afterMatch,verify};window
 })();
 </script>
 <!-- HC_MATCH_QUESTION_V325 --><!-- HC_MATCH_OBSERVE_QUESTION_V326 --><!-- HC_MATCH_TO_VERIFY_V327 --><!-- HC_VERIFY_TO_NEXT_QUESTION_V328 --><!-- HC_CONTEXT_LOOP_V329 -->
+
+
+<!-- HC_MATCH_QUESTION_CARD_V330_V340 -->
+<style>
+#hcMatchQ330{margin:10px 0}.mq330{background:#0b171c;border:1px solid #b8ff45;border-radius:18px;padding:14px}.mqt330{font-size:10px;font-weight:950;color:#b8ff45}.mqq330{font-size:19px;font-weight:900;line-height:1.45;margin:8px 0}.mqb330{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.mqs330{font-size:11px;opacity:.72}</style>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function q(){let x=L('hc_meeting_question_v288',null);if(x?.question)return x;let a=L('hc_team_meeting_v288',[]);if(Array.isArray(a)&&a.length){let z=a[a.length-1];return{focus:z.focus,question:z.question}}return null}
+function match(){let a=L('hc_matches_v3',[]),t=new Date().toISOString().slice(0,10);return Array.isArray(a)?a.find(x=>x.date===t):null}
+function mount(){let home=document.getElementById('home'),m=match(),x=q(),old=document.getElementById('hcMatchQ330');if(old)old.remove();if(!home||!m)return;let anchor=document.getElementById('hcContext313')||home.firstElementChild;if(!anchor)return;let d=document.createElement('div');d.id='hcMatchQ330';d.innerHTML=`<div class="mq330"><div class="mqt330">今日、試合で確かめる問い</div>${x?.focus?`<div class="mqs330">${E(x.focus)}</div>`:''}<div class="mqq330">${E(x?.question||'今日はチームとして何を確かめたい？')}</div><div class="mqs330">正解を探すのではなく、試合の中で観察します。</div><button class="mqb330" onclick="HC330.observe()">試合中に気づきを残す</button></div>`;anchor.parentNode.insertBefore(d,anchor.nextSibling)}
+function observe(){let x=q();window.HC31?.open?.();if(!window.HC31?.open){let note=prompt('試合中に何が見えましたか？');if(note){let a=L('hc_match_question_observation_v340',[]);if(!Array.isArray(a))a=[];a.push({id:'mq_'+Date.now(),createdAt:new Date().toISOString(),focus:x?.focus||'',question:x?.question||'',note});localStorage.setItem('hc_match_question_observation_v340',JSON.stringify(a))}}}
+window.HC330={mount,observe,q,match};window.HC331={q};window.HC332={match};window.HC333={observe};window.HC334={q};window.HC335={q};window.HC336={q};window.HC337={q};window.HC338={q};window.HC339={q};window.HC340={q};
+setTimeout(mount,600);
+})();
+</script>
+<!-- HC_MATCH_QUESTION_HOME_V330 --><!-- HC_MATCH_FOCUS_V331 --><!-- HC_TODAY_MATCH_BIND_V332 --><!-- HC_MATCH_OBSERVE_V333 --><!-- HC_QUESTION_NOT_ANSWER_V334 --><!-- HC_MATCH_PLAYER_LENS_V335 --><!-- HC_MATCH_COACH_LENS_V336 --><!-- HC_MATCH_EVIDENCE_LENS_V337 --><!-- HC_MATCH_DISCOVERY_LENS_V338 --><!-- HC_MATCH_VERIFY_BRIDGE_V339 --><!-- HC_MATCH_QUESTION_OBSERVATION_V340 -->
+
+<!-- HC_CONTEXT_DETAIL_V341_V346 -->
+<script>
+(function(){'use strict';
+function refresh(){setTimeout(()=>window.HC330?.mount?.(),220)}
+const m=window.HC313?.mount;if(m)window.HC313.mount=function(){let r=m.apply(this,arguments);refresh();return r};
+function nextAfterMatch(){window.HC295?.open?.()}window.HC341={refresh};window.HC342={refresh};window.HC343={refresh};window.HC344={refresh};window.HC345={nextAfterMatch};window.HC346={nextAfterMatch};
+})();
+</script>
+<!-- HC_MATCH_DAY_MINIMAL_V341 --><!-- HC_MATCH_DAY_QUESTION_FIRST_V342 --><!-- HC_MATCH_DAY_ONE_ACTION_V343 --><!-- HC_MATCH_DAY_REFRESH_V344 --><!-- HC_MATCH_TO_LEARNING_V345 --><!-- HC_MATCH_DAY_LOOP_V346 -->
 </body></html>
