@@ -1736,4 +1736,46 @@ window.HC239={patch};window.HC240={patch};window.HC241={patch};window.HC242={pat
 })();
 </script>
 <!-- HC_BOTTOMUP_HOME_ROUTE_V239 --><!-- HC_COACH_NOT_MENU_PICKER_V240 --><!-- HC_DISCOVERY_FIRST_V241 --><!-- HC_BOTTOMUP_CORE_V242 -->
+
+
+<!-- HC_VOICE_DISCOVERY_LOOP_V243_V254 -->
+<style>
+#hcVoice243{position:fixed;inset:0;z-index:10041;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcVoice243 .vw{max-width:720px;margin:auto}.vc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.vt{font-size:10px;font-weight:950;color:#b8ff45}.vin{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px}.vb{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.vsub{background:#17252b;color:#eef6f2}.vl{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.vs{font-size:11px;opacity:.72}</style>
+<div id="hcVoice243"><div class="vw" id="hcVoice243b"></div></div>
+<script>
+(function(){'use strict';
+const VK='hc_player_voice_v1',DK='hc_team_discovery_v1',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function arr(k){let a=L(k,[]);return Array.isArray(a)?a:[]} function focus(){return window.HC191?.current?.()?.focus||window.HC64?.context?.()?.focus||'重点未設定'}
+function related(k){let f=focus(),a=arr(k);let same=a.filter(x=>(x.focus||x.issue||'')===f);return(same.length?same:a).slice(-3)}
+function open(){render();document.getElementById('hcVoice243').style.display='block'}
+function render(){let f=focus(),v=related(VK),d=related(DK),b=document.getElementById('hcVoice243b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="vt">選手の声 → チームの発見</div><h2>${E(f)}</h2></div><button onclick="HC243.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="vc"><div class="vt">1｜選手はどう感じた？</div><textarea id="vv243" class="vin" rows="3" placeholder="例：奪いに行くのか戻るのか迷った"></textarea><button class="vb" onclick="HC243.voice()">選手の声を残す</button>${v.length?`<div class="vs">最近の声</div>${v.map(x=>`<div class="vl">${E(x.text||x.what||x.playerVoice||'')}</div>`).join('')}`:''}</div><div class="vc"><div class="vt">2｜チームとして何を発見した？</div><textarea id="vd243" class="vin" rows="3" placeholder="例：1st DFが遅れたら全員で奪いに行かず中央を守る"></textarea><button class="vb" onclick="HC243.discovery()">チームの発見として残す</button>${d.length?`<div class="vs">最近の発見</div>${d.map(x=>`<div class="vl">${E(x.text||x.discovery||'')}</div>`).join('')}`:''}</div><div class="vc"><div class="vt">3｜次の練習へ</div><div class="vl">次回はこの声・発見を「今日みんなで解く問い」の材料にします。</div><button class="vb vsub" onclick="HC243.next()">今日の学習環境をつくる</button></div><button class="vb vsub" onclick="HC243.close()">閉じる</button>`}
+function voice(){let t=document.getElementById('vv243').value.trim();if(!t)return;let a=arr(VK);a.push({id:'voice_'+Date.now(),createdAt:new Date().toISOString(),focus:focus(),author:'TEAM',text:t,what:t,source:'bottomup'});S(VK,a);render()}
+function discovery(){let t=document.getElementById('vd243').value.trim();if(!t)return;let a=arr(DK);a.push({id:'disc_'+Date.now(),createdAt:new Date().toISOString(),focus:focus(),text:t,discovery:t,source:'bottomup'});S(DK,a);render()}
+function next(){close();window.HC228?.open?.()}function close(){document.getElementById('hcVoice243').style.display='none'}
+window.HC243={open,close,voice,discovery,next,related};window.HC244={related};window.HC245={related};window.HC246={related};window.HC247={related};window.HC248={related};window.HC249={related};
+})();
+</script>
+<!-- HC_VOICE_CAPTURE_V243 --><!-- HC_VOICE_FOCUS_LINK_V244 --><!-- HC_DISCOVERY_CAPTURE_V245 --><!-- HC_DISCOVERY_FOCUS_LINK_V246 --><!-- HC_VOICE_TO_QUESTION_V247 --><!-- HC_DISCOVERY_TO_QUESTION_V248 --><!-- HC_BOTTOMUP_MEMORY_V249 -->
+
+<script>
+(function(){'use strict';
+function latest(k,f){try{let a=JSON.parse(localStorage.getItem(k)||'[]');if(!Array.isArray(a))return null;let same=a.filter(x=>(x.focus||x.issue||'')===f);return(same.length?same:a).slice(-1)[0]||null}catch(e){return null}}
+function suggestion(f){let v=latest('hc_player_voice_v1',f),d=latest('hc_team_discovery_v1',f),base=window.HC231?.question?.(f)||`「${f}」を成功させるには何を見る？`;let dt=d&&(d.text||d.discovery),vt=v&&(v.text||v.what);if(dt)return`チームの発見「${dt}」は、どんな状況なら再現できる？`;if(vt)return`選手の声「${vt}」が起きるのはなぜ？ 何を見れば判断できる？`;return base}
+window.HC250={suggestion};window.HC251={suggestion};window.HC252={suggestion};window.HC253={suggestion};window.HC254={suggestion};
+})();
+</script>
+<!-- HC_ADAPTIVE_QUESTION_V250 --><!-- HC_VOICE_REASON_V251 --><!-- HC_DISCOVERY_REASON_V252 --><!-- HC_TEAM_QUESTION_MEMORY_V253 --><!-- HC_NEXT_SESSION_INPUT_V254 -->
+
+<!-- HC_BOTTOMUP_ROUTE_POLISH_V255_V258 -->
+<script>
+(function(){'use strict';
+function add(){let h=document.getElementById('hcSimple203');if(!h||document.getElementById('hcVoiceEntry243'))return;let grid=h.querySelector('.hs203row');if(!grid)return;let b=document.createElement('button');b.id='hcVoiceEntry243';b.textContent='選手の声・発見';b.onclick=()=>HC243.open();grid.appendChild(b)}
+function patchQuestion(){let el=document.getElementById('bq228');if(!el)return;let f=window.HC191?.current?.()?.focus||window.HC64?.context?.()?.focus||'';let q=window.HC250?.suggestion?.(f);if(q)el.value=q}
+const o=window.HC228?.open;if(o)window.HC228.open=function(){let r=o.apply(this,arguments);setTimeout(patchQuestion,50);return r}
+const m=window.HC203?.mount;if(m)window.HC203.mount=function(){let r=m.apply(this,arguments);setTimeout(add,70);return r}
+setTimeout(add,600);
+window.HC255={add};window.HC256={patchQuestion};window.HC257={add};window.HC258={add};
+})();
+</script>
+<!-- HC_HOME_VOICE_ENTRY_V255 --><!-- HC_QUESTION_AUTO_INPUT_V256 --><!-- HC_DISCOVERY_SESSION_BRIDGE_V257 --><!-- HC_BOTTOMUP_DAILY_LOOP_V258 -->
 </body></html>
