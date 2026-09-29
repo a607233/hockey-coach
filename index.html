@@ -2809,4 +2809,73 @@ setTimeout(()=>{if(document.getElementById('today'))render()},2200);
 </script>
 <!-- /HC_TODAY_SESSION_V2_01 -->
 
+
+<!-- HC_TODAY_SESSION_V21 -->
+<style>
+#hcTodayV21{margin:12px 0 120px}
+.tv21{background:linear-gradient(180deg,#101d22,#091317);border:1px solid #2b4149;border-radius:20px;padding:16px;color:#eef6f2}
+.tv21-k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}
+.tv21-h{font-size:23px;font-weight:950;margin:5px 0}.tv21-s{font-size:12px;color:#94a6ad;line-height:1.55}
+.tv21-box{background:#071014;border:1px solid #263b43;border-radius:15px;padding:12px;margin-top:9px}
+.tv21-in,.tv21-sel,.tv21-ta{width:100%;box-sizing:border-box;background:#0d181d;border:1px solid #30454e;border-radius:11px;color:#fff;padding:11px;font-size:14px}
+.tv21-ta{min-height:66px}.tv21-l{display:block;font-size:10px;color:#91a3aa;font-weight:900;margin-bottom:6px}
+.tv21-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
+.tv21-tab{border:1px solid #354b54;background:#101c21;color:#b8c5c9;border-radius:10px;padding:9px 4px;font-size:11px;font-weight:900}
+.tv21-tab.on{background:#d7ff39;color:#071014;border-color:#d7ff39}
+.tv21-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tv21-chip{border:1px solid #40545c;background:#101c21;color:#dce7e2;border-radius:999px;padding:7px 9px;font-size:12px}.tv21-chip.on{background:#d7ff39;color:#071014;border-color:#d7ff39;font-weight:900}
+.tv21-selected{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.tv21-selected span{background:#1b2b30;border-radius:999px;padding:6px 8px;font-size:11px;color:#d7ff39}
+.tv21-card{background:#0b161b;border:1px solid #294049;border-radius:15px;padding:12px;margin-top:9px}.tv21-card h4{margin:3px 0 8px;font-size:16px}.tv21-meta{font-size:12px;color:#9badb3;line-height:1.55}
+.tv21-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tv21-btn{border:0;border-radius:12px;padding:11px 12px;font-weight:950;background:#d7ff39;color:#071014}.tv21-subbtn{border:1px solid #354b54;border-radius:12px;padding:10px 12px;font-weight:850;background:#15242a;color:#fff}
+.tv21-kpi{padding:9px 10px;border-left:3px solid #d7ff39;background:#0b1519;border-radius:8px;margin-top:6px;font-size:13px}
+body.hc-today-active #hcTeamFab,body.hc-today-active .hcTeamFab,body.hc-today-active [id*="teamFab" i],body.hc-today-active [class*="teamFab" i]{display:none!important}
+@media(max-width:560px){.tv21-grid{grid-template-columns:1fr}.tv21-tabs{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script>
+(function(){'use strict';
+const KEY='hc_today_v21';
+const CAT={
+ '攻撃':['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る','サークルへ侵入する','サークル内で決定機を作る'],
+ '守備':['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','最も近い選手が1st DFになる','2nd・3rd DFが中央を閉じて連動する','コンパクトを保つ'],
+ '攻→守':['ロスト後4秒で相手の前進を止める','ボール周辺を即時圧縮する','中央への出口を消す','奪えなければ撤退して整える'],
+ '守→攻':['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる','相手の守備が整う前に優位を使う']
+};
+const REC={
+ '攻→守':{name:'4v4+2 即時奪回ゲーム',setup:'30×25m｜4v4＋外サポート2人',rule:'攻撃側がボールを失ったら4秒間だけ即時奪回。守備側は奪ったら5秒以内に反対側へ前進すると2点。',q:'誰が1st DFになる？ その瞬間、残りの選手は何を消す？',k:['4秒以内奪回率','ロストから相手前進までの回数','中央突破を許した回数']},
+ '攻撃':{name:'5v5+3 前進・侵入ゲーム',setup:'40×30m｜3ゾーン',rule:'幅を使って前進し、最終ゾーンへの侵入で1点。サークル想定ゾーンからの得点は追加点。',q:'今、運ぶ・つなぐ・逆を取るのどれが最も前進できる？',k:['前進成功率','最終ゾーン侵入回数','幅を使った前進回数']},
+ '守備':{name:'5v5 誘導プレスゲーム',setup:'35×30m｜中央に制限ゾーン',rule:'守備側は中央を守り、外へ誘導して奪えば2点。攻撃側は中央突破で2点。',q:'1st DFはどこへ誘導する？ 2nd DFは何を消す？',k:['狙った方向への誘導率','中央突破を防いだ回数','奪取後5秒以内の前進']},
+ '守→攻':{name:'4v4+GK トランジションゲーム',setup:'35×25m｜2ゴール',rule:'奪ったチームは6秒以内のシュートで2点。前進できなければ一度幅を取り保持して再構築。',q:'奪った瞬間、前に何が見えた？ 前進できない時の出口は？',k:['奪取後6秒以内シュート','奪取後の前進成功率','保持への切替成功率']}
+};
+function load(){try{return Object.assign({theme:'',duration:90,cat:'攻→守',principles:[]},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return {theme:'',duration:90,cat:'攻→守',principles:[]}}}
+function save(x){localStorage.setItem(KEY,JSON.stringify(x))}
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function mount(){
+ const page=document.getElementById('today');if(!page)return;
+ let old=document.getElementById('hcTodayV21');if(old)old.remove();
+ let v2=document.getElementById('hcTodayV2');if(v2)v2.style.display='none';
+ const x=load(),rec=REC[x.cat]||REC['攻→守'];
+ const d=document.createElement('div');d.id='hcTodayV21';
+ d.innerHTML=`<div class="tv21">
+ <div class="tv21-k">TODAY'S SESSION V2.1｜LEARNING DESIGN</div><div class="tv21-h">今日、何を変えたい？</div><div class="tv21-s">テーマを決め、原則を絞り、ゲームに近い環境をデザインします。</div>
+ <div class="tv21-grid"><div class="tv21-box"><label class="tv21-l">今日のテーマ</label><input id="tv21Theme" class="tv21-in" value="${esc(x.theme)}" placeholder="例：ボールロスト後の即時奪回"></div><div class="tv21-box"><label class="tv21-l">時間</label><select id="tv21Duration" class="tv21-sel">${[60,75,90,100,120].map(n=>`<option ${+x.duration===n?'selected':''}>${n}</option>`).join('')}</select></div></div>
+ <div class="tv21-box"><label class="tv21-l">① 局面を選ぶ</label><div class="tv21-tabs">${Object.keys(CAT).map(c=>`<button class="tv21-tab ${x.cat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}</div><label class="tv21-l" style="margin-top:12px">② 原則を2〜3個に絞る</label><div class="tv21-chips">${CAT[x.cat].map(p=>`<button class="tv21-chip ${(x.principles||[]).includes(p)?'on':''}" data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div><div class="tv21-selected">${(x.principles||[]).map(p=>`<span>✓ ${esc(p)}</span>`).join('')}</div></div>
+ <div class="tv21-card"><div class="tv21-k">RECOMMENDED GAME</div><h4>${esc(rec.name)}</h4><div class="tv21-meta"><b>設定：</b>${esc(rec.setup)}<br><b>制約：</b>${esc(rec.rule)}</div><div class="tv21-box"><label class="tv21-l">COACHING QUESTION</label>${esc(rec.q)}</div><button class="tv21-btn" id="tv21Use" style="width:100%;margin-top:9px">この練習を今日のメニューに採用</button></div>
+ <div class="tv21-card"><div class="tv21-k">KPI｜今日、何を見取る？</div>${rec.k.map(k=>`<div class="tv21-kpi">${esc(k)}</div>`).join('')}</div>
+ <div class="tv21-card"><div class="tv21-k">SESSION FLOW</div><h4>${x.duration}分の基本構成</h4><div class="tv21-meta">① 動作改善・ボールウォームアップ 15分<br>② テーマ導入ゲーム 20分<br>③ ${esc(rec.name)} 25分<br>④ ゲーム 25分<br>⑤ 振り返り 5分</div><div class="tv21-grid" style="margin-top:10px"><button class="tv21-subbtn" id="tv21Edit">詳細を編集</button><button class="tv21-btn" id="tv21Save">今日の設計を保存</button></div></div>
+ </div>`;
+ page.prepend(d);bind();
+ document.body.classList.add('hc-today-active');
+}
+function bind(){
+ document.querySelectorAll('#hcTodayV21 .tv21-tab').forEach(b=>b.onclick=()=>{let x=load();x.theme=document.getElementById('tv21Theme').value;x.duration=+document.getElementById('tv21Duration').value;x.cat=b.dataset.cat;x.principles=[];save(x);mount()});
+ document.querySelectorAll('#hcTodayV21 .tv21-chip').forEach(b=>b.onclick=()=>{let x=load(),p=b.dataset.p,a=x.principles||[];if(a.includes(p))a=a.filter(z=>z!==p);else if(a.length<3)a.push(p);else{alert('原則は3つまでに絞りましょう。');return}x.principles=a;x.theme=document.getElementById('tv21Theme').value;x.duration=+document.getElementById('tv21Duration').value;save(x);mount()});
+ document.getElementById('tv21Save').onclick=()=>{let x=load();x.theme=document.getElementById('tv21Theme').value;x.duration=+document.getElementById('tv21Duration').value;save(x);alert('今日の学習デザインを保存しました。')};
+ document.getElementById('tv21Use').onclick=()=>{let x=load(),r=REC[x.cat];let old={};try{old=JSON.parse(localStorage.getItem('hc_today_v2')||'{}')}catch(e){};old.theme=document.getElementById('tv21Theme').value||x.theme;old.duration=+document.getElementById('tv21Duration').value;old.principles=x.principles;old.kpis=r.k;old.items=old.items||[];old.items.splice(Math.min(2,old.items.length),0,{name:r.name,minutes:25,purpose:'選択した原則をゲーム状況で学習する',constraint:r.rule,question:r.q});localStorage.setItem('hc_today_v2',JSON.stringify(old));alert('今日のメニューに追加しました。下の「詳細を編集」から調整できます。')};
+ document.getElementById('tv21Edit').onclick=()=>{document.getElementById('hcTodayV2').style.display='block';document.getElementById('hcTodayV21').style.display='none';document.body.classList.add('hc-today-active');window.HCTodayV2?.render?.();setTimeout(()=>{let a=document.getElementById('hcTodayV21');if(a)a.style.display='none';let b=document.getElementById('hcTodayV2');if(b)b.style.display='block'},80)};
+}
+const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);document.body.classList.toggle('hc-today-active',id==='today');if(id==='today')setTimeout(mount,80);return r};
+setTimeout(()=>{let p=document.getElementById('today');if(p&&getComputedStyle(p).display!=='none')mount()},2200);
+})();
+</script>
+<!-- /HC_TODAY_SESSION_V21 -->
+
 </body></html>
