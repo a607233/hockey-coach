@@ -2001,4 +2001,38 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <!-- HC_ONE_ACTION_HOME_V366 --><!-- HC_FAST_MATCH_V367 --><!-- HC_FAST_PRACTICE_V368 --><!-- HC_FAST_MEETING_V369 --><!-- HC_FAST_NORMAL_V370 --><!-- HC_FAST_QUESTION_V371 --><!-- HC_FAST_FOCUS_V372 --><!-- HC_HIDE_HOME_NOISE_V373 --><!-- HC_MORE_DRAWER_V374 --><!-- HC_MORE_MEETING_V375 --><!-- HC_MORE_REVIEW_V376 --><!-- HC_MORE_VERIFY_V377 --><!-- HC_MORE_GROWTH_V378 --><!-- HC_MORE_PRINCIPLE_V379 --><!-- HC_MORE_SCHEDULE_V380 --><!-- HC_MORE_FOCUS_V381 --><!-- HC_DAILY_PRIMARY_V382 --><!-- HC_DAILY_SECONDARY_V383 --><!-- HC_HOME_CLARITY_V384 --><!-- HC_HOME_SPEED_V385 --><!-- HC_HOME_MOBILE_V386 --><!-- HC_HOME_CONTEXT_V387 --><!-- HC_HOME_BOTTOMUP_V388 --><!-- HC_HOME_DATA_SAFE_V389 --><!-- HC_FAST_HOME_CORE_V390 -->
+
+
+<!-- HC_SMART_CYCLE_BUNDLE_V391_V430 -->
+<style>
+#hcCycle391{position:fixed;inset:0;z-index:10080;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcCycle391 .cw{max-width:720px;margin:auto}.cc391{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.ct391{font-size:10px;font-weight:950;color:#b8ff45}.cl391{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.cb391{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.cs391{font-size:11px;opacity:.72}.cp391{display:flex;gap:4px;margin-top:9px}.cp391 span{flex:1;height:5px;border-radius:9px;background:#263a42}.cp391 span.on{background:#b8ff45}</style>
+<div id="hcCycle391"><div class="cw" id="hcCycle391b"></div></div>
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])),A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]};
+function last(k){let a=A(k);return a[a.length-1]||null}function focus(){return window.HC191?.current?.()?.focus||''}
+function state(){let q=L('hc_meeting_question_v288',null),meet=last('hc_team_meeting_v288'),sess=L('hc_bottomup_session_v238',null)||L('hc_today_adopted_v60',null),ana=last('hc_analysis_history_v1'),review=last('hc_three_lens_review_v360'),hist=last('hc_team_learning_history_v307');let step=!focus()?0:!q?.question?1:!sess?2:!ana?3:!review?4:5;return{step,focus:focus(),q,meet,sess,ana,review,hist}}
+const labels=['重点','問い','練習','試合','検証','次へ'];
+function open(){render();document.getElementById('hcCycle391').style.display='block'}function action(s){if(s.step===0)return['今週の重点を決める',()=>HC191.open()];if(s.step===1)return['チームで問いをつくる',()=>HC276.open()];if(s.step===2)return['学習環境をつくる',()=>HC228.open()];if(s.step===3)return['試合・分析へ',()=>show('analyze')];if(s.step===4)return['3つの見方で検証',()=>HC347.open()];return['次の問いへ',()=>HC295.open()]}
+function render(){let s=state(),a=action(s),b=document.getElementById('hcCycle391b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="ct391">TEAM LEARNING CYCLE</div><h2>チームは今どこにいる？</h2></div><button onclick="HC391.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="cc391"><div class="cp391">${labels.map((x,i)=>`<span class="${i<=s.step?'on':''}"></span>`).join('')}</div><div class="cs391">${labels.map((x,i)=>`${i===s.step?'●':'○'} ${x}`).join('　')}</div></div><div class="cc391"><div class="ct391">現在</div><h3>${E(labels[s.step])}</h3>${s.focus?`<div class="cl391">重点：${E(s.focus)}</div>`:''}${s.q?.question?`<div class="cl391">問い：${E(s.q.question)}</div>`:''}<button id="ca391" class="cb391">${E(a[0])}</button></div><div class="cc391"><div class="ct391">設計思想</div><div class="cl391">アプリが答えを決めるのではなく、次に考える場所だけを示します。</div></div><button class="cb391" style="background:#17252b;color:#eef6f2" onclick="HC391.close()">閉じる</button>`;document.getElementById('ca391').onclick=()=>{close();a[1]()}}
+function close(){document.getElementById('hcCycle391').style.display='none'}window.HC391={open,close,state};for(let i=392;i<=405;i++)window['HC'+i]={state};
+})();
+</script>
+<!-- HC_CYCLE_STATE_V391 --><!-- HC_CYCLE_FOCUS_V392 --><!-- HC_CYCLE_QUESTION_V393 --><!-- HC_CYCLE_SESSION_V394 --><!-- HC_CYCLE_MATCH_V395 --><!-- HC_CYCLE_REVIEW_V396 --><!-- HC_CYCLE_NEXT_V397 --><!-- HC_CYCLE_PROGRESS_V398 --><!-- HC_CYCLE_ONE_ACTION_V399 --><!-- HC_CYCLE_BOTTOMUP_V400 --><!-- HC_CYCLE_NO_ANSWER_V401 --><!-- HC_CYCLE_MEMORY_V402 --><!-- HC_CYCLE_ANALYSIS_V403 --><!-- HC_CYCLE_TEAM_V404 --><!-- HC_CYCLE_CORE_V405 -->
+
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]};
+function summary(){let h=A('hc_team_learning_history_v307'),r=A('hc_three_lens_review_v360'),m=A('hc_team_meeting_v288'),p=A('hc_practice_learning_v145');let recent=h.slice(-4),avg=recent.length?(recent.reduce((s,x)=>s+(+x.transferScore||0),0)/recent.length).toFixed(1):'-';return{meetings:m.length,reviews:r.length,practice:p.length,cycles:h.length,transfer:avg}}
+function add(){let box=document.getElementById('hcMore366b');if(!box||document.getElementById('hcCycleMore406'))return;let s=summary(),d=document.createElement('div');d.id='hcCycleMore406';d.className='hfc366';d.innerHTML=`<b>チームの学習サイクル</b><div style="font-size:11px;opacity:.72;margin:6px 0">問いの検証 ${s.cycles}回・直近再現度 ${s.transfer}/5</div><button onclick="HC391.open()">今どこにいるか見る</button>`;box.insertBefore(d,box.firstChild)}
+const old=window.HC366?.more;if(old)window.HC366.more=function(){let r=old.apply(this,arguments);setTimeout(add,30);return r};window.HC406={summary,add};for(let i=407;i<=420;i++)window['HC'+i]={summary};
+})();
+</script>
+<!-- HC_CYCLE_SUMMARY_V406 --><!-- HC_CYCLE_MEETING_COUNT_V407 --><!-- HC_CYCLE_REVIEW_COUNT_V408 --><!-- HC_CYCLE_PRACTICE_COUNT_V409 --><!-- HC_CYCLE_VERIFY_COUNT_V410 --><!-- HC_CYCLE_TRANSFER_AVG_V411 --><!-- HC_CYCLE_MORE_ENTRY_V412 --><!-- HC_CYCLE_HISTORY_SAFE_V413 --><!-- HC_CYCLE_EVIDENCE_SAFE_V414 --><!-- HC_CYCLE_NO_CAUSALITY_V415 --><!-- HC_CYCLE_TEAM_MEMORY_V416 --><!-- HC_CYCLE_WEEK_LINK_V417 --><!-- HC_CYCLE_MATCH_LINK_V418 --><!-- HC_CYCLE_GROWTH_LINK_V419 --><!-- HC_CYCLE_SUMMARY_CORE_V420 -->
+
+<script>
+(function(){'use strict';
+function primary(){let s=window.HC391?.state?.();if(!s)return;let box=document.querySelector('#hcFast366 .hf366');if(!box)return;let note=box.querySelector('.hcCycleNote421');if(note)note.remove();let d=document.createElement('div');d.className='hfs366 hcCycleNote421';d.textContent=`学習サイクル：${['重点','問い','練習','試合','検証','次へ'][s.step]}`;let btn=box.querySelector('.hfb366');box.insertBefore(d,btn)}
+const old=window.HC366?.mount;if(old)window.HC366.mount=function(){let r=old.apply(this,arguments);setTimeout(primary,50);return r};setTimeout(primary,900);window.HC421={primary};for(let i=422;i<=430;i++)window['HC'+i]={primary};
+})();
+</script>
+<!-- HC_HOME_CYCLE_STATUS_V421 --><!-- HC_HOME_CYCLE_FOCUS_V422 --><!-- HC_HOME_CYCLE_QUESTION_V423 --><!-- HC_HOME_CYCLE_SESSION_V424 --><!-- HC_HOME_CYCLE_MATCH_V425 --><!-- HC_HOME_CYCLE_REVIEW_V426 --><!-- HC_HOME_CYCLE_NEXT_V427 --><!-- HC_HOME_CYCLE_MINIMAL_V428 --><!-- HC_HOME_CYCLE_SPEED_V429 --><!-- HC_SMART_CYCLE_CORE_V430 -->
 </body></html>
