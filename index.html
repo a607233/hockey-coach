@@ -1522,4 +1522,32 @@ window.HC159={open,close,analyze};window.HC160={group};window.HC161={status};win
 <script>
 (function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcTransferEntry159'))return;let b=document.createElement('button');b.id='hcTransferEntry159';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='練習が試合につながったか見る';b.onclick=()=>HC159.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,140);setTimeout(add,340)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
 </script>
+
+
+<!-- HC_CANONICAL_LINK_V166_V172 -->
+<script>
+(function(){'use strict';
+const K='hc_canonical_links_v166',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+function catalog(){let items=(window.DATA?.items||[]).map(x=>({id:Array.isArray(x)?x[0]:x.id,phase:Array.isArray(x)?x[1]:x.phase,name:Array.isArray(x)?x[2]:x.name}));let clusters=window.DATA?.clusters||{};return{items,clusters}}
+function itemIdsForFocus(f){let c=catalog();if(c.clusters[f])return c.clusters[f].slice();let q=c.items.filter(x=>x.name===f||f.includes(x.name));return q.map(x=>x.id)}
+function normalize(){let db=L(K,{version:1,focus:{},updatedAt:''}),c=catalog();Object.keys(c.clusters).forEach(name=>{db.focus[name]={focusId:'cluster:'+name,name,itemIds:c.clusters[name].slice(),kpis:(window.DATA?.kpi?.[name]||[]).slice()}});db.updatedAt=new Date().toISOString();S(K,db);return db}
+function analysisSeries(f){let ids=itemIdsForFocus(f),h=L('hc_analysis_history_v1',[]);if(!Array.isArray(h))h=[];return h.map(a=>{let vals=ids.map(id=>+a?.scores?.[id]).filter(Boolean);return{id:a.id,date:a.date,matchId:a.matchId||'',avg:vals.length?vals.reduce((x,y)=>x+y,0)/vals.length:null,count:vals.length,scores:Object.fromEntries(ids.filter(id=>a?.scores?.[id]).map(id=>[id,a.scores[id]]))}}).filter(x=>x.count)}
+function practiceSeries(f){let a=L('hc_practice_learning_v145',[]);if(!Array.isArray(a))a=[];return a.filter(x=>x.focus===f)}
+function view(f){let a=analysisSeries(f),p=practiceSeries(f);return{focus:f,itemIds:itemIdsForFocus(f),analysis:a,practice:p}}
+normalize();window.HC166={catalog,normalize,view,itemIdsForFocus};window.HC167={itemIdsForFocus};window.HC168={analysisSeries};window.HC169={practiceSeries};window.HC170={view};window.HC171={view};window.HC172={view};
+})();
+</script>
+<!-- HC_CANONICAL_IDS_V166 --><!-- HC_FOCUS_ITEM_LINK_V167 --><!-- HC_ANALYSIS_ITEM_SERIES_V168 --><!-- HC_PRACTICE_FOCUS_SERIES_V169 --><!-- HC_KPI_LINK_V170 --><!-- HC_MATCH_ID_BRIDGE_V171 --><!-- HC_EVIDENCE_MODEL_V172 -->
+<style>
+#hcEvidence173{position:fixed;inset:0;z-index:10011;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcEvidence173 .ew{max-width:720px;margin:auto}.ec{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.et{font-size:10px;font-weight:950;color:#b8ff45}.eline{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.eb{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.es{font-size:11px;opacity:.72}</style>
+<div id="hcEvidence173"><div class="ew" id="hcEvidence173b"></div></div>
+<script>
+(function(){'use strict';const E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function open(){let f=window.HC64?.context?.()?.focus||'ロスト後4秒',v=HC166.view(f),items=HC166.catalog().items.filter(x=>v.itemIds.includes(x.id)),b=document.getElementById('hcEvidence173b');let first=v.analysis[0],last=v.analysis[v.analysis.length-1];b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="et">原則別の積み上がり</div><h2>${E(f)}</h2></div><button onclick="HC173.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="ec"><div class="et">分析項目</div>${items.map(x=>`<div class="eline"><b>${E(x.id)} ${E(x.name)}</b></div>`).join('')||'<div class="eline">この重点に対応する標準項目を確認中です。</div>'}</div><div class="ec"><div class="et">試合分析の履歴</div><div>${v.analysis.length}回の比較可能な分析</div>${first&&last&&v.analysis.length>1?`<div class="eline">最初 ${first.avg.toFixed(1)} → 最新 ${last.avg.toFixed(1)}</div>`:'<div class="es">同じ項目で2回以上分析すると変化を比較できます。</div>'}</div><div class="ec"><div class="et">練習の履歴</div><div>${v.practice.length}回の振り返り</div>${v.practice.length?`<div class="eline">最新：行動 ${v.practice[v.practice.length-1].behavior}/5・ゲームへのつながり ${v.practice[v.practice.length-1].transfer}/5</div>`:''}</div><div class="ec"><div class="et">判断するときの注意</div><div>分析点の変化だけで「練習の効果」とは断定しません。映像、KPI（評価指標）、相手、試合状況、選手の声も合わせて確認します。</div></div><button class="eb" onclick="HC173.close()">閉じる</button>`;document.getElementById('hcEvidence173').style.display='block'}
+function close(){document.getElementById('hcEvidence173').style.display='none'}window.HC173={open,close};})();
+</script>
+<!-- HC_PRINCIPLE_EVIDENCE_VIEW_V173 -->
+<script>
+(function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcEvidenceEntry173'))return;let b=document.createElement('button');b.id='hcEvidenceEntry173';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='原則ごとの変化を見る';b.onclick=()=>HC173.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,150);setTimeout(add,350)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
+</script>
 </body></html>
