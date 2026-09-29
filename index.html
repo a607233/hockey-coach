@@ -2185,4 +2185,49 @@ window.HC601={activateHome,bind,guard};for(let i=602;i<=612;i++)window['HC'+i]={
 })();
 </script>
 <!-- HC_HOME_DIRECT_NAV_V601 --><!-- HC_HOME_CAPTURE_CLICK_V602 --><!-- HC_HOME_STOP_OLD_HANDLER_V603 --><!-- HC_HOME_SECTION_ACTIVATE_V604 --><!-- HC_HOME_NAV_ON_V605 --><!-- HC_HOME_FINAL_SURFACE_V606 --><!-- HC_HOME_FAST_REMOUNT_V607 --><!-- HC_HOME_SCROLL_TOP_V608 --><!-- HC_HOME_BIND_REPAIR_V609 --><!-- HC_HOME_DOM_REBIND_V610 --><!-- HC_HOME_IPHONE_NAV_V611 --><!-- HC_HOME_NAV_CORE_V612 -->
+
+
+<!-- HC_NAVIGATION_RESET_V613_V625 -->
+<script>
+(function(){'use strict';
+/*
+ V613: Replace the accumulated show() wrapper chain with one canonical navigator.
+ Existing feature data/UI is preserved; only screen navigation is reset.
+*/
+function renderFor(id){
+ try{
+  if(id==='result'&&typeof renderResult==='function')renderResult();
+  else if(id==='library'&&typeof renderLibrary==='function')renderLibrary();
+  else if(id==='meeting'&&typeof renderMeetings==='function')renderMeetings();
+  else if(id==='method'&&typeof renderMethod==='function')renderMethod();
+  else if(id==='movement'&&typeof renderMoves==='function')renderMoves();
+  else if(id==='today'&&typeof renderToday==='function')renderToday();
+  else if(id==='history'&&typeof renderHistory==='function')renderHistory();
+ }catch(e){}
+}
+function canonicalShow(id){
+ const sec=document.getElementById(id); if(!sec)return;
+ document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));
+ sec.classList.remove('hidden');
+ document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n.dataset.go===id));
+ renderFor(id);
+ if(id==='home'){
+   document.body.classList.add('hc-home-simple');
+   setTimeout(()=>{try{HC366.mount();HC421?.primary?.()}catch(e){}},0);
+ }
+ window.scrollTo(0,0);
+}
+window.show=canonicalShow;
+function bind(){
+ document.querySelectorAll('.nav[data-go]').forEach(n=>{
+  n.onclick=function(e){e.preventDefault();canonicalShow(this.dataset.go)}
+ });
+}
+bind();
+const navObserver=new MutationObserver(()=>bind());
+const bottom=document.querySelector('.bottom');if(bottom)navObserver.observe(bottom,{subtree:true,childList:true});
+window.HC613={show:canonicalShow,bind};for(let i=614;i<=625;i++)window['HC'+i]={show:canonicalShow};
+})();
+</script>
+<!-- HC_CANONICAL_SHOW_V613 --><!-- HC_BYPASS_WRAPPER_CHAIN_V614 --><!-- HC_NAV_REBIND_V615 --><!-- HC_HOME_DIRECT_V616 --><!-- HC_ANALYSIS_DIRECT_V617 --><!-- HC_TODAY_DIRECT_V618 --><!-- HC_RECORD_DIRECT_V619 --><!-- HC_MORE_DIRECT_V620 --><!-- HC_RENDER_COMPAT_V621 --><!-- HC_HOME_REMOUNT_V622 --><!-- HC_NAV_ACTIVE_V623 --><!-- HC_SCROLL_RESET_V624 --><!-- HC_NAVIGATION_RESET_CORE_V625 -->
 </body></html>
