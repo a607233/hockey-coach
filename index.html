@@ -1706,4 +1706,34 @@ window.HC225={patch};window.HC226={patch};window.HC227={patch};
 })();
 </script>
 <!-- HC_TODAY_HOME_ROUTE_V225 --><!-- HC_TODAY_SINGLE_ENTRY_V226 --><!-- HC_TODAY_STUDIO_LINK_V227 -->
+
+
+<!-- HC_BOTTOMUP_STUDIO_V228_V238 -->
+<style>
+#hcBottom228{position:fixed;inset:0;z-index:10040;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcBottom228 .bw{max-width:720px;margin:auto}.bc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.bt{font-size:10px;font-weight:950;color:#b8ff45}.bl{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.bin{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px}.bb{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.bsub{background:#17252b;color:#eef6f2}.bs{font-size:11px;opacity:.72}.bg{display:grid;grid-template-columns:1fr 1fr;gap:7px}</style>
+<div id="hcBottom228"><div class="bw" id="hcBottom228b"></div></div>
+<script>
+(function(){'use strict';
+const K='hc_bottomup_session_v238',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function latest(k){let a=L(k,[]);return Array.isArray(a)&&a.length?a[a.length-1]:null}
+function context(){let f=L('hc_foundation_v2',{}),w=window.HC191?.current?.(),voice=latest('hc_player_voice_v1'),disc=latest('hc_team_discovery_v1');return{focus:w?.focus||window.HC64?.context?.()?.focus||'重点未設定',n:+f.attendance||18,g:+f.gkToday||0,m:+f.plannedMinutes||100,voice,disc}}
+function question(f){if(f.includes('ロスト後'))return'奪いに行けない時、何を守り、いつRECOVERへ切り替える？';if(f.includes('奪取後'))return'奪った瞬間、何が見えたらGOで、何が見えたらHOLD / RESET？';if(f.includes('前進'))return'前進できない時、どこに新しい出口をつくれる？';if(f.includes('幅'))return'相手を動かすために、誰がどこで幅をつくる？';return`「${f}」を成功させるために、何を見て何を選ぶ？`}
+function open(){render();document.getElementById('hcBottom228').style.display='block'}
+function render(){let x=context(),q=question(x.focus),disc=x.disc?.text||x.disc?.discovery||'まだチームの発見が記録されていません',voice=x.voice?.text||x.voice?.what||'まだ選手の声が記録されていません',b=document.getElementById('hcBottom228b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="bt">今日の学習環境</div><h2>答えではなく、発見が生まれる場をつくる</h2></div><button onclick="HC228.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="bc"><div class="bt">1｜DATA・試合から</div><h3>${E(x.focus)}</h3><div class="bs">人数 ${x.n}人・GK ${x.g}人・${x.m}分</div></div><div class="bc"><div class="bt">2｜選手の声</div><div class="bl">${E(voice)}</div><div class="bs">選手の声は「正解」ではなく、状況を理解する材料として扱います。</div></div><div class="bc"><div class="bt">3｜チームの発見</div><div class="bl">${E(disc)}</div></div><div class="bc"><div class="bt">4｜今日、みんなで解く問い</div><textarea id="bq228" class="bin" rows="3">${E(q)}</textarea></div><div class="bc"><div class="bt">5｜コーチは環境をデザイン</div><div class="bg"><div><div class="bs">SPACE｜広さ</div><input id="bs228" class="bin" placeholder="例：中央を狭く"></div><div><div class="bs">NUMBER｜人数</div><input id="bn228" class="bin" placeholder="例：攻撃+1"></div><div><div class="bs">RULE｜ルール</div><input id="br228" class="bin" placeholder="例：4秒以内に判断"></div><div><div class="bs">SUCCESS｜成功条件</div><input id="bc228" class="bin" placeholder="例：前進阻止で1点"></div></div><div class="bs">メニューを選ぶのではなく、狙った判断が自然に必要になる条件をつくります。</div><button class="bb bsub" onclick="HC133.open()">制約デザインのヒントを見る</button></div><div class="bc"><div class="bt">6｜コーチが観察すること</div><div class="bl">選手が何を見て、どの選択肢を選び、仲間とどう調整したか。</div></div><div class="bc"><div class="bt">7｜練習後は選手が言葉にする</div><div class="bl">「何が見えた？」「何を選んだ？」「次は何を変える？」</div></div><button class="bb" onclick="HC228.save()">この学習環境を今日の練習にする</button><button class="bb bsub" onclick="HC228.close()">閉じる</button>`}
+function save(){let x=context(),v={id:'bu_'+Date.now(),date:new Date().toISOString().slice(0,10),createdAt:new Date().toISOString(),focus:x.focus,attendance:x.n,gk:x.g,minutes:x.m,question:document.getElementById('bq228').value,space:document.getElementById('bs228').value,number:document.getElementById('bn228').value,rule:document.getElementById('br228').value,success:document.getElementById('bc228').value,status:'learning_environment'};S(K,v);S('hc_today_adopted_v60',v);alert('今日の学習環境を保存しました');close();setTimeout(()=>window.HC203?.mount?.(),100)}
+function close(){document.getElementById('hcBottom228').style.display='none'}
+window.HC228={open,close,save,context};window.HC229={context};window.HC230={context};window.HC231={question};window.HC232={open};window.HC233={open};window.HC234={open};window.HC235={open};window.HC236={open};window.HC237={open};window.HC238={open};
+})();
+</script>
+<!-- HC_DATA_INPUT_V228 --><!-- HC_PLAYER_VOICE_INPUT_V229 --><!-- HC_TEAM_DISCOVERY_INPUT_V230 --><!-- HC_TEAM_QUESTION_V231 --><!-- HC_COACH_ENVIRONMENT_V232 --><!-- HC_SPACE_DESIGN_V233 --><!-- HC_NUMBER_DESIGN_V234 --><!-- HC_RULE_DESIGN_V235 --><!-- HC_SUCCESS_DESIGN_V236 --><!-- HC_PLAYER_DISCOVERY_V237 --><!-- HC_BOTTOMUP_SESSION_V238 -->
+
+<!-- HC_BOTTOMUP_ROUTE_V239_V242 -->
+<script>
+(function(){'use strict';
+function patch(){document.querySelectorAll('#hcSimple203 button').forEach(b=>{if(b.textContent.includes('今日の練習をつくる')){b.textContent='今日の学習環境をつくる';b.onclick=()=>HC228.open()}});document.querySelectorAll('#hcDailyHub198 button').forEach(b=>{if(b.textContent.includes('今日の練習'))b.onclick=()=>HC228.open()})}
+const old=window.HC203?.mount;if(old)window.HC203.mount=function(){let r=old.apply(this,arguments);setTimeout(patch,50);return r};setTimeout(patch,550);
+window.HC239={patch};window.HC240={patch};window.HC241={patch};window.HC242={patch};
+})();
+</script>
+<!-- HC_BOTTOMUP_HOME_ROUTE_V239 --><!-- HC_COACH_NOT_MENU_PICKER_V240 --><!-- HC_DISCOVERY_FIRST_V241 --><!-- HC_BOTTOMUP_CORE_V242 -->
 </body></html>
