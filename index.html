@@ -2007,4 +2007,92 @@ window.HCR366={mount,get};
 })();
 </script>
 <!-- HC_HOME_TODAY_STATUS_RESTORE_CORE_V366R -->
+
+
+<!-- HC_STABLE_PROGRESS_V367R_V390R -->
+<style>
+#hcStableProgressR{margin:12px 0}.hsp-card{background:#0c171c;border:1px solid #263a42;border-radius:18px;padding:14px;color:#f4f8f6}.hsp-title{font-size:10px;font-weight:900;letter-spacing:1px;color:#d7ff39}.hsp-row{display:flex;gap:7px;margin-top:9px;overflow:auto}.hsp-chip{white-space:nowrap;border:1px solid #30434b;border-radius:999px;padding:7px 10px;font-size:11px;color:#aebbc0}.hsp-chip.on{border-color:#d7ff39;color:#d7ff39}.hsp-q{margin-top:10px;padding:10px;border-left:3px solid #d7ff39;background:#091318;border-radius:0 10px 10px 0;font-size:13px;line-height:1.5}.hsp-btn{width:100%;border:0;border-radius:11px;padding:11px;margin-top:10px;background:#17262d;color:#eef6f2;font-weight:850}
+</style>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}};
+function state(){
+ const q=L('hc_meeting_question_v288',null);
+ const f=window.HC191?.current?.()?.focus||q?.focus||'';
+ const session=L('hc_bottomup_session_v238',null)||L('hc_today_adopted_v60',null);
+ let analyses=L('hc_analysis_history_v1',[]);if(!Array.isArray(analyses))analyses=[];
+ let reviews=L('hc_three_lens_review_v360',[]);if(!Array.isArray(reviews))reviews=[];
+ let step=!f?0:!q?.question?1:!session?2:!analyses.length?3:!reviews.length?4:5;
+ return{f,q,step};
+}
+function mount(){
+ const home=document.getElementById('home');if(!home)return;
+ let old=document.getElementById('hcStableProgressR');if(old)old.remove();
+ const x=state(),labels=['重点','問い','練習','試合','検証','次へ'];
+ const d=document.createElement('div');d.id='hcStableProgressR';
+ d.innerHTML=`<div class="hsp-card"><div class="hsp-title">TEAM LEARNING｜チームの現在地</div><div class="hsp-row">${labels.map((v,i)=>`<span class="hsp-chip ${i===x.step?'on':''}">${v}</span>`).join('')}</div>${x.f?`<div class="hsp-q"><b>今の重点：</b>${x.f}${x.q?.question?`<br><b>問い：</b>${x.q.question}`:''}</div>`:'<div class="hsp-q">今週の重点を決めるところから始めます。</div>'}<button class="hsp-btn" id="hspOpen">チームの学習サイクルを見る</button></div>`;
+ const today=document.getElementById('hcTodayStatusR');
+ if(today)today.insertAdjacentElement('afterend',d);else home.prepend(d);
+ d.querySelector('#hspOpen').onclick=()=>{
+   if(x.step===0) window.HC191?.open?.();
+   else if(x.step===1) window.HC276?.open?.();
+   else if(x.step===2) window.HC228?.open?.();
+   else if(x.step===4) window.HC347?.open?.();
+   else show(x.step===3?'analyze':'history');
+ };
+}
+setTimeout(mount,240);
+window.HCR367={mount,state};
+})();
+</script>
+<!-- HC_STABLE_NO_OBSERVER_V368R --><!-- HC_STABLE_NO_NAV_WRAP_V369R --><!-- HC_STABLE_FOCUS_V370R --><!-- HC_STABLE_QUESTION_V371R --><!-- HC_STABLE_SESSION_V372R --><!-- HC_STABLE_ANALYSIS_V373R --><!-- HC_STABLE_REVIEW_V374R --><!-- HC_STABLE_NEXT_V375R --><!-- HC_STABLE_PROGRESS_UI_V376R --><!-- HC_STABLE_BOTTOMUP_V377R --><!-- HC_STABLE_HOME_KEEP_V378R --><!-- HC_STABLE_TODAY_KEEP_V379R --><!-- HC_STABLE_DATA_KEEP_V380R --><!-- HC_STABLE_MOBILE_V381R --><!-- HC_STABLE_JA_V382R --><!-- HC_STABLE_LIGHT_V383R --><!-- HC_STABLE_NO_POLLING_V384R --><!-- HC_STABLE_NO_MUTATION_V385R --><!-- HC_STABLE_NO_SHOW_OVERRIDE_V386R --><!-- HC_STABLE_COMPAT_V387R --><!-- HC_STABLE_CORE_V388R --><!-- HC_STABLE_BASELINE_V389R --><!-- HC_STABLE_PROGRESS_CORE_V390R -->
+
+
+<!-- HC_COACH_HOME_COCKPIT_R391_R430 -->
+<style>
+#hcCoachHomeR{margin:12px 0;color:#f4f8f6}.hch-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.hch-card{background:#0c171c;border:1px solid #263a42;border-radius:16px;padding:13px;margin-bottom:9px}.hch-wide{grid-column:1/-1}.hch-k{font-size:10px;font-weight:900;letter-spacing:1px;color:#d7ff39}.hch-v{font-size:18px;font-weight:900;margin:5px 0}.hch-s{font-size:11px;line-height:1.45;color:#9babb1}.hch-q{font-size:14px;line-height:1.55;margin-top:7px;border-left:3px solid #d7ff39;padding-left:9px}.hch-btn{width:100%;border:0;border-radius:10px;padding:10px;margin-top:9px;background:#17262d;color:#eef6f2;font-weight:850}.hch-main{background:#d7ff39;color:#071014}.hch-chips{display:flex;gap:5px;overflow:auto;margin-top:8px}.hch-chip{white-space:nowrap;border:1px solid #31454e;border-radius:999px;padding:6px 8px;font-size:10px;color:#aebbc0}.hch-chip.on{border-color:#d7ff39;color:#d7ff39}
+</style>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}};
+const A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]};
+const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function currentFocus(){try{return window.HC191?.current?.()?.focus||window.HC34?.priority?.()?.name||window.HC34?.priority?.()||''}catch(e){return''}}
+function nextMatch(){let a=A('hc_matches_v3').filter(x=>x.date&&x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>String(a.date).localeCompare(String(b.date)));return a[0]||null}
+function latest(k){let a=A(k);return a[a.length-1]||null}
+function state(){
+ let f=currentFocus(),q=L('hc_meeting_question_v288',null),m=nextMatch(),voice=latest('hc_player_voice_v1'),disc=latest('hc_team_discovery_v1'),practice=latest('hc_practice_learning_v145'),analysis=latest('hc_analysis_history_v1');
+ let session=L('hc_bottomup_session_v238',null)||L('hc_today_adopted_v60',null);
+ let step=!f?0:!q?.question?1:!session?2:!analysis?3:!latest('hc_three_lens_review_v360')?4:5;
+ return{f,q,m,voice,disc,practice,analysis,session,step};
+}
+function mount(){
+ const home=document.getElementById('home');if(!home)return;
+ let old=document.getElementById('hcCoachHomeR');if(old)old.remove();
+ let x=state(),labels=['重点','問い','練習','試合','検証','次へ'],voiceText=x.voice&&(x.voice.text||x.voice.what)||'',discText=x.disc&&(x.disc.discovery||x.disc.text)||'';
+ let d=document.createElement('div');d.id='hcCoachHomeR';
+ d.innerHTML=`<div class="hch-grid">
+ <div class="hch-card hch-wide"><div class="hch-k">TEAM LEARNING｜現在地</div><div class="hch-chips">${labels.map((v,i)=>`<span class="hch-chip ${i===x.step?'on':''}">${v}</span>`).join('')}</div><div class="hch-s" style="margin-top:8px">チームが今どこを考えているかを表示します。</div></div>
+ <div class="hch-card"><div class="hch-k">NEXT MATCH｜次の試合</div><div class="hch-v">${x.m?esc(x.m.date):'未登録'}</div><div class="hch-s">${x.m?esc(x.m.opponent||x.m.competition||'対戦相手未入力'):'試合予定を登録するとここに表示'}</div><button class="hch-btn" id="hchMatch">試合を見る</button></div>
+ <div class="hch-card"><div class="hch-k">WEEK FOCUS｜今週の重点</div><div class="hch-v">${esc(x.f||'未設定')}</div><div class="hch-s">分析・映像・選手の声から決める</div><button class="hch-btn" id="hchFocus">重点を確認</button></div>
+ <div class="hch-card hch-wide"><div class="hch-k">TEAM QUESTION｜チームの問い</div><div class="hch-q">${esc(x.q?.question||'まだチームの問いがありません。')}</div><button class="hch-btn" id="hchMeeting">チームミーティング</button></div>
+ <div class="hch-card"><div class="hch-k">PLAYER VOICE｜選手の声</div><div class="hch-s">${esc(voiceText||'まだ記録がありません')}</div></div>
+ <div class="hch-card"><div class="hch-k">DISCOVERY｜チームの発見</div><div class="hch-s">${esc(discText||'まだ記録がありません')}</div></div>
+ <div class="hch-card hch-wide"><div class="hch-k">TODAY｜今日の学習環境</div><div class="hch-v">${esc(x.f||'今日のテーマを決める')}</div><div class="hch-s">${x.session?'今日の学習環境は保存されています。':'人数・GK・時間に合わせて、選手が発見できる環境をつくります。'}</div><button class="hch-btn hch-main" id="hchToday">今日の学習環境をつくる</button></div>
+ <div class="hch-card"><div class="hch-k">LAST PRACTICE｜直近の練習</div><div class="hch-v">${x.practice?`${x.practice.behavior||'-'} / 5`:'-'}</div><div class="hch-s">狙った行動の出現${x.practice?.transfer?`・試合転移 ${x.practice.transfer}/5`:''}</div></div>
+ <div class="hch-card"><div class="hch-k">GROWTH｜成長</div><div class="hch-v">${A('hc_practice_learning_v145').length} 回</div><div class="hch-s">練習振り返りの蓄積</div><button class="hch-btn" id="hchGrowth">成長を見る</button></div>
+ </div>`;
+ const today=document.getElementById('hcTodayStatusR');
+ if(today)today.insertAdjacentElement('afterend',d);else home.prepend(d);
+ d.querySelector('#hchMatch').onclick=()=>show('analyze');
+ d.querySelector('#hchFocus').onclick=()=>window.HC191?.open?.()||show('analyze');
+ d.querySelector('#hchMeeting').onclick=()=>window.HC276?.open?.();
+ d.querySelector('#hchToday').onclick=()=>window.HC228?.open?.()||show('today');
+ d.querySelector('#hchGrowth').onclick=()=>window.HC152?.open?.()||show('history');
+}
+setTimeout(mount,230);
+window.HCR391={mount,state};
+})();
+</script>
+<!-- HC_COCKPIT_CURRENT_R392 --><!-- HC_COCKPIT_MATCH_R393 --><!-- HC_COCKPIT_FOCUS_R394 --><!-- HC_COCKPIT_QUESTION_R395 --><!-- HC_COCKPIT_VOICE_R396 --><!-- HC_COCKPIT_DISCOVERY_R397 --><!-- HC_COCKPIT_TODAY_R398 --><!-- HC_COCKPIT_PRACTICE_R399 --><!-- HC_COCKPIT_GROWTH_R400 --><!-- HC_COCKPIT_NO_OBSERVER_R401 --><!-- HC_COCKPIT_NO_NAV_WRAP_R402 --><!-- HC_COCKPIT_NO_SHOW_OVERRIDE_R403 --><!-- HC_COCKPIT_LIGHT_R404 --><!-- HC_COCKPIT_MOBILE_R405 --><!-- HC_COCKPIT_JAPANESE_R406 --><!-- HC_COCKPIT_EXISTING_DATA_R407 --><!-- HC_COCKPIT_BOTTOMUP_R408 --><!-- HC_COCKPIT_PLAYER_FIRST_R409 --><!-- HC_COCKPIT_DATA_NOT_ANSWER_R410 --><!-- HC_COCKPIT_MATCH_BRIDGE_R411 --><!-- HC_COCKPIT_FOCUS_BRIDGE_R412 --><!-- HC_COCKPIT_MEETING_BRIDGE_R413 --><!-- HC_COCKPIT_TODAY_BRIDGE_R414 --><!-- HC_COCKPIT_GROWTH_BRIDGE_R415 --><!-- HC_COCKPIT_HOME_KEEP_R416 --><!-- HC_COCKPIT_PEOPLE_KEEP_R417 --><!-- HC_COCKPIT_GK_KEEP_R418 --><!-- HC_COCKPIT_TIME_KEEP_R419 --><!-- HC_COCKPIT_STABLE_R420 --><!-- HC_COCKPIT_NO_POLLING_R421 --><!-- HC_COCKPIT_NO_MUTATION_R422 --><!-- HC_COCKPIT_NO_MONKEY_PATCH_R423 --><!-- HC_COCKPIT_SAFE_R424 --><!-- HC_COCKPIT_UI_R425 --><!-- HC_COCKPIT_CONTEXT_R426 --><!-- HC_COCKPIT_DAILY_R427 --><!-- HC_COCKPIT_TEAM_R428 --><!-- HC_COCKPIT_COACH_R429 --><!-- HC_COACH_HOME_COCKPIT_CORE_R430 -->
 </body></html>
