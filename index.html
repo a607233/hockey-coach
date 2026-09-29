@@ -1255,4 +1255,37 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <!-- HC_HOME_SCHEDULE_ENTRY_V104 --><!-- HC_HOME_PLANNER_ENTRY_V105 --><!-- HC_HOME_RETURN_ENTRY_V106 --><!-- HC_HOME_ENTRY_REFRESH_V107 --><!-- HC_HOME_WEEK_FLOW_V108 -->
+
+
+<!-- HC_SIMPLE_HOME_V109_V114 -->
+<style>
+#hcSimple109{margin:10px 0}.hsCard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.hsNo{font-size:11px;font-weight:950;color:#b8ff45}.hsBig{font-size:18px;font-weight:950;margin:5px 0}.hsBtn{width:100%;border:0;border-radius:11px;padding:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.hsDay{padding:7px 0;border-bottom:1px solid #203239}.hsMuted{font-size:11px;opacity:.72}
+</style>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function nextMatch(){let a=L('hc_matches_v3',[]),t=new Date().toISOString().slice(0,10);return(Array.isArray(a)?a:[]).filter(x=>(x.date||'')>=t).sort((a,b)=>String(a.date).localeCompare(String(b.date)))[0]||null}
+function schedule(){return window.HC93?.upcoming?.()||[]}
+function focus(){return window.HC64?.context?.()?.focus||'分析から今週のテーマを決める'}
+function todayPlan(){let a=L('hc_today_adopted_v60',null);return a?.training?.name||a?.training?.title||a?.focus||focus()}
+function mount(){
+ let home=document.getElementById('hcHome69')||document.getElementById('home');if(!home)return;
+ let old=document.getElementById('hcSimple109');if(old)old.remove();
+ let m=nextMatch(),ds=schedule(),f=focus(),box=document.createElement('div');box.id='hcSimple109';
+ box.innerHTML=`<div class="hsCard"><div class="hsNo">① 次の試合</div><div class="hsBig">${m?E(m.date)+'　vs '+E(m.opponent||'対戦相手未入力'):'まだ登録されていません'}</div></div>
+ <div class="hsCard"><div class="hsNo">② 今週の練習</div>${ds.length?ds.slice(0,5).map(d=>`<div class="hsDay"><b>${E(d.date)}</b>　${E(d.name||'練習')}　${E(d.minutes)}分</div>`).join(''):'<div class="hsBig">練習日を登録してください</div>'}<button class="hsBtn" onclick="HC93.open()">予定を変更</button></div>
+ <div class="hsCard"><div class="hsNo">③ 今週は何を伸ばす？</div><div class="hsBig">${E(f)}</div><div class="hsMuted">試合分析・チームの課題をもとに表示</div></div>
+ <div class="hsCard"><div class="hsNo">④ 今日の練習</div><div class="hsBig">${E(todayPlan())}</div><button class="hsBtn" onclick="HC114.today()">今日の練習を見る</button></div>`;
+ let target=document.getElementById('hcHome69');if(target)target.prepend(box);else home.prepend(box);
+ let complex=document.getElementById('hcWeekEntry104');if(complex)complex.style.display='none';
+}
+function refresh(){setTimeout(mount,40);setTimeout(mount,220)}
+function today(){if(window.show)show('today')}
+document.addEventListener('click',e=>{let t=e.target.closest&&e.target.closest('button');if(t&&/HOME/i.test(t.textContent||''))refresh()});
+const ps=window.show;if(typeof ps==='function'){window.show=function(id){let r=ps.apply(this,arguments);if(id==='home')refresh();return r}}
+window.HC109={mount,refresh};window.HC110={nextMatch};window.HC111={schedule};window.HC112={focus};window.HC113={todayPlan};window.HC114={today,refresh};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+})();
+</script>
+<!-- HC_SIMPLE_NEXT_MATCH_V109 --><!-- HC_SIMPLE_SCHEDULE_V110 --><!-- HC_SIMPLE_WEEK_FOCUS_V111 --><!-- HC_SIMPLE_TODAY_V112 --><!-- HC_SIMPLE_REFRESH_V113 --><!-- HC_SIMPLE_FLOW_V114 -->
 </body></html>
