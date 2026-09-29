@@ -1393,4 +1393,36 @@ window.HC127={open,close,change,goToday};window.HC128={plan};window.HC129={plan}
 <script>
 (function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcAdaptEntry127'))return;let b=document.createElement('button');b.id='hcAdaptEntry127';b.className='hgBtn';b.textContent='人数・GK・時間に合わせて調整';b.onclick=()=>HC127.open();h.querySelector('.hgCard')?.appendChild(b)};function r(){setTimeout(add,100);setTimeout(add,300)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
 </script>
+
+
+<!-- HC_CONSTRAINT_COACH_V133_V138 -->
+<style>
+#hcConstraint133{position:fixed;inset:0;z-index:10007;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcConstraint133 .cw{max-width:720px;margin:auto}.cc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.ct{font-size:10px;font-weight:950;color:#b8ff45}.cb{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.choice{display:grid;grid-template-columns:1fr 1fr;gap:7px}.choice button{padding:10px;border:1px solid #344950;border-radius:10px;background:#081216;color:#eef6f2}.cl{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.cs{font-size:11px;opacity:.72}</style>
+<div id="hcConstraint133"><div class="cw" id="hcConstraint133b"></div></div>
+<script>
+(function(){'use strict';
+const E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+let mode='判断を速くする';
+function focus(){return window.HC64?.context?.()?.focus||'現在の優先課題'}
+function design(m){
+ let x={
+ '判断を速くする':['スペースを少し狭くする','保持時間を短くする','前方への選択肢を複数作る','認知→判断の速さ'],
+ '前進を増やす':['縦長のコートにする','前方ゾーン進入で得点','攻撃側を+1にする','前進できる瞬間の認知'],
+ '幅を使う':['横幅を広くする','外側レーン経由で加点','守備は中央スタート','逆サイドを見つける回数'],
+ 'ロスト後を鍛える':['中央に危険ゾーンを設定','4秒以内の奪回/前進阻止で加点','攻撃側を前がかりにする','WIN / DELAY / RECOVER判断'],
+ '奪取後を鍛える':['前方にターゲットゾーン','奪取後4秒以内前進で加点','出口を2方向以上作る','GO / HOLD / RESET判断'],
+ 'サークル攻略':['サークル周辺を実戦サイズに近づける','侵入後の得点条件を変える','攻撃側にサポート役を追加','侵入後のパス/運ぶ/打つ判断']
+ };return x[m]||x['判断を速くする']
+}
+function open(){render();document.getElementById('hcConstraint133').style.display='block'}
+function render(){let d=design(mode),b=document.getElementById('hcConstraint133b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="ct">練習環境をデザイン</div><h2>答えを教えず、プレーを引き出す</h2></div><button onclick="HC133.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="cc"><div class="ct">今日の重点</div><h3>${E(focus())}</h3></div><div class="cc"><div class="ct">何を引き出したい？</div><div class="choice">${['判断を速くする','前進を増やす','幅を使う','ロスト後を鍛える','奪取後を鍛える','サークル攻略'].map(x=>`<button onclick="HC133.pick('${x}')">${x}</button>`).join('')}</div></div><div class="cc"><div class="ct">${E(mode)}</div><div class="cl"><b>スペース</b><br>${E(d[0])}</div><div class="cl"><b>ルール・得点条件</b><br>${E(d[1])}</div><div class="cl"><b>人数・配置</b><br>${E(d[2])}</div><div class="cl"><b>観察すること</b><br>${E(d[3])}</div></div><div class="cc"><div class="ct">選手への問い</div><b>「うまくいったとき、どこを見て何を選んだ？」</b><div class="cs">制約は答えではありません。狙った行動が出なければ、スペース・人数・ルールを1つずつ調整します。</div></div><button class="cb" onclick="HC133.close()">この条件を参考に練習する</button>`}
+function pick(x){mode=x;render()}function close(){document.getElementById('hcConstraint133').style.display='none'}
+window.HC133={open,close,pick};window.HC134={design};window.HC135={design};window.HC136={design};window.HC137={design};window.HC138={design};
+})();
+</script>
+<!-- HC_CONSTRAINT_GOAL_V133 --><!-- HC_SPACE_CONSTRAINT_V134 --><!-- HC_NUMBER_CONSTRAINT_V135 --><!-- HC_RULE_CONSTRAINT_V136 --><!-- HC_BEHAVIOR_OBSERVE_V137 --><!-- HC_PLAYER_QUESTION_V138 -->
+<script>
+(function(){function add(){let h=document.getElementById('hcAdapt127b');if(!h||document.getElementById('hcConstraintEntry133'))return;let b=document.createElement('button');b.id='hcConstraintEntry133';b.className='abtn';b.textContent='練習環境を調整する';b.onclick=()=>HC133.open();let cards=h.querySelectorAll('.ac');(cards[cards.length-1]||h).appendChild(b)}let p=window.HC127?.open;if(p)window.HC127.open=function(){let r=p.apply(this,arguments);setTimeout(add,30);return r}})();
+</script>
 </body></html>
