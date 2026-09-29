@@ -1425,4 +1425,37 @@ window.HC133={open,close,pick};window.HC134={design};window.HC135={design};windo
 <script>
 (function(){function add(){let h=document.getElementById('hcAdapt127b');if(!h||document.getElementById('hcConstraintEntry133'))return;let b=document.createElement('button');b.id='hcConstraintEntry133';b.className='abtn';b.textContent='練習環境を調整する';b.onclick=()=>HC133.open();let cards=h.querySelectorAll('.ac');(cards[cards.length-1]||h).appendChild(b)}let p=window.HC127?.open;if(p)window.HC127.open=function(){let r=p.apply(this,arguments);setTimeout(add,30);return r}})();
 </script>
+
+
+<!-- HC_PRACTICE_LEARNING_V139_V145 -->
+<style>
+#hcLearn139{position:fixed;inset:0;z-index:10008;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcLearn139 .lw{max-width:720px;margin:auto}.lc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.lt{font-size:10px;font-weight:950;color:#b8ff45}.lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.lgrid button{padding:11px 4px;border:1px solid #344950;border-radius:10px;background:#081216;color:#eef6f2}.lgrid button.sel{background:#b8ff45;color:#071014}.lin{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:10px}.lbtn{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.lline{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.ls{font-size:11px;opacity:.72}</style>
+<div id="hcLearn139"><div class="lw" id="hcLearn139b"></div></div>
+<script>
+(function(){'use strict';
+const K='hc_practice_learning_v145',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+let st={behavior:3,difficulty:3,transfer:3};
+function advice(){
+ let a=[];
+ if(st.behavior<=2)a.push('狙った行動が出にくい → ルールを増やす前に、スペース・人数差・得点条件のうち1つだけ変える');
+ if(st.difficulty>=4)a.push('難しすぎる → スペースを広げる、攻撃側を+1にする、判断時間を少し増やす');
+ if(st.difficulty<=2)a.push('簡単すぎる → スペースを狭める、守備圧を上げる、選択肢を増やす');
+ if(st.transfer<=2)a.push('ゲームで出ない → 練習後半をゲーム形式に近づけ、同じ情報を見て判断できる環境にする');
+ if(st.behavior>=4&&st.transfer>=4)a.push('狙いがゲームでも出ている → 条件を少し外し、自発的に再現できるか確認する');
+ return a.length?a:['大きく変えず、同じ目的で再現性をもう一度確認する'];
+}
+function open(){st={behavior:3,difficulty:3,transfer:3};render();document.getElementById('hcLearn139').style.display='block'}
+function row(key,label){return `<div class="lc"><div class="lt">${label}</div><div class="lgrid">${[1,2,3,4,5].map(n=>`<button class="${st[key]===n?'sel':''}" onclick="HC139.rate('${key}',${n})">${n}</button>`).join('')}</div></div>`}
+function render(){let b=document.getElementById('hcLearn139b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="lt">練習を振り返る</div><h2>メニューではなく、学習環境を改善する</h2></div><button onclick="HC139.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div>${row('behavior','狙った行動は出た？　1=ほぼ出ない / 5=よく出た')}${row('difficulty','難しさは？　1=簡単すぎる / 3=ちょうど良い / 5=難しすぎる')}${row('transfer','ゲームでも使えそう？　1=つながらない / 5=かなりつながる')}<div class="lc"><div class="lt">選手の気づき</div><textarea id="lv139" class="lin" rows="3" placeholder="例：外側に相手を引きつけると中央が空いた"></textarea></div><div class="lc"><div class="lt">次回の調整案</div>${advice().map(x=>`<div class="lline">${E(x)}</div>`).join('')}<div class="ls">一度に多く変えず、原則として1つの制約を調整します。</div></div><button class="lbtn" onclick="HC139.save()">振り返りを保存</button><button class="lbtn" style="background:#17252b;color:#eef6f2" onclick="HC139.close()">閉じる</button>`}
+function rate(k,n){st[k]=n;let v=document.getElementById('lv139')?.value||'';render();setTimeout(()=>{let x=document.getElementById('lv139');if(x)x.value=v},0)}
+function save(){let a=L(K,[]);if(!Array.isArray(a))a=[];a.push({id:'learn_'+Date.now(),createdAt:new Date().toISOString(),focus:window.HC64?.context?.()?.focus||'',behavior:st.behavior,difficulty:st.difficulty,transfer:st.transfer,playerVoice:document.getElementById('lv139')?.value||'',next:advice()});S(K,a);alert('振り返りを保存しました');close()}
+function close(){document.getElementById('hcLearn139').style.display='none'}
+window.HC139={open,close,rate,save};window.HC140={advice};window.HC141={advice};window.HC142={advice};window.HC143={advice};window.HC144={advice};window.HC145={history:()=>L(K,[])};
+})();
+</script>
+<!-- HC_BEHAVIOR_RATE_V139 --><!-- HC_DIFFICULTY_RATE_V140 --><!-- HC_TRANSFER_RATE_V141 --><!-- HC_CONSTRAINT_FEEDBACK_V142 --><!-- HC_PLAYER_INSIGHT_V143 --><!-- HC_NEXT_ADJUST_V144 --><!-- HC_PRACTICE_MEMORY_V145 -->
+<script>
+(function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcLearnEntry139'))return;let b=document.createElement('button');b.id='hcLearnEntry139';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='練習を振り返る';b.onclick=()=>HC139.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,100);setTimeout(add,300)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
+</script>
 </body></html>
