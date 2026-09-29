@@ -1458,4 +1458,24 @@ window.HC139={open,close,rate,save};window.HC140={advice};window.HC141={advice};
 <script>
 (function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcLearnEntry139'))return;let b=document.createElement('button');b.id='hcLearnEntry139';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='練習を振り返る';b.onclick=()=>HC139.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,100);setTimeout(add,300)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
 </script>
+
+
+<!-- HC_PRACTICE_MEMORY_COACH_V146_V151 -->
+<style>
+#hcMemory146{margin:9px 0}.hmCard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px}.hmTag{font-size:10px;font-weight:950;color:#b8ff45}.hmLine{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.hmBtn{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:9px}.hmSmall{font-size:11px;opacity:.72}</style>
+<script>
+(function(){'use strict';
+const K='hc_practice_learning_v145',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function focus(){return window.HC64?.context?.()?.focus||''}
+function relevant(){let a=L(K,[]);if(!Array.isArray(a)||!a.length)return null;let f=focus(),same=a.filter(x=>f&&x.focus===f);return(same.length?same:a).slice(-1)[0]||null}
+function message(x){if(!x)return null;let lead=x.next?.[0]||'前回と同じ目的で再現性を確認する';let reason=x.behavior<=2?'前回は狙った行動が十分に出ませんでした。':x.difficulty>=4?'前回は難度が高めでした。':x.difficulty<=2?'前回は簡単すぎる傾向でした。':x.transfer<=2?'前回はゲームへのつながりが弱めでした。':'前回の条件を大きく変える必要はなさそうです。';return{reason,lead}}
+function mount(){let h=document.getElementById('hcGuide121');if(!h)return;let old=document.getElementById('hcMemory146');if(old)old.remove();let x=relevant(),m=x&&message(x);if(!m)return;let d=document.createElement('div');d.id='hcMemory146';d.innerHTML=`<div class="hmCard"><div class="hmTag">前回の練習から</div><h3 style="margin:5px 0">今日はここから始めましょう</h3><div>${E(m.reason)}</div><div class="hmLine"><b>今回の調整候補</b><br>${E(m.lead)}</div><div class="hmSmall">前回：行動 ${E(x.behavior)}/5・難しさ ${E(x.difficulty)}/5・ゲームへのつながり ${E(x.transfer)}/5</div>${x.playerVoice?`<div class="hmLine"><b>選手の気づき</b><br>${E(x.playerVoice)}</div>`:''}<button class="hmBtn" onclick="HC146.adjust()">この考え方で練習を調整</button></div>`;h.appendChild(d)}
+function adjust(){if(window.HC127)HC127.open()}
+function refresh(){setTimeout(mount,120);setTimeout(mount,320)}
+const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let r=p.apply(this,arguments);refresh();return r}
+window.HC146={mount,adjust,relevant};window.HC147={message};window.HC148={relevant};window.HC149={relevant};window.HC150={relevant};window.HC151={relevant};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+})();
+</script>
+<!-- HC_MEMORY_MATCH_V146 --><!-- HC_MEMORY_REASON_V147 --><!-- HC_MEMORY_ADJUST_V148 --><!-- HC_MEMORY_PLAYER_VOICE_V149 --><!-- HC_MEMORY_START_V150 --><!-- HC_MEMORY_LOOP_V151 -->
 </body></html>
