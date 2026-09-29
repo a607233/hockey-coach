@@ -2095,4 +2095,67 @@ window.HCR391={mount,state};
 })();
 </script>
 <!-- HC_COCKPIT_CURRENT_R392 --><!-- HC_COCKPIT_MATCH_R393 --><!-- HC_COCKPIT_FOCUS_R394 --><!-- HC_COCKPIT_QUESTION_R395 --><!-- HC_COCKPIT_VOICE_R396 --><!-- HC_COCKPIT_DISCOVERY_R397 --><!-- HC_COCKPIT_TODAY_R398 --><!-- HC_COCKPIT_PRACTICE_R399 --><!-- HC_COCKPIT_GROWTH_R400 --><!-- HC_COCKPIT_NO_OBSERVER_R401 --><!-- HC_COCKPIT_NO_NAV_WRAP_R402 --><!-- HC_COCKPIT_NO_SHOW_OVERRIDE_R403 --><!-- HC_COCKPIT_LIGHT_R404 --><!-- HC_COCKPIT_MOBILE_R405 --><!-- HC_COCKPIT_JAPANESE_R406 --><!-- HC_COCKPIT_EXISTING_DATA_R407 --><!-- HC_COCKPIT_BOTTOMUP_R408 --><!-- HC_COCKPIT_PLAYER_FIRST_R409 --><!-- HC_COCKPIT_DATA_NOT_ANSWER_R410 --><!-- HC_COCKPIT_MATCH_BRIDGE_R411 --><!-- HC_COCKPIT_FOCUS_BRIDGE_R412 --><!-- HC_COCKPIT_MEETING_BRIDGE_R413 --><!-- HC_COCKPIT_TODAY_BRIDGE_R414 --><!-- HC_COCKPIT_GROWTH_BRIDGE_R415 --><!-- HC_COCKPIT_HOME_KEEP_R416 --><!-- HC_COCKPIT_PEOPLE_KEEP_R417 --><!-- HC_COCKPIT_GK_KEEP_R418 --><!-- HC_COCKPIT_TIME_KEEP_R419 --><!-- HC_COCKPIT_STABLE_R420 --><!-- HC_COCKPIT_NO_POLLING_R421 --><!-- HC_COCKPIT_NO_MUTATION_R422 --><!-- HC_COCKPIT_NO_MONKEY_PATCH_R423 --><!-- HC_COCKPIT_SAFE_R424 --><!-- HC_COCKPIT_UI_R425 --><!-- HC_COCKPIT_CONTEXT_R426 --><!-- HC_COCKPIT_DAILY_R427 --><!-- HC_COCKPIT_TEAM_R428 --><!-- HC_COCKPIT_COACH_R429 --><!-- HC_COACH_HOME_COCKPIT_CORE_R430 -->
+
+
+<!-- HC_DECISION_FLOW_R431_R470 -->
+<style>
+#hcDecisionFlowR{position:fixed;inset:0;z-index:10120;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcDecisionFlowR .dfw{max-width:720px;margin:auto}.dfc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}
+.dfk{font-size:10px;font-weight:950;color:#d7ff39;letter-spacing:1px}.dfv{font-size:18px;font-weight:900;line-height:1.45;margin:6px 0}.dfs{font-size:11px;opacity:.72;line-height:1.5}
+.dfi{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px;margin-top:8px}
+.dfb{width:100%;padding:12px;border:0;border-radius:11px;background:#d7ff39;color:#071014;font-weight:950;margin-top:8px}.dfsub{background:#17252b;color:#eef6f2}
+.dfsteps{display:flex;gap:5px;overflow:auto;margin:10px 0}.dfsteps span{white-space:nowrap;border:1px solid #344950;border-radius:999px;padding:6px 8px;font-size:10px;opacity:.55}.dfsteps span.on{border-color:#d7ff39;color:#d7ff39;opacity:1}
+</style>
+<div id="hcDecisionFlowR"><div class="dfw" id="hcDecisionFlowRb"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]},last=k=>A(k).slice(-1)[0]||null,E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function analysis(){return last('hc_analysis_history_v1')}
+function focus(){
+ let w=L('hc_week_focus_decision_v191',null); if(w?.focus)return w.focus;
+ let a=analysis(); return a?.priority?.name||a?.priority||a?.focus||'';
+}
+function context(){
+ let a=analysis(),f=focus(),v=last('hc_player_voice_v1'),d=last('hc_team_discovery_v1'),q=L('hc_meeting_question_v288',null);
+ return{a,f,v,d,q};
+}
+function open(){render();document.getElementById('hcDecisionFlowR').style.display='block'}
+function close(){document.getElementById('hcDecisionFlowR').style.display='none'}
+function render(){
+ let x=context(),b=document.getElementById('hcDecisionFlowRb'),vt=x.v&&(x.v.text||x.v.what)||'',dt=x.d&&(x.d.discovery||x.d.text)||'';
+ b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="dfk">COACH DECISION FLOW</div><h2 style="margin:4px 0">分析を「今日の学び」までつなぐ</h2></div><button onclick="HCR431.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div>
+ <div class="dfsteps"><span class="on">現象</span><span>原因</span><span>重点</span><span>選手</span><span>問い</span><span>環境</span></div>
+ <div class="dfc"><div class="dfk">1｜DATA｜何が起きている？</div><div class="dfv">${E(x.f||'分析から重点を決めます')}</div><div class="dfs">${x.a?'保存済みのチーム分析を参照しています。':'まだ分析記録がありません。数字だけで原因は決めません。'}</div><button class="dfb dfsub" onclick="HCR431.goAnalysis()">分析を確認する</button></div>
+ <div class="dfc"><div class="dfk">2｜WHY｜なぜ起きた？</div><textarea id="dfWhyR" class="dfi" rows="3" placeholder="例：1st DFが遅い、中央保護との役割共有が曖昧、相手の立ち位置に反応しすぎる"></textarea><div class="dfs">技術だけでなく、判断・関係性・配置・相手・状況から考えます。</div></div>
+ <div class="dfc"><div class="dfk">3｜PLAYER LENS｜選手にはどう見えている？</div><div class="dfv" style="font-size:14px">${E(vt||'まだ選手の声がありません')}</div><button class="dfb dfsub" onclick="HCR431.voice()">選手の声を集める</button></div>
+ <div class="dfc"><div class="dfk">4｜TEAM DISCOVERY｜チームは何を発見した？</div><div class="dfv" style="font-size:14px">${E(dt||'まだチームの発見がありません')}</div></div>
+ <div class="dfc"><div class="dfk">5｜QUESTION｜次に何を確かめる？</div><textarea id="dfQuestionR" class="dfi" rows="3" placeholder="正解を教える問いではなく、選手が試して発見できる問い">${E(x.q?.question||'')}</textarea></div>
+ <div class="dfc"><div class="dfk">6｜COACH DESIGN｜どんな環境なら発見できる？</div><div class="dfs">コーチはメニューを選ぶ人ではなく、SPACE / NUMBER / RULE / SUCCESS を設計する人。</div><button class="dfb" onclick="HCR431.saveAndDesign()">問いを保存して学習環境をつくる</button></div>
+ <button class="dfb dfsub" onclick="HCR431.close()">閉じる</button>`;
+}
+function saveAndDesign(){
+ let x=context(),why=document.getElementById('dfWhyR').value.trim(),q=document.getElementById('dfQuestionR').value.trim();
+ if(why){let a=A('hc_cause_notes_r470');a.push({id:'cause_'+Date.now(),createdAt:new Date().toISOString(),focus:x.f,analysisId:x.a?.id||'',text:why});S('hc_cause_notes_r470',a)}
+ if(q)S('hc_meeting_question_v288',{focus:x.f,question:q,createdAt:new Date().toISOString(),source:'decision_flow'});
+ close(); if(window.HC228?.open)HC228.open(); else show('today');
+}
+function goAnalysis(){close();show('analysis')}
+function voice(){close();if(window.HC243?.open)HC243.open();else if(window.HC276?.open)HC276.open()}
+window.HCR431={open,close,render,saveAndDesign,goAnalysis,voice,context};
+})();
+</script>
+<script>
+(function(){'use strict';
+function add(){
+ let h=document.getElementById('hcCoachHomeR');if(!h||document.getElementById('hcDecisionEntryR'))return;
+ let d=document.createElement('div');d.id='hcDecisionEntryR';d.className='hch-card';
+ d.innerHTML='<div class="hch-k">COACH DECISION｜分析から今日へ</div><div class="hch-v">現象 → WHY → 問い → 学習環境</div><div class="hch-s">分析結果をそのまま練習メニューにせず、選手の見方と原因を挟んで今日の環境へつなげます。</div><button class="hch-btn hch-main" onclick="HCR431.open()">分析から今日の学びをつくる</button>';
+ h.appendChild(d);
+}
+setTimeout(add,360);
+window.HCR432={add};
+})();
+</script>
+<!-- HC_DECISION_DATA_R433 --><!-- HC_DECISION_WHY_R434 --><!-- HC_DECISION_PRIORITY_R435 --><!-- HC_DECISION_PLAYER_R436 --><!-- HC_DECISION_DISCOVERY_R437 --><!-- HC_DECISION_QUESTION_R438 --><!-- HC_DECISION_ENVIRONMENT_R439 --><!-- HC_DECISION_CAUSE_MEMORY_R440 --><!-- HC_DECISION_ANALYSIS_LINK_R441 --><!-- HC_DECISION_VOICE_LINK_R442 --><!-- HC_DECISION_BOTTOMUP_R443 --><!-- HC_DECISION_NO_AUTO_ANSWER_R444 --><!-- HC_DECISION_SPACE_R445 --><!-- HC_DECISION_NUMBER_R446 --><!-- HC_DECISION_RULE_R447 --><!-- HC_DECISION_SUCCESS_R448 --><!-- HC_DECISION_HOME_ENTRY_R449 --><!-- HC_DECISION_EXISTING_KEYS_R450 --><!-- HC_DECISION_NO_OBSERVER_R451 --><!-- HC_DECISION_NO_SHOW_WRAP_R452 --><!-- HC_DECISION_NO_NAV_WRAP_R453 --><!-- HC_DECISION_LIGHT_R454 --><!-- HC_DECISION_MOBILE_R455 --><!-- HC_DECISION_JA_R456 --><!-- HC_DECISION_SAFE_R457 --><!-- HC_DECISION_FLOW_R458 --><!-- HC_DECISION_TEAM_R459 --><!-- HC_DECISION_COACH_R460 --><!-- HC_DECISION_PLAYER_FIRST_R461 --><!-- HC_DECISION_DATA_SUPPORT_R462 --><!-- HC_DECISION_CAUSE_R463 --><!-- HC_DECISION_PRIORITY_LINK_R464 --><!-- HC_DECISION_QUESTION_SAVE_R465 --><!-- HC_DECISION_DESIGN_LINK_R466 --><!-- HC_DECISION_LEARNING_LOOP_R467 --><!-- HC_DECISION_COMPAT_R468 --><!-- HC_DECISION_STABLE_R469 --><!-- HC_DECISION_FLOW_CORE_R470 -->
 </body></html>
