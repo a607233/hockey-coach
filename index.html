@@ -1168,4 +1168,45 @@ setTimeout(purgeLiteralText,600);
 })();
 </script>
 <!-- HC_RECORD_LITERAL_TEXT_FIX_V87 -->
+
+
+<!-- HC_WEEK_CYCLE_V88_V92 -->
+<style>
+#hcWeek88{position:fixed;inset:0;z-index:10003;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcWeek88 .ww{max-width:720px;margin:auto}.wcard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.wtag{font-size:10px;font-weight:950;padding:5px 8px;border-radius:999px;background:#263817;color:#dfff91}.wbtn{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.wline{border-left:3px solid #b8ff45;padding:8px 10px;background:#081216;margin-top:7px}.wmuted{opacity:.72;font-size:12px}</style>
+<div id="hcWeek88"><div class="ww" id="hcWeek88b"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function state(){let c=window.HC64?.context?.()||{},ad=L('hc_today_adopted_v60',null),loops=L('hc_session_loop_v63',[]),last=Array.isArray(loops)?loops[loops.length-1]:null;return{focus:c.focus||'現在の優先課題',ad,last}}
+function design(s){let f=s.focus;return{why:f.includes('ロスト後')?'ボールロスト直後の役割決定と危険地帯保護を検証':f.includes('奪取後')?'奪取直後の認知とGO/HOLD/RESET判断を検証':f.includes('プレッシング')?'1st DFの誘導と2nd DF以降の連動を検証':'優先課題が起きる条件と判断を検証',observe:f.includes('サークル')?'侵入後のサポート・3人目・フィニッシュ':f.includes('守備')?'中央保護・カバー・前進阻止':'成功行動が繰り返し現れるか',question:'うまくいった瞬間、何を見て何を選んだ？',verify:'次の試合・再分析で同じ行動が再現されたか'}}
+function open(){let s=state(),d=design(s),b=document.getElementById('hcWeek88b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><span class="wtag">WEEK CYCLE · V88–V92</span><h2>試合から次の試合へ</h2></div><button onclick="HC88.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="wcard"><span class="wtag">FOCUS · V88</span><h3>${E(s.focus)}</h3><div class="wline"><b>WHY</b><br>${E(d.why)}</div></div><div class="wcard"><span class="wtag">TRAIN · V89</span><div><b>${E(s.ad?.training?.name||s.ad?.training?.title||'練習候補を設計')}</b></div><div class="wline"><b>観察すること</b><br>${E(d.observe)}</div><button class="wbtn" onclick="HC88.goTrain()">練習設計へ</button></div><div class="wcard"><span class="wtag">PLAYER VOICE · V90</span><div class="wline">${E(d.question)}</div><div class="wmuted">答えを教えるためではなく、選手が見ていた情報と判断理由を確認します。</div></div><div class="wcard"><span class="wtag">EVIDENCE · V91</span><div>${s.last?'直近KPI '+E(s.last.score)+'/5':'実施後にKPIを記録'}</div><div class="wline"><b>次に検証</b><br>${E(d.verify)}</div></div><div class="wcard"><span class="wtag">NEXT MATCH · V92</span><div>TRAIN → RECORD → PLAYER VOICE → MATCH → RE-ANALYZE</div><button class="wbtn" onclick="HC88.goAnalyze()">再分析へ</button></div><button class="wbtn" style="background:#17252b;color:#eef6f2" onclick="HC88.close()">閉じる</button>`;document.getElementById('hcWeek88').style.display='block'}
+function close(){document.getElementById('hcWeek88').style.display='none'}
+function goTrain(){close();if(window.HC54)HC54.open();else if(window.show)show('today')}
+function goAnalyze(){close();if(window.show)show('analysis')}
+window.HC88={open,close,goTrain,goAnalyze};window.HC89={open};window.HC90={open};window.HC91={open};window.HC92={open};
+})();
+</script>
+<!-- HC_WEEK_FOCUS_V88 --><!-- HC_WEEK_TRAIN_V89 --><!-- HC_WEEK_VOICE_V90 --><!-- HC_WEEK_EVIDENCE_V91 --><!-- HC_WEEK_VERIFY_V92 -->
+
+
+<!-- HC_FLEXIBLE_SCHEDULE_V93_V97 -->
+<style>
+#hcSchedule93{position:fixed;inset:0;z-index:10004;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcSchedule93 .sw{max-width:720px;margin:auto}.scard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.stag{font-size:10px;font-weight:950;padding:5px 8px;border-radius:999px;background:#263817;color:#dfff91}.sbtn{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.sinput{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:10px;margin-top:6px}.srow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sitem{background:#081216;border-radius:12px;padding:10px;margin-top:7px}</style>
+<div id="hcSchedule93"><div class="sw" id="hcSchedule93b"></div></div>
+<script>
+(function(){'use strict';
+const K='hc_training_schedule_v93',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function data(){let x=L(K,null);return x&&Array.isArray(x.days)?x:{days:[]}}
+function open(){render();document.getElementById('hcSchedule93').style.display='block'}
+function render(){let x=data(),b=document.getElementById('hcSchedule93b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><span class="stag">FLEX SCHEDULE · V93–V97</span><h2>練習日を設定</h2></div><button onclick="HC93.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="scard"><span class="stag">ADD · V93</span><div class="srow"><div><label>日付</label><input id="sd93" class="sinput" type="date"></div><div><label>時間（分）</label><input id="sm93" class="sinput" type="number" value="100"></div></div><label>内容・予定名</label><input id="sn93" class="sinput" placeholder="例：通常練習 / 短縮練習 / TRM"><button class="sbtn" onclick="HC93.add()">この日を追加</button></div><div class="scard"><span class="stag">SCHEDULE · V94</span>${x.days.length?x.days.sort((a,b)=>a.date.localeCompare(b.date)).map(d=>`<div class="sitem"><b>${E(d.date)}</b>　${E(d.name||'練習')}<br><small>${E(d.minutes)}分</small><button style="float:right;background:none;border:0;color:#b8ff45" onclick="HC93.del('${d.id}')">削除</button></div>`).join(''):'<div class="sitem">まだ練習日は登録されていません。</div>'}</div><div class="scard"><span class="stag">FLEXIBLE · V95</span><div>曜日固定ではありません。変則日課・大会・OFFなどに合わせて、日付単位で自由に変更できます。</div></div><button class="sbtn" style="background:#17252b;color:#eef6f2" onclick="HC93.close()">閉じる</button>`}
+function add(){let d=document.getElementById('sd93')?.value,m=Math.max(0,+document.getElementById('sm93')?.value||0),n=document.getElementById('sn93')?.value||'練習';if(!d){alert('日付を選んでください');return}let x=data();x.days=x.days.filter(z=>z.date!==d);x.days.push({id:'day_'+Date.now(),date:d,minutes:m,name:n});S(K,x);render()}
+function del(id){let x=data();x.days=x.days.filter(z=>z.id!==id);S(K,x);render()}
+function close(){document.getElementById('hcSchedule93').style.display='none'}
+function upcoming(){let t=new Date().toISOString().slice(0,10);return data().days.filter(x=>x.date>=t).sort((a,b)=>a.date.localeCompare(b.date))}
+window.HC93={open,render,add,del,close,upcoming};window.HC94={upcoming};window.HC95={open};window.HC96={upcoming};window.HC97={upcoming};
+})();
+</script>
+<!-- HC_SCHEDULE_EDIT_V93 --><!-- HC_SCHEDULE_LIST_V94 --><!-- HC_VARIABLE_DAYS_V95 --><!-- HC_WEEK_LINK_V96 --><!-- HC_COCKPIT_SCHEDULE_V97 -->
 </body></html>
