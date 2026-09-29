@@ -2108,83 +2108,10 @@ const old=window.HC366?.more;if(old)window.HC366.more=function(){let r=old.apply
 <!-- HC_MORE_SEASON_V566 --><!-- HC_MORE_HEALTH_V567 --><!-- HC_MORE_CONSOLIDATE_V568 --><!-- HC_MORE_PRIMARY_V569 --><!-- HC_MORE_SECONDARY_V570 --><!-- HC_MORE_BACKUP_V571 --><!-- HC_MORE_SETTINGS_V572 --><!-- HC_MORE_STORY_V573 --><!-- HC_MORE_GROWTH_V574 --><!-- HC_MORE_CYCLE_V575 --><!-- HC_MORE_NO_DUP_V576 --><!-- HC_MORE_MOBILE_V577 --><!-- HC_MORE_JA_V578 --><!-- HC_MORE_FAST_V579 --><!-- HC_MORE_SAFE_V580 --><!-- HC_MORE_COMPAT_V581 --><!-- HC_MORE_DATA_V582 --><!-- HC_MORE_SEASON_COMMAND_V583 --><!-- HC_MORE_TEAM_STORY_V584 --><!-- HC_MORE_TEAM_GROWTH_V585 --><!-- HC_MORE_TEAM_CYCLE_V586 --><!-- HC_MORE_ADMIN_SECONDARY_V587 --><!-- HC_MORE_DAILY_FIRST_V588 --><!-- HC_MORE_POLISH_V589 --><!-- HC_PLATFORM_CORE_V590 -->
 
 
-<!-- HC_HOME_RETURN_HARD_FIX_V591_V600 -->
-<style>
-/* V591: HOME is rebuilt by legacy HC2.home(); keep only the final daily surface visible after every return */
-body.hc-home-simple #home #hcContext313,
-body.hc-home-simple #home #hcMatchQ330,
-body.hc-home-simple #home #hcSimple203,
-body.hc-home-simple #home #hcDailyHub198,
-body.hc-home-simple #home #hcHome69,
-body.hc-home-simple #home #hcCockpit64,
-body.hc-home-simple #home #hcWeek88,
-body.hc-home-simple #home #hcWeekEntry104,
-body.hc-home-simple #home #hcHome109{display:none!important}
-</style>
-<script>
-(function(){'use strict';
-let busy=false,timer=0;
-function isHome(){let h=document.getElementById('home');return !!h && (h.classList.contains('active')||getComputedStyle(h).display!=='none')}
-function rebuild(){
- if(busy||!isHome())return; busy=true;
- try{
-  document.body.classList.add('hc-home-simple');
-  if(window.HC366&&typeof HC366.mount==='function') HC366.mount();
-  setTimeout(()=>{try{window.HC421?.primary?.()}catch(e){}},60);
- }finally{setTimeout(()=>busy=false,120)}
-}
-function queue(){clearTimeout(timer);timer=setTimeout(rebuild,90)}
-/* Observe screen visibility instead of wrapping window.show again. */
-const root=document.getElementById('app')||document.body;
-const mo=new MutationObserver(()=>{if(isHome())queue()});
-mo.observe(root,{subtree:true,attributes:true,attributeFilter:['class','style'],childList:true});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)queue()});
-window.addEventListener('pageshow',queue);
-window.addEventListener('hashchange',queue);
-setTimeout(queue,250);
-window.HC591={rebuild,queue,isHome};window.HC592={rebuild};window.HC593={queue};window.HC594={isHome};window.HC595={rebuild};window.HC596={rebuild};window.HC597={rebuild};window.HC598={rebuild};window.HC599={rebuild};window.HC600={rebuild};
-})();
-</script>
-<!-- HC_HOME_RETURN_OBSERVER_V591 --><!-- HC_HOME_NO_SHOW_WRAP_V592 --><!-- HC_HOME_REBUILD_V593 --><!-- HC_HOME_VISIBILITY_V594 --><!-- HC_HOME_LEGACY_RESET_FIX_V595 --><!-- HC_HOME_DAILY_RESTORE_V596 --><!-- HC_HOME_DUPLICATE_GUARD_V597 --><!-- HC_HOME_IPHONE_RETURN_V598 --><!-- HC_HOME_STABILITY_V599 --><!-- HC_HOME_RETURN_CORE_V600 -->
 
 
-<!-- HC_NAV_HOME_DEFINITIVE_FIX_V601_V612 -->
-<style>
-/* definitive HOME surface */
-body.hc-home-simple #home>*:not(#hcFast366){display:none!important}
-body.hc-home-simple #home>#hcFast366{display:block!important}
-</style>
-<script>
-(function(){'use strict';
-let lock=false;
-function activateHome(){
- const h=document.getElementById('home'); if(!h)return;
- document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));
- h.classList.remove('hidden');
- document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n.dataset.go==='home'));
- document.body.classList.add('hc-home-simple');
- try{window.HC366?.mount?.()}catch(e){}
- setTimeout(()=>{try{window.HC421?.primary?.()}catch(e){}},40);
- window.scrollTo(0,0);
-}
-function bind(){
- document.querySelectorAll('.nav[data-go="home"]').forEach(btn=>{
-   btn.onclick=function(ev){ev.preventDefault();ev.stopImmediatePropagation();activateHome()};
- });
-}
-function guard(){
- if(lock)return;lock=true;
- try{bind();let h=document.getElementById('home');if(h&&!h.classList.contains('hidden')){document.body.classList.add('hc-home-simple');if(!document.getElementById('hcFast366'))activateHome()}}
- finally{lock=false}
-}
-document.addEventListener('click',function(e){let b=e.target.closest?.('.nav[data-go="home"]');if(b){e.preventDefault();e.stopImmediatePropagation();activateHome()}},true);
-const mo=new MutationObserver(()=>setTimeout(guard,0));mo.observe(document.body,{subtree:true,childList:true});
-window.addEventListener('pageshow',guard);document.addEventListener('visibilitychange',()=>{if(!document.hidden)guard()});
-setTimeout(guard,200);
-window.HC601={activateHome,bind,guard};for(let i=602;i<=612;i++)window['HC'+i]={activateHome,guard};
-})();
-</script>
-<!-- HC_HOME_DIRECT_NAV_V601 --><!-- HC_HOME_CAPTURE_CLICK_V602 --><!-- HC_HOME_STOP_OLD_HANDLER_V603 --><!-- HC_HOME_SECTION_ACTIVATE_V604 --><!-- HC_HOME_NAV_ON_V605 --><!-- HC_HOME_FINAL_SURFACE_V606 --><!-- HC_HOME_FAST_REMOUNT_V607 --><!-- HC_HOME_SCROLL_TOP_V608 --><!-- HC_HOME_BIND_REPAIR_V609 --><!-- HC_HOME_DOM_REBIND_V610 --><!-- HC_HOME_IPHONE_NAV_V611 --><!-- HC_HOME_NAV_CORE_V612 -->
+
+
 
 
 <!-- HC_NAVIGATION_RESET_V613_V625 -->
@@ -2230,4 +2157,30 @@ window.HC613={show:canonicalShow,bind};for(let i=614;i<=625;i++)window['HC'+i]={
 })();
 </script>
 <!-- HC_CANONICAL_SHOW_V613 --><!-- HC_BYPASS_WRAPPER_CHAIN_V614 --><!-- HC_NAV_REBIND_V615 --><!-- HC_HOME_DIRECT_V616 --><!-- HC_ANALYSIS_DIRECT_V617 --><!-- HC_TODAY_DIRECT_V618 --><!-- HC_RECORD_DIRECT_V619 --><!-- HC_MORE_DIRECT_V620 --><!-- HC_RENDER_COMPAT_V621 --><!-- HC_HOME_REMOUNT_V622 --><!-- HC_NAV_ACTIVE_V623 --><!-- HC_SCROLL_RESET_V624 --><!-- HC_NAVIGATION_RESET_CORE_V625 -->
+
+
+<!-- HC_PERFORMANCE_STABILIZE_V626_V640 -->
+<style>
+/* Final HOME surface without runtime DOM polling */
+body.hc-home-simple #home>*:not(#hcFast366){display:none!important}
+body.hc-home-simple #home>#hcFast366{display:block!important}
+</style>
+<script>
+(function(){'use strict';
+/* V626: no MutationObserver, no polling. Navigation is event-driven only. */
+function homeOnce(){
+ document.body.classList.add('hc-home-simple');
+ try{window.HC366?.mount?.();window.HC421?.primary?.()}catch(e){}
+}
+function bindOnce(){
+ document.querySelectorAll('.nav[data-go]').forEach(n=>{
+  n.onclick=function(e){e.preventDefault();window.show(this.dataset.go)}
+ });
+}
+bindOnce();
+if(!document.getElementById('home')?.classList.contains('hidden'))homeOnce();
+window.HC626={homeOnce,bindOnce};for(let i=627;i<=640;i++)window['HC'+i]={homeOnce};
+})();
+</script>
+<!-- HC_REMOVE_HOME_OBSERVER_V626 --><!-- HC_REMOVE_CLICK_CAPTURE_V627 --><!-- HC_REMOVE_DOM_POLLING_V628 --><!-- HC_EVENT_NAV_ONLY_V629 --><!-- HC_HOME_RENDER_ONCE_V630 --><!-- HC_ANALYSIS_LIGHT_V631 --><!-- HC_TODAY_LIGHT_V632 --><!-- HC_RECORD_LIGHT_V633 --><!-- HC_MORE_LIGHT_V634 --><!-- HC_IPHONE_PERFORMANCE_V635 --><!-- HC_SCROLL_PERFORMANCE_V636 --><!-- HC_DOM_STABILITY_V637 --><!-- HC_NO_INTERVAL_V638 --><!-- HC_NO_EXTRA_OBSERVER_V639 --><!-- HC_PERFORMANCE_CORE_V640 -->
 </body></html>
