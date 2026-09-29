@@ -1370,4 +1370,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <!-- HC_TODAY_GUIDE_V121 --><!-- HC_TODAY_STATE_V122 --><!-- HC_TODAY_SCHEDULE_V123 --><!-- HC_TODAY_FOCUS_V124 --><!-- HC_TODAY_RECORD_V125 --><!-- HC_TODAY_NEXT_V126 -->
+
+
+<!-- HC_TODAY_ADAPTER_V127_V132 -->
+<style>
+#hcAdapt127{position:fixed;inset:0;z-index:10006;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcAdapt127 .aw{max-width:720px;margin:auto}.ac{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.atag{font-size:10px;font-weight:950;color:#b8ff45}.ain{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:10px}.agrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.abtn{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.aline{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.asmall{font-size:11px;opacity:.72}</style>
+<div id="hcAdapt127"><div class="aw" id="hcAdapt127b"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function base(){let f=L('hc_foundation_v2',{}),c=window.HC64?.context?.()||{};return{people:+f.attendance||18,gk:+f.gkToday||0,min:+f.plannedMinutes||100,focus:c.focus||'現在の優先課題'}}
+function plan(x){let warm=Math.max(8,Math.round(x.min*.12)),main=Math.max(20,Math.round(x.min*.55)),game=Math.max(12,x.min-warm-main);let format=x.people<=10?'少人数・反復回数を増やす':x.people<=16?'3〜5人単位の局面ゲーム':'複数グループで同時進行';let gk=x.gk<1?'GKなし：ゴール条件をゾーン通過・ターゲットへ変更':x.gk===1?'GK1名：GKを固定し、他グループはターゲットゴール':'GKあり：実戦的フィニッシュまで実施';return{warm,main,game,format,gk,load:x.min<=60?'内容を絞り、説明時間を短くする':x.min>=110?'高強度ブロック間に回復を入れる':'通常負荷'}}
+function open(){let x=base();render(x);document.getElementById('hcAdapt127').style.display='block'}
+function render(x){let p=plan(x),b=document.getElementById('hcAdapt127b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="atag">今日の練習を調整</div><h2>条件が変わっても目的は変えない</h2></div><button onclick="HC127.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="ac"><div class="atag">今日の条件</div><div class="agrid"><div>人数<input id="ap127" class="ain" type="number" value="${x.people}"></div><div>GK<input id="ag127" class="ain" type="number" value="${x.gk}"></div></div><div>練習時間（分）<input id="am127" class="ain" type="number" value="${x.min}"></div><button class="abtn" onclick="HC127.change()">この条件で調整</button></div><div class="ac"><div class="atag">今日の重点</div><h3>${E(x.focus)}</h3><div class="asmall">人数や時間が変わっても、この目的は維持します。</div></div><div class="ac"><div class="atag">おすすめ構成</div><div class="aline"><b>導入 ${p.warm}分</b><br>認知・判断を含むウォームアップ</div><div class="aline"><b>重点練習 ${p.main}分</b><br>${E(p.format)}</div><div class="aline"><b>ゲーム ${p.game}分</b><br>重点行動がゲームで現れるか確認</div></div><div class="ac"><div class="atag">条件への対応</div><div>${E(p.gk)}</div><div class="aline">${E(p.load)}</div></div><div class="ac"><div class="atag">観察すること</div><b>成功した回数だけでなく「何を見て、その判断をしたか」</b><div class="asmall">練習後はKPI（評価指標）と選手の気づきを記録します。</div></div><button class="abtn" onclick="HC127.goToday()">今日の練習へ</button><button class="abtn" style="background:#17252b;color:#eef6f2" onclick="HC127.close()">閉じる</button>`}
+function change(){let x=base();x.people=Math.max(1,+document.getElementById('ap127').value||1);x.gk=Math.max(0,+document.getElementById('ag127').value||0);x.min=Math.max(20,+document.getElementById('am127').value||20);render(x)}
+function close(){document.getElementById('hcAdapt127').style.display='none'}function goToday(){close();if(window.show)show('today')}
+window.HC127={open,close,change,goToday};window.HC128={plan};window.HC129={plan};window.HC130={plan};window.HC131={plan};window.HC132={plan};
+})();
+</script>
+<!-- HC_TODAY_CONTEXT_V127 --><!-- HC_PEOPLE_ADAPT_V128 --><!-- HC_GK_ADAPT_V129 --><!-- HC_TIME_ADAPT_V130 --><!-- HC_SESSION_STRUCTURE_V131 --><!-- HC_OBSERVE_V132 -->
+<script>
+(function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcAdaptEntry127'))return;let b=document.createElement('button');b.id='hcAdaptEntry127';b.className='hgBtn';b.textContent='人数・GK・時間に合わせて調整';b.onclick=()=>HC127.open();h.querySelector('.hgCard')?.appendChild(b)};function r(){setTimeout(add,100);setTimeout(add,300)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
+</script>
 </body></html>
