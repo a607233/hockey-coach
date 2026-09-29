@@ -1478,4 +1478,25 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <!-- HC_MEMORY_MATCH_V146 --><!-- HC_MEMORY_REASON_V147 --><!-- HC_MEMORY_ADJUST_V148 --><!-- HC_MEMORY_PLAYER_VOICE_V149 --><!-- HC_MEMORY_START_V150 --><!-- HC_MEMORY_LOOP_V151 -->
+
+
+<!-- HC_TEAM_TREND_V152_V158 -->
+<style>
+#hcTrend152{position:fixed;inset:0;z-index:10009;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcTrend152 .tw{max-width:720px;margin:auto}.tc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.tt{font-size:10px;font-weight:950;color:#b8ff45}.tstat{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.tbox{background:#081216;border-radius:12px;padding:10px;text-align:center}.tbig{font-size:21px;font-weight:950}.tline{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.tbtn{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.ts{font-size:11px;opacity:.72}</style>
+<div id="hcTrend152"><div class="tw" id="hcTrend152b"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])),avg=(a,k)=>a.length?(a.reduce((s,x)=>s+(+x[k]||0),0)/a.length).toFixed(1):'—';
+function data(){let a=L('hc_practice_learning_v145',[]);if(!Array.isArray(a))a=[];let cut=Date.now()-28*864e5,recent=a.filter(x=>new Date(x.createdAt).getTime()>=cut);let focuses={};recent.forEach(x=>{let f=x.focus||'未分類';(focuses[f]??=[]).push(x)});return{all:a,recent,focuses}}
+function insight(d){if(!d.recent.length)return['まだ4週間の振り返りデータがありません。'];let out=[],b=+avg(d.recent,'behavior'),t=+avg(d.recent,'transfer');if(b>=4)out.push('狙った行動は比較的よく現れています。');if(b&&b<3)out.push('狙った行動の出現が少なめです。制約設定を見直す候補です。');if(t&&t<3)out.push('練習からゲームへのつながりが弱めです。ゲームに近い情報・判断を増やす候補です。');if(Object.keys(d.focuses).length<=1)out.push('扱う重点が偏っています。分析結果と照らして、最近扱えていない原則がないか確認しましょう。');return out.length?out:['大きな偏りはまだ見えていません。データを蓄積して傾向を確認します。']}
+function open(){let d=data(),b=document.getElementById('hcTrend152b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="tt">チームの成長・直近4週間</div><h2>練習の積み上がりを見る</h2></div><button onclick="HC152.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="tc"><div class="tstat"><div class="tbox"><div class="tbig">${d.recent.length}</div><div class="ts">振り返り</div></div><div class="tbox"><div class="tbig">${avg(d.recent,'behavior')}</div><div class="ts">行動の出現</div></div><div class="tbox"><div class="tbig">${avg(d.recent,'transfer')}</div><div class="ts">ゲームへの転移</div></div></div></div><div class="tc"><div class="tt">最近扱った重点</div>${Object.entries(d.focuses).length?Object.entries(d.focuses).sort((a,b)=>b[1].length-a[1].length).map(([f,a])=>`<div class="tline"><b>${E(f)}</b><br>${a.length}回・行動 ${avg(a,'behavior')}/5・転移 ${avg(a,'transfer')}/5</div>`).join(''):'<div class="tline">まだ記録がありません。</div>'}</div><div class="tc"><div class="tt">今見えていること</div>${insight(d).map(x=>`<div class="tline">${E(x)}</div>`).join('')}<div class="ts">これは成長の断定ではなく、練習記録から見える傾向です。試合分析・KPI・選手の声と合わせて判断します。</div></div><button class="tbtn" onclick="HC152.close()">閉じる</button>`;document.getElementById('hcTrend152').style.display='block'}
+function close(){document.getElementById('hcTrend152').style.display='none'}
+window.HC152={open,close,data};window.HC153={data};window.HC154={data};window.HC155={data};window.HC156={data};window.HC157={data};window.HC158={data};
+})();
+</script>
+<!-- HC_4WEEK_VIEW_V152 --><!-- HC_BEHAVIOR_TREND_V153 --><!-- HC_TRANSFER_TREND_V154 --><!-- HC_FOCUS_COVERAGE_V155 --><!-- HC_STAGNATION_HINT_V156 --><!-- HC_PRINCIPLE_GAP_V157 --><!-- HC_GROWTH_CAUTION_V158 -->
+<script>
+(function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcTrendEntry152'))return;let b=document.createElement('button');b.id='hcTrendEntry152';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='チームの成長を見る';b.onclick=()=>HC152.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,120);setTimeout(add,320)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
+</script>
 </body></html>
