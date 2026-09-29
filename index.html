@@ -1969,4 +1969,42 @@ window.HC361={add};window.HC362={add};window.HC363={add};window.HC364={add};wind
 })();
 </script>
 <!-- HC_HOME_POSTMATCH_REVIEW_V361 --><!-- HC_POSTMATCH_PLAYER_COACH_DATA_V362 --><!-- HC_REVIEW_SIMPLE_ENTRY_V363 --><!-- HC_REVIEW_BOTTOMUP_LOOP_V364 --><!-- HC_POSTMATCH_REVIEW_CORE_V365 -->
+
+
+<!-- HC_HOME_TODAY_STATUS_RESTORE_V366R -->
+<style>
+#hcTodayStatusR{margin:12px 0}
+.htr-card{background:linear-gradient(180deg,rgba(18,31,37,.96),rgba(11,21,26,.96));border:1px solid #263a42;border-radius:18px;padding:15px;color:#f4f8f6}
+.htr-k{font-size:10px;font-weight:900;letter-spacing:1.2px;color:#d7ff39}
+.htr-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.htr-box{background:#0a1419;border:1px solid #24363e;border-radius:13px;padding:12px}
+.htr-box b{display:block;font-size:22px;margin:3px 0}.htr-box small{color:#8ea0a8}
+.htr-btn{width:100%;border:0;border-radius:10px;padding:9px;margin-top:8px;background:#17262d;color:#eef6f2;font-weight:800}
+.htr-main{width:100%;border:0;border-radius:12px;padding:12px;margin-top:10px;background:#d7ff39;color:#071014;font-weight:950}
+</style>
+<script>
+(function(){'use strict';
+const K='hc_foundation_v2';
+function get(){try{return JSON.parse(localStorage.getItem(K)||'{}')}catch(e){return{}}}
+function mount(){
+ const home=document.getElementById('home'); if(!home)return;
+ let old=document.getElementById('hcTodayStatusR'); if(old)old.remove();
+ const x=get(), attendance=Number.isFinite(+x.attendance)?+x.attendance:18,
+ roster=Number.isFinite(+x.roster)?+x.roster:18,
+ gk=Number.isFinite(+x.gkToday)?+x.gkToday:2,
+ gkRoster=Number.isFinite(+x.gkRoster)?+x.gkRoster:2,
+ mins=Number.isFinite(+x.plannedMinutes)?+x.plannedMinutes:100;
+ const d=document.createElement('div');d.id='hcTodayStatusR';
+ d.innerHTML=`<div class="htr-card"><div class="htr-k">TODAY｜今日の練習</div><div class="htr-grid"><div class="htr-box"><small>参加人数</small><b>${attendance} / ${roster}</b><small>GK ${gk} / ${gkRoster}</small><button class="htr-btn" id="htrPeople">人数・GKを変更</button></div><div class="htr-box"><small>予定時間</small><b>${mins}<span style="font-size:12px"> 分</span></b><small>今日の練習時間</small><button class="htr-btn" id="htrTime">時間を変更</button></div></div><button class="htr-main" id="htrToday">今日の練習を開く</button></div>`;
+ const anchor=home.querySelector('.hero')||home.firstElementChild;
+ if(anchor)anchor.insertAdjacentElement('afterend',d);else home.prepend(d);
+ d.querySelector('#htrPeople').onclick=()=>{if(window.HC2?.people)HC2.people();};
+ d.querySelector('#htrTime').onclick=()=>{if(window.HC2?.time)HC2.time();};
+ d.querySelector('#htrToday').onclick=()=>show('today');
+}
+setTimeout(mount,180);
+window.HCR366={mount,get};
+})();
+</script>
+<!-- HC_HOME_TODAY_STATUS_RESTORE_CORE_V366R -->
 </body></html>
