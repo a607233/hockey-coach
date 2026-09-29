@@ -1573,4 +1573,38 @@ const oldShow=window.show;window.show=function(id){oldShow(id);if(id==='identity
 })();
 </script>
 <!-- HC_IDENTITY_FORM_V174 --><!-- HC_PURPOSE_EDIT_V175 --><!-- HC_PHILOSOPHY_EDIT_V176 --><!-- HC_GAMEMODEL_EDIT_V177 --><!-- HC_IDENTITY_SAFE_SAVE_V178 --><!-- HC_IDENTITY_REFRESH_V179 -->
+
+
+<!-- HC_IDENTITY_CLEAN_V180_V184 -->
+<style>
+#identity #hcIdentityEditAll174{margin:0 0 10px!important;height:48px!important;border-radius:14px!important;font-size:14px!important}
+#identity .identityHero .v3topbtn,#identity .identityHero button[onclick*="editPurpose"],
+#identity button[onclick*="addPhilo"],#identity button[onclick*="editPhilo"],
+#identity button[onclick*="editGame"]{display:none!important}
+#identity .identityHero{margin-top:0}
+</style>
+<script>
+(function(){'use strict';
+function clean(){let s=document.getElementById('identity');if(!s)return;let master=document.getElementById('hcIdentityEditAll174');if(master){master.textContent='編集';master.style.width='auto';master.style.padding='0 22px';master.style.margin='0 0 10px auto';master.style.display='block'}s.querySelectorAll('button').forEach(b=>{let o=b.getAttribute('onclick')||'';if(/HC3\.(editPurpose|addPhilo|editPhilo|editGame)/.test(o))b.style.display='none'})}
+const old=window.show;window.show=function(id){old(id);if(id==='identity')setTimeout(clean,60)};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(clean,400));else setTimeout(clean,400);
+window.HC180={clean};window.HC181={clean};window.HC182={clean};window.HC183={clean};window.HC184={clean};
+})();
+</script>
+<!-- HC_IDENTITY_SINGLE_EDIT_V180 --><!-- HC_IDENTITY_HIDE_DUPLICATES_V181 --><!-- HC_IDENTITY_MOBILE_CLEAN_V182 --><!-- HC_IDENTITY_VISUAL_POLISH_V183 --><!-- HC_IDENTITY_ONE_ACTION_V184 -->
+
+<!-- HC_PRIORITY_RADAR_V185_V190 -->
+<style>
+#hcRadar185{position:fixed;inset:0;z-index:10021;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcRadar185 .rw{max-width:720px;margin:auto}.rc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.rt{font-size:10px;font-weight:950;color:#b8ff45}.rl{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.rb{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.rs{font-size:11px;opacity:.72}</style>
+<div id="hcRadar185"><div class="rw" id="hcRadar185b"></div></div>
+<script>
+(function(){'use strict';const E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function candidates(){let names=Object.keys(window.DATA?.clusters||{}),out=[];names.forEach(n=>{let v=window.HC166?.view?.(n);if(!v)return;let a=v.analysis,p=v.practice,last=a[a.length-1],prev=a[a.length-2],days=p.length?Math.floor((Date.now()-new Date(p[p.length-1].createdAt).getTime())/864e5):999;let delta=last&&prev?last.avg-prev.avg:null,reason=[];if(!last)reason.push('試合分析がまだ少ない');else if(last.avg<3)reason.push('最新の試合評価が3未満');if(delta!==null&&delta<=0)reason.push('直近の試合評価が改善していない');if(days>=14)reason.push('最近14日以上この重点を扱っていない');if(reason.length)out.push({name:n,last:last?.avg,delta,days,reason})});return out.slice(0,6)}
+function open(){let a=candidates(),b=document.getElementById('hcRadar185b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="rt">次週の重点候補</div><h2>見落としや停滞を探す</h2></div><button onclick="HC185.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="rc">${a.length?a.map(x=>`<div class="rl"><b>${E(x.name)}</b>${x.last?`<br>最新分析 ${x.last.toFixed(1)}/5`:''}<br><span class="rs">${x.reason.map(E).join('・')}</span></div>`).join(''):'<div class="rl">今のデータでは強い注意候補はありません。</div>'}<div class="rs">候補は「次にやるべき答え」ではありません。試合映像・KPI・選手の声・対戦相手を合わせてコーチが決めます。</div></div><button class="rb" onclick="HC185.analysis()">分析を確認する</button><button class="rb" style="background:#17252b;color:#eef6f2" onclick="HC185.close()">閉じる</button>`;document.getElementById('hcRadar185').style.display='block'}
+function close(){document.getElementById('hcRadar185').style.display='none'}function analysis(){close();if(window.show)show('analysis')}window.HC185={open,close,analysis,candidates};window.HC186={candidates};window.HC187={candidates};window.HC188={candidates};window.HC189={candidates};window.HC190={candidates};
+})();
+</script>
+<!-- HC_PRIORITY_CANDIDATES_V185 --><!-- HC_STALE_PRINCIPLE_V186 --><!-- HC_STAGNATION_V187 --><!-- HC_LOW_MATCH_SCORE_V188 --><!-- HC_COACH_DECISION_V189 --><!-- HC_NEXT_WEEK_RADAR_V190 -->
+<script>
+(function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcRadarEntry185'))return;let b=document.createElement('button');b.id='hcRadarEntry185';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='次週の重点候補を見る';b.onclick=()=>HC185.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,160);setTimeout(add,360)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
+</script>
 </body></html>
