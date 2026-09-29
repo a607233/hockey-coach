@@ -2973,4 +2973,78 @@ setTimeout(mount,2600);
 </script>
 <!-- /HC_NEXT_TRAINING_ENGINE_V1 -->
 
+
+<!-- HC_NEXT_TRAINING_ENGINE_V2 -->
+<style>
+#hcNextTrainingV2{margin:12px 0 100px}.nt2{background:linear-gradient(180deg,#101d22,#091317);border:1px solid #30464e;border-radius:20px;padding:16px;color:#eef6f2}
+.nt2-k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.nt2-h{font-size:22px;font-weight:950;margin:5px 0}.nt2-s{font-size:12px;color:#94a6ad;line-height:1.55}
+.nt2-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.nt2-stat{background:#071014;border:1px solid #293e46;border-radius:13px;padding:10px}.nt2-stat b{display:block;font-size:18px}.nt2-stat small{font-size:10px;color:#91a3aa}
+.nt2-card{margin-top:10px;background:#071014;border:1px solid #293e46;border-radius:15px;padding:12px}.nt2-row{display:flex;justify-content:space-between;gap:10px;align-items:start}.nt2-score{font-size:27px;font-weight:950;color:#d7ff39}
+.nt2-bar{height:7px;background:#16252b;border-radius:99px;overflow:hidden;margin:7px 0}.nt2-fill{height:100%;background:#d7ff39;border-radius:99px}.nt2-tag{display:inline-block;margin:3px 3px 0 0;padding:5px 7px;border:1px solid #3a5058;border-radius:999px;font-size:10px}
+.nt2-why{margin-top:8px;padding:9px 10px;border-left:3px solid #d7ff39;background:#0c171b;border-radius:8px;font-size:11px;color:#c5d1d4;line-height:1.55}
+.nt2-btn{width:100%;margin-top:10px;border:0;border-radius:12px;padding:12px;background:#d7ff39;color:#071014;font-weight:950}.nt2-sub{width:100%;margin-top:7px;border:1px solid #354b54;border-radius:12px;padding:10px;background:#15242a;color:#fff;font-weight:850}
+@media(max-width:560px){.nt2-grid{grid-template-columns:1fr 1fr}.nt2-grid .nt2-stat:last-child{grid-column:1/-1}}
+</style>
+<script>
+(function(){'use strict';
+const AREAS={
+ '攻→守':{theme:'ボールロスト後の即時奪回',principles:['ロスト後4秒で相手の前進を止める','ボール周辺を即時圧縮する','中央への出口を消す'],kpis:['4秒以内奪回率','被カウンター数','中央突破を許した回数'],words:['ロスト','4秒','即時奪回','被カウンター','攻守転換']},
+ '攻撃':{theme:'前進してサークルへ侵入する',principles:['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る'],kpis:['前進成功率','サークル侵入回数','決定機数'],words:['前進','サークル','攻撃','幅','深さ','得点']},
+ '守備':{theme:'中央を守りながら狙った方向へ誘導して奪う',principles:['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','2nd・3rd DFが中央を閉じて連動する'],kpis:['中央突破阻止率','狙った方向への誘導率','奪取回数'],words:['守備','中央','プレス','失点','被シュート','1st df']},
+ '守→攻':{theme:'奪った瞬間の前進判断',principles:['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる'],kpis:['奪取後の前進成功率','6秒以内シュート','保持への切替成功率'],words:['守→攻','守攻','奪取後','奪って前進','トランジション']}
+};
+function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
+function arrays(keys){let a=[];keys.forEach(k=>{let v=safe(k,[]);if(Array.isArray(v))a=a.concat(v)});return a}
+function allData(){return arrays(['hc_records','hc_training_records','hc_history','hc_session_history','hc_match_records','hc_analyses','hc_analysis','hc_match_analysis','hc_growth_analysis'])}
+function dateOf(x){let v=x?.date||x?.created_at||x?.createdAt||x?.timestamp||'';let d=new Date(v);return isNaN(d)?null:d}
+function ageDays(x){let d=dateOf(x);return d?Math.max(0,(Date.now()-d.getTime())/86400000):999}
+function stringify(x){try{return JSON.stringify(x).toLowerCase()}catch(e){return ''}}
+function numericPairs(obj,prefix='',out=[]){
+ if(!obj||typeof obj!=='object')return out;
+ Object.entries(obj).forEach(([k,v])=>{let name=(prefix+' '+k).trim();if(typeof v==='number'&&isFinite(v))out.push([name,v]);else if(v&&typeof v==='object')numericPairs(v,name,out)});
+ return out
+}
+function scoreArea(name,data){
+ const A=AREAS[name];let score=20,reasons=[],mentions=0,recent=0,last=999,kpiSignal=0;
+ data.forEach(x=>{let t=stringify(x),age=ageDays(x),hit=A.words.some(w=>t.includes(w.toLowerCase()));
+   if(hit){mentions++;last=Math.min(last,age); if(age<=14)recent++; score+=age<=14?7:3}
+   numericPairs(x).forEach(([k,v])=>{let lk=k.toLowerCase();if(A.kpis.some(q=>lk.includes(q.toLowerCase().replace('率','')))){ if(v<50){score+=8;kpiSignal++} }});
+ });
+ // 未実施期間：最近扱っていない局面を少し押し上げる
+ if(last>21){score+=18;reasons.push('最近3週間以上、関連する記録が少ない')}
+ else if(last>14){score+=10;reasons.push('最近2週間、扱う量が少なめ')}
+ else if(last<7){reasons.push('直近の記録に関連課題がある')}
+ if(recent>=2)reasons.push('直近14日で関連する課題記録が複数ある');
+ if(kpiSignal)reasons.push('関連KPIに改善余地がある');
+ if(!reasons.length)reasons.push('ゲームモデル上の重要テーマとして継続確認');
+ return {name,score:Math.min(99,score),mentions,recent,last,reasons,A}
+}
+function rank(){let d=allData();return Object.keys(AREAS).map(n=>scoreArea(n,d)).sort((a,b)=>b.score-a.score)}
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function mount(){
+ const host=document.getElementById('analysis')||document.getElementById('home');if(!host)return;
+ let old1=document.getElementById('hcNextTrainingV1');if(old1)old1.style.display='none';
+ let old=document.getElementById('hcNextTrainingV2');if(old)old.remove();
+ const rs=rank(),top=rs[0],data=allData(),recent=data.filter(x=>ageDays(x)<=14).length;
+ const d=document.createElement('div');d.id='hcNextTrainingV2';
+ d.innerHTML=`<div class="nt2"><div class="nt2-k">NEXT TRAINING ENGINE V2</div><div class="nt2-h">次に、何を伸ばす？</div><div class="nt2-s">最近の記録・KPI・取り組み頻度を合わせて、次の練習候補を整理します。</div>
+ <div class="nt2-grid"><div class="nt2-stat"><small>参照データ</small><b>${data.length}</b><small>records</small></div><div class="nt2-stat"><small>直近14日</small><b>${recent}</b><small>records</small></div><div class="nt2-stat"><small>優先候補</small><b>${esc(top.name)}</b><small>phase</small></div></div>
+ ${rs.map((r,i)=>`<div class="nt2-card"><div class="nt2-row"><div><div class="nt2-k">${i===0?'TOP PRIORITY':'CANDIDATE '+(i+1)}</div><b>${esc(r.name)}｜${esc(r.A.theme)}</b></div><div class="nt2-score">${r.score}</div></div><div class="nt2-bar"><div class="nt2-fill" style="width:${r.score}%"></div></div><div>${r.A.principles.map(p=>`<span class="nt2-tag">${esc(p)}</span>`).join('')}</div><div class="nt2-why"><b>WHY｜なぜ？</b><br>${r.reasons.map(z=>'・'+esc(z)).join('<br>')}</div>${i===0?'<button class="nt2-btn" data-use="'+esc(r.name)+'">この課題から今日の練習を作る</button>':''}</div>`).join('')}
+ <button class="nt2-sub" id="nt2Refresh">最新データで再計算</button></div>`;
+ host.prepend(d);
+ d.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>apply(b.dataset.use));
+ document.getElementById('nt2Refresh').onclick=mount;
+}
+function apply(name){
+ const A=AREAS[name];if(!A)return;
+ localStorage.setItem('hc_today_v21',JSON.stringify({theme:A.theme,duration:90,cat:name,principles:A.principles}));
+ let old=safe('hc_today_v2',{});old.theme=A.theme;old.duration=90;old.principles=A.principles;old.kpis=A.kpis;localStorage.setItem('hc_today_v2',JSON.stringify(old));
+ if(typeof window.show==='function')window.show('today');setTimeout(()=>window.HCTodayV21?.mount?.(),120)
+}
+const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);if(id==='analysis'||id==='home')setTimeout(mount,150);return r};
+window.HCNextTrainingV2={mount,rank,apply};setTimeout(mount,3000);
+})();
+</script>
+<!-- /HC_NEXT_TRAINING_ENGINE_V2 -->
+
 </body></html>
