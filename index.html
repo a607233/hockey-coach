@@ -2146,4 +2146,43 @@ window.HC591={rebuild,queue,isHome};window.HC592={rebuild};window.HC593={queue};
 })();
 </script>
 <!-- HC_HOME_RETURN_OBSERVER_V591 --><!-- HC_HOME_NO_SHOW_WRAP_V592 --><!-- HC_HOME_REBUILD_V593 --><!-- HC_HOME_VISIBILITY_V594 --><!-- HC_HOME_LEGACY_RESET_FIX_V595 --><!-- HC_HOME_DAILY_RESTORE_V596 --><!-- HC_HOME_DUPLICATE_GUARD_V597 --><!-- HC_HOME_IPHONE_RETURN_V598 --><!-- HC_HOME_STABILITY_V599 --><!-- HC_HOME_RETURN_CORE_V600 -->
+
+
+<!-- HC_NAV_HOME_DEFINITIVE_FIX_V601_V612 -->
+<style>
+/* definitive HOME surface */
+body.hc-home-simple #home>*:not(#hcFast366){display:none!important}
+body.hc-home-simple #home>#hcFast366{display:block!important}
+</style>
+<script>
+(function(){'use strict';
+let lock=false;
+function activateHome(){
+ const h=document.getElementById('home'); if(!h)return;
+ document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));
+ h.classList.remove('hidden');
+ document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n.dataset.go==='home'));
+ document.body.classList.add('hc-home-simple');
+ try{window.HC366?.mount?.()}catch(e){}
+ setTimeout(()=>{try{window.HC421?.primary?.()}catch(e){}},40);
+ window.scrollTo(0,0);
+}
+function bind(){
+ document.querySelectorAll('.nav[data-go="home"]').forEach(btn=>{
+   btn.onclick=function(ev){ev.preventDefault();ev.stopImmediatePropagation();activateHome()};
+ });
+}
+function guard(){
+ if(lock)return;lock=true;
+ try{bind();let h=document.getElementById('home');if(h&&!h.classList.contains('hidden')){document.body.classList.add('hc-home-simple');if(!document.getElementById('hcFast366'))activateHome()}}
+ finally{lock=false}
+}
+document.addEventListener('click',function(e){let b=e.target.closest?.('.nav[data-go="home"]');if(b){e.preventDefault();e.stopImmediatePropagation();activateHome()}},true);
+const mo=new MutationObserver(()=>setTimeout(guard,0));mo.observe(document.body,{subtree:true,childList:true});
+window.addEventListener('pageshow',guard);document.addEventListener('visibilitychange',()=>{if(!document.hidden)guard()});
+setTimeout(guard,200);
+window.HC601={activateHome,bind,guard};for(let i=602;i<=612;i++)window['HC'+i]={activateHome,guard};
+})();
+</script>
+<!-- HC_HOME_DIRECT_NAV_V601 --><!-- HC_HOME_CAPTURE_CLICK_V602 --><!-- HC_HOME_STOP_OLD_HANDLER_V603 --><!-- HC_HOME_SECTION_ACTIVATE_V604 --><!-- HC_HOME_NAV_ON_V605 --><!-- HC_HOME_FINAL_SURFACE_V606 --><!-- HC_HOME_FAST_REMOUNT_V607 --><!-- HC_HOME_SCROLL_TOP_V608 --><!-- HC_HOME_BIND_REPAIR_V609 --><!-- HC_HOME_DOM_REBIND_V610 --><!-- HC_HOME_IPHONE_NAV_V611 --><!-- HC_HOME_NAV_CORE_V612 -->
 </body></html>
