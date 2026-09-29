@@ -2106,4 +2106,44 @@ const old=window.HC366?.more;if(old)window.HC366.more=function(){let r=old.apply
 })();
 </script>
 <!-- HC_MORE_SEASON_V566 --><!-- HC_MORE_HEALTH_V567 --><!-- HC_MORE_CONSOLIDATE_V568 --><!-- HC_MORE_PRIMARY_V569 --><!-- HC_MORE_SECONDARY_V570 --><!-- HC_MORE_BACKUP_V571 --><!-- HC_MORE_SETTINGS_V572 --><!-- HC_MORE_STORY_V573 --><!-- HC_MORE_GROWTH_V574 --><!-- HC_MORE_CYCLE_V575 --><!-- HC_MORE_NO_DUP_V576 --><!-- HC_MORE_MOBILE_V577 --><!-- HC_MORE_JA_V578 --><!-- HC_MORE_FAST_V579 --><!-- HC_MORE_SAFE_V580 --><!-- HC_MORE_COMPAT_V581 --><!-- HC_MORE_DATA_V582 --><!-- HC_MORE_SEASON_COMMAND_V583 --><!-- HC_MORE_TEAM_STORY_V584 --><!-- HC_MORE_TEAM_GROWTH_V585 --><!-- HC_MORE_TEAM_CYCLE_V586 --><!-- HC_MORE_ADMIN_SECONDARY_V587 --><!-- HC_MORE_DAILY_FIRST_V588 --><!-- HC_MORE_POLISH_V589 --><!-- HC_PLATFORM_CORE_V590 -->
+
+
+<!-- HC_HOME_RETURN_HARD_FIX_V591_V600 -->
+<style>
+/* V591: HOME is rebuilt by legacy HC2.home(); keep only the final daily surface visible after every return */
+body.hc-home-simple #home #hcContext313,
+body.hc-home-simple #home #hcMatchQ330,
+body.hc-home-simple #home #hcSimple203,
+body.hc-home-simple #home #hcDailyHub198,
+body.hc-home-simple #home #hcHome69,
+body.hc-home-simple #home #hcCockpit64,
+body.hc-home-simple #home #hcWeek88,
+body.hc-home-simple #home #hcWeekEntry104,
+body.hc-home-simple #home #hcHome109{display:none!important}
+</style>
+<script>
+(function(){'use strict';
+let busy=false,timer=0;
+function isHome(){let h=document.getElementById('home');return !!h && (h.classList.contains('active')||getComputedStyle(h).display!=='none')}
+function rebuild(){
+ if(busy||!isHome())return; busy=true;
+ try{
+  document.body.classList.add('hc-home-simple');
+  if(window.HC366&&typeof HC366.mount==='function') HC366.mount();
+  setTimeout(()=>{try{window.HC421?.primary?.()}catch(e){}},60);
+ }finally{setTimeout(()=>busy=false,120)}
+}
+function queue(){clearTimeout(timer);timer=setTimeout(rebuild,90)}
+/* Observe screen visibility instead of wrapping window.show again. */
+const root=document.getElementById('app')||document.body;
+const mo=new MutationObserver(()=>{if(isHome())queue()});
+mo.observe(root,{subtree:true,attributes:true,attributeFilter:['class','style'],childList:true});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)queue()});
+window.addEventListener('pageshow',queue);
+window.addEventListener('hashchange',queue);
+setTimeout(queue,250);
+window.HC591={rebuild,queue,isHome};window.HC592={rebuild};window.HC593={queue};window.HC594={isHome};window.HC595={rebuild};window.HC596={rebuild};window.HC597={rebuild};window.HC598={rebuild};window.HC599={rebuild};window.HC600={rebuild};
+})();
+</script>
+<!-- HC_HOME_RETURN_OBSERVER_V591 --><!-- HC_HOME_NO_SHOW_WRAP_V592 --><!-- HC_HOME_REBUILD_V593 --><!-- HC_HOME_VISIBILITY_V594 --><!-- HC_HOME_LEGACY_RESET_FIX_V595 --><!-- HC_HOME_DAILY_RESTORE_V596 --><!-- HC_HOME_DUPLICATE_GUARD_V597 --><!-- HC_HOME_IPHONE_RETURN_V598 --><!-- HC_HOME_STABILITY_V599 --><!-- HC_HOME_RETURN_CORE_V600 -->
 </body></html>
