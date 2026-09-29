@@ -2361,4 +2361,70 @@ window.HCV1B2={open,close,render,saveSeason,stats,role};
 (function(){function mount(){let h=document.getElementById('hcCoachHomeR');if(!h||document.getElementById('hcV1B2Entry'))return;let d=document.createElement('div');d.id='hcV1B2Entry';d.className='hch-card hch-wide';d.innerHTML='<div class="hch-k">V1｜GROWTH & SEASON</div><div class="hch-v">学びをシーズンの物語にする</div><div class="hch-s">成長履歴・シーズン・OWNER / STAFF / PLAYER別HOME。</div><button class="hch-btn hch-main" onclick="HCV1B2.open()">成長・シーズンを見る</button>';h.appendChild(d)}setTimeout(mount,950);window.HCV1B2HOME={mount}})();
 </script>
 <!-- HC_V1B2_GROWTH --><!-- HC_V1B2_SEASON --><!-- HC_V1B2_OWNER_HOME --><!-- HC_V1B2_STAFF_HOME --><!-- HC_V1B2_PLAYER_HOME --><!-- HC_V1B2_LEARNING_MEMORY --><!-- HC_V1B2_ROLE_SPECIFIC --><!-- HC_V1B2_CORE -->
+
+
+<!-- HC_V1_FINAL_RELEASE -->
+<style>
+#hcV1Final{position:fixed;inset:0;z-index:10300;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcV1Final .vfwrap{max-width:760px;margin:auto}.vfcard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}
+.vfk{font-size:10px;font-weight:950;color:#d7ff39;letter-spacing:1px}.vft{font-size:18px;font-weight:900;line-height:1.4;margin:5px 0}.vfs{font-size:11px;opacity:.75;line-height:1.55}
+.vfgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vfbtn{width:100%;padding:12px;border:0;border-radius:11px;background:#d7ff39;color:#071014;font-weight:950;margin-top:8px}.vfsub{background:#17252b;color:#eef6f2}
+.vfrole{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.vfrole button{border:1px solid #40545c;background:#101d22;color:#eef6f2;border-radius:999px;padding:8px 11px}.vfrole button.on{background:#d7ff39;color:#071014;border-color:#d7ff39;font-weight:900}
+.vfok{display:inline-block;border:1px solid #3c555d;border-radius:999px;padding:5px 8px;margin:3px;font-size:10px}.vfwarn{border-color:#9c8331;color:#ffe89a}
+</style>
+<div id="hcV1Final"><div class="vfwrap" id="hcV1FinalBody"></div></div>
+<script>
+(function(){'use strict';
+const RK='hc_role_v1',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function role(){return L(RK,{role:'OWNER'}).role||'OWNER'}
+function setRole(r){S(RK,{role:r,updatedAt:new Date().toISOString()});render();applyRole()}
+function open(){render();document.getElementById('hcV1Final').style.display='block'}
+function close(){document.getElementById('hcV1Final').style.display='none'}
+function run(fn){close();setTimeout(fn,30)}
+function data(){
+ return {analysis:A('hc_analysis_history_v1').length,voice:A('hc_player_voice_v1').length,discovery:A('hc_team_discovery_v1').length,kpi:A('hc_team_kpi_v1').length,env:A('hc_learning_environment_r520').length,review:A('hc_three_lens_review_v360').length}
+}
+function render(){
+ let b=document.getElementById('hcV1FinalBody'),r=role(),d=data(),q=L('hc_meeting_question_v288',null),f=L('hc_week_focus_decision_v191',null),season=L('hc_season_v1',{});
+ let roleButtons=['OWNER','STAFF','PLAYER'].map(x=>`<button class="${r===x?'on':''}" onclick="HCV1.setRole('${x}')">${x}</button>`).join('');
+ let content='';
+ if(r==='PLAYER'){
+  content=`<div class="vfcard"><div class="vfk">PLAYER</div><div class="vft">${E(q?.question||'今日の問いを確認しよう')}</div><div class="vfs">今週の重点：${E(f?.focus||'未設定')}</div><button class="vfbtn" onclick="HCV1.run(()=>HCR521.open('quick'))">QUICK VOICE</button></div>
+  <div class="vfcard"><div class="vfk">TEAM DISCOVERY</div><div class="vft">${d.discovery} 件</div><div class="vfs">チームが発見してきたことを、次の問いにつなげます。</div><button class="vfbtn vfsub" onclick="HCV1.run(()=>HCR521.open())">学習ループを見る</button></div>`;
+ } else if(r==='STAFF'){
+  content=`<div class="vfgrid"><div class="vfcard"><div class="vfk">ANALYZE</div><div class="vft">分析 → WHY</div><button class="vfbtn" onclick="HCV1.run(()=>HCR431.open())">判断フロー</button></div><div class="vfcard"><div class="vfk">DESIGN</div><div class="vft">学習環境</div><button class="vfbtn" onclick="HCV1.run(()=>HCR471.open())">環境をつくる</button></div></div>
+  <div class="vfcard"><div class="vfk">PRINCIPLE & KPI</div><div class="vft">${d.kpi} KPI</div><div class="vfs">分析を原理原則とKPIへ接続。</div><button class="vfbtn vfsub" onclick="HCV1.run(()=>HCV1B1.open())">V1 CORE</button></div>
+  <div class="vfcard"><div class="vfk">MATCH → NEXT</div><div class="vfs">練習の問いを試合で確かめ、PLAYER × COACH × DATAから次の問いへ。</div><button class="vfbtn vfsub" onclick="HCV1.run(()=>HCR521.open())">学習ループ</button></div>`;
+ } else {
+  content=`<div class="vfcard"><div class="vfk">OWNER</div><div class="vft">${E(season.name||'チーム全体を管理')}</div><div class="vfs">シーズン・成長・役割を俯瞰します。</div><button class="vfbtn" onclick="HCV1.run(()=>HCV1B2.open())">成長・シーズン</button></div>
+  <div class="vfgrid"><div class="vfcard"><div class="vfk">ANALYSIS</div><div class="vft">${d.analysis}</div></div><div class="vfcard"><div class="vfk">DISCOVERY</div><div class="vft">${d.discovery}</div></div><div class="vfcard"><div class="vfk">ENVIRONMENT</div><div class="vft">${d.env}</div></div><div class="vfcard"><div class="vfk">KPI</div><div class="vft">${d.kpi}</div></div></div>`;
+ }
+ b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="vfk">HOCKEY COACH</div><h2 style="margin:4px 0">Ver.1</h2></div><button onclick="HCV1.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div>
+ <div class="vfcard"><div class="vfk">ROLE VIEW</div><div class="vfrole">${roleButtons}</div><div class="vfs" style="margin-top:8px">現在：${r}</div></div>${content}
+ <div class="vfcard"><div class="vfk">V1 STATUS</div><span class="vfok">HOME</span><span class="vfok">分析32</span><span class="vfok">WHY</span><span class="vfok">原理原則</span><span class="vfok">KPI</span><span class="vfok">学習環境</span><span class="vfok">QUICK VOICE</span><span class="vfok">MATCH</span><span class="vfok">GROWTH</span><span class="vfok">SEASON</span><div class="vfs" style="margin-top:9px">Ver.1の機能範囲はここで固定します。新機能はVer.2候補へ。</div></div>
+ <div class="vfcard"><div class="vfk">SECURITY STATUS</div><span class="vfok vfwarn">PROTOTYPE</span><div class="vfs" style="margin-top:8px">現在の役割切替は画面設計の確認用です。安全な本番運用にはログイン、サーバー側権限、チーム分離、クラウドDB、バックアップが必要です。氏名・パスワード・APIキー等の機密情報は入力しないでください。</div></div>
+ <button class="vfbtn vfsub" onclick="HCV1.close()">HOMEへ戻る</button>`;
+}
+function applyRole(){
+ let r=role();
+ document.documentElement.dataset.hcRole=r.toLowerCase();
+}
+window.HCV1={open,close,render,setRole,role,run,applyRole,data};
+setTimeout(applyRole,50);
+})();
+</script>
+<script>
+(function(){'use strict';
+function finalizeHome(){
+ let h=document.getElementById('hcCoachHomeR');if(!h)return;
+ ['hcV1B1Entry','hcV1B2Entry'].forEach(id=>{let x=document.getElementById(id);if(x)x.style.display='none'});
+ if(document.getElementById('hcV1FinalEntry'))return;
+ let d=document.createElement('div');d.id='hcV1FinalEntry';d.className='hch-card hch-wide';
+ d.innerHTML='<div class="hch-k">HOCKEY COACH｜VER.1</div><div class="hch-v">チームの学びを循環させる</div><div class="hch-s">PURPOSE → GAME MODEL → MATCH → ANALYZE → WHY → QUESTION → DESIGN → DISCOVER → GROW → NEXT</div><button class="hch-btn hch-main" onclick="HCV1.open()">Ver.1 ダッシュボード</button>';
+ h.prepend(d);
+}
+setTimeout(finalizeHome,1100);window.HCV1HOME={finalizeHome};
+})();
+</script>
+<!-- HC_V1_FINAL_HOME --><!-- HC_V1_FINAL_OWNER --><!-- HC_V1_FINAL_STAFF --><!-- HC_V1_FINAL_PLAYER --><!-- HC_V1_FINAL_UI_CONSOLIDATION --><!-- HC_V1_FINAL_NO_NEW_FEATURES --><!-- HC_V1_FINAL_SECURITY_DISCLOSURE --><!-- HC_V1_FINAL_NO_OBSERVER --><!-- HC_V1_FINAL_NO_SHOW_WRAP --><!-- HC_V1_FINAL_RELEASE_CORE -->
 </body></html>
