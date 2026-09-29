@@ -2674,4 +2674,44 @@ setTimeout(forceQrInvite,2500);
 </script>
 <!-- /HC_STABLE_PHILOSOPHY_HOME_FINAL -->
 
+
+<!-- HC_PHILOSOPHY_IN_MORE_FINAL_V1 -->
+<script>
+(function(){
+'use strict';
+function addPhilosophyToMore(){
+  const body=document.getElementById('hcV2MoreBody');
+  if(!body || document.getElementById('hcMorePhilosophyBtn')) return;
+  const cards=[...body.querySelectorAll('.tmc')];
+  const target=cards.find(c=>(c.textContent||'').includes('原理原則・トレーニング')) || cards[0];
+  if(!target)return;
+  const grid=target.querySelector('.m2grid') || target;
+  const btn=document.createElement('button');
+  btn.id='hcMorePhilosophyBtn';
+  btn.className='m2card';
+  btn.innerHTML='<b>フィロソフィー</b><small>チームの目的・価値観・ゲームモデル</small>';
+  btn.onclick=function(){
+    window.HCV2MORE?.close?.();
+    setTimeout(function(){
+      if(window.HC174 && typeof window.HC174.open==='function') window.HC174.open();
+      else if(typeof window.show==='function') window.show('identity');
+    },50);
+  };
+  grid.prepend(btn);
+}
+const prev=window.HCV2MORE?.open;
+if(prev){
+  window.HCV2MORE.open=function(){
+    const r=prev.apply(this,arguments);
+    setTimeout(addPhilosophyToMore,40);
+    setTimeout(addPhilosophyToMore,180);
+    return r;
+  };
+}
+window.HCMorePhilosophy={mount:addPhilosophyToMore};
+setTimeout(addPhilosophyToMore,2500);
+})();
+</script>
+<!-- /HC_PHILOSOPHY_IN_MORE_FINAL_V1 -->
+
 </body></html>
