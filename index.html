@@ -1637,4 +1637,43 @@ window.HC198={mount};window.HC199={mount};window.HC200={mount};window.HC201={mou
 })();
 </script>
 <!-- HC_DAILY_HUB_V198 --><!-- HC_HOME_FOUR_ACTIONS_V199 --><!-- HC_WEEK_FOCUS_HOME_V200 --><!-- HC_TRAIN_REFLECT_HOME_V201 --><!-- HC_GROWTH_HOME_V202 -->
+
+
+<!-- HC_HOME_FOCUS_MODE_V203_V209 -->
+<style>
+body.hc-home-simple #home #hcCockpit64,
+body.hc-home-simple #home #hcHome69,
+body.hc-home-simple #home #hcWeek88,
+body.hc-home-simple #home #hcSchedule93,
+body.hc-home-simple #home #hcWeekEntry104,
+body.hc-home-simple #home #hcHome109,
+body.hc-home-simple #home #hcMemory146,
+body.hc-home-simple #home #hcTrendEntry152,
+body.hc-home-simple #home #hcTransferEntry159,
+body.hc-home-simple #home #hcEvidenceEntry173,
+body.hc-home-simple #home #hcRadarEntry185{display:none!important}
+#hcSimple203{margin:10px 0}.hs203{background:#0b171c;border:1px solid #263a42;border-radius:18px;padding:14px}.hs203tag{font-size:10px;font-weight:950;color:#b8ff45}.hs203row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.hs203row button{padding:12px 7px;border:0;border-radius:11px;background:#17252b;color:#eef6f2;font-weight:850}.hs203row button.main{background:#b8ff45;color:#071014}.hs203small{font-size:11px;opacity:.72;margin-top:7px}
+</style>
+<script>
+(function(){'use strict';
+function state(){let w=window.HC191?.current?.();let sched=window.HC93?.upcoming?.()||[];let today=new Date().toISOString().slice(0,10),td=sched.find(x=>x.date===today);return{focus:w?.focus||'',today:td}}
+function mount(){document.body.classList.add('hc-home-simple');let home=document.getElementById('home');if(!home)return;let old=document.getElementById('hcSimple203');if(old)old.remove();let hub=document.getElementById('hcDailyHub198'),anchor=hub||home.firstElementChild;if(!anchor)return;let x=state(),d=document.createElement('div');d.id='hcSimple203';d.innerHTML=`<div class="hs203"><div class="hs203tag">今日やること</div><h2 style="margin:5px 0">${x.focus?'今週の重点：'+x.focus:'今週の重点を決めましょう'}</h2><div class="hs203small">${x.today?'今日の練習：'+(x.today.name||'練習')+'・'+x.today.minutes+'分':'今日の練習予定は未登録です'}</div><div class="hs203row"><button class="main" onclick="${x.focus?'HC127.open()':'HC191.open()'}">${x.focus?'今日の練習をつくる':'重点を決める'}</button><button onclick="HC139.open()">練習後に振り返る</button><button onclick="HC93.open()">予定を変更</button><button onclick="HC152.open()">成長を見る</button></div></div>`;anchor.parentNode.insertBefore(d,anchor.nextSibling);if(hub)hub.style.display='none'}
+function refresh(){setTimeout(mount,180);setTimeout(mount,450)}
+const ps=window.show;window.show=function(id){ps(id);if(id==='home')refresh()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+window.HC203={mount,state};window.HC204={mount};window.HC205={mount};window.HC206={mount};window.HC207={mount};window.HC208={mount};window.HC209={mount};
+})();
+</script>
+<!-- HC_HOME_ONE_PURPOSE_V203 --><!-- HC_HIDE_LEGACY_HOME_V204 --><!-- HC_TODAY_CONTEXT_V205 --><!-- HC_FOCUS_CONTEXT_V206 --><!-- HC_FOUR_DAILY_ACTIONS_V207 --><!-- HC_HOME_REFRESH_V208 --><!-- HC_HOME_CLEAN_V209 -->
+
+<!-- HC_WEEK_FOCUS_BRIDGE_V210_V214 -->
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}};
+function focus(){return window.HC191?.current?.()?.focus||window.HC64?.context?.()?.focus||''}
+function summary(){let f=focus(),v=f&&window.HC166?.view?.(f),p=v?.practice||[],a=v?.analysis||[];return{focus:f,practice:p.length,analysis:a.length,lastPractice:p[p.length-1]||null,lastAnalysis:a[a.length-1]||null}}
+function open(){let x=summary();if(!x.focus){window.HC191?.open?.();return}window.HC127?.open?.()}
+window.HC210={focus,summary,open};window.HC211={summary};window.HC212={summary};window.HC213={summary};window.HC214={summary};
+})();
+</script>
+<!-- HC_SELECTED_FOCUS_BRIDGE_V210 --><!-- HC_FOCUS_PRACTICE_HISTORY_V211 --><!-- HC_FOCUS_ANALYSIS_HISTORY_V212 --><!-- HC_FOCUS_DAILY_LINK_V213 --><!-- HC_FOCUS_LOOP_V214 -->
 </body></html>
