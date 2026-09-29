@@ -1851,4 +1851,37 @@ window.HC289={add};window.HC290={q};window.HC291={patch};window.HC292={add};wind
 })();
 </script>
 <!-- HC_HOME_MEETING_ENTRY_V289 --><!-- HC_HIDE_SPLIT_BOTTOMUP_V290 --><!-- HC_MEETING_QUESTION_PRIORITY_V291 --><!-- HC_MEETING_DAILY_BRIDGE_V292 --><!-- HC_MEETING_SIMPLE_UI_V293 --><!-- HC_MEETING_LOOP_V294 -->
+
+
+<!-- HC_LEARNING_HISTORY_V295_V307 -->
+<style>
+#hcLearn295{position:fixed;inset:0;z-index:10055;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcLearn295 .lw{max-width:720px;margin:auto}.lc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.lt{font-size:10px;font-weight:950;color:#b8ff45}.lb{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.lsub{background:#17252b;color:#eef6f2}.ll{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.ls{font-size:11px;opacity:.72}.lscore{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:8px}.lscore button{padding:10px 2px;border:1px solid #40545c;border-radius:9px;background:#071014;color:#fff}.lscore button.sel{background:#b8ff45;color:#071014;border-color:#b8ff45}</style>
+<div id="hcLearn295"><div class="lw" id="hcLearn295b"></div></div>
+<script>
+(function(){'use strict';
+const K='hc_team_learning_history_v307',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));let score=0;
+function arr(k){let a=L(k,[]);return Array.isArray(a)?a:[]}function latest(k){return arr(k).slice(-1)[0]||null}
+function context(){let m=latest('hc_team_meeting_v288'),q=L('hc_meeting_question_v288',null),t=L('hc_bottomup_session_v238',null)||L('hc_today_adopted_v60',null),a=latest('hc_analysis_history_v1');return{m,q,t,a}}
+function open(){score=0;render();document.getElementById('hcLearn295').style.display='block'}
+function render(){let x=context(),question=x.q?.question||x.m?.question||'まだ問いが保存されていません',focus=x.q?.focus||x.m?.focus||x.t?.focus||'重点未設定',b=document.getElementById('hcLearn295b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="lt">チームの学習履歴</div><h2>問いは試合でどう変わった？</h2></div><button onclick="HC295.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="lc"><div class="lt">1｜みんなで持った問い</div><h3>${E(focus)}</h3><div class="ll">${E(question)}</div></div><div class="lc"><div class="lt">2｜練習で試したこと</div><div class="ll">${x.t?E([x.t.space,x.t.number,x.t.rule,x.t.success].filter(Boolean).join(' / ')||'学習環境を実施'):'まだ学習環境の記録がありません'}</div></div><div class="lc"><div class="lt">3｜次の試合で確かめる</div><div class="ls">「成功したか」だけでなく、問いに対してチームの判断がどう変わったかを見ます。</div><div class="lscore">${[1,2,3,4,5].map(n=>`<button class="${score===n?'sel':''}" onclick="HC295.rate(${n})">${n}</button>`).join('')}</div><div class="ls">1 まだ見えない　3 一部で見えた　5 自然に再現できた</div></div><div class="lc"><div class="lt">4｜試合で何が見えた？</div><textarea id="lo295" class="gin" style="width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px" rows="3" placeholder="例：1st DFが遅れた時に中央保護へ切り替える場面が増えた"></textarea></div><div class="lc"><div class="lt">5｜次の問い</div><textarea id="ln295" class="gin" style="width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px" rows="3" placeholder="例：中央を守った後、いつ再び奪いに出る？"></textarea><div class="ls">同じ問いを続けても、新しい問いに進んでもOKです。</div></div><button class="lb" onclick="HC295.save()">学習履歴として保存</button><button class="lb lsub" onclick="HC295.history()">これまでの学習を見る</button><button class="lb lsub" onclick="HC295.close()">閉じる</button>`}
+function rate(n){score=n;render()}
+function save(){let x=context(),m=x.m||{},q=x.q||{},v={id:'learnhist_'+Date.now(),createdAt:new Date().toISOString(),focus:q.focus||m.focus||x.t?.focus||'',question:q.question||m.question||'',meetingId:m.id||'',sessionId:x.t?.id||'',analysisId:x.a?.id||'',matchId:x.a?.matchId||'',transferScore:score,observation:document.getElementById('lo295').value.trim(),nextQuestion:document.getElementById('ln295').value.trim(),status:'verified_by_team'};let a=arr(K);a.push(v);S(K,a);if(v.nextQuestion)S('hc_meeting_question_v288',{focus:v.focus,question:v.nextQuestion,createdAt:v.createdAt,source:'learning_history'});alert('チームの学習履歴を保存しました');close()}
+function history(){let a=arr(K).slice(-6).reverse(),b=document.getElementById('hcLearn295b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="lt">学習履歴</div><h2>問い → 練習 → 試合</h2></div><button onclick="HC295.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div>${a.length?a.map(x=>`<div class="lc"><div class="lt">${E((x.createdAt||'').slice(0,10))}｜${E(x.focus)}</div><div class="ll">${E(x.question)}</div><div class="ls">試合での再現 ${x.transferScore||'-'}/5</div>${x.observation?`<div class="ll">${E(x.observation)}</div>`:''}${x.nextQuestion?`<div class="lt" style="margin-top:10px">次の問い</div><div class="ll">${E(x.nextQuestion)}</div>`:''}</div>`).join(''):'<div class="lc">まだ学習履歴はありません。</div>'}<button class="lb lsub" onclick="HC295.open()">戻る</button>`}
+function close(){document.getElementById('hcLearn295').style.display='none'}
+window.HC295={open,close,rate,save,history,context};window.HC296={context};window.HC297={context};window.HC298={context};window.HC299={context};window.HC300={context};window.HC301={context};window.HC302={context};window.HC303={context};window.HC304={context};window.HC305={context};window.HC306={context};window.HC307={context};
+})();
+</script>
+<!-- HC_LEARNING_QUESTION_V295 --><!-- HC_LEARNING_SESSION_V296 --><!-- HC_LEARNING_MATCH_V297 --><!-- HC_TRANSFER_SCORE_V298 --><!-- HC_MATCH_OBSERVATION_V299 --><!-- HC_NEXT_QUESTION_V300 --><!-- HC_LEARNING_SAVE_V301 --><!-- HC_LEARNING_MATCH_ID_V302 --><!-- HC_LEARNING_ANALYSIS_ID_V303 --><!-- HC_LEARNING_HISTORY_VIEW_V304 --><!-- HC_LEARNING_CONTINUITY_V305 --><!-- HC_TEAM_VERIFICATION_V306 --><!-- HC_TEAM_LEARNING_HISTORY_V307 -->
+
+<!-- HC_LEARNING_HOME_V308_V312 -->
+<style>body.hc-home-simple #hcLearnEntry139{display:none!important}</style>
+<script>
+(function(){'use strict';
+function add(){let h=document.getElementById('hcSimple203');if(!h||document.getElementById('hcLearnEntry295'))return;let grid=h.querySelector('.hs203row');if(!grid)return;let b=document.createElement('button');b.id='hcLearnEntry295';b.textContent='問いを試合で検証';b.onclick=()=>HC295.open();grid.appendChild(b)}
+const m=window.HC203?.mount;if(m)window.HC203.mount=function(){let r=m.apply(this,arguments);setTimeout(add,130);return r}
+setTimeout(add,750);
+window.HC308={add};window.HC309={add};window.HC310={add};window.HC311={add};window.HC312={add};
+})();
+</script>
+<!-- HC_HOME_LEARNING_ENTRY_V308 --><!-- HC_QUESTION_MATCH_VERIFY_V309 --><!-- HC_LEARNING_SIMPLE_UI_V310 --><!-- HC_LEARNING_BOTTOMUP_LOOP_V311 --><!-- HC_LEARNING_CORE_V312 -->
 </body></html>
