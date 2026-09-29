@@ -2216,4 +2216,56 @@ window.HCR472={wire};
 })();
 </script>
 <!-- HC_ENV_TODAY_R473 --><!-- HC_ENV_PEOPLE_R474 --><!-- HC_ENV_GK_R475 --><!-- HC_ENV_TIME_R476 --><!-- HC_ENV_FOCUS_R477 --><!-- HC_ENV_QUESTION_R478 --><!-- HC_ENV_SPACE_R479 --><!-- HC_ENV_NUMBER_R480 --><!-- HC_ENV_RULE_R481 --><!-- HC_ENV_SUCCESS_R482 --><!-- HC_ENV_OBSERVE_R483 --><!-- HC_ENV_ONE_CHANGE_R484 --><!-- HC_ENV_NO_ANSWER_R485 --><!-- HC_ENV_PLAYER_DISCOVERY_R486 --><!-- HC_ENV_SAVE_R487 --><!-- HC_ENV_BOTTOMUP_COMPAT_R488 --><!-- HC_ENV_HOME_LINK_R489 --><!-- HC_ENV_DECISION_LINK_R490 --><!-- HC_ENV_NO_OBSERVER_R491 --><!-- HC_ENV_NO_NAV_WRAP_R492 --><!-- HC_ENV_NO_SHOW_WRAP_R493 --><!-- HC_ENV_MOBILE_R494 --><!-- HC_ENV_JA_R495 --><!-- HC_ENV_LIGHT_R496 --><!-- HC_ENV_STABLE_R497 --><!-- HC_ENV_COACH_DESIGN_R498 --><!-- HC_ENV_SPACE_DETAIL_R499 --><!-- HC_ENV_NUMBER_DETAIL_R500 --><!-- HC_ENV_RULE_DETAIL_R501 --><!-- HC_ENV_SUCCESS_DETAIL_R502 --><!-- HC_ENV_OBSERVATION_R503 --><!-- HC_ENV_ATTENDANCE_R504 --><!-- HC_ENV_GK_CONTEXT_R505 --><!-- HC_ENV_MINUTES_R506 --><!-- HC_ENV_QUESTION_CONTEXT_R507 --><!-- HC_ENV_FOCUS_CONTEXT_R508 --><!-- HC_ENV_SESSION_MEMORY_R509 --><!-- HC_ENV_PRACTICE_BRIDGE_R510 --><!-- HC_ENV_REFLECTION_BRIDGE_R511 --><!-- HC_ENV_TEAM_DISCOVERY_R512 --><!-- HC_ENV_ECOLOGICAL_R513 --><!-- HC_ENV_CONSTRAINTS_R514 --><!-- HC_ENV_BOTTOMUP_R515 --><!-- HC_ENV_COACH_ROLE_R516 --><!-- HC_ENV_PLAYER_ROLE_R517 --><!-- HC_ENV_COMPAT_R518 --><!-- HC_ENV_SAFE_R519 --><!-- HC_LEARNING_ENV_STUDIO_CORE_R520 -->
+
+
+<!-- HC_INTEGRATED_LEARNING_LOOP_R521_R600 -->
+<style>
+#hcLoopR{position:fixed;inset:0;z-index:10160;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcLoopR .lrw{max-width:720px;margin:auto}.lrc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}
+.lrk{font-size:10px;font-weight:950;color:#d7ff39;letter-spacing:1px}.lrv{font-size:17px;font-weight:900;line-height:1.45;margin:6px 0}.lrs{font-size:11px;opacity:.72;line-height:1.5}
+.lrb{width:100%;padding:12px;border:0;border-radius:11px;background:#d7ff39;color:#071014;font-weight:950;margin-top:8px}.lrsub{background:#17252b;color:#eef6f2}
+.lrgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lrchip{border:1px solid #40545c;background:#101d22;color:#eef6f2;border-radius:999px;padding:9px;font-size:11px}.lrchip.sel{background:#d7ff39;color:#071014;border-color:#d7ff39;font-weight:900}
+.lri{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px;margin-top:8px}
+.lrline{display:flex;gap:5px;overflow:auto;margin-top:8px}.lrline span{white-space:nowrap;border:1px solid #344950;border-radius:999px;padding:6px 8px;font-size:10px}.lrline .on{border-color:#d7ff39;color:#d7ff39}
+</style>
+<div id="hcLoopR"><div class="lrw" id="hcLoopRb"></div></div>
+<script>
+(function(){'use strict';
+const QK='hc_quick_voice_r600',MK='hc_match_learning_r600',NK='hc_next_question_r600';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]},last=k=>A(k).slice(-1)[0]||null;
+const E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+let mode='home',pick='';
+function ctx(){let q=L('hc_meeting_question_v288',null),f=L('hc_week_focus_decision_v191',null),env=last('hc_learning_environment_r520'),m=A('hc_matches_v3').filter(x=>x.date&&x.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>String(a.date).localeCompare(String(b.date)))[0];return{q,f,env,m}}
+function open(m='home'){mode=m;pick='';render();document.getElementById('hcLoopR').style.display='block'}
+function close(){document.getElementById('hcLoopR').style.display='none'}
+function head(title){return `<div style="display:flex;justify-content:space-between"><div><div class="lrk">TEAM LEARNING LOOP</div><h2 style="margin:4px 0">${title}</h2></div><button onclick="HCR521.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div>`}
+function render(){
+ let b=document.getElementById('hcLoopRb'),x=ctx();
+ if(mode==='quick'){b.innerHTML=head('QUICK VOICE｜30秒だけ')+`<div class="lrc"><div class="lrk">今日はどんな感じだった？</div><div class="lrgrid" style="margin-top:9px">${['見えた','迷った','試した','変えた'].map(v=>`<button class="lrchip ${pick===v?'sel':''}" onclick="HCR521.choose('${v}')">${v}</button>`).join('')}</div><textarea id="lrVoice" class="lri" rows="2" placeholder="一言だけ（任意）"></textarea><div class="lrs">毎回全員に書かせる機能ではありません。必要な日・必要なグループだけ。</div><button class="lrb" onclick="HCR521.saveVoice()">保存</button></div>`;return}
+ if(mode==='match'){b.innerHTML=head('MATCH LEARNING｜試合で確かめる')+`<div class="lrc"><div class="lrk">NEXT MATCH</div><div class="lrv">${x.m?E(x.m.date)+' '+E(x.m.opponent||''):'次の試合は未登録'}</div><div class="lrk" style="margin-top:12px">MATCH QUESTION</div><div class="lrv">${E(x.q?.question||'試合で何を確かめる？')}</div><textarea id="lrMatchObs" class="lri" rows="3" placeholder="試合中に見ること：いつ・どこで・誰が・何を選んだ？"></textarea><button class="lrb" onclick="HCR521.saveMatch()">試合の観察ポイントを保存</button></div>`;return}
+ if(mode==='next'){b.innerHTML=head('NEXT QUESTION｜次へつなぐ')+`<div class="lrc"><div class="lrk">PLAYER / TEAM / DATA を並べる</div><div class="lrs">選手の声だけ、コーチの印象だけ、数字だけで結論を決めません。</div><textarea id="lrDiscover" class="lri" rows="2" placeholder="今回チームが発見したこと"></textarea><textarea id="lrNextQ" class="lri" rows="2" placeholder="次に確かめたい問い"></textarea><button class="lrb" onclick="HCR521.saveNext()">TEAM DISCOVERY → 次の問いへ</button></div>`;return}
+ b.innerHTML=head('チームの学びを循環させる')+`<div class="lrc"><div class="lrline"><span class="on">重点</span><span class="on">問い</span><span class="on">環境</span><span>発見</span><span>試合</span><span>検証</span><span>次へ</span></div><div class="lrv">${E(x.q?.question||'まずチームの問いをつくる')}</div></div>
+ <div class="lrc"><div class="lrk">PLAYER VOICE｜必要な時だけ</div><div class="lrs">普段は入力なし。発見があった日だけ30秒。</div><button class="lrb" onclick="HCR521.open('quick')">QUICK VOICE</button></div>
+ <div class="lrc"><div class="lrk">MATCH｜練習を試合で確かめる</div><div class="lrs">問いをそのまま試合の観察テーマへ。</div><button class="lrb lrsub" onclick="HCR521.open('match')">試合モード</button></div>
+ <div class="lrc"><div class="lrk">NEXT｜発見を次の問いへ</div><div class="lrs">振り返りを文章提出で終わらせず、チームの次の学習へ変換。</div><button class="lrb lrsub" onclick="HCR521.open('next')">次の問いをつくる</button></div>`;
+}
+function choose(v){pick=v;render()}
+function saveVoice(){let t=document.getElementById('lrVoice')?.value.trim()||'',a=A(QK);a.push({id:'qv_'+Date.now(),createdAt:new Date().toISOString(),tag:pick,text:t,group:'TEAM'});S(QK,a);let pv=A('hc_player_voice_v1');pv.push({createdAt:new Date().toISOString(),text:[pick,t].filter(Boolean).join('｜'),group:'TEAM',source:'quick_voice'});S('hc_player_voice_v1',pv);alert('QUICK VOICEを保存しました');close()}
+function saveMatch(){let t=document.getElementById('lrMatchObs')?.value.trim()||'',x=ctx(),a=A(MK);a.push({id:'match_'+Date.now(),createdAt:new Date().toISOString(),match:x.m||null,question:x.q?.question||'',observe:t,status:'planned'});S(MK,a);alert('試合の観察ポイントを保存しました');close()}
+function saveNext(){let d=document.getElementById('lrDiscover')?.value.trim()||'',q=document.getElementById('lrNextQ')?.value.trim()||'',x=ctx();if(d){let a=A('hc_team_discovery_v1');a.push({createdAt:new Date().toISOString(),discovery:d,source:'learning_loop'});S('hc_team_discovery_v1',a)}if(q){S('hc_meeting_question_v288',{focus:x.f?.focus||x.q?.focus||'',question:q,createdAt:new Date().toISOString(),source:'learning_loop'});let n=A(NK);n.push({createdAt:new Date().toISOString(),fromDiscovery:d,question:q});S(NK,n)}alert('チームの発見と次の問いを保存しました');close();setTimeout(()=>window.HCR391?.mount?.(),100)}
+window.HCR521={open,close,render,choose,saveVoice,saveMatch,saveNext};
+})();
+</script>
+<script>
+(function(){'use strict';
+function mount(){
+ let h=document.getElementById('hcCoachHomeR');if(!h||document.getElementById('hcLearningLoopEntryR'))return;
+ let d=document.createElement('div');d.id='hcLearningLoopEntryR';d.className='hch-card hch-wide';
+ d.innerHTML='<div class="hch-k">TEAM LEARNING LOOP｜学びを次へ</div><div class="hch-v">発見 → 試合 → 検証 → 次の問い</div><div class="hch-s">選手の振り返りは毎回不要。必要な時だけ30秒、重要な日はチームで深く。</div><button class="hch-btn hch-main" onclick="HCR521.open()">学習ループを開く</button>';
+ h.appendChild(d);
+}
+setTimeout(mount,650);window.HCR522={mount};
+})();
+</script>
+<!-- HC_QUICK_VOICE_R523 --><!-- HC_OPTIONAL_REFLECTION_R524 --><!-- HC_30SEC_R525 --><!-- HC_TEAM_DISCOVERY_R526 --><!-- HC_NEXT_QUESTION_R527 --><!-- HC_MATCH_MODE_R528 --><!-- HC_MATCH_QUESTION_R529 --><!-- HC_MATCH_OBSERVE_R530 --><!-- HC_PLAYER_LENS_R531 --><!-- HC_COACH_LENS_R532 --><!-- HC_DATA_LENS_R533 --><!-- HC_NO_LOW_SCORE_AUTO_R534 --><!-- HC_CAUSE_FIRST_R535 --><!-- HC_PRINCIPLE_BRIDGE_R536 --><!-- HC_ATTACK_PRINCIPLES_R537 --><!-- HC_DEFENCE_PRINCIPLES_R538 --><!-- HC_TRANSITION_PRINCIPLES_R539 --><!-- HC_KPI_BRIDGE_R540 --><!-- HC_GROWTH_BRIDGE_R541 --><!-- HC_WEEKLY_REFLECTION_R542 --><!-- HC_MATCH_REFLECTION_R543 --><!-- HC_IMPORTANT_PRACTICE_R544 --><!-- HC_GROUP_VOICE_R545 --><!-- HC_ANON_VOICE_R546 --><!-- HC_NO_DAILY_BURDEN_R547 --><!-- HC_TEAM_STORY_R548 --><!-- HC_LEARNING_MEMORY_R549 --><!-- HC_QUESTION_MEMORY_R550 --><!-- HC_MATCH_MEMORY_R551 --><!-- HC_DISCOVERY_MEMORY_R552 --><!-- HC_EXISTING_VOICE_COMPAT_R553 --><!-- HC_EXISTING_DISCOVERY_COMPAT_R554 --><!-- HC_EXISTING_QUESTION_COMPAT_R555 --><!-- HC_EXISTING_MATCH_COMPAT_R556 --><!-- HC_HOME_LOOP_ENTRY_R557 --><!-- HC_NO_OBSERVER_R558 --><!-- HC_NO_SHOW_WRAP_R559 --><!-- HC_NO_NAV_WRAP_R560 --><!-- HC_LIGHT_R561 --><!-- HC_MOBILE_R562 --><!-- HC_JA_R563 --><!-- HC_STABLE_R564 --><!-- HC_BOTTOMUP_R565 --><!-- HC_ECOLOGICAL_R566 --><!-- HC_TACTICAL_PERIODIZATION_BRIDGE_R567 --><!-- HC_LEARNING_ENV_BRIDGE_R568 --><!-- HC_DECISION_FLOW_BRIDGE_R569 --><!-- HC_ANALYSIS_BRIDGE_R570 --><!-- HC_PLAYER_DISCOVERY_R571 --><!-- HC_TEAM_DISCOVERY_R572 --><!-- HC_NEXT_LEARNING_R573 --><!-- HC_MATCH_TRANSFER_R574 --><!-- HC_PREMATCH_R575 --><!-- HC_INMATCH_R576 --><!-- HC_POSTMATCH_R577 --><!-- HC_THREE_LENS_BRIDGE_R578 --><!-- HC_KPI_BEHAVIOR_R579 --><!-- HC_KPI_DECISION_R580 --><!-- HC_KPI_REPRODUCIBILITY_R581 --><!-- HC_SEASON_BRIDGE_R582 --><!-- HC_TRAINING_LIBRARY_BRIDGE_R583 --><!-- HC_METHOD_BRIDGE_R584 --><!-- HC_A1_A10_R585 --><!-- HC_D1_D10_R586 --><!-- HC_T1_T12_R587 --><!-- HC_WIN_DELAY_RECOVER_R588 --><!-- HC_GO_HOLD_RESET_R589 --><!-- HC_FOUR_SECOND_DECISION_R590 --><!-- HC_COACH_ENV_DESIGNER_R591 --><!-- HC_PLAYER_DISCOVERER_R592 --><!-- HC_DATA_SUPPORT_NOT_ANSWER_R593 --><!-- HC_WEEK_LOOP_R594 --><!-- HC_MONTH_LOOP_R595 --><!-- HC_SEASON_LOOP_R596 --><!-- HC_COMPAT_R597 --><!-- HC_SAFE_R598 --><!-- HC_INTEGRATED_R599 --><!-- HC_INTEGRATED_LEARNING_LOOP_CORE_R600 -->
 </body></html>
