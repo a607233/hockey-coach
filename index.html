@@ -2569,53 +2569,30 @@ let oldOpen=window.HCV2TEAM?.open;if(oldOpen)window.HCV2TEAM.open=async function
 </script>
 <!-- HC_V2_02_INVITE_ONE_TAP --><!-- HC_V2_02_HOME_PHILOSOPHY_GAME_MODEL -->
 
-\n<!-- HC_V2_03_ROLE_QR_INVITE -->
+
+<!-- HC_V2_05_HOME_IDENTITY_FORCE_VISIBLE -->
 <style>
-#hcQrInvite{position:fixed;inset:0;z-index:13000;background:#071014;color:#eef6f2;display:none;overflow:auto;padding:18px}.qriw{max-width:620px;margin:auto}.qric{background:#0b171c;border:1px solid #294049;border-radius:18px;padding:16px;margin:10px 0}.qriroles{display:grid;grid-template-columns:1fr;gap:9px}.qrib{border:1px solid #3d555e;background:#101f25;color:#fff;border-radius:14px;padding:15px;text-align:left;font-weight:950;font-size:16px}.qrib small{display:block;font-weight:500;opacity:.7;margin-top:4px}.qrib.player{border-color:#7f9428}.qriqr{background:#fff;border-radius:16px;padding:14px;width:max-content;max-width:100%;margin:14px auto}.qriurl{font-size:11px;word-break:break-all;background:#071014;border:1px solid #33484f;border-radius:10px;padding:10px}.qrigrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.qriMain{border:0;border-radius:12px;padding:13px;background:#d7ff39;color:#071014;font-weight:950}.qriSub{border:1px solid #40545c;border-radius:12px;padding:12px;background:#17252b;color:#fff;font-weight:850}
+#hcIdentityHomeV205{margin:12px 0}.id205{background:linear-gradient(180deg,#101d22,#0a1519);border:1px solid #344a42;border-radius:19px;padding:16px;color:#eef6f2}.id205k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.id205purpose{font-size:22px;font-weight:950;line-height:1.2;margin:5px 0}.id205row{display:flex;justify-content:space-between;gap:10px;align-items:start}.id205edit{border:1px solid #40545c;background:#17252b;color:#fff;border-radius:10px;padding:8px 11px;font-weight:850}.id205sec{border-top:1px solid #26383f;margin-top:13px;padding-top:12px}.id205chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.id205chip{border:1px solid #40545c;border-radius:999px;padding:6px 9px;font-size:12px}.id205gm{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.id205gm>div{background:#071014;border:1px solid #263940;border-radius:11px;padding:9px}.id205gm b{font-size:11px;color:#d7ff39}.id205gm small{display:block;color:#cbd5d1;margin-top:4px;line-height:1.35}
 </style>
-<div id="hcQrInvite"><div class="qriw" id="hcQrInviteBody"></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function(){'use strict';
-const APP='https://hockey-coach-five.vercel.app';
-const RL={STAFF:['STAFF｜指導者','コーチ・スタッフとして参加'],PLAYER:['PLAYER｜選手','選手として参加'],PARENT:['PARENT｜保護者','保護者として参加']};
-function A(){return window.HCV2AUTH?.state?.()||{}}
-function S(){return window.supabase.createClient('https://ujwbmmiwdujowsxooiug.supabase.co','sb_publishable_7pf-oFguV6axSOAwNdlE4Q_ekGuDApz',{auth:{persistSession:true,autoRefreshToken:true}})}
-function body(x){document.getElementById('hcQrInviteBody').innerHTML=x}
-function close(){document.getElementById('hcQrInvite').style.display='none'}
-function open(){let a=A();if(!a.user||a.active?.role!=='OWNER')return alert('OWNERでログインしてください。');document.getElementById('hcQrInvite').style.display='block';body(`<div style="display:flex;justify-content:space-between;align-items:start"><div><div class="tmk">TEAM INVITE</div><div class="tmt">役割を選ぶだけ</div><div class="tms">メールアドレス入力は不要です。</div></div><button onclick="HCQR.close()" style="background:none;border:0;color:#fff;font-size:30px">×</button></div><div class="qric"><div class="qriroles">${Object.keys(RL).map(r=>`<button class="qrib ${r==='PLAYER'?'player':''}" onclick="HCQR.issue('${r}')">${RL[r][0]}<small>${RL[r][1]} → 専用URL・QRを発行</small></button>`).join('')}</div></div><div class="tms" style="padding:4px">招待リンクは7日間・最大50回。新しく同じ役割のリンクを作ると、古いリンクは無効になります。</div>`)}
-async function issue(role){let a=A(),m=a.active;if(!m)return;body(`<div class="qric"><div class="tmt">招待リンクを作成中…</div></div>`);let r=await S().rpc('hc_create_invite_link',{p_team_id:m.team_id,p_role:role,p_expires_hours:168,p_max_uses:50});if(r.error){body(`<div class="qric"><div class="tmerr">${r.error.message}</div><button class="qriSub" onclick="HCQR.open()">戻る</button></div>`);return}let row=Array.isArray(r.data)?r.data[0]:r.data,token=row?.token;if(!token)return;let url=APP+'?invite='+encodeURIComponent(token),team=m?.hc_teams?.name||'TEAM';window.HCQR.current={url,token,role,team};body(`<div style="display:flex;justify-content:space-between"><div><div class="tmk">${RL[role][0]}</div><div class="tmt">このQRを見せるだけ</div></div><button onclick="HCQR.close()" style="background:none;border:0;color:#fff;font-size:30px">×</button></div><div class="qric"><div id="hcQrCanvas" class="qriqr"></div><div class="qriurl">${url}</div><div class="qrigrid" style="margin-top:10px"><button class="qriMain" onclick="HCQR.share()">共有する</button><button class="qriSub" onclick="HCQR.copy()">URLをコピー</button></div><button class="qriSub" style="width:100%;margin-top:8px" onclick="HCQR.open()">別の役割を発行</button></div>`);setTimeout(()=>{let el=document.getElementById('hcQrCanvas');if(el&&window.QRCode)new QRCode(el,{text:url,width:220,height:220,correctLevel:QRCode.CorrectLevel.M})},50)}
-async function share(){let x=window.HCQR.current;if(!x)return;let text=`HOCKEY COACH「${x.team}」${RL[x.role][0]}招待です。\nこのリンクから参加してください。\n${x.url}`;try{if(navigator.share)await navigator.share({title:'HOCKEY COACH TEAM招待',text,url:x.url});else await copy()}catch(e){}}
-async function copy(){let x=window.HCQR.current;if(!x)return;await navigator.clipboard.writeText(x.url);alert('招待URLをコピーしました。')}
-async function accept(){let u=new URL(location.href),t=u.searchParams.get('invite')||localStorage.getItem('hc_pending_invite_token');if(!t)return;localStorage.setItem('hc_pending_invite_token',t);let a=A();if(!a.user){setTimeout(()=>window.HCV2AUTH?.open?.(),500);return}let r=await S().rpc('hc_accept_invite_link',{p_token:t});if(!r.error){localStorage.removeItem('hc_pending_invite_token');u.searchParams.delete('invite');history.replaceState({},'',u.pathname+(u.searchParams.toString()?'?'+u.searchParams.toString():'')+u.hash);await window.HCV2AUTH?.refresh?.();alert('TEAMへの参加が完了しました。')}else if(!String(r.error.message||'').includes('LOGIN_REQUIRED'))console.warn(r.error)}
-function replaceTeamInvite(){let root=document.getElementById('hcV2TeamManagerBody');if(!root)return;let cards=[...root.querySelectorAll('.tmc')],c=cards.find(x=>(x.textContent||'').includes('メンバーを招待'));if(c)c.innerHTML=`<div class="tmk">INVITE</div><div class="tmt">QR・専用URLで招待</div><div class="tms">メールアドレスは不要。役割を選ぶだけです。</div><button class="tmb" onclick="HCQR.open()">＋ メンバーを招待</button>`}
-let old=window.HCV2TEAM?.open;if(old)window.HCV2TEAM.open=async function(){await old.apply(this,arguments);setTimeout(replaceTeamInvite,100)};
-window.HCQR={open,close,issue,share,copy,accept,current:null};setTimeout(accept,2400);setTimeout(accept,5000);
-})();
-</script>
-<!-- HC_V2_03_QR_ROLE_LINK --><!-- HC_V2_03_SECURE_TOKEN_INVITE -->
-
-
-<!-- HC_V2_04_QR_INVITE_PRIORITY_FIX -->
-<script>
-(function(){'use strict';
-function forceQrInvite(){
- const root=document.getElementById('hcV2TeamManagerBody'); if(!root)return;
- const cards=[...root.querySelectorAll('.tmc')];
- const invite=cards.find(c=>(c.textContent||'').includes('INVITE') || (c.textContent||'').includes('メンバーを招待') || (c.textContent||'').includes('QR・専用URLで招待'));
- if(invite){
-   invite.innerHTML='<div class="tmk">INVITE</div><div class="tmt">QR・専用URLで招待</div><div class="tms">メールアドレスは不要。役割を選ぶだけです。</div><button class="tmb" id="hcQrInviteMainBtn">＋ メンバーを招待</button>';
-   const b=document.getElementById('hcQrInviteMainBtn'); if(b)b.onclick=()=>window.HCQR?.open?.();
- }
- const pending=cards.find(c=>(c.textContent||'').includes('PENDING') || (c.textContent||'').includes('招待準備'));
- if(pending) pending.style.display='none';
+const K='hc_identity_v3';
+const DEF={purpose:'心を動かすチームになる。',purposeDetail:'ホッケーを通して、自分たちも周りの人もワクワクさせるチームをつくる。',philosophies:[{id:'p1',title:'ワクワクする',detail:''},{id:'p2',title:'活き活きとプレーする',detail:''},{id:'p3',title:'挑戦を楽しむ',detail:''},{id:'p4',title:'憧れられるチームへ',detail:''}],gameModel:{'攻撃':'保持しながら前進し、優位をつくってゴールへ','守備':'中央とゴールを守り、意図して奪う','攻→守':'4秒｜WIN → DELAY → RECOVER','守→攻':'4秒｜GO → HOLD → RESET'}};
+const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function load(){try{let x=JSON.parse(localStorage.getItem(K)||'null');return x&&typeof x==='object'?Object.assign({},DEF,x,{gameModel:Object.assign({},DEF.gameModel,x.gameModel||{})}):DEF}catch(e){return DEF}}
+function mount(){
+ const home=document.getElementById('home'); if(!home)return;
+ let old=document.getElementById('hcIdentityHomeV205');if(old)old.remove();
+ const I=load(), ph=Array.isArray(I.philosophies)&&I.philosophies.length?I.philosophies:DEF.philosophies;
+ let d=document.createElement('div');d.id='hcIdentityHomeV205';
+ d.innerHTML=`<div class="id205"><div class="id205row"><div><div class="id205k">TEAM IDENTITY｜チームの軸</div><div class="id205purpose">${esc(I.purpose||DEF.purpose)}</div><div style="font-size:12px;opacity:.72">${esc(I.purposeDetail||'')}</div></div><button class="id205edit" onclick="HC174.open()">編集</button></div><div class="id205sec"><div class="id205k">PHILOSOPHY｜フィロソフィー</div><div class="id205chips">${ph.map(p=>`<span class="id205chip">${esc(p.title)}</span>`).join('')}</div></div><div class="id205sec"><div class="id205k">GAME MODEL｜チームモデル</div><div class="id205gm">${['攻撃','守備','攻→守','守→攻'].map(k=>`<div><b>${k}</b><small>${esc(I.gameModel?.[k]||'未設定')}</small></div>`).join('')}</div></div></div>`;
+ const first=home.firstElementChild; if(first)first.after(d); else home.prepend(d);
 }
-const prev=window.HCV2TEAM?.open;
-if(prev) window.HCV2TEAM.open=async function(){await prev.apply(this,arguments);setTimeout(forceQrInvite,180);setTimeout(forceQrInvite,500)};
-window.HCQRInviteFix=forceQrInvite;
-setTimeout(forceQrInvite,2500);
+const prevShow=window.show;if(prevShow)window.show=function(id){prevShow.apply(this,arguments);if(id==='home')setTimeout(mount,40)};
+const oldSave=window.HC174?.save;if(oldSave)window.HC174.save=function(){oldSave.apply(this,arguments);setTimeout(mount,100)};
+window.HCIdentityHomeV205={mount};setTimeout(mount,300);setTimeout(mount,1600);setTimeout(mount,3800);
 })();
 </script>
-<!-- HC_V2_04_QR_INVITE_BUTTON_FIX --><!-- HC_V2_04_HIDE_LEGACY_EMAIL_INVITES -->
+<!-- HC_V2_05_HOME_PHILOSOPHY_VISIBLE --><!-- HC_V2_05_HOME_GAME_MODEL_VISIBLE -->
 
 </body></html>
