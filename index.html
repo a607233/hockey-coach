@@ -2714,4 +2714,99 @@ setTimeout(addPhilosophyToMore,2500);
 </script>
 <!-- /HC_PHILOSOPHY_IN_MORE_FINAL_V1 -->
 
+
+<!-- HC_TODAY_SESSION_V2_01 -->
+<style>
+#hcTodayV2{margin:12px 0}
+.tdv2{background:linear-gradient(180deg,#101d22,#091317);border:1px solid #2b4149;border-radius:20px;padding:16px;color:#eef6f2}
+.tdv2-k{font-size:10px;font-weight:950;letter-spacing:1.3px;color:#d7ff39}
+.tdv2-title{font-size:23px;font-weight:950;margin:4px 0}
+.tdv2-sub{font-size:12px;color:#94a6ad;line-height:1.5}
+.tdv2-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+.tdv2-box{background:#071014;border:1px solid #263b43;border-radius:14px;padding:12px}
+.tdv2-box label{display:block;font-size:10px;color:#91a3aa;font-weight:900;margin-bottom:6px;letter-spacing:.7px}
+.tdv2-in,.tdv2-sel,.tdv2-ta{width:100%;background:#0d181d;border:1px solid #30454e;border-radius:11px;color:#fff;padding:11px;font-size:14px}
+.tdv2-ta{min-height:70px;resize:vertical}
+.tdv2-chiprow{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.tdv2-chip{border:1px solid #40545c;background:#101c21;color:#dce7e2;border-radius:999px;padding:7px 9px;font-size:12px}
+.tdv2-chip.on{background:#d7ff39;color:#071014;border-color:#d7ff39;font-weight:900}
+.tdv2-btn{border:0;border-radius:12px;padding:11px 13px;font-weight:950;background:#d7ff39;color:#071014}
+.tdv2-subbtn{border:1px solid #354b54;border-radius:12px;padding:10px 12px;font-weight:850;background:#15242a;color:#fff}
+.tdv2-menu{margin-top:9px;border:1px solid #294049;border-radius:15px;padding:12px;background:#0b161b}
+.tdv2-menuhead{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.tdv2-min{font-size:18px;font-weight:950;color:#d7ff39}
+.tdv2-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.tdv2-total{font-size:30px;font-weight:950;color:#d7ff39}
+.tdv2-kpis{display:grid;gap:7px;margin-top:8px}
+.tdv2-foot{margin-top:12px;padding-top:12px;border-top:1px solid #263940}
+@media(max-width:560px){.tdv2-grid{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){'use strict';
+const KEY='hc_today_v2';
+const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const defaults={
+ theme:'',duration:90,principles:[],kpis:['テーマの成功回数','意図したプレーの成功率'],
+ items:[
+  {name:'動作改善・ボールウォームアップ',minutes:15,purpose:'身体と認知をゲームへつなげる',constraint:'ボールを使い、見る・動く・判断するを同時に行う',question:'今、何が見えている？'},
+  {name:'テーマ導入ゲーム',minutes:20,purpose:'今日の課題をゲームから発見する',constraint:'人数・コート・得点条件をテーマに合わせる',question:'どこに優位がある？'},
+  {name:'制約付きトレーニング',minutes:25,purpose:'狙う行動が自然に増える環境をつくる',constraint:'時間・人数・ゾーン・得点条件のいずれかを変更',question:'何が変わるとプレーしやすい？'},
+  {name:'ゲーム',minutes:25,purpose:'制約を減らして試合へ転移する',constraint:'コーチ介入を減らし、選手の判断を観察',question:'今日の学びをどこで使える？'},
+  {name:'振り返り',minutes:5,purpose:'学習を言語化して次回へつなげる',constraint:'選手同士で短く共有',question:'今日できるようになったことは？'}
+ ]};
+function load(){try{return Object.assign({},defaults,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return JSON.parse(JSON.stringify(defaults))}}
+function save(x){localStorage.setItem(KEY,JSON.stringify(x))}
+function methodNames(){
+ try{
+  let raw=localStorage.getItem('hc_method_v3')||localStorage.getItem('hc_method')||'[]',a=JSON.parse(raw);
+  if(Array.isArray(a))return [...new Set(a.filter(x=>x&&x.active!==false).map(x=>x.name).filter(Boolean))].slice(0,18)
+ }catch(e){}
+ return ['前進する','幅と深さをつくる','優位をつくる','サークルへ侵入する','即時奪回','遅らせる','中央を守る','奪って前進する'];
+}
+function total(x){return (x.items||[]).reduce((a,b)=>a+(+b.minutes||0),0)}
+function render(){
+ const host=document.getElementById('today');if(!host)return;
+ let old=document.getElementById('hcTodayV2');if(old)old.remove();
+ const x=load(), ps=methodNames();
+ let d=document.createElement('div');d.id='hcTodayV2';
+ d.innerHTML=`<div class="tdv2">
+ <div class="tdv2-k">TODAY'S SESSION｜LEARNING DESIGN</div>
+ <div class="tdv2-title">今日、何を学習させたい？</div>
+ <div class="tdv2-sub">課題 → 原則 → 環境デザイン → KPI → 振り返りを1本につなげます。</div>
+ <div class="tdv2-grid">
+  <div class="tdv2-box"><label>今日のテーマ</label><input id="tdv2Theme" class="tdv2-in" value="${esc(x.theme||'')}" placeholder="例：ボールロスト後4秒以内の即時奪回"></div>
+  <div class="tdv2-box"><label>セッション時間</label><select id="tdv2Duration" class="tdv2-sel">${[60,75,90,100,120].map(n=>`<option ${+x.duration===n?'selected':''} value="${n}">${n}分</option>`).join('')}</select></div>
+ </div>
+ <div class="tdv2-box" style="margin-top:8px"><label>今日扱う原則</label><div class="tdv2-chiprow">${ps.map(p=>`<button class="tdv2-chip ${(x.principles||[]).includes(p)?'on':''}" data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
+ <div style="display:flex;justify-content:space-between;align-items:end;margin-top:15px"><div><div class="tdv2-k">SESSION FLOW</div><b>練習の流れ</b></div><div><span class="tdv2-total">${total(x)}</span><small> / ${x.duration}分</small></div></div>
+ <div id="tdv2Items">${(x.items||[]).map((it,i)=>menuHTML(it,i)).join('')}</div>
+ <div class="tdv2-actions"><button class="tdv2-subbtn" id="tdv2Add">＋ メニュー追加</button><button class="tdv2-btn" id="tdv2Save">今日の設計を保存</button></div>
+ <div class="tdv2-box" style="margin-top:13px"><label>KPI｜今日は何を見取る？</label><div class="tdv2-kpis">${(x.kpis||[]).map((k,i)=>`<input class="tdv2-in tdv2Kpi" data-i="${i}" value="${esc(k)}" placeholder="例：4秒以内奪回率">`).join('')}</div><button class="tdv2-subbtn" id="tdv2AddKpi" style="margin-top:8px">＋ KPI追加</button></div>
+ <div class="tdv2-foot"><div class="tdv2-k">AFTER SESSION</div><div class="tdv2-sub">練習後は既存の「練習終了・記録する」から理解度・達成度・KPI・次回課題を保存できます。</div></div>
+ </div>`;
+ host.prepend(d);bind();
+}
+function menuHTML(it,i){return `<div class="tdv2-menu" data-i="${i}"><div class="tdv2-menuhead"><input class="tdv2-in tdv2Name" value="${esc(it.name||'')}" style="font-weight:900"><div><input class="tdv2-in tdv2Minutes" type="number" min="0" value="${+it.minutes||0}" style="width:72px;text-align:center"><div class="tdv2-min" style="font-size:10px;text-align:center">MIN</div></div></div><div class="tdv2-grid"><div><label style="font-size:10px;color:#91a3aa">狙い</label><textarea class="tdv2-ta tdv2Purpose">${esc(it.purpose||'')}</textarea></div><div><label style="font-size:10px;color:#91a3aa">制約・ルール</label><textarea class="tdv2-ta tdv2Constraint">${esc(it.constraint||'')}</textarea></div></div><label style="font-size:10px;color:#91a3aa">コーチングの問い</label><input class="tdv2-in tdv2Question" value="${esc(it.question||'')}"><button class="tdv2-subbtn tdv2Del" style="margin-top:8px">削除</button></div>`}
+function collect(){
+ let x=load();x.theme=document.getElementById('tdv2Theme')?.value||'';x.duration=+(document.getElementById('tdv2Duration')?.value||90);
+ x.principles=[...document.querySelectorAll('#hcTodayV2 .tdv2-chip.on')].map(b=>b.dataset.p);
+ x.items=[...document.querySelectorAll('#tdv2Items .tdv2-menu')].map(m=>({name:m.querySelector('.tdv2Name').value,minutes:+m.querySelector('.tdv2Minutes').value||0,purpose:m.querySelector('.tdv2Purpose').value,constraint:m.querySelector('.tdv2Constraint').value,question:m.querySelector('.tdv2Question').value}));
+ x.kpis=[...document.querySelectorAll('.tdv2Kpi')].map(i=>i.value).filter(Boolean);return x
+}
+function bind(){
+ document.querySelectorAll('#hcTodayV2 .tdv2-chip').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+ document.getElementById('tdv2Save').onclick=()=>{let x=collect();save(x);alert('今日のセッション設計を保存しました。');render()};
+ document.getElementById('tdv2Add').onclick=()=>{let x=collect();x.items.push({name:'新しいメニュー',minutes:10,purpose:'',constraint:'',question:''});save(x);render()};
+ document.getElementById('tdv2AddKpi').onclick=()=>{let x=collect();x.kpis.push('');save(x);render()};
+ document.querySelectorAll('.tdv2Del').forEach((b,i)=>b.onclick=()=>{let x=collect();x.items.splice(i,1);save(x);render()});
+ document.querySelectorAll('.tdv2Minutes').forEach(i=>i.onchange=()=>{let x=collect();save(x);render()});
+ document.getElementById('tdv2Duration').onchange=()=>{let x=collect();save(x);render()};
+}
+const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);if(id==='today')setTimeout(render,50);return r};
+window.HCTodayV2={render,load};
+setTimeout(()=>{if(document.getElementById('today'))render()},2200);
+})();
+</script>
+<!-- /HC_TODAY_SESSION_V2_01 -->
+
 </body></html>
