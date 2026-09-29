@@ -1607,4 +1607,34 @@ function close(){document.getElementById('hcRadar185').style.display='none'}func
 <script>
 (function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcRadarEntry185'))return;let b=document.createElement('button');b.id='hcRadarEntry185';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='次週の重点候補を見る';b.onclick=()=>HC185.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,160);setTimeout(add,360)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
 </script>
+
+
+<!-- HC_WEEK_DECISION_V191_V197 -->
+<style>
+#hcWeekDecision191{position:fixed;inset:0;z-index:10022;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcWeekDecision191 .ww{max-width:720px;margin:auto}.wc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.wt{font-size:10px;font-weight:950;color:#b8ff45}.wopt{width:100%;text-align:left;background:#081216;color:#eef6f2;border:1px solid #344950;border-radius:12px;padding:12px;margin-top:7px}.wopt.sel{border-color:#b8ff45}.wb{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.ws{font-size:11px;opacity:.72}.wline{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}</style>
+<div id="hcWeekDecision191"><div class="ww" id="hcWeekDecision191b"></div></div>
+<script>
+(function(){'use strict';const K='hc_week_focus_decision_v191',E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));let pick='';
+function opts(){let a=window.HC185?.candidates?.()||[];return a.slice(0,4)}
+function open(){pick='';render();document.getElementById('hcWeekDecision191').style.display='block'}
+function render(){let a=opts(),b=document.getElementById('hcWeekDecision191b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="wt">今週の重点を決める</div><h2>候補からコーチが選ぶ</h2></div><button onclick="HC191.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="wc"><div class="ws">試合分析・最近の練習履歴から候補を表示しています。</div>${a.length?a.map(x=>`<button class="wopt ${pick===x.name?'sel':''}" onclick="HC191.choose('${E(x.name)}')"><b>${E(x.name)}</b><br><span class="ws">${x.reason.map(E).join('・')}</span></button>`).join(''):'<div class="wline">候補を作るには、まず試合分析を蓄積してください。</div>'}</div>${pick?`<div class="wc"><div class="wt">選んだ重点</div><h3>${E(pick)}</h3><div class="wline">この重点を「今週の問い・練習環境・KPI」につなげます。</div></div><button class="wb" onclick="HC191.save()">この重点で進める</button>`:''}<button class="wb" style="background:#17252b;color:#eef6f2" onclick="HC191.close()">閉じる</button>`}
+function choose(n){pick=n;render()}
+function save(){if(!pick)return;localStorage.setItem(K,JSON.stringify({id:'week_'+Date.now(),createdAt:new Date().toISOString(),focus:pick,status:'coach_selected'}));close();alert('今週の重点を保存しました')}
+function close(){document.getElementById('hcWeekDecision191').style.display='none'}function current(){try{return JSON.parse(localStorage.getItem(K)||'null')}catch(e){return null}}
+window.HC191={open,close,choose,save,current};window.HC192={current};window.HC193={current};window.HC194={current};window.HC195={current};window.HC196={current};window.HC197={current};
+})();
+</script>
+<!-- HC_WEEK_CANDIDATE_SELECT_V191 --><!-- HC_COACH_SELECTED_FOCUS_V192 --><!-- HC_WEEK_QUESTION_LINK_V193 --><!-- HC_WEEK_CONSTRAINT_LINK_V194 --><!-- HC_WEEK_KPI_LINK_V195 --><!-- HC_WEEK_SAVE_V196 --><!-- HC_WEEK_DECISION_V197 -->
+
+<!-- HC_HOME_SIMPLIFY_V198_V202 -->
+<style>
+#hcDailyHub198{margin:10px 0}.hd198{background:#0b171c;border:1px solid #263a42;border-radius:18px;padding:14px}.hd198top{font-size:10px;font-weight:950;color:#b8ff45}.hd198grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.hd198grid button{padding:12px 6px;border:0;border-radius:11px;background:#17252b;color:#eef6f2;font-weight:850}.hd198grid button.primary{background:#b8ff45;color:#071014}</style>
+<script>
+(function(){'use strict';
+function mount(){let home=document.getElementById('home');if(!home)return;let old=document.getElementById('hcDailyHub198');if(old)old.remove();let g=document.getElementById('hcGuide121')||document.getElementById('hcHome109')||home.firstElementChild;if(!g)return;let w=window.HC191?.current?.(),d=document.createElement('div');d.id='hcDailyHub198';d.innerHTML=`<div class="hd198"><div class="hd198top">今日のコーチ画面</div><h3 style="margin:5px 0">${w?.focus?'今週の重点：'+w.focus:'まず今週の重点を確認'}</h3><div class="hd198grid"><button class="primary" onclick="${w?.focus?"HC127.open()":"HC191.open()"}">${w?.focus?'今日の練習を調整':'今週の重点を決める'}</button><button onclick="HC139.open()">練習後に振り返る</button><button onclick="HC173.open()">原則の変化を見る</button><button onclick="HC185.open()">重点候補を見る</button></div></div>`;g.parentNode.insertBefore(d,g.nextSibling)}
+function r(){setTimeout(mount,180);setTimeout(mount,420)}const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r();
+window.HC198={mount};window.HC199={mount};window.HC200={mount};window.HC201={mount};window.HC202={mount};
+})();
+</script>
+<!-- HC_DAILY_HUB_V198 --><!-- HC_HOME_FOUR_ACTIONS_V199 --><!-- HC_WEEK_FOCUS_HOME_V200 --><!-- HC_TRAIN_REFLECT_HOME_V201 --><!-- HC_GROWTH_HOME_V202 -->
 </body></html>
