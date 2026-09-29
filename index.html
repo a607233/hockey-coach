@@ -1288,4 +1288,52 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <!-- HC_SIMPLE_NEXT_MATCH_V109 --><!-- HC_SIMPLE_SCHEDULE_V110 --><!-- HC_SIMPLE_WEEK_FOCUS_V111 --><!-- HC_SIMPLE_TODAY_V112 --><!-- HC_SIMPLE_REFRESH_V113 --><!-- HC_SIMPLE_FLOW_V114 -->
+
+
+<!-- HC_JAPANESE_UI_V115_V120 -->
+<style>
+.hc-ja-note{font-size:11px;opacity:.72}
+</style>
+<script>
+(function(){'use strict';
+const map={
+'HOME':'ホーム','ANALYZE':'分析','TODAY':'今日の練習','RECORD':'記録','MORE':'その他',
+'PLAYER VOICE':'選手の声','TEAM DISCOVERY':'チームの発見','NEXT ACTION':'次にやること',
+'TODAY’S FOCUS':'今日の重点',"TODAY'S FOCUS":'今日の重点','WEEKLY EVIDENCE':'今週の記録',
+'MATCH READINESS':'試合への準備','MATCH DAY':'試合当日','PRE-MATCH PLAN':'試合前プラン',
+'SIDELINE CAPTURE':'試合中メモ','POST-MATCH ANALYSIS':'試合後分析','NEXT PRACTICE':'次の練習',
+'WHY':'なぜ？','FOCUS':'重点','TRAIN':'練習','VERIFY':'振り返り','NEXT':'次へ',
+'EVIDENCE':'記録・根拠','CONTEXT':'現在の状況','TRAINING DAYS':'練習日',
+'ADAPT':'予定に合わせて調整','LOAD':'負荷','DAILY BRIDGE':'今日の練習へ',
+'WEEK PLANNER':'週間練習プラン','FLEX SCHEDULE':'練習予定','SCHEDULE':'予定',
+'ADD':'追加','QUICK NAV':'すぐに開く','COACH DECISION':'指導者の判断',
+'GAME MODEL':'ゲームモデル','PHILOSOPHY':'フィロソフィー','GROWTH':'成長',
+'DISCOVERY':'発見','ISSUE':'課題','PRINCIPLE':'原則','TRAINING':'練習',
+'GOOD':'良かったこと','WATCH':'確認したいこと','SYSTEM STABILITY':'システム状態',
+'DATA SAFETY':'データ保護','SECURITY':'セキュリティ'
+};
+function translateText(root){
+ if(!root)return;
+ let w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let a=[],n;
+ while(n=w.nextNode())a.push(n);
+ a.forEach(t=>{if(t.parentElement&&/SCRIPT|STYLE|TEXTAREA|INPUT|OPTION/.test(t.parentElement.tagName))return;
+   let v=t.nodeValue;
+   Object.entries(map).sort((a,b)=>b[0].length-a[0].length).forEach(([en,ja])=>{
+     v=v.replace(new RegExp('\\b'+en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','g'),ja)
+   });
+   t.nodeValue=v;
+ });
+ document.querySelectorAll('button,a,.tab,.nav-item').forEach(el=>{
+   let tx=(el.textContent||'').trim();
+   if(map[tx])el.textContent=map[tx];
+ });
+}
+function run(){translateText(document.body)}
+const obs=new MutationObserver(ms=>{obs.disconnect();ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)translateText(n)}));obs.observe(document.body,{childList:true,subtree:true})});
+function start(){run();obs.observe(document.body,{childList:true,subtree:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+window.HC115={run};window.HC116={run};window.HC117={run};window.HC118={run};window.HC119={run};window.HC120={run};
+})();
+</script>
+<!-- HC_JA_NAV_V115 --><!-- HC_JA_HOME_V116 --><!-- HC_JA_ANALYZE_V117 --><!-- HC_JA_TRAINING_V118 --><!-- HC_JA_RECORD_V119 --><!-- HC_JA_SYSTEM_V120 -->
 </body></html>
