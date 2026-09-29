@@ -1938,4 +1938,35 @@ function nextAfterMatch(){window.HC295?.open?.()}window.HC341={refresh};window.H
 })();
 </script>
 <!-- HC_MATCH_DAY_MINIMAL_V341 --><!-- HC_MATCH_DAY_QUESTION_FIRST_V342 --><!-- HC_MATCH_DAY_ONE_ACTION_V343 --><!-- HC_MATCH_DAY_REFRESH_V344 --><!-- HC_MATCH_TO_LEARNING_V345 --><!-- HC_MATCH_DAY_LOOP_V346 -->
+
+
+<!-- HC_THREE_LENS_REVIEW_V347_V360 -->
+<style>
+#hcReview347{position:fixed;inset:0;z-index:10060;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcReview347 .rw{max-width:720px;margin:auto}.rc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.rt{font-size:10px;font-weight:950;color:#b8ff45}.ri{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px}.rb{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.rsub{background:#17252b;color:#eef6f2}.rl{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.rs{font-size:11px;opacity:.72}.rlens{display:grid;grid-template-columns:1fr;gap:7px}.rchip{display:inline-block;border:1px solid #40545c;border-radius:999px;padding:5px 8px;margin:2px;font-size:10px}</style>
+<div id="hcReview347"><div class="rw" id="hcReview347b"></div></div>
+<script>
+(function(){'use strict';
+const K='hc_three_lens_review_v360',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function arr(k){let a=L(k,[]);return Array.isArray(a)?a:[]}function latest(k){return arr(k).slice(-1)[0]||null}
+function ctx(){let q=L('hc_meeting_question_v288',null),m=latest('hc_team_meeting_v288'),v=latest('hc_player_voice_v1'),a=latest('hc_analysis_history_v1'),obs=latest('hc_match_question_observation_v340');return{focus:q?.focus||m?.focus||'',question:q?.question||m?.question||'',v,a,obs}}
+function dataText(x){if(!x.a)return'試合分析はまだ保存されていません。';let vals=Object.values(x.a.scores||{}).map(Number).filter(Number.isFinite),avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):x.a.avg||'-';return`保存済み分析：平均 ${avg} / 5${x.a.matchId?'・試合IDあり':''}`}
+function open(){render();document.getElementById('hcReview347').style.display='block'}
+function render(){let x=ctx(),b=document.getElementById('hcReview347b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="rt">試合後のチーム検証</div><h2>3つの見方を並べる</h2></div><button onclick="HC347.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="rc"><div class="rt">今日確かめた問い</div><h3>${E(x.focus||'重点')}</h3><div class="rl">${E(x.question||'問いがまだありません')}</div></div><div class="rc"><div class="rt">1｜PLAYER｜選手にはどう見えた？</div><textarea id="rp347" class="ri" rows="3" placeholder="何が見えた？ 何を選んだ？">${E(x.v&&(x.v.text||x.v.what)||'')}</textarea></div><div class="rc"><div class="rt">2｜COACH｜コーチにはどう見えた？</div><textarea id="rc347" class="ri" rows="3" placeholder="どんな判断・関係性・現象が見えた？">${E(x.obs?.note||'')}</textarea></div><div class="rc"><div class="rt">3｜DATA｜数字ではどう見えた？</div><div class="rl">${E(dataText(x))}</div><div class="rs">数字だけで原因は決めません。映像・相手・試合状況も合わせて見ます。</div></div><div class="rc"><div class="rt">4｜3つを並べて、何を発見した？</div><textarea id="rd347" class="ri" rows="3" placeholder="一致したこと／ズレたこと／新しく気づいたこと"></textarea><div class="rs">一致もズレも、次の学習材料です。</div></div><div class="rc"><div class="rt">5｜次に確かめたい問い</div><textarea id="rq347" class="ri" rows="3" placeholder="次の練習・試合でみんなが確かめたいこと"></textarea></div><button class="rb" onclick="HC347.save()">チームの検証として保存</button><button class="rb rsub" onclick="HC347.meeting()">この内容でミーティングへ</button><button class="rb rsub" onclick="HC347.close()">閉じる</button>`}
+function save(){let x=ctx(),v={id:'review_'+Date.now(),createdAt:new Date().toISOString(),focus:x.focus,question:x.question,player:document.getElementById('rp347').value.trim(),coach:document.getElementById('rc347').value.trim(),analysisId:x.a?.id||'',matchId:x.a?.matchId||'',data:dataText(x),discovery:document.getElementById('rd347').value.trim(),nextQuestion:document.getElementById('rq347').value.trim(),status:'team_review'};let a=arr(K);a.push(v);S(K,a);if(v.discovery){let d=arr('hc_team_discovery_v1');d.push({id:'disc_'+Date.now(),createdAt:v.createdAt,focus:v.focus,text:v.discovery,discovery:v.discovery,source:'three_lens'});S('hc_team_discovery_v1',d)}if(v.nextQuestion)S('hc_meeting_question_v288',{focus:v.focus,question:v.nextQuestion,createdAt:v.createdAt,source:'three_lens'});alert('チームの検証を保存しました')}
+function meeting(){save();close();window.HC276?.open?.()}function close(){document.getElementById('hcReview347').style.display='none'}function latestReview(){return arr(K).slice(-1)[0]||null}
+window.HC347={open,close,save,meeting,latest:latestReview};window.HC348={ctx};window.HC349={ctx};window.HC350={ctx};window.HC351={ctx};window.HC352={ctx};window.HC353={ctx};window.HC354={ctx};window.HC355={ctx};window.HC356={ctx};window.HC357={ctx};window.HC358={ctx};window.HC359={ctx};window.HC360={ctx};
+})();
+</script>
+<!-- HC_POSTMATCH_QUESTION_V347 --><!-- HC_PLAYER_LENS_REVIEW_V348 --><!-- HC_COACH_LENS_REVIEW_V349 --><!-- HC_DATA_LENS_REVIEW_V350 --><!-- HC_THREE_LENS_COMPARE_V351 --><!-- HC_GAP_AS_EVIDENCE_V352 --><!-- HC_DISCOVERY_FROM_REVIEW_V353 --><!-- HC_NEXT_QUESTION_REVIEW_V354 --><!-- HC_REVIEW_ANALYSIS_ID_V355 --><!-- HC_REVIEW_MATCH_ID_V356 --><!-- HC_REVIEW_SAVE_V357 --><!-- HC_REVIEW_TO_MEETING_V358 --><!-- HC_REVIEW_CAUTION_V359 --><!-- HC_THREE_LENS_CORE_V360 -->
+
+<!-- HC_REVIEW_HOME_V361_V365 -->
+<script>
+(function(){'use strict';
+function add(){let h=document.getElementById('hcSimple203');if(!h||document.getElementById('hcReviewEntry347'))return;let grid=h.querySelector('.hs203row');if(!grid)return;let b=document.createElement('button');b.id='hcReviewEntry347';b.textContent='試合後に3つの見方で検証';b.onclick=()=>HC347.open();grid.appendChild(b)}
+const m=window.HC203?.mount;if(m)window.HC203.mount=function(){let r=m.apply(this,arguments);setTimeout(add,150);return r}
+setTimeout(add,800);
+window.HC361={add};window.HC362={add};window.HC363={add};window.HC364={add};window.HC365={add};
+})();
+</script>
+<!-- HC_HOME_POSTMATCH_REVIEW_V361 --><!-- HC_POSTMATCH_PLAYER_COACH_DATA_V362 --><!-- HC_REVIEW_SIMPLE_ENTRY_V363 --><!-- HC_REVIEW_BOTTOMUP_LOOP_V364 --><!-- HC_POSTMATCH_REVIEW_CORE_V365 -->
 </body></html>
