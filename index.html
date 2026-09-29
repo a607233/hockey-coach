@@ -1209,4 +1209,27 @@ window.HC93={open,render,add,del,close,upcoming};window.HC94={upcoming};window.H
 })();
 </script>
 <!-- HC_SCHEDULE_EDIT_V93 --><!-- HC_SCHEDULE_LIST_V94 --><!-- HC_VARIABLE_DAYS_V95 --><!-- HC_WEEK_LINK_V96 --><!-- HC_COCKPIT_SCHEDULE_V97 -->
+
+
+<!-- HC_WEEK_PLANNER_V98_V103 -->
+<style>
+#hcPlan98{position:fixed;inset:0;z-index:10005;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcPlan98 .pw{max-width:720px;margin:auto}.pcard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.ptag{font-size:10px;font-weight:950;padding:5px 8px;border-radius:999px;background:#263817;color:#dfff91}.pday{background:#081216;border:1px solid #22363e;border-radius:13px;padding:11px;margin-top:8px}.pbtn{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.pmuted{font-size:11px;opacity:.7}.pgoal{border-left:3px solid #b8ff45;padding-left:9px;margin-top:7px}</style>
+<div id="hcPlan98"><div class="pw" id="hcPlan98b"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function focus(){return window.HC64?.context?.()?.focus||'現在の優先課題'}
+function days(){return window.HC93?.upcoming?.()||[]}
+function matches(){let a=L('hc_matches_v3',[]),t=new Date().toISOString().slice(0,10);return(Array.isArray(a)?a:[]).filter(x=>(x.date||'')>=t).sort((a,b)=>String(a.date).localeCompare(String(b.date)))}
+function role(i,n){if(n<=1)return'PRIORITY + GAME TRANSFER';let r=i/(n-1);return r<.34?'LEARN / DISCOVER':r<.7?'STABILIZE / PRESSURE':'TRANSFER / MATCH READY'}
+function load(i,n){if(n<=1)return'MEDIUM';let r=i/(n-1);return r<.34?'MEDIUM-HIGH':r<.7?'HIGH':'LOW-MEDIUM'}
+function make(){let ds=days(),m=matches()[0],f=focus();let usable=m?ds.filter(d=>d.date<m.date):ds.slice(0,7);let plan=usable.map((d,i)=>({id:d.id,date:d.date,name:d.name,minutes:d.minutes,role:role(i,usable.length),load:load(i,usable.length),focus:f,question:'この状況で何を見て、何を選ぶ？',kpi:'狙った行動の再現回数 / 判断の質'}));let x={id:'week_'+Date.now(),createdAt:new Date().toISOString(),focus:f,nextMatch:m||null,days:plan};S('hc_week_plan_v98',x);return x}
+function current(){return L('hc_week_plan_v98',null)}
+function open(){let x=current()||make(),b=document.getElementById('hcPlan98b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><span class="ptag">WEEK PLANNER · V98–V103</span><h2>次戦から逆算する</h2></div><button onclick="HC98.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="pcard"><span class="ptag">CONTEXT · V98</span><h3>${E(x.focus)}</h3><div>${x.nextMatch?'NEXT MATCH '+E(x.nextMatch.date)+' vs '+E(x.nextMatch.opponent||'OPPONENT'):'次戦未登録：登録済み練習日で設計'}</div><button class="pbtn" onclick="HC98.rebuild()">現在の予定で再設計</button></div><div class="pcard"><span class="ptag">TRAINING DAYS · V99</span>${x.days.length?x.days.map((d,i)=>`<div class="pday"><b>${E(d.date)}｜${E(d.name||'練習')}｜${E(d.minutes)}分</b><div class="pgoal"><b>${E(d.role)}</b><br>FOCUS：${E(d.focus)}<br>LOAD：${E(d.load)}</div><div class="pmuted">QUESTION：${E(d.question)}<br>KPI：${E(d.kpi)}</div></div>`).join(''):'<div class="pday">次戦までの練習日がありません。FLEX SCHEDULEで日程を追加してください。</div>'}</div><div class="pcard"><span class="ptag">ADAPT · V100</span><div>練習回数が少ない週は内容を詰め込まず、優先課題とゲームへの転移を中心にします。</div></div><div class="pcard"><span class="ptag">LOAD · V101</span><div>序盤＝学習・発見 → 中盤＝圧力下で安定 → 試合前＝負荷を落としてゲーム転移、という基本形です。固定ルールではなく編集前提です。</div></div><div class="pcard"><span class="ptag">DAILY BRIDGE · V102</span><button class="pbtn" onclick="HC98.today()">TODAYへ</button></div><div class="pcard"><span class="ptag">VERIFY · V103</span><div>試合後はKPIとPLAYER VOICEを再分析へ戻します。</div></div><button class="pbtn" style="background:#17252b;color:#eef6f2" onclick="HC98.close()">閉じる</button>`;document.getElementById('hcPlan98').style.display='block'}
+function rebuild(){make();open()}function close(){document.getElementById('hcPlan98').style.display='none'}function today(){close();if(window.show)show('today')}
+window.HC98={open,close,rebuild,today,make,current};window.HC99={current};window.HC100={make};window.HC101={current};window.HC102={today};window.HC103={current};
+})();
+</script>
+<!-- HC_WEEK_CONTEXT_V98 --><!-- HC_WEEK_DAYS_V99 --><!-- HC_WEEK_ADAPT_V100 --><!-- HC_WEEK_LOAD_V101 --><!-- HC_WEEK_TODAY_V102 --><!-- HC_WEEK_VERIFY_V103 -->
 </body></html>
