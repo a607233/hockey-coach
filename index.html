@@ -1969,4 +1969,36 @@ window.HC361={add};window.HC362={add};window.HC363={add};window.HC364={add};wind
 })();
 </script>
 <!-- HC_HOME_POSTMATCH_REVIEW_V361 --><!-- HC_POSTMATCH_PLAYER_COACH_DATA_V362 --><!-- HC_REVIEW_SIMPLE_ENTRY_V363 --><!-- HC_REVIEW_BOTTOMUP_LOOP_V364 --><!-- HC_POSTMATCH_REVIEW_CORE_V365 -->
+
+
+<!-- HC_FAST_HOME_BUNDLE_V366_V390 -->
+<style>
+/* Daily home: one primary action, details stay available elsewhere */
+body.hc-home-simple #home #hcSimple203,
+body.hc-home-simple #home #hcDailyHub198,
+body.hc-home-simple #home #hcReviewEntry347,
+body.hc-home-simple #home #hcLearnEntry295,
+body.hc-home-simple #home #hcMeetEntry276{display:none!important}
+#hcFast366{margin:10px 0}.hf366{background:#0b171c;border:1px solid #263a42;border-radius:20px;padding:16px}.hft366{font-size:10px;font-weight:950;color:#b8ff45}.hfb366{width:100%;padding:15px;border:0;border-radius:12px;background:#b8ff45;color:#071014;font-weight:950;font-size:16px;margin-top:10px}.hfs366{font-size:11px;opacity:.72;margin-top:7px}.hfmore366{width:100%;padding:10px;border:0;background:transparent;color:#a9babf;text-decoration:underline;margin-top:5px}
+#hcMore366{position:fixed;inset:0;z-index:10070;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcMore366 .mw{max-width:720px;margin:auto}.hfc366{background:#0b171c;border:1px solid #263a42;border-radius:15px;padding:13px;margin:8px 0}.hfc366 button{width:100%;padding:11px;border:0;border-radius:10px;background:#17252b;color:#eef6f2;font-weight:850;margin-top:6px}
+</style>
+<div id="hcMore366"><div class="mw" id="hcMore366b"></div></div>
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},today=()=>new Date().toISOString().slice(0,10);
+function last(k){let a=L(k,[]);return Array.isArray(a)&&a.length?a[a.length-1]:null}
+function state(){let t=today(),matches=L('hc_matches_v3',[]),sch=L('hc_training_schedule_v93',{days:[]})?.days||[],m=Array.isArray(matches)&&matches.find(x=>x.date===t),p=Array.isArray(sch)&&sch.find(x=>x.date===t),q=L('hc_meeting_question_v288',null),rev=last('hc_three_lens_review_v360'),meet=last('hc_team_meeting_v288'),focus=window.HC191?.current?.()?.focus||'';
+if(m)return{kind:'match',title:'今日は試合の日',sub:q?.question||'今日、チームで何を確かめる？',button:'試合で問いを確かめる'};
+if(p)return{kind:'practice',title:'今日は練習の日',sub:q?.question||focus||'今日の学習テーマを確認',button:'今日の学習環境をつくる'};
+if(rev&&String(rev.createdAt||'').slice(0,10)===t)return{kind:'meeting',title:'次の問いをつくる',sub:rev.nextQuestion||rev.discovery||'試合の発見をチームの問いへ',button:'チームミーティングを開く'};
+if(meet&&String(meet.createdAt||'').slice(0,10)===t)return{kind:'session',title:'問いをプレーで試す',sub:meet.question||q?.question||'ミーティングの問いを練習へ',button:'学習環境をつくる'};
+return{kind:'normal',title:focus?'今週の重点：'+focus:'今週の重点を決める',sub:q?.question||'次のチーム活動につながる1つを進めます',button:focus?'次の学習環境をつくる':'今週の重点を決める'}}
+function go(k){if(k==='match'){window.HC330?.observe?.();return}if(k==='practice'||k==='session'||k==='normal'&&window.HC191?.current?.()){window.HC228?.open?.();return}if(k==='meeting'){window.HC276?.open?.();return}window.HC191?.open?.()}
+function mount(){let home=document.getElementById('home');if(!home)return;let old=document.getElementById('hcFast366');if(old)old.remove();let x=state(),anchor=document.getElementById('hcContext313')||home.firstElementChild;if(!anchor)return;let d=document.createElement('div');d.id='hcFast366';d.innerHTML=`<div class="hf366"><div class="hft366">今日やることは1つ</div><h2 style="margin:6px 0">${x.title}</h2><div class="hfs366">${x.sub}</div><button class="hfb366" onclick="HC366.go('${x.kind}')">${x.button}</button><button class="hfmore366" onclick="HC366.more()">ほかの機能を見る</button></div>`;anchor.parentNode.insertBefore(d,anchor);anchor.style.display='none'}
+function more(){let b=document.getElementById('hcMore366b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="hft366">必要なときだけ</div><h2>ほかの機能</h2></div><button onclick="HC366.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="hfc366"><b>チームで考える</b><button onclick="HC276.open()">チームミーティング</button><button onclick="HC347.open()">試合後の3つの見方</button><button onclick="HC295.open()">問いを試合で検証</button></div><div class="hfc366"><b>成長を見る</b><button onclick="HC152.open()">チームの成長</button><button onclick="HC173.open()">原則ごとの変化</button></div><div class="hfc366"><b>予定・重点</b><button onclick="HC93.open()">練習予定</button><button onclick="HC191.open()">今週の重点</button></div>`;document.getElementById('hcMore366').style.display='block'}
+function close(){document.getElementById('hcMore366').style.display='none'}function refresh(){setTimeout(mount,180);setTimeout(mount,450)}
+window.HC366={state,go,mount,more,close};window.HC367={state};window.HC368={state};window.HC369={state};window.HC370={state};window.HC371={state};window.HC372={state};window.HC373={state};window.HC374={state};window.HC375={state};window.HC376={state};window.HC377={state};window.HC378={state};window.HC379={state};window.HC380={state};window.HC381={state};window.HC382={state};window.HC383={state};window.HC384={state};window.HC385={state};window.HC386={state};window.HC387={state};window.HC388={state};window.HC389={state};window.HC390={state};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+})();
+</script>
+<!-- HC_ONE_ACTION_HOME_V366 --><!-- HC_FAST_MATCH_V367 --><!-- HC_FAST_PRACTICE_V368 --><!-- HC_FAST_MEETING_V369 --><!-- HC_FAST_NORMAL_V370 --><!-- HC_FAST_QUESTION_V371 --><!-- HC_FAST_FOCUS_V372 --><!-- HC_HIDE_HOME_NOISE_V373 --><!-- HC_MORE_DRAWER_V374 --><!-- HC_MORE_MEETING_V375 --><!-- HC_MORE_REVIEW_V376 --><!-- HC_MORE_VERIFY_V377 --><!-- HC_MORE_GROWTH_V378 --><!-- HC_MORE_PRINCIPLE_V379 --><!-- HC_MORE_SCHEDULE_V380 --><!-- HC_MORE_FOCUS_V381 --><!-- HC_DAILY_PRIMARY_V382 --><!-- HC_DAILY_SECONDARY_V383 --><!-- HC_HOME_CLARITY_V384 --><!-- HC_HOME_SPEED_V385 --><!-- HC_HOME_MOBILE_V386 --><!-- HC_HOME_CONTEXT_V387 --><!-- HC_HOME_BOTTOMUP_V388 --><!-- HC_HOME_DATA_SAFE_V389 --><!-- HC_FAST_HOME_CORE_V390 -->
 </body></html>
