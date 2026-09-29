@@ -1499,4 +1499,27 @@ window.HC152={open,close,data};window.HC153={data};window.HC154={data};window.HC
 <script>
 (function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcTrendEntry152'))return;let b=document.createElement('button');b.id='hcTrendEntry152';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='チームの成長を見る';b.onclick=()=>HC152.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,120);setTimeout(add,320)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
 </script>
+
+
+<!-- HC_MATCH_TRANSFER_V159_V165 -->
+<style>
+#hcTransfer159{position:fixed;inset:0;z-index:10010;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcTransfer159 .mw{max-width:720px;margin:auto}.mc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.mt{font-size:10px;font-weight:950;color:#b8ff45}.mline{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.mstat{display:grid;grid-template-columns:1fr 1fr;gap:7px}.mbox{background:#081216;border-radius:12px;padding:10px;text-align:center}.mbig{font-size:21px;font-weight:950}.mbtn{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.ms{font-size:11px;opacity:.72}</style>
+<div id="hcTransfer159"><div class="mw" id="hcTransfer159b"></div></div>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])),avg=(a,k)=>a.length?(a.reduce((s,x)=>s+(+x[k]||0),0)/a.length).toFixed(1):'—';
+function practice(){let a=L('hc_practice_learning_v145',[]);return Array.isArray(a)?a:[]}
+function analyses(){for(let k of ['hc_analyses_v1','hc_analysis_v1','hc_analysis_history_v1']){let a=L(k,[]);if(Array.isArray(a)&&a.length)return a}return[]}
+function group(){let p=practice(),g={};p.forEach(x=>{let f=x.focus||'未分類';(g[f]??=[]).push(x)});return g}
+function status(a){let b=+avg(a,'behavior'),t=+avg(a,'transfer');if(a.length>=2&&b>=4&&t>=4)return'練習では再現性が高まっている';if(t&&t<3)return'ゲームへの転移を確認したい';return'継続して試合で検証する'}
+function open(){let g=group(),an=analyses(),b=document.getElementById('hcTransfer159b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="mt">練習 → 試合</div><h2>取り組みが試合で現れたかを見る</h2></div><button onclick="HC159.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="mc"><div class="mstat"><div class="mbox"><div class="mbig">${practice().length}</div><div class="ms">練習振り返り</div></div><div class="mbox"><div class="mbig">${an.length}</div><div class="ms">保存済み分析</div></div></div></div><div class="mc"><div class="mt">重点ごとの確認</div>${Object.entries(g).length?Object.entries(g).map(([f,a])=>`<div class="mline"><b>${E(f)}</b><br>練習 ${a.length}回・行動 ${avg(a,'behavior')}/5・ゲームへのつながり ${avg(a,'transfer')}/5<br><span class="ms">${E(status(a))}</span></div>`).join(''):'<div class="mline">まだ練習振り返りがありません。</div>'}</div><div class="mc"><div class="mt">次の試合で見ること</div><div class="mline"><b>同じ原則が、練習のルールがなくても自発的に現れるか</b></div><div class="mline">成功回数だけでなく、認知・判断・周囲との連動を観察する</div><div class="ms">現在は練習データと保存済み分析の存在を結ぶ段階です。分析項目との厳密な原則別比較は、データ形式を統一してから行います。</div></div><button class="mbtn" onclick="HC159.analyze()">試合分析を見る</button><button class="mbtn" style="background:#17252b;color:#eef6f2" onclick="HC159.close()">閉じる</button>`;document.getElementById('hcTransfer159').style.display='block'}
+function close(){document.getElementById('hcTransfer159').style.display='none'}function analyze(){close();if(window.show)show('analysis')}
+window.HC159={open,close,analyze};window.HC160={group};window.HC161={status};window.HC162={group};window.HC163={group};window.HC164={group};window.HC165={group};
+})();
+</script>
+<!-- HC_PRACTICE_MATCH_BRIDGE_V159 --><!-- HC_FOCUS_MATCH_VIEW_V160 --><!-- HC_TRANSFER_STATUS_V161 --><!-- HC_MATCH_OBSERVE_V162 --><!-- HC_ANALYSIS_BRIDGE_V163 --><!-- HC_EVIDENCE_CAUTION_V164 --><!-- HC_NEXT_MATCH_VERIFY_V165 -->
+<script>
+(function(){function add(){let h=document.getElementById('hcGuide121');if(!h||document.getElementById('hcTransferEntry159'))return;let b=document.createElement('button');b.id='hcTransferEntry159';b.className='hgBtn';b.style.background='#17252b';b.style.color='#eef6f2';b.textContent='練習が試合につながったか見る';b.onclick=()=>HC159.open();h.querySelector('.hgCard')?.appendChild(b)}function r(){setTimeout(add,140);setTimeout(add,340)};const p=window.HC121?.refresh;if(p)window.HC121.refresh=function(){let x=p.apply(this,arguments);r();return x};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r()})();
+</script>
 </body></html>
