@@ -1884,4 +1884,31 @@ window.HC308={add};window.HC309={add};window.HC310={add};window.HC311={add};wind
 })();
 </script>
 <!-- HC_HOME_LEARNING_ENTRY_V308 --><!-- HC_QUESTION_MATCH_VERIFY_V309 --><!-- HC_LEARNING_SIMPLE_UI_V310 --><!-- HC_LEARNING_BOTTOMUP_LOOP_V311 --><!-- HC_LEARNING_CORE_V312 -->
+
+
+<!-- HC_CONTEXT_HOME_V313_V324 -->
+<style>
+#hcContext313{margin:10px 0}.cx313{background:#0b171c;border:1px solid #263a42;border-radius:18px;padding:14px}.ct313{font-size:10px;font-weight:950;color:#b8ff45}.cb313{width:100%;padding:13px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:9px}.cs313{font-size:11px;opacity:.72;margin-top:5px}.cp313{display:flex;gap:5px;margin-top:9px}.cp313 span{flex:1;text-align:center;padding:6px 2px;border:1px solid #344950;border-radius:8px;font-size:10px;opacity:.55}.cp313 span.on{border-color:#b8ff45;color:#b8ff45;opacity:1}</style>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},day=()=>new Date().toISOString().slice(0,10);
+function matches(){let a=L('hc_matches_v3',[]);return Array.isArray(a)?a:[]}function schedule(){let x=L('hc_training_schedule_v93',{days:[]});return Array.isArray(x?.days)?x.days:[]}
+function mode(){let t=day(),m=matches().find(x=>x.date===t),p=schedule().find(x=>x.date===t),meet=L('hc_team_meeting_v288',[]),last=Array.isArray(meet)?meet.slice(-1)[0]:null;if(m)return{type:'match',title:'今日は試合の日',sub:m.opponent?`対戦：${m.opponent}`:'試合でチームの問いを確かめる',action:'試合モードを開く'};if(p)return{type:'practice',title:'今日は練習の日',sub:`${p.name||'練習'}・${p.minutes||''}分`,action:'今日の学習環境をつくる'};if(last&&String(last.createdAt||'').slice(0,10)===t)return{type:'meeting',title:'今日はミーティングの日',sub:'選手の声から次の問いをつくる',action:'チームミーティングを開く'};return{type:'normal',title:'今日は何を進めますか？',sub:'予定がなければ、次のチーム活動を選べます',action:'今週の重点を確認'}}
+function go(t){if(t==='match'){window.HC29?.open?.()||window.HC295?.open?.();return}if(t==='practice'){window.HC228?.open?.();return}if(t==='meeting'){window.HC276?.open?.();return}let f=window.HC191?.current?.();f?window.HC228?.open?.():window.HC191?.open?.()}
+function mount(){let home=document.getElementById('home');if(!home)return;let old=document.getElementById('hcContext313');if(old)old.remove();let x=mode(),anchor=document.getElementById('hcSimple203')||home.firstElementChild;if(!anchor)return;let d=document.createElement('div');d.id='hcContext313';d.innerHTML=`<div class="cx313"><div class="ct313">今日のモード</div><h2 style="margin:5px 0">${x.title}</h2><div class="cs313">${x.sub}</div><div class="cp313"><span class="${x.type==='match'?'on':''}">試合</span><span class="${x.type==='practice'?'on':''}">練習</span><span class="${x.type==='meeting'?'on':''}">ミーティング</span></div><button class="cb313" onclick="HC313.go('${x.type}')">${x.action}</button></div>`;anchor.parentNode.insertBefore(d,anchor);if(x.type!=='normal')anchor.style.display='none';else anchor.style.display='block'}
+function refresh(){setTimeout(mount,170);setTimeout(mount,430)}
+const m=window.HC203?.mount;if(m)window.HC203.mount=function(){let r=m.apply(this,arguments);refresh();return r};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+window.HC313={mode,go,mount};window.HC314={mode};window.HC315={mode};window.HC316={mode};window.HC317={mode};window.HC318={mode};window.HC319={mode};window.HC320={mode};window.HC321={mode};window.HC322={mode};window.HC323={mode};window.HC324={mode};
+})();
+</script>
+<!-- HC_TODAY_MODE_V313 --><!-- HC_MATCH_DAY_HOME_V314 --><!-- HC_PRACTICE_DAY_HOME_V315 --><!-- HC_MEETING_DAY_HOME_V316 --><!-- HC_NORMAL_DAY_HOME_V317 --><!-- HC_MATCH_CONTEXT_V318 --><!-- HC_PRACTICE_CONTEXT_V319 --><!-- HC_MEETING_CONTEXT_V320 --><!-- HC_CONTEXT_PRIMARY_ACTION_V321 --><!-- HC_CONTEXT_HIDE_NOISE_V322 --><!-- HC_CONTEXT_REFRESH_V323 --><!-- HC_CONTEXT_HOME_CORE_V324 -->
+
+<!-- HC_MATCH_LEARNING_BRIDGE_V325_V329 -->
+<script>
+(function(){'use strict';
+function afterMatch(){let q;try{q=JSON.parse(localStorage.getItem('hc_meeting_question_v288')||'null')}catch(e){}return q?.question||''}
+function verify(){window.HC295?.open?.()}window.HC325={afterMatch,verify};window.HC326={afterMatch};window.HC327={verify};window.HC328={verify};window.HC329={verify};
+})();
+</script>
+<!-- HC_MATCH_QUESTION_V325 --><!-- HC_MATCH_OBSERVE_QUESTION_V326 --><!-- HC_MATCH_TO_VERIFY_V327 --><!-- HC_VERIFY_TO_NEXT_QUESTION_V328 --><!-- HC_CONTEXT_LOOP_V329 -->
 </body></html>
