@@ -2268,4 +2268,58 @@ setTimeout(mount,650);window.HCR522={mount};
 })();
 </script>
 <!-- HC_QUICK_VOICE_R523 --><!-- HC_OPTIONAL_REFLECTION_R524 --><!-- HC_30SEC_R525 --><!-- HC_TEAM_DISCOVERY_R526 --><!-- HC_NEXT_QUESTION_R527 --><!-- HC_MATCH_MODE_R528 --><!-- HC_MATCH_QUESTION_R529 --><!-- HC_MATCH_OBSERVE_R530 --><!-- HC_PLAYER_LENS_R531 --><!-- HC_COACH_LENS_R532 --><!-- HC_DATA_LENS_R533 --><!-- HC_NO_LOW_SCORE_AUTO_R534 --><!-- HC_CAUSE_FIRST_R535 --><!-- HC_PRINCIPLE_BRIDGE_R536 --><!-- HC_ATTACK_PRINCIPLES_R537 --><!-- HC_DEFENCE_PRINCIPLES_R538 --><!-- HC_TRANSITION_PRINCIPLES_R539 --><!-- HC_KPI_BRIDGE_R540 --><!-- HC_GROWTH_BRIDGE_R541 --><!-- HC_WEEKLY_REFLECTION_R542 --><!-- HC_MATCH_REFLECTION_R543 --><!-- HC_IMPORTANT_PRACTICE_R544 --><!-- HC_GROUP_VOICE_R545 --><!-- HC_ANON_VOICE_R546 --><!-- HC_NO_DAILY_BURDEN_R547 --><!-- HC_TEAM_STORY_R548 --><!-- HC_LEARNING_MEMORY_R549 --><!-- HC_QUESTION_MEMORY_R550 --><!-- HC_MATCH_MEMORY_R551 --><!-- HC_DISCOVERY_MEMORY_R552 --><!-- HC_EXISTING_VOICE_COMPAT_R553 --><!-- HC_EXISTING_DISCOVERY_COMPAT_R554 --><!-- HC_EXISTING_QUESTION_COMPAT_R555 --><!-- HC_EXISTING_MATCH_COMPAT_R556 --><!-- HC_HOME_LOOP_ENTRY_R557 --><!-- HC_NO_OBSERVER_R558 --><!-- HC_NO_SHOW_WRAP_R559 --><!-- HC_NO_NAV_WRAP_R560 --><!-- HC_LIGHT_R561 --><!-- HC_MOBILE_R562 --><!-- HC_JA_R563 --><!-- HC_STABLE_R564 --><!-- HC_BOTTOMUP_R565 --><!-- HC_ECOLOGICAL_R566 --><!-- HC_TACTICAL_PERIODIZATION_BRIDGE_R567 --><!-- HC_LEARNING_ENV_BRIDGE_R568 --><!-- HC_DECISION_FLOW_BRIDGE_R569 --><!-- HC_ANALYSIS_BRIDGE_R570 --><!-- HC_PLAYER_DISCOVERY_R571 --><!-- HC_TEAM_DISCOVERY_R572 --><!-- HC_NEXT_LEARNING_R573 --><!-- HC_MATCH_TRANSFER_R574 --><!-- HC_PREMATCH_R575 --><!-- HC_INMATCH_R576 --><!-- HC_POSTMATCH_R577 --><!-- HC_THREE_LENS_BRIDGE_R578 --><!-- HC_KPI_BEHAVIOR_R579 --><!-- HC_KPI_DECISION_R580 --><!-- HC_KPI_REPRODUCIBILITY_R581 --><!-- HC_SEASON_BRIDGE_R582 --><!-- HC_TRAINING_LIBRARY_BRIDGE_R583 --><!-- HC_METHOD_BRIDGE_R584 --><!-- HC_A1_A10_R585 --><!-- HC_D1_D10_R586 --><!-- HC_T1_T12_R587 --><!-- HC_WIN_DELAY_RECOVER_R588 --><!-- HC_GO_HOLD_RESET_R589 --><!-- HC_FOUR_SECOND_DECISION_R590 --><!-- HC_COACH_ENV_DESIGNER_R591 --><!-- HC_PLAYER_DISCOVERER_R592 --><!-- HC_DATA_SUPPORT_NOT_ANSWER_R593 --><!-- HC_WEEK_LOOP_R594 --><!-- HC_MONTH_LOOP_R595 --><!-- HC_SEASON_LOOP_R596 --><!-- HC_COMPAT_R597 --><!-- HC_SAFE_R598 --><!-- HC_INTEGRATED_R599 --><!-- HC_INTEGRATED_LEARNING_LOOP_CORE_R600 -->
+
+
+<!-- HC_V1_BLOCK1_ANALYSIS_PRINCIPLE_KPI_ROLE -->
+<style>
+#hcV1B1{position:fixed;inset:0;z-index:10200;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}
+#hcV1B1 .v1w{max-width:760px;margin:auto}.v1c{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}
+.v1k{font-size:10px;font-weight:950;color:#d7ff39;letter-spacing:1px}.v1v{font-size:17px;font-weight:900;line-height:1.45;margin:6px 0}.v1s{font-size:11px;opacity:.74;line-height:1.5}
+.v1grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.v1b{width:100%;padding:12px;border:0;border-radius:11px;background:#d7ff39;color:#071014;font-weight:950;margin-top:8px}.v1sub{background:#17252b;color:#eef6f2}
+.v1role{border:1px solid #40545c;background:#101d22;color:#eef6f2;border-radius:999px;padding:9px 11px}.v1role.on{background:#d7ff39;color:#071014;border-color:#d7ff39;font-weight:900}
+.v1i{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:15px;margin-top:7px}
+.v1tag{display:inline-block;border:1px solid #40545c;border-radius:999px;padding:5px 8px;margin:3px;font-size:10px}
+</style>
+<div id="hcV1B1"><div class="v1w" id="hcV1B1b"></div></div>
+<script>
+(function(){'use strict';
+const RK='hc_role_v1',PK='hc_principle_link_v1',KK='hc_team_kpi_v1';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]},last=k=>A(k).slice(-1)[0]||null,E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const principles={
+ A:['前進','幅','深さ','サポート','数的・位置的優位','3人目・4人目','逆サイド','サークル侵入','フィニッシュ','攻撃時リスク管理'],
+ D:['ゴールを守る','中央保護','1st DF','誘導','2nd DF','カバー','コンパクト','奪取トリガー','ゴール前守備','奪取後の前進'],
+ T:['WIN→DELAY→RECOVER','GO→HOLD→RESET','4秒は判断の窓']
+};
+let tab='main';
+function role(){return L(RK,{role:'OWNER'}).role||'OWNER'}
+function analysis(){return last('hc_analysis_history_v1')}
+function question(){return L('hc_meeting_question_v288',null)}
+function open(t='main'){tab=t;render();document.getElementById('hcV1B1').style.display='block'}
+function close(){document.getElementById('hcV1B1').style.display='none'}
+function roleBtns(){return ['OWNER','STAFF','PLAYER'].map(r=>`<button class="v1role ${role()===r?'on':''}" onclick="HCV1B1.setRole('${r}')">${r}</button>`).join(' ')}
+function render(){
+ let b=document.getElementById('hcV1B1b'),r=role(),a=analysis(),q=question(),links=A(PK),kpis=A(KK);
+ let head=`<div style="display:flex;justify-content:space-between"><div><div class="v1k">HOCKEY COACH V1｜BLOCK 1</div><h2 style="margin:4px 0">分析 × 原理原則 × KPI</h2></div><button onclick="HCV1B1.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div>`;
+ if(tab==='roles'){b.innerHTML=head+`<div class="v1c"><div class="v1k">ROLE PREVIEW｜役割</div><div style="margin-top:10px">${roleBtns()}</div><div class="v1s" style="margin-top:10px">これはVer.1の役割別UIプレビューです。本番の安全な権限制御は最終ブロックでサーバー側認証と組み合わせます。</div></div>
+ <div class="v1c"><div class="v1v">${r}</div><div class="v1s">${r==='OWNER'?'チーム作成・メンバー/権限・全データ・シーズン管理':r==='STAFF'?'分析・重点・問い・学習環境・試合/練習記録・KPI': '今週の重点・今日の問い・QUICK VOICE・チームの発見/成長'}</div></div><button class="v1b v1sub" onclick="HCV1B1.open()">戻る</button>`;return}
+ if(tab==='principles'){b.innerHTML=head+`<div class="v1c"><div class="v1k">PRINCIPLE LINK｜課題を原則へ</div><div class="v1s">点数が低い原則を自動で正解扱いしません。現象とWHYを見たうえで「関連候補」として結びます。</div>${Object.entries(principles).map(([k,v])=>`<div class="v1v">${k==='A'?'攻撃':k==='D'?'守備':'トランジション'}</div><div>${v.map((x,i)=>`<button class="v1tag" onclick="HCV1B1.addPrinciple('${k}${i+1}','${x}')">${k}${i+1} ${x}</button>`).join('')}</div>`).join('')}</div>
+ <div class="v1c"><div class="v1k">現在の関連原則</div><div class="v1s">${links.length?links.slice(-6).map(x=>E(x.code+' '+x.name)).join(' / '):'まだ選択されていません'}</div></div><button class="v1b v1sub" onclick="HCV1B1.open()">戻る</button>`;return}
+ if(tab==='kpi'){b.innerHTML=head+`<div class="v1c"><div class="v1k">TEAM KPI｜何が変われば前進？</div><div class="v1s">勝敗や回数だけでなく、判断・行動・再現性を観察します。</div><input id="v1KName" class="v1i" placeholder="KPI例：奪取後4秒以内に前進を選べた"><select id="v1KType" class="v1i"><option>判断</option><option>行動</option><option>再現性</option><option>結果</option></select><input id="v1KTarget" class="v1i" placeholder="観察基準 例：10回中7回"><button class="v1b" onclick="HCV1B1.saveKPI()">KPIを保存</button></div>
+ <div class="v1c"><div class="v1k">保存済みKPI</div>${kpis.length?kpis.slice(-5).reverse().map(x=>`<div class="v1v" style="font-size:14px">${E(x.name)}</div><div class="v1s">${E(x.type)}｜${E(x.target)}</div>`).join(''):'<div class="v1s">まだありません</div>'}</div><button class="v1b v1sub" onclick="HCV1B1.open()">戻る</button>`;return}
+ b.innerHTML=head+`<div class="v1c"><div class="v1k">ROLE</div><div class="v1v">${r}</div><div class="v1s">役割に応じて、最終的に見える画面と操作権限を分けます。</div><button class="v1b v1sub" onclick="HCV1B1.open('roles')">役割を確認</button></div>
+ <div class="v1c"><div class="v1k">ANALYSIS</div><div class="v1v">${a?'最新分析あり':'分析記録なし'}</div><div class="v1s">${E(q?.question||'分析 → WHY → 重点 → 問い の順で考えます。')}</div><button class="v1b v1sub" onclick="HCV1B1.goAnalysis()">32項目の分析を見る</button></div>
+ <div class="v1grid"><div class="v1c"><div class="v1k">PRINCIPLES</div><div class="v1v">原理原則</div><div class="v1s">攻撃10・守備10・トランジションを関連候補として接続。</div><button class="v1b" onclick="HCV1B1.open('principles')">原則を結ぶ</button></div>
+ <div class="v1c"><div class="v1k">KPI</div><div class="v1v">${kpis.length} 個</div><div class="v1s">判断・行動・再現性・結果を観察。</div><button class="v1b" onclick="HCV1B1.open('kpi')">KPIをつくる</button></div></div>`;
+}
+function setRole(r){S(RK,{role:r,updatedAt:new Date().toISOString()});render()}
+function addPrinciple(code,name){let a=A(PK);a.push({id:'pl_'+Date.now(),createdAt:new Date().toISOString(),code,name,analysisId:analysis()?.id||'',question:question()?.question||''});S(PK,a);render()}
+function saveKPI(){let n=document.getElementById('v1KName').value.trim(),t=document.getElementById('v1KType').value,g=document.getElementById('v1KTarget').value.trim();if(!n)return alert('KPIを入力してください');let a=A(KK);a.push({id:'kpi_'+Date.now(),createdAt:new Date().toISOString(),name:n,type:t,target:g,question:question()?.question||'',principles:A(PK).slice(-4)});S(KK,a);render()}
+function goAnalysis(){close();show('analysis')}
+window.HCV1B1={open,close,render,setRole,addPrinciple,saveKPI,goAnalysis,role};
+})();
+</script>
+<script>
+(function(){function mount(){let h=document.getElementById('hcCoachHomeR');if(!h||document.getElementById('hcV1B1Entry'))return;let d=document.createElement('div');d.id='hcV1B1Entry';d.className='hch-card hch-wide';d.innerHTML='<div class="hch-k">V1 CORE｜分析 × 原理原則 × KPI</div><div class="hch-v">分析を「数字」で終わらせない</div><div class="hch-s">現象とWHYから関連原則を結び、判断・行動・再現性のKPIへ。</div><button class="hch-btn hch-main" onclick="HCV1B1.open()">V1 COREを開く</button>';h.appendChild(d)}setTimeout(mount,800);window.HCV1B1HOME={mount}})();
+</script>
+<!-- HC_V1B1_ROLE_OWNER --><!-- HC_V1B1_ROLE_STAFF --><!-- HC_V1B1_ROLE_PLAYER --><!-- HC_V1B1_ANALYSIS32 --><!-- HC_V1B1_PRINCIPLES --><!-- HC_V1B1_KPI --><!-- HC_V1B1_NO_AUTO_LOW_SCORE --><!-- HC_V1B1_DECISION_KPI --><!-- HC_V1B1_BEHAVIOR_KPI --><!-- HC_V1B1_REPRO_KPI --><!-- HC_V1B1_RESULT_KPI --><!-- HC_V1B1_SERVER_AUTH_LATER --><!-- HC_V1_BLOCK1_CORE -->
 </body></html>
