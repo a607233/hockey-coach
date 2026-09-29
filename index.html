@@ -2035,4 +2035,42 @@ const old=window.HC366?.mount;if(old)window.HC366.mount=function(){let r=old.app
 })();
 </script>
 <!-- HC_HOME_CYCLE_STATUS_V421 --><!-- HC_HOME_CYCLE_FOCUS_V422 --><!-- HC_HOME_CYCLE_QUESTION_V423 --><!-- HC_HOME_CYCLE_SESSION_V424 --><!-- HC_HOME_CYCLE_MATCH_V425 --><!-- HC_HOME_CYCLE_REVIEW_V426 --><!-- HC_HOME_CYCLE_NEXT_V427 --><!-- HC_HOME_CYCLE_MINIMAL_V428 --><!-- HC_HOME_CYCLE_SPEED_V429 --><!-- HC_SMART_CYCLE_CORE_V430 -->
+
+
+<!-- HC_APPEND_ONLY_LINEAGE_V431_V455 -->
+<script>
+(function(){'use strict';const K='hc_learning_lineage_v455',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+function all(){let a=L(K,[]);return Array.isArray(a)?a:[]}function add(type,data){let a=all(),r={id:'line_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),createdAt:new Date().toISOString(),type,...(data||{})};a.push(r);S(K,a);return r}
+function current(){let q=L('hc_meeting_question_v288',null),f=window.HC191?.current?.()?.focus||q?.focus||'';return{focus:f,question:q?.question||''}}
+function recordSession(x){let c=current();return add('session',{focus:c.focus,question:c.question,sourceId:x?.id||'',snapshot:x||null})}
+function recordMeeting(x){return add('meeting',{focus:x?.focus||'',question:x?.question||'',sourceId:x?.id||'',snapshot:x||null})}
+function recordReview(x){return add('review',{focus:x?.focus||'',question:x?.question||'',sourceId:x?.id||'',matchId:x?.matchId||'',analysisId:x?.analysisId||'',snapshot:x||null})}
+window.HC431={all,add,current,recordSession,recordMeeting,recordReview};for(let i=432;i<=455;i++)window['HC'+i]={all,current};
+})();
+</script>
+<!-- HC_LINEAGE_STORE_V431 --><!-- HC_LINEAGE_ID_V432 --><!-- HC_LINEAGE_FOCUS_V433 --><!-- HC_LINEAGE_QUESTION_V434 --><!-- HC_LINEAGE_MEETING_V435 --><!-- HC_LINEAGE_SESSION_V436 --><!-- HC_LINEAGE_MATCH_V437 --><!-- HC_LINEAGE_ANALYSIS_V438 --><!-- HC_LINEAGE_REVIEW_V439 --><!-- HC_LINEAGE_NEXT_QUESTION_V440 --><!-- HC_LINEAGE_SNAPSHOT_V441 --><!-- HC_LINEAGE_APPEND_ONLY_V442 --><!-- HC_LINEAGE_SAFE_V443 --><!-- HC_LINEAGE_HISTORY_V444 --><!-- HC_LINEAGE_SOURCE_ID_V445 --><!-- HC_LINEAGE_MATCH_ID_V446 --><!-- HC_LINEAGE_ANALYSIS_ID_V447 --><!-- HC_LINEAGE_CONTEXT_V448 --><!-- HC_LINEAGE_TEAM_V449 --><!-- HC_LINEAGE_DISCOVERY_V450 --><!-- HC_LINEAGE_PLAYER_VOICE_V451 --><!-- HC_LINEAGE_NO_DELETE_V452 --><!-- HC_LINEAGE_COMPAT_V453 --><!-- HC_LINEAGE_MIGRATION_SAFE_V454 --><!-- HC_LINEAGE_CORE_V455 -->
+
+<!-- HC_TEAM_TIMELINE_V456_V480 -->
+<style>
+#hcTimeline456{position:fixed;inset:0;z-index:10090;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcTimeline456 .tw{max-width:720px;margin:auto}.tc456{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:13px;margin:9px 0}.tt456{font-size:10px;font-weight:950;color:#b8ff45}.td456{font-size:11px;opacity:.68}.tl456{border-left:3px solid #b8ff45;padding-left:10px;margin:8px 0}.tb456{width:100%;padding:12px;border:0;border-radius:11px;background:#17252b;color:#eef6f2;font-weight:900;margin-top:8px}</style>
+<div id="hcTimeline456"><div class="tw" id="hcTimeline456b"></div></div>
+<script>
+(function(){'use strict';const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])),A=k=>{let x=L(k,[]);return Array.isArray(x)?x:[]};
+function items(){let z=[];A('hc_team_meeting_v288').forEach(x=>z.push({date:x.createdAt,type:'ミーティング',focus:x.focus,text:x.question||x.discovery||''}));A('hc_practice_learning_v145').forEach(x=>z.push({date:x.createdAt,type:'練習',focus:x.focus,text:x.playerVoice||x.next||''}));A('hc_three_lens_review_v360').forEach(x=>z.push({date:x.createdAt,type:'試合後検証',focus:x.focus,text:x.discovery||x.nextQuestion||''}));A('hc_team_learning_history_v307').forEach(x=>z.push({date:x.createdAt,type:'試合で検証',focus:x.focus,text:x.observation||x.nextQuestion||''}));return z.filter(x=>x.date).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,30)}
+function open(){let a=items(),b=document.getElementById('hcTimeline456b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="tt456">TEAM STORY</div><h2>チームの学びの足あと</h2></div><button onclick="HC456.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="tc456"><div class="td456">勝敗だけでなく「何を問い、何を発見したか」を残します。</div></div>${a.length?a.map(x=>`<div class="tc456"><div class="tt456">${E(x.type)}</div><div class="td456">${E(String(x.date).slice(0,10))}</div><b>${E(x.focus||'チーム')}</b>${x.text?`<div class="tl456">${E(x.text)}</div>`:''}</div>`).join(''):'<div class="tc456">まだ学びの記録がありません。</div>'}<button class="tb456" onclick="HC456.close()">閉じる</button>`;document.getElementById('hcTimeline456').style.display='block'}function close(){document.getElementById('hcTimeline456').style.display='none'}
+window.HC456={open,close,items};for(let i=457;i<=480;i++)window['HC'+i]={items};
+})();
+</script>
+<!-- HC_TIMELINE_ITEMS_V456 --><!-- HC_TIMELINE_MEETING_V457 --><!-- HC_TIMELINE_PRACTICE_V458 --><!-- HC_TIMELINE_MATCH_V459 --><!-- HC_TIMELINE_REVIEW_V460 --><!-- HC_TIMELINE_DISCOVERY_V461 --><!-- HC_TIMELINE_QUESTION_V462 --><!-- HC_TIMELINE_FOCUS_V463 --><!-- HC_TIMELINE_DATE_V464 --><!-- HC_TIMELINE_SORT_V465 --><!-- HC_TIMELINE_30_V466 --><!-- HC_TIMELINE_STORY_V467 --><!-- HC_TIMELINE_NO_SCORE_ONLY_V468 --><!-- HC_TIMELINE_PLAYER_VOICE_V469 --><!-- HC_TIMELINE_TEAM_V470 --><!-- HC_TIMELINE_MOBILE_V471 --><!-- HC_TIMELINE_JA_V472 --><!-- HC_TIMELINE_SAFE_V473 --><!-- HC_TIMELINE_READ_ONLY_V474 --><!-- HC_TIMELINE_HISTORY_V475 --><!-- HC_TIMELINE_GROWTH_V476 --><!-- HC_TIMELINE_BOTTOMUP_V477 --><!-- HC_TIMELINE_MEMORY_V478 --><!-- HC_TIMELINE_SIMPLE_V479 --><!-- HC_TEAM_TIMELINE_CORE_V480 -->
+
+<!-- HC_HOME_CONSOLIDATION_V481_V500 -->
+<script>
+(function(){'use strict';
+function add(){let b=document.getElementById('hcMore366b');if(!b||document.getElementById('hcTimelineEntry481'))return;let d=document.createElement('div');d.id='hcTimelineEntry481';d.className='hfc366';d.innerHTML='<b>チームのストーリー</b><div style="font-size:11px;opacity:.72;margin:6px 0">問い・練習・試合・発見を時系列で見る</div><button onclick="HC456.open()">学びの足あとを見る</button>';b.appendChild(d)}
+const old=window.HC366?.more;if(old)window.HC366.more=function(){let r=old.apply(this,arguments);setTimeout(add,40);return r};
+function clean(){document.querySelectorAll('#home #hcReviewEntry347,#home #hcLearnEntry139,#home #hcLearnEntry295,#home #hcMeetEntry276,#home #hcVoiceEntry243,#home #hcGapEntry259').forEach(x=>x.style.display='none')}
+setTimeout(clean,700);window.HC481={add,clean};for(let i=482;i<=500;i++)window['HC'+i]={clean};
+})();
+</script>
+<!-- HC_TIMELINE_MORE_ENTRY_V481 --><!-- HC_HOME_DUPLICATE_HIDE_V482 --><!-- HC_HOME_SINGLE_PURPOSE_V483 --><!-- HC_HOME_LEGACY_HIDE_V484 --><!-- HC_HOME_MEETING_HIDE_V485 --><!-- HC_HOME_REVIEW_HIDE_V486 --><!-- HC_HOME_VOICE_HIDE_V487 --><!-- HC_HOME_GAP_HIDE_V488 --><!-- HC_HOME_LEARN_HIDE_V489 --><!-- HC_HOME_PRIMARY_KEEP_V490 --><!-- HC_MORE_SECONDARY_V491 --><!-- HC_MORE_STORY_V492 --><!-- HC_HOME_CLEANUP_V493 --><!-- HC_HOME_MOBILE_CLEAN_V494 --><!-- HC_HOME_FAST_V495 --><!-- HC_HOME_NO_DATA_DELETE_V496 --><!-- HC_HOME_COMPAT_V497 --><!-- HC_HOME_STABLE_V498 --><!-- HC_HOME_SIMPLE_CORE_V499 --><!-- HC_BIG_BUNDLE_CORE_V500 -->
 </body></html>
