@@ -1336,4 +1336,38 @@ window.HC115={run};window.HC116={run};window.HC117={run};window.HC118={run};wind
 })();
 </script>
 <!-- HC_JA_NAV_V115 --><!-- HC_JA_HOME_V116 --><!-- HC_JA_ANALYZE_V117 --><!-- HC_JA_TRAINING_V118 --><!-- HC_JA_RECORD_V119 --><!-- HC_JA_SYSTEM_V120 -->
+
+
+<!-- HC_DAILY_GUIDE_V121_V126 -->
+<style>
+#hcGuide121{margin:9px 0}.hgCard{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px}.hgTitle{font-size:12px;color:#b8ff45;font-weight:950}.hgStep{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #203239}.hgNum{min-width:24px;height:24px;border-radius:50%;background:#b8ff45;color:#071014;display:grid;place-items:center;font-weight:950}.hgBtn{width:100%;padding:11px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.hgSmall{font-size:11px;opacity:.72}
+</style>
+<script>
+(function(){'use strict';
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}};
+function state(){
+ let sched=window.HC93?.upcoming?.()||[], today=new Date().toISOString().slice(0,10), td=sched.find(x=>x.date===today);
+ let adopted=L('hc_today_adopted_v60',null), loops=L('hc_session_loop_v63',[]);
+ let done=Array.isArray(loops)&&loops.some(x=>x.candidateId&&adopted&&x.candidateId===adopted.candidateId);
+ return{td,adopted,done};
+}
+function mount(){
+ let h=document.getElementById('hcHome69')||document.getElementById('home');if(!h)return;
+ let old=document.getElementById('hcGuide121');if(old)old.remove();let st=state(),d=document.createElement('div');d.id='hcGuide121';
+ let now=!st.td?'今日は練習予定が未登録です':!st.adopted?'今日の練習内容を決めましょう':!st.done?'練習後に記録を残しましょう':'記録済みです。次の課題を確認しましょう';
+ d.innerHTML=`<div class="hgCard"><div class="hgTitle">今日、まずやること</div><h3 style="margin:5px 0">${now}</h3>
+ <div class="hgStep"><span class="hgNum">1</span><div><b>予定を確認</b><div class="hgSmall">${st.td?st.td.date+'・'+st.td.minutes+'分':'練習日・時間を登録'}</div></div></div>
+ <div class="hgStep"><span class="hgNum">2</span><div><b>今日の重点を確認</b><div class="hgSmall">今週の課題から、今日取り組むことを絞る</div></div></div>
+ <div class="hgStep"><span class="hgNum">3</span><div><b>練習後に記録</b><div class="hgSmall">KPI（評価指標）と選手の気づきを残す</div></div></div>
+ <button class="hgBtn" onclick="HC121.next()">${!st.td?'予定を設定する':!st.adopted?'今日の練習を見る':!st.done?'記録する':'分析を見る'}</button></div>`;
+ h.prepend(d);
+}
+function next(){let s=state();if(!s.td)return HC93.open();if(!s.adopted){if(window.show)return show('today')}if(!s.done){if(window.show)return show('history')}if(window.show)return show('analysis')}
+function refresh(){setTimeout(mount,50);setTimeout(mount,220)}
+const ps=window.show;if(typeof ps==='function'){window.show=function(id){let r=ps.apply(this,arguments);if(id==='home')refresh();return r}}
+window.HC121={mount,next,refresh};window.HC122={state};window.HC123={refresh};window.HC124={refresh};window.HC125={refresh};window.HC126={refresh};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+})();
+</script>
+<!-- HC_TODAY_GUIDE_V121 --><!-- HC_TODAY_STATE_V122 --><!-- HC_TODAY_SCHEDULE_V123 --><!-- HC_TODAY_FOCUS_V124 --><!-- HC_TODAY_RECORD_V125 --><!-- HC_TODAY_NEXT_V126 -->
 </body></html>
