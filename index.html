@@ -1814,4 +1814,41 @@ window.HC271={q};window.HC272={patchBottom};window.HC273={add};window.HC274={q};
 })();
 </script>
 <!-- HC_GAP_TO_QUESTION_V271 --><!-- HC_GAP_TO_ENVIRONMENT_V272 --><!-- HC_HOME_GAP_ENTRY_V273 --><!-- HC_GAP_DAILY_LOOP_V274 --><!-- HC_GAP_BOTTOMUP_BRIDGE_V275 -->
+
+
+<!-- HC_TEAM_MEETING_V276_V288 -->
+<style>
+#hcMeet276{position:fixed;inset:0;z-index:10050;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcMeet276 .mw{max-width:720px;margin:auto}.mc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.mt{font-size:10px;font-weight:950;color:#b8ff45}.mi{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px}.mb{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.msub{background:#17252b;color:#eef6f2}.ml{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.ms{font-size:11px;opacity:.72}.mstep{display:inline-block;border:1px solid #40545c;border-radius:999px;padding:5px 8px;margin:2px;font-size:10px}</style>
+<div id="hcMeet276"><div class="mw" id="hcMeet276b"></div></div>
+<script>
+(function(){'use strict';
+const K='hc_team_meeting_v288',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function arr(k){let a=L(k,[]);return Array.isArray(a)?a:[]}function focus(){return window.HC191?.current?.()?.focus||window.HC64?.context?.()?.focus||'重点未設定'}
+function latest(k,f){let a=arr(k),x=a.filter(v=>(v.focus||v.issue||'')===f);return(x.length?x:a).slice(-1)[0]||null}
+function open(){render();document.getElementById('hcMeet276').style.display='block'}
+function render(){let f=focus(),v=latest('hc_player_voice_v1',f),d=latest('hc_team_discovery_v1',f),g=window.HC259?.latest?.(f),b=document.getElementById('hcMeet276b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="mt">チームミーティング</div><h2>みんなで次の問いをつくる</h2></div><button onclick="HC276.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="mc"><span class="mstep">試合を見る</span><span class="mstep">コーチ</span><span class="mstep">選手</span><span class="mstep">発見</span><span class="mstep">問い</span><div class="mt" style="margin-top:10px">今日話すテーマ</div><h3>${E(f)}</h3><input id="mv276" class="mi" placeholder="試合映像URL（任意）"></div><div class="mc"><div class="mt">1｜まず選手から</div><div class="ms">コーチが答えを言う前に、選手が見えたこと・感じたことを出します。</div><textarea id="mp276" class="mi" rows="3" placeholder="選手：何が見えた？ 何に迷った？">${E(v&&(v.text||v.what)||'')}</textarea></div><div class="mc"><div class="mt">2｜コーチにはどう見えた？</div><textarea id="mc276" class="mi" rows="3" placeholder="コーチ：どんな現象が起きていた？">${E(g?.coach||'')}</textarea></div><div class="mc"><div class="mt">3｜チームとして何を発見した？</div><textarea id="md276" class="mi" rows="3" placeholder="例：1st DFが遅れた時は中央保護を優先する">${E(d&&(d.text||d.discovery)||'')}</textarea></div><div class="mc"><div class="mt">4｜次にみんなで解く問い</div><textarea id="mq276" class="mi" rows="3">${E(g?.question||window.HC250?.suggestion?.(f)||'')}</textarea><div class="ms">問いは「正解を当てる問題」ではなく、次のプレーで確かめるテーマです。</div></div><button class="mb" onclick="HC276.save()">ミーティングを保存</button><button class="mb msub" onclick="HC276.session()">この問いから学習環境をつくる</button><button class="mb msub" onclick="HC276.close()">閉じる</button>`}
+function values(){return{focus:focus(),video:document.getElementById('mv276').value.trim(),player:document.getElementById('mp276').value.trim(),coach:document.getElementById('mc276').value.trim(),discovery:document.getElementById('md276').value.trim(),question:document.getElementById('mq276').value.trim()}}
+function save(){let x=values(),a=arr(K),v={id:'meeting_'+Date.now(),createdAt:new Date().toISOString(),...x,status:'team_discovery'};a.push(v);S(K,a);if(x.player){let p=arr('hc_player_voice_v1');p.push({id:'voice_'+Date.now(),createdAt:v.createdAt,focus:x.focus,author:'TEAM',text:x.player,what:x.player,source:'meeting'});S('hc_player_voice_v1',p)}if(x.discovery){let d=arr('hc_team_discovery_v1');d.push({id:'disc_'+Date.now(),createdAt:v.createdAt,focus:x.focus,text:x.discovery,discovery:x.discovery,source:'meeting'});S('hc_team_discovery_v1',d)}S('hc_meeting_question_v288',{focus:x.focus,question:x.question,createdAt:v.createdAt});alert('チームミーティングを保存しました')}
+function session(){save();close();window.HC228?.open?.()}function latestMeeting(){return arr(K).slice(-1)[0]||null}function close(){document.getElementById('hcMeet276').style.display='none'}
+window.HC276={open,close,save,session,latest:latestMeeting};window.HC277={open};window.HC278={open};window.HC279={open};window.HC280={open};window.HC281={open};window.HC282={open};window.HC283={open};window.HC284={open};window.HC285={open};window.HC286={open};window.HC287={open};window.HC288={open};
+})();
+</script>
+<!-- HC_MEETING_THEME_V276 --><!-- HC_MEETING_VIDEO_V277 --><!-- HC_PLAYER_FIRST_V278 --><!-- HC_COACH_VIEW_MEETING_V279 --><!-- HC_TEAM_DISCOVERY_MEETING_V280 --><!-- HC_TEAM_QUESTION_MEETING_V281 --><!-- HC_MEETING_SAVE_V282 --><!-- HC_MEETING_VOICE_LINK_V283 --><!-- HC_MEETING_DISCOVERY_LINK_V284 --><!-- HC_MEETING_QUESTION_LINK_V285 --><!-- HC_MEETING_TO_SESSION_V286 --><!-- HC_MEETING_HISTORY_V287 --><!-- HC_TEAM_MEETING_CORE_V288 -->
+
+<!-- HC_MEETING_INTEGRATION_V289_V294 -->
+<style>
+body.hc-home-simple #hcVoiceEntry243,body.hc-home-simple #hcGapEntry259{display:none!important}
+</style>
+<script>
+(function(){'use strict';
+function add(){let h=document.getElementById('hcSimple203');if(!h||document.getElementById('hcMeetEntry276'))return;let grid=h.querySelector('.hs203row');if(!grid)return;let b=document.createElement('button');b.id='hcMeetEntry276';b.textContent='チームミーティング';b.onclick=()=>HC276.open();grid.appendChild(b)}
+function q(){try{let x=JSON.parse(localStorage.getItem('hc_meeting_question_v288')||'null');let f=window.HC191?.current?.()?.focus||window.HC64?.context?.()?.focus||'';return x&&x.focus===f?x.question:''}catch(e){return''}}
+function patch(){let el=document.getElementById('bq228'),x=q();if(el&&x)el.value=x}
+const o=window.HC228?.open;if(o)window.HC228.open=function(){let r=o.apply(this,arguments);setTimeout(patch,90);return r}
+const m=window.HC203?.mount;if(m)window.HC203.mount=function(){let r=m.apply(this,arguments);setTimeout(add,110);return r}
+setTimeout(add,700);
+window.HC289={add};window.HC290={q};window.HC291={patch};window.HC292={add};window.HC293={q};window.HC294={q};
+})();
+</script>
+<!-- HC_HOME_MEETING_ENTRY_V289 --><!-- HC_HIDE_SPLIT_BOTTOMUP_V290 --><!-- HC_MEETING_QUESTION_PRIORITY_V291 --><!-- HC_MEETING_DAILY_BRIDGE_V292 --><!-- HC_MEETING_SIMPLE_UI_V293 --><!-- HC_MEETING_LOOP_V294 -->
 </body></html>
