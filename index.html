@@ -1778,4 +1778,40 @@ window.HC255={add};window.HC256={patchQuestion};window.HC257={add};window.HC258=
 })();
 </script>
 <!-- HC_HOME_VOICE_ENTRY_V255 --><!-- HC_QUESTION_AUTO_INPUT_V256 --><!-- HC_DISCOVERY_SESSION_BRIDGE_V257 --><!-- HC_BOTTOMUP_DAILY_LOOP_V258 -->
+
+
+<!-- HC_PERSPECTIVE_GAP_V259_V270 -->
+<style>
+#hcGap259{position:fixed;inset:0;z-index:10042;background:#071014;color:#eef6f2;overflow:auto;padding:18px;display:none}#hcGap259 .gw{max-width:720px;margin:auto}.gc{background:#0b171c;border:1px solid #263a42;border-radius:16px;padding:14px;margin:9px 0}.gt{font-size:10px;font-weight:950;color:#b8ff45}.gin{width:100%;box-sizing:border-box;background:#071014;color:#fff;border:1px solid #344950;border-radius:10px;padding:11px;font-size:16px}.gb{width:100%;padding:12px;border:0;border-radius:11px;background:#b8ff45;color:#071014;font-weight:950;margin-top:8px}.gsub{background:#17252b;color:#eef6f2}.gl{border-left:3px solid #b8ff45;padding-left:9px;margin-top:8px}.gs{font-size:11px;opacity:.72}.gchip{display:inline-block;border:1px solid #40545c;border-radius:999px;padding:5px 9px;margin:3px;font-size:11px}</style>
+<div id="hcGap259"><div class="gw" id="hcGap259b"></div></div>
+<script>
+(function(){'use strict';
+const K='hc_perspective_gap_v270',L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v)),E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function arr(k){let a=L(k,[]);return Array.isArray(a)?a:[]}function focus(){return window.HC191?.current?.()?.focus||window.HC64?.context?.()?.focus||'重点未設定'}
+function lastVoice(){let a=arr('hc_player_voice_v1'),f=focus(),x=a.filter(v=>(v.focus||v.issue||'')===f);return(x.length?x:a).slice(-1)[0]||null}
+function hint(c,p){let t=(c+' '+p);if(/誰|役割|わから|迷/.test(t))return'役割・判断基準の共有';if(/遅|反応|間に合/.test(t))return'認知のタイミング';if(/距離|遠|近|間隔/.test(t))return'距離・ポジショニング';if(/声|コミュ|伝/.test(t))return'情報共有';return'見えている情報・判断基準の違い'}
+function open(){render();document.getElementById('hcGap259').style.display='block'}
+function render(){let f=focus(),v=lastVoice(),pv=v&&(v.text||v.what||v.playerVoice)||'',b=document.getElementById('hcGap259b');b.innerHTML=`<div style="display:flex;justify-content:space-between"><div><div class="gt">コーチ × 選手</div><h2>見方の違いを学習材料にする</h2></div><button onclick="HC259.close()" style="background:none;border:0;color:#fff;font-size:28px">×</button></div><div class="gc"><div class="gt">現在の重点</div><h3>${E(f)}</h3></div><div class="gc"><div class="gt">1｜コーチにはどう見えた？</div><textarea id="gc259" class="gin" rows="3" placeholder="例：ロスト後の反応が遅かった"></textarea></div><div class="gc"><div class="gt">2｜選手にはどう見えた？</div><textarea id="gp259" class="gin" rows="3" placeholder="例：誰が奪いに行くのか分からなかった">${E(pv)}</textarea><div class="gs">PLAYER VOICEがあれば最新の声を入れています。書き換え可能です。</div></div><button class="gb" onclick="HC259.compare()">見方を並べて考える</button><div id="gr259"></div><button class="gb gsub" onclick="HC259.close()">閉じる</button>`}
+function compare(){let c=document.getElementById('gc259').value.trim(),p=document.getElementById('gp259').value.trim();if(!c&&!p)return;let h=hint(c,p),r=document.getElementById('gr259');r.innerHTML=`<div class="gc"><div class="gt">3｜ズレは「問題」ではなく手がかり</div><div class="gl"><b>コーチ：</b>${E(c||'未入力')}</div><div class="gl"><b>選手：</b>${E(p||'未入力')}</div><div style="margin-top:10px"><span class="gchip">仮説：${E(h)}</span></div><div class="gs">これは原因の断定ではありません。映像・KPI・他の選手の声・練習で確かめます。</div><div class="gt" style="margin-top:12px">次にみんなで解く問い</div><div class="gl">${E(`「${h}」について、プレー中に何を見ればチームで同じ判断ができる？`)}</div><button class="gb" onclick="HC259.save()">このズレを次の学習材料にする</button></div>`;window.__gap259={c,p,h}}
+function save(){let x=window.__gap259;if(!x)return;let a=arr(K),v={id:'gap_'+Date.now(),createdAt:new Date().toISOString(),focus:focus(),coach:x.c,player:x.p,hypothesis:x.h,question:`「${x.h}」について、プレー中に何を見ればチームで同じ判断ができる？`,status:'hypothesis'};a.push(v);S(K,a);alert('次の学習材料として保存しました');close()}
+function latest(f){let a=arr(K),x=a.filter(v=>v.focus===f);return(x.length?x:a).slice(-1)[0]||null}function close(){document.getElementById('hcGap259').style.display='none'}
+window.HC259={open,close,compare,save,latest};window.HC260={latest};window.HC261={hint};window.HC262={latest};window.HC263={latest};window.HC264={latest};window.HC265={latest};window.HC266={latest};window.HC267={latest};window.HC268={latest};window.HC269={latest};window.HC270={latest};
+})();
+</script>
+<!-- HC_COACH_VIEW_V259 --><!-- HC_PLAYER_VIEW_V260 --><!-- HC_GAP_HINT_V261 --><!-- HC_GAP_HYPOTHESIS_V262 --><!-- HC_ROLE_GAP_V263 --><!-- HC_TIMING_GAP_V264 --><!-- HC_SPACE_GAP_V265 --><!-- HC_INFO_GAP_V266 --><!-- HC_GAP_QUESTION_V267 --><!-- HC_GAP_SAVE_V268 --><!-- HC_GAP_EVIDENCE_CAUTION_V269 --><!-- HC_GAP_MEMORY_V270 -->
+
+<!-- HC_GAP_TO_BOTTOMUP_V271_V275 -->
+<script>
+(function(){'use strict';
+function focus(){return window.HC191?.current?.()?.focus||window.HC64?.context?.()?.focus||''}
+function q(){let x=window.HC259?.latest?.(focus());return x?.question||window.HC250?.suggestion?.(focus())||''}
+function patchBottom(){let el=document.getElementById('bq228'),x=q();if(el&&x)el.value=x}
+function add(){let h=document.getElementById('hcSimple203');if(!h||document.getElementById('hcGapEntry259'))return;let grid=h.querySelector('.hs203row');if(!grid)return;let b=document.createElement('button');b.id='hcGapEntry259';b.textContent='コーチと選手の見方';b.onclick=()=>HC259.open();grid.appendChild(b)}
+const o=window.HC228?.open;if(o)window.HC228.open=function(){let r=o.apply(this,arguments);setTimeout(patchBottom,70);return r}
+const m=window.HC203?.mount;if(m)window.HC203.mount=function(){let r=m.apply(this,arguments);setTimeout(add,90);return r}
+setTimeout(add,650);
+window.HC271={q};window.HC272={patchBottom};window.HC273={add};window.HC274={q};window.HC275={q};
+})();
+</script>
+<!-- HC_GAP_TO_QUESTION_V271 --><!-- HC_GAP_TO_ENVIRONMENT_V272 --><!-- HC_HOME_GAP_ENTRY_V273 --><!-- HC_GAP_DAILY_LOOP_V274 --><!-- HC_GAP_BOTTOMUP_BRIDGE_V275 -->
 </body></html>
