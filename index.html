@@ -2570,42 +2570,29 @@ let oldOpen=window.HCV2TEAM?.open;if(oldOpen)window.HCV2TEAM.open=async function
 <!-- HC_V2_02_INVITE_ONE_TAP --><!-- HC_V2_02_HOME_PHILOSOPHY_GAME_MODEL -->
 
 
-<!-- HC_V2_06_IDENTITY_REAL_COCKPIT_AND_MORE -->
+<!-- HC_V2_05_HOME_IDENTITY_FORCE_VISIBLE -->
 <style>
-#hcIdentityCockpitV206{margin:0 0 14px}.ic206{background:linear-gradient(145deg,#10271e,#0b171c);border:1px solid #496535;border-radius:22px;padding:17px;color:#f2f7f4}.ic206top{display:flex;justify-content:space-between;gap:10px;align-items:start}.ic206k{font-size:11px;font-weight:950;letter-spacing:1.4px;color:#d7ff39}.ic206purpose{font-size:24px;font-weight:950;line-height:1.15;margin:6px 0}.ic206desc{font-size:12px;color:#9eafb4;line-height:1.45}.ic206edit{border:1px solid #49605a;background:#17252b;color:#fff;border-radius:11px;padding:8px 11px;font-weight:850}.ic206sec{border-top:1px solid #2a3d3a;margin-top:13px;padding-top:12px}.ic206chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}.ic206chip{border:1px solid #4a5c58;background:#0b171c;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:750}.ic206gm{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.ic206gm>div{background:#071014;border:1px solid #2b4047;border-radius:12px;padding:10px}.ic206gm b{display:block;color:#d7ff39;font-size:11px}.ic206gm span{display:block;margin-top:4px;font-size:11px;color:#d2dcda;line-height:1.4}
+#hcIdentityHomeV205{margin:12px 0}.id205{background:linear-gradient(180deg,#101d22,#0a1519);border:1px solid #344a42;border-radius:19px;padding:16px;color:#eef6f2}.id205k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.id205purpose{font-size:22px;font-weight:950;line-height:1.2;margin:5px 0}.id205row{display:flex;justify-content:space-between;gap:10px;align-items:start}.id205edit{border:1px solid #40545c;background:#17252b;color:#fff;border-radius:10px;padding:8px 11px;font-weight:850}.id205sec{border-top:1px solid #26383f;margin-top:13px;padding-top:12px}.id205chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.id205chip{border:1px solid #40545c;border-radius:999px;padding:6px 9px;font-size:12px}.id205gm{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.id205gm>div{background:#071014;border:1px solid #263940;border-radius:11px;padding:9px}.id205gm b{font-size:11px;color:#d7ff39}.id205gm small{display:block;color:#cbd5d1;margin-top:4px;line-height:1.35}
 </style>
 <script>
 (function(){'use strict';
-const K='hc_identity_v3',DEF={purpose:'心を動かすチームになる。',purposeDetail:'ホッケーを通して、自分たちも周りの人もワクワクさせるチームをつくる。',philosophies:[{title:'ワクワクする'},{title:'活き活きとプレーする'},{title:'挑戦を楽しむ'},{title:'憧れられるチームへ'}],gameModel:{'攻撃':'保持しながら前進し、優位をつくってゴールへ','守備':'中央とゴールを守り、意図して奪う','攻→守':'4秒｜WIN → DELAY → RECOVER','守→攻':'4秒｜GO → HOLD → RESET'}};
-const E=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-function get(){try{let x=JSON.parse(localStorage.getItem(K)||'null')||{};return {...DEF,...x,gameModel:{...DEF.gameModel,...(x.gameModel||{})},philosophies:Array.isArray(x.philosophies)&&x.philosophies.length?x.philosophies:DEF.philosophies}}catch(e){return DEF}}
-function card(){
- let I=get();return `<div class="ic206"><div class="ic206top"><div><div class="ic206k">TEAM IDENTITY｜チームの軸</div><div class="ic206purpose">${E(I.purpose)}</div><div class="ic206desc">${E(I.purposeDetail||'')}</div></div><button class="ic206edit" onclick="HC174.open()">編集</button></div><div class="ic206sec"><div class="ic206k">PHILOSOPHY｜フィロソフィー</div><div class="ic206chips">${I.philosophies.map(p=>`<span class="ic206chip">${E(p.title||'')}</span>`).join('')}</div></div><div class="ic206sec"><div class="ic206k">GAME MODEL｜チームモデル</div><div class="ic206gm">${['攻撃','守備','攻→守','守→攻'].map(k=>`<div><b>${k}</b><span>${E(I.gameModel[k]||'未設定')}</span></div>`).join('')}</div></div></div>`}
+const K='hc_identity_v3';
+const DEF={purpose:'心を動かすチームになる。',purposeDetail:'ホッケーを通して、自分たちも周りの人もワクワクさせるチームをつくる。',philosophies:[{id:'p1',title:'ワクワクする',detail:''},{id:'p2',title:'活き活きとプレーする',detail:''},{id:'p3',title:'挑戦を楽しむ',detail:''},{id:'p4',title:'憧れられるチームへ',detail:''}],gameModel:{'攻撃':'保持しながら前進し、優位をつくってゴールへ','守備':'中央とゴールを守り、意図して奪う','攻→守':'4秒｜WIN → DELAY → RECOVER','守→攻':'4秒｜GO → HOLD → RESET'}};
+const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function load(){try{let x=JSON.parse(localStorage.getItem(K)||'null');return x&&typeof x==='object'?Object.assign({},DEF,x,{gameModel:Object.assign({},DEF.gameModel,x.gameModel||{})}):DEF}catch(e){return DEF}}
 function mount(){
- let cockpit=document.getElementById('hcCoachHomeR');
- if(!cockpit||cockpit.offsetParent===null){cockpit=document.getElementById('hcHome69')||document.getElementById('home')}
- if(!cockpit)return;
- document.querySelectorAll('#hcIdentityCockpitV206').forEach(x=>x.remove());
- let d=document.createElement('div');d.id='hcIdentityCockpitV206';d.innerHTML=card();
- cockpit.insertBefore(d,cockpit.firstChild);
+ const home=document.getElementById('home'); if(!home)return;
+ let old=document.getElementById('hcIdentityHomeV205');if(old)old.remove();
+ const I=load(), ph=Array.isArray(I.philosophies)&&I.philosophies.length?I.philosophies:DEF.philosophies;
+ let d=document.createElement('div');d.id='hcIdentityHomeV205';
+ d.innerHTML=`<div class="id205"><div class="id205row"><div><div class="id205k">TEAM IDENTITY｜チームの軸</div><div class="id205purpose">${esc(I.purpose||DEF.purpose)}</div><div style="font-size:12px;opacity:.72">${esc(I.purposeDetail||'')}</div></div><button class="id205edit" onclick="HC174.open()">編集</button></div><div class="id205sec"><div class="id205k">PHILOSOPHY｜フィロソフィー</div><div class="id205chips">${ph.map(p=>`<span class="id205chip">${esc(p.title)}</span>`).join('')}</div></div><div class="id205sec"><div class="id205k">GAME MODEL｜チームモデル</div><div class="id205gm">${['攻撃','守備','攻→守','守→攻'].map(k=>`<div><b>${k}</b><small>${esc(I.gameModel?.[k]||'未設定')}</small></div>`).join('')}</div></div></div>`;
+ const first=home.firstElementChild; if(first)first.after(d); else home.prepend(d);
 }
-function identityOpen(){window.HCV2MORE?.close?.();if(window.show)show('identity');setTimeout(()=>window.HC174?.open?.(),120)}
-function patchMore(){
- const more=document.getElementById('hcV2MoreBody');if(!more)return;
- if(more.querySelector('#hcMoreIdentityV206'))return;
- const cards=[...more.querySelectorAll('.tmc')];
- const target=cards.find(x=>(x.textContent||'').includes('原理原則'));
- if(!target)return;
- let box=document.createElement('div');box.id='hcMoreIdentityV206';box.className='tmc';
- box.innerHTML='<div class="tmk">チームの軸</div><div class="m2grid"><button class="m2card" onclick="HCV206.identityOpen()"><b>フィロソフィー</b><small>目的・価値観を確認／編集</small></button><button class="m2card" onclick="HCV2MORE.close();show(\'identity\')"><b>チームモデル</b><small>攻撃・守備・トランジション</small></button></div>';
- target.parentNode.insertBefore(box,target);
-}
-const oldMore=window.HCV2MORE?.open;if(oldMore)window.HCV2MORE.open=function(){oldMore.apply(this,arguments);setTimeout(patchMore,50)};
-const oldShow=window.show;if(oldShow)window.show=function(id){oldShow.apply(this,arguments);if(id==='home')setTimeout(mount,80)};
-window.HCV206={mount,patchMore,identityOpen};
-setTimeout(mount,500);setTimeout(mount,1800);setTimeout(mount,4000);
+const prevShow=window.show;if(prevShow)window.show=function(id){prevShow.apply(this,arguments);if(id==='home')setTimeout(mount,40)};
+const oldSave=window.HC174?.save;if(oldSave)window.HC174.save=function(){oldSave.apply(this,arguments);setTimeout(mount,100)};
+window.HCIdentityHomeV205={mount};setTimeout(mount,300);setTimeout(mount,1600);setTimeout(mount,3800);
 })();
 </script>
-<!-- HC_V2_06_IDENTITY_ON_VISIBLE_COACH_COCKPIT --><!-- HC_V2_06_MORE_IDENTITY_ENTRY -->
+<!-- HC_V2_05_HOME_PHILOSOPHY_VISIBLE --><!-- HC_V2_05_HOME_GAME_MODEL_VISIBLE -->
 
-</body></html>
+\n<!-- HC_V2_06_HOME_IDENTITY_PRIORITY -->\n<style>\n#hcIdentityHomeV205 .id205sec[data-open-identity]{cursor:pointer}\n#hcIdentityHomeV205 .id205sec[data-open-identity]:active{transform:scale(.995)}\n</style>\n<script>\n(function(){'use strict';\nfunction openIdentity(){ if(window.HC174&&typeof HC174.open==='function') HC174.open(); }\nfunction place(){\n const home=document.getElementById('home'), box=document.getElementById('hcIdentityHomeV205');\n if(!home||!box)return;\n const duplicate=document.getElementById('hcHomeIdentityV202'); if(duplicate) duplicate.style.display='none';\n const sections=box.querySelectorAll('.id205sec');\n sections.forEach(sec=>{sec.setAttribute('data-open-identity','1');sec.onclick=openIdentity;});\n let scriptTarget=[...home.querySelectorAll('.card,.quick-card,section,div')].find(el=>{\n   const t=(el.textContent||'').trim(); return /^SCRIPT\\b/i.test(t)||t.includes('SCRIPT｜');\n });\n if(scriptTarget){\n   let target=scriptTarget.closest('.card')||scriptTarget;\n   if(target!==box&&target.parentElement===home) home.insertBefore(box,target);\n   else if(target!==box) home.prepend(box);\n } else if(home.firstElementChild!==box){ home.prepend(box); }\n}\nconst oldMount=window.HCIdentityHomeV205?.mount;\nif(oldMount) window.HCIdentityHomeV205.mount=function(){oldMount();setTimeout(place,0)};\nconst obs=new MutationObserver(()=>setTimeout(place,0));\nconst start=()=>{const h=document.getElementById('home');if(h){obs.observe(h,{childList:true,subtree:true});place();}};\nif(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();\nsetTimeout(place,200);setTimeout(place,1000);setTimeout(place,3000);\n})();\n</script>\n<!-- HC_V2_06_PHILOSOPHY_ABOVE_SCRIPT_CLICK_TO_EDIT -->\n</body></html>
