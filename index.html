@@ -2451,7 +2451,7 @@ function open(){document.getElementById('hcV2Auth').style.display='block';refres
 function msg(s,ok=false){let x=document.getElementById('a2msg');if(x){x.className=ok?'a2ok':'a2err';x.textContent=s||''}}
 function roleLabel(r){return({OWNER:'OWNER｜管理者',STAFF:'STAFF｜指導者',PLAYER:'PLAYER｜選手',PARENT:'PARENT｜保護者'})[r]||r}
 function applyDbRole(m){if(!m)return;localStorage.setItem('hc_role_v1',JSON.stringify({role:m.role,source:'supabase',teamId:m.team_id,updatedAt:new Date().toISOString()}));document.documentElement.dataset.hcRole=String(m.role||'').toLowerCase();try{window.HCV1?.applyRole?.()}catch(e){}}
-async function loadMemberships(){const s=client(),u=await s.auth.getUser();if(u.error)throw u.error;state.user=u.data.user||null;state.memberships=[];state.active=null;if(!state.user)return;const q=await s.from('hc_members').select('id,team_id,role,display_name,created_at,hc_teams(id,name)').eq('user_id',state.user.id).order('created_at',{ascending:true});if(q.error)throw q.error;state.memberships=q.data||[];state.active=state.memberships[0]||null;if(state.active)applyDbRole(state.active)}
+async function loadMemberships(){const s=client(),ss=await s.auth.getSession();state.user=null;state.memberships=[];state.active=null;if(ss.error)throw ss.error;if(!ss.data.session)return;const u=await s.auth.getUser();if(u.error)throw u.error;state.user=u.data.user||null;if(!state.user)return;const q=await s.from('hc_members').select('id,team_id,role,display_name,created_at,hc_teams(id,name)').eq('user_id',state.user.id).order('created_at',{ascending:true});if(q.error)throw q.error;state.memberships=q.data||[];state.active=state.memberships[0]||null;if(state.active)applyDbRole(state.active)}
 async function refresh(){try{await loadMemberships();render()}catch(e){render();setTimeout(()=>msg(e.message||String(e)),0)}}
 function render(){const b=document.getElementById('hcV2AuthBody');if(!b)return;const head='<div style="display:flex;justify-content:space-between;gap:10px"><div><div class="a2k">HOCKEY COACH｜VER.2</div><div class="a2t">SECURE TEAM LOGIN</div></div><button onclick="HCV2AUTH.close()" style="background:none;border:0;color:#fff;font-size:30px">×</button></div>';
 if(!state.user){b.innerHTML=head+'<div class="a2c"><div class="a2k">LOGIN</div><div class="a2t">ログイン</div><div class="a2s">メールアドレスとパスワードで本人確認します。</div><input id="a2Email" class="a2i" type="email" autocomplete="email" placeholder="メールアドレス"><input id="a2Pass" class="a2i" type="password" autocomplete="current-password" placeholder="パスワード"><button class="a2b" onclick="HCV2AUTH.signIn()">ログイン</button><button class="a2b a2sub" onclick="HCV2AUTH.signUp()">初めての方｜アカウント作成</button><div id="a2msg"></div></div><div class="a2c"><div class="a2k">SECURITY</div><div class="a2s">役割は画面の切替ではなく、Supabase上のTEAMメンバー情報から判定します。Secret / service_roleキーはブラウザに置いていません。</div></div>';return}
@@ -2533,5 +2533,20 @@ window.HCV2TEAM={open,close,prepareInvite};window.HCV2MORE={open:moreOpen,close:
 })();
 </script>
 <!-- HC_V2_OWNER_TEAM_MANAGER_CORE --><!-- HC_V2_MORE_REORGANIZE_CORE --><!-- HC_V2_INVITE_SAFE_PREP_ONLY --><!-- HC_V2_NO_SECRET_IN_BROWSER -->
+
+
+<!-- HC_V2_INVITE_EMAIL_CLIENT_CORE -->
+<script>
+(function(){'use strict';
+const FN='https://ujwbmmiwdujowsxooiug.supabase.co/functions/v1/send-team-invite';
+function pub(){return window.supabase.createClient('https://ujwbmmiwdujowsxooiug.supabase.co','sb_publishable_7pf-oFguV6axSOAwNdlE4Q_ekGuDApz',{auth:{persistSession:true,autoRefreshToken:true}})}
+function message(v,ok){let x=document.getElementById('tmMsg');if(x){x.className=ok?'tmok':'tmerr';x.textContent=v||''}}
+async function sendInvite(){let a=window.HCV2AUTH?.state?.()||{},m=a.active,email=document.getElementById('tmEmail')?.value.trim().toLowerCase()||'',role=document.getElementById('tmRole')?.value||'PLAYER';if(!a.user||!m||m.role!=='OWNER')return message('OWNERでログインしてください。');if(!/^\S+@\S+\.\S+$/.test(email))return message('正しいメールアドレスを入力してください。');try{message('招待メールを送信しています…');let ss=await pub().auth.getSession(),token=ss.data?.session?.access_token;if(!token)throw new Error('ログインし直してください。');let r=await fetch(FN,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({team_id:m.team_id,email,role})}),j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.detail||j.error||'招待メールを送信できませんでした。');message('招待メールを送信しました。',true);setTimeout(()=>window.HCV2TEAM?.open?.(),800)}catch(e){message(e.message||String(e))}}
+async function accept(){try{let a=window.HCV2AUTH?.state?.()||{};if(!a.user)return;let r=await pub().rpc('hc_accept_invitation');if(!r.error&&r.data?.length){await window.HCV2AUTH?.refresh?.();alert('TEAMへの参加が完了しました。')}}catch(e){console.warn(e)}}
+function patch(){let b=document.querySelector('#hcV2TeamManagerBody .tmb[onclick*="prepareInvite"]');if(b){b.textContent='招待メールを送信';b.removeAttribute('onclick');b.onclick=sendInvite}document.querySelectorAll('#hcV2TeamManagerBody .tmwarn').forEach(x=>{if((x.textContent||'').includes('次の段階'))x.textContent='招待メールは安全なサーバー処理から送信します。Secretキーはブラウザに保存しません。'});document.querySelectorAll('#hcV2TeamManagerBody .tmmember .tms').forEach(x=>{x.textContent=(x.textContent||'').replace('招待準備中','招待中')})}
+let old=window.HCV2TEAM?.open;if(old)window.HCV2TEAM.open=async function(){await old.apply(this,arguments);setTimeout(patch,80)};window.HCV2INVITE={sendInvite,accept,patch};setTimeout(()=>{patch();accept()},2600);
+})();
+</script>
+<!-- HC_V2_INVITE_ACCEPT_RPC_CORE --><!-- HC_V2_AUTH_SESSION_MISSING_FIX -->
 
 </body></html>
