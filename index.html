@@ -1232,4 +1232,27 @@ window.HC98={open,close,rebuild,today,make,current};window.HC99={current};window
 })();
 </script>
 <!-- HC_WEEK_CONTEXT_V98 --><!-- HC_WEEK_DAYS_V99 --><!-- HC_WEEK_ADAPT_V100 --><!-- HC_WEEK_LOAD_V101 --><!-- HC_WEEK_TODAY_V102 --><!-- HC_WEEK_VERIFY_V103 -->
+
+
+<!-- HC_HOME_WEEK_ENTRY_V104_V108 -->
+<style>
+#hcWeekEntry104{margin:10px 0}.hcweGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hcweBtn{border:1px solid #33474e;background:#0b171c;color:#eef6f2;border-radius:14px;padding:12px;text-align:left;font-weight:900}.hcweBtn b{display:block;color:#b8ff45;margin-bottom:4px}.hcweNext{font-size:11px;opacity:.72;margin-top:8px}
+</style>
+<script>
+(function(){'use strict';
+function mount(){
+ const h=document.getElementById('hcHome69')||document.getElementById('home'); if(!h)return;
+ let old=document.getElementById('hcWeekEntry104'); if(old)old.remove();
+ let d=document.createElement('div');d.id='hcWeekEntry104';
+ d.innerHTML='<div class="hcweGrid"><button class="hcweBtn" onclick="HC93.open()"><b>📅 今週の予定</b>練習日・時間を変更</button><button class="hcweBtn" onclick="HC98.open()"><b>🏑 週間トレーニング設計</b>次戦から逆算する</button></div><div class="hcweNext">予定変更 → 週間設計 → TODAY → RECORD → 再評価</div>';
+ let target=document.getElementById('hcHome69'); if(target)target.appendChild(d); else h.prepend(d);
+}
+function refresh(){setTimeout(mount,30);setTimeout(mount,180)}
+document.addEventListener('click',e=>{let t=e.target.closest&&e.target.closest('button');if(t&&/HOME/i.test(t.textContent||''))refresh()});
+const prevShow=window.show;if(typeof prevShow==='function'){window.show=function(id){let r=prevShow.apply(this,arguments);if(id==='home')refresh();return r}}
+window.HC104={mount,refresh};window.HC105={openSchedule:()=>HC93.open()};window.HC106={openPlanner:()=>HC98.open()};window.HC107={refresh};window.HC108={refresh};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+})();
+</script>
+<!-- HC_HOME_SCHEDULE_ENTRY_V104 --><!-- HC_HOME_PLANNER_ENTRY_V105 --><!-- HC_HOME_RETURN_ENTRY_V106 --><!-- HC_HOME_ENTRY_REFRESH_V107 --><!-- HC_HOME_WEEK_FLOW_V108 -->
 </body></html>
