@@ -9,7 +9,8 @@
 :root{--bg:#071014;--panel:#0d181d;--panel2:#101f25;--line:#263942;--txt:#f4f8f6;--muted:#8fa1a8;--lime:#d7ff39;--danger:#ff7070}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{padding-bottom:88px}
 header{position:sticky;top:0;z-index:20;background:rgba(7,16,20,.95);border-bottom:1px solid #17272e;padding:18px 16px 14px;backdrop-filter:blur(14px)}
-.brand{font-size:22px;font-weight:950;letter-spacing:1px}.brand small{color:var(--lime);font-size:10px;letter-spacing:2px}.sub{font-size:11px;color:var(--muted);margin-top:4px}
+.brand{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:22px;font-weight:950;letter-spacing:1px;line-height:1.12}.brand small{display:block;color:var(--lime);font-size:10px;letter-spacing:2px;white-space:nowrap}.sub{font-size:11px;color:var(--muted);margin-top:6px}
+@media(max-width:430px){header{padding:14px 16px 12px}.brand{font-size:20px;letter-spacing:.5px}.brand small{font-size:9px;letter-spacing:1.5px}.sub{font-size:10px}}
 main{max-width:760px;margin:auto;padding:14px}.page{display:none}.page.on{display:block}.card{background:linear-gradient(180deg,#0f1d23,#0a151a);border:1px solid var(--line);border-radius:19px;padding:15px;margin:0 0 12px}
 .k{font-size:10px;color:var(--lime);font-weight:950;letter-spacing:1.4px}.title{font-size:22px;font-weight:950;margin:5px 0}.muted{color:var(--muted);font-size:12px;line-height:1.55}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.field label{display:block;color:#91a4ab;font-size:10px;margin-bottom:4px}.input,.area{width:100%;background:#071014;color:#fff;border:1px solid #30464e;border-radius:11px;padding:11px;font-size:15px}.area{min-height:82px;resize:vertical}
 .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.pill{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:999px;padding:8px 10px;font-weight:850}.pill.on{background:var(--lime);border-color:var(--lime);color:#071014}
@@ -301,7 +302,7 @@ function principleSelectV58(phase,current){
   opts.push(`<option value="${esc(main)}" ${current===main?'selected':''}>主｜${esc(main)}</option>`);
   subs.forEach(([sub,details])=>{
    let sv=main+' ＞ '+sub;opts.push(`<option value="${esc(sv)}" ${current===sv?'selected':''}>　準｜${esc(sub)}</option>`);
-   details.forEach(d=>{let dv=sv+' ＞ '+d;opts.push(`<option value="${esc(dv)}" ${current===dv?'selected':''}>　　準々｜${esc(d)}</option>`})
+   details.forEach(d=>{let dv=sv+' ＞ '+d;opts.push(`<option value="${esc(dv)}" ${current===dv?'selected':''}>　　準々｜${esc(d)}</option>`)})
   })
  });
  return `<option value="">選択してください</option>${opts.join('')}`
@@ -389,4 +390,5 @@ renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 <!-- HC_V56_PRINCIPLE_TREE_SMART_LIBRARY -->
 <!-- HC_V57_SMART_LIBRARY_FAVORITES_MATCHING -->
 <!-- HC_V58_STABLE_COMPLETE_PRINCIPLE_LINKAGE -->
+<!-- HC_V581_HOTFIX_NAV_HEADER -->
 </body></html>
