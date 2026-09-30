@@ -75,7 +75,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <div id="more-invite" class="tabpane"><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">STAFF / PLAYER / PARENTなどの役割を追加・編集できます。QR本体は次段階で接続します。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div></div>
  <div id="more-cloud" class="tabpane"><div class="card"><div class="k">V7.1 CLOUD / SECURE</div><div class="title">ログイン・クラウド基盤</div><p class="muted">端末保存を維持したまま、Supabase Authへ安全に接続します。データ同期はRLS適用後だけ有効化します。</p><div id="cloudStatusV70" class="menu"></div><div class="field"><label>Supabase Project URL</label><input id="cloudUrlV70" class="input" placeholder="https://xxxx.supabase.co"></div><div class="field"><label>Publishable key</label><input id="cloudKeyV70" class="input" placeholder="sb_publishable_..."></div><button class="btn2" onclick="saveCloudConfigV70()">接続設定を保存</button></div>
 <div class="card"><div class="k">AUTH</div><div class="title" style="font-size:19px">メールでログイン</div><div id="authStateV71" class="menu"></div><div class="field"><label>メールアドレス</label><input id="authEmailV71" class="input" type="email" autocomplete="email" placeholder="coach@example.com"></div><button class="btn" onclick="sendMagicLinkV71()">ログインリンクを送る</button><button class="btn2" style="margin-top:8px" onclick="signOutV71()">ログアウト</button></div>
-<div class="card"><div class="k">TEAM SECURITY</div><div class="title" style="font-size:19px">チーム分離・RLS</div><div id="rlsStateV72" class="menu"><b>未確認</b><div class="meta">下のSQLをSupabase SQL Editorで1回実行してから「RLSを確認」を押します。</div></div><button class="btn2" onclick="checkRlsV72()">RLSを確認</button><button class="btn2" style="margin-top:8px" onclick="downloadSqlV72()">RLSセットアップSQLを保存</button><p class="muted">確認が成功するまでクラウド同期は解除されません。</p></div><div class="card"><div class="k">SECURITY GATE</div><b>同期はまだロック中</b><p class="muted">RLSテーブルとチーム権限の確認が終わるまで、Philosophy・原則・練習・記録はクラウドへ送信しません。</p><div class="meta">✓ Publishable keyのみ<br>✓ Secret/service-role key拒否<br>✓ AuthセッションはSupabase SDK管理<br>✓ RLS適用後に team_id 単位で同期<br>✓ ローカル保存は継続</div></div></div>
+<div class="card"><div class="k">DATA HEALTH</div><div class="title" style="font-size:19px">データ容量チェック</div><div id="storageHealthV75" class="menu"></div><button class="btn2" onclick="renderStorageHealthV75()">再チェック</button><p class="muted">動画・画像本体はアプリ内に保存せずURL参照を基本にします。クラウド同期後も端末側は軽量キャッシュとして扱います。</p></div><div class="card"><div class="k">TEAM SECURITY</div><div class="title" style="font-size:19px">チーム分離・RLS</div><div id="rlsStateV72" class="menu"><b>未確認</b><div class="meta">下のSQLをSupabase SQL Editorで1回実行してから「RLSを確認」を押します。</div></div><button class="btn2" onclick="checkRlsV72()">RLSを確認</button><button class="btn2" style="margin-top:8px" onclick="downloadSqlV72()">RLSセットアップSQLを保存</button><p class="muted">確認が成功するまでクラウド同期は解除されません。</p></div><div class="card"><div class="k">SECURITY GATE</div><b>同期はまだロック中</b><p class="muted">RLSテーブルとチーム権限の確認が終わるまで、Philosophy・原則・練習・記録はクラウドへ送信しません。</p><div class="meta">✓ Publishable keyのみ<br>✓ Secret/service-role key拒否<br>✓ AuthセッションはSupabase SDK管理<br>✓ RLS適用後に team_id 単位で同期<br>✓ ローカル保存は継続</div></div></div>
 <div id="more-settings" class="tabpane"><div class="card"><div class="k">DATA</div><div class="title">設定・データ</div><p class="muted">今日のメニューと練習記録の互換データを維持しています。</p><button class="btn2" onclick="exportData()">データを書き出す</button></div></div>
 </section>
 </main>
@@ -192,6 +192,22 @@ function econoDiagramV74(x){
  let map={close:()=>P('ea',32,50)+P('ed',53,50)+A(48,50,10,180),goal:()=>P('ea',35,50)+P('ed',58,50)+A(40,50,43)+X(72,50),body:()=>P('ea',37,50)+P('ed',52,45)+A(43,55,18,25)+X(55,68),cover:()=>P('ea',31,48)+P('ed',47,48)+P('ed',61,32)+P('ea',55,24)+A(56,35,10,-30),cover2:()=>P('ea',32,50)+P('ea',53,25)+P('ed',48,48)+P('ed',63,36)+A(57,39,10,-30),gap:()=>P('ea',30,50)+P('ed',52,32)+P('ed',52,68)+X(52,50),recover:()=>P('ea',54,48)+P('ed',39,58)+A(42,58,25,-18),wide:()=>P('ea',30,50)+P('ed',50,50)+P('ed',60,30)+X(65,50)+A(34,48,24,-28),scan:()=>P('ea',30,50)+P('ed',50,50)+P('ea',66,30)+X(60,50)+A(49,43,14,-45),height:()=>P('ed',55,50)+P('ea',28,28)+P('ea',40,52)+P('ea',55,74)+A(35,50,27),between:()=>P('ed',48,28)+P('ed',48,72)+P('ea',36,50)+P('ea',59,50)+A(40,50,17),slide:()=>P('ea',28,28)+P('ed',48,30)+P('ed',48,50)+P('ed',48,70)+A(48,30,13,90),lane:()=>P('ea',30,50)+P('ed',48,50)+P('ea',68,50)+X(58,50),overload:()=>P('ea',32,50)+P('ed',48,35)+P('ed',48,52)+P('ed',58,68)+A(58,65,12,-90),trap:()=>P('ea',32,50)+P('ed',48,42)+P('ed',53,62)+X(60,50)+A(53,60,11,-55),handover:()=>P('ea',48,30)+P('ed',45,48)+P('ed',62,48)+A(48,34,23,40),pressure:()=>P('ea',31,50)+P('ed',47,50)+P('ea',55,27)+P('ed',64,35)+A(36,50,12)+A(56,31,9,25),diagonal:()=>P('ea',38,28)+P('ed',52,42)+A(42,32,31,32),return:()=>P('ea',40,30)+P('ed',54,43)+A(54,43,18,90)+A(54,62,18,-90),loss:()=>P('ea',38,50)+P('ed',55,50)+P('ea',52,25)+X(62,35)+A(46,28,16,28)}; z=(map[d[2]]||(()=>P('ea',30,50)+P('ed',50,50)+A(34,50,20)))();
  return `<div class="econoDiagram"><div class="k">戦術図｜${String(n).padStart(2,'0')}</div><b>${esc(d[0])}</b><div class="epitch">${z}<span class="egoal" style="right:2%;top:35%"></span></div><div class="meta"><b>図のコンセプト：</b>${esc(d[1])}<br>青＝攻撃／黒＝守備／赤矢印＝移動・狙い／×＝閉じたい場所</div></div>`
 }
+
+function setupDiagramV75(x){
+ let min=+x?.minPlayers||1,max=+x?.maxPlayers||30,space=x?.space||'自由設定',gk=x?.gkRequired?'GKあり':'GKなしでも可';
+ let total=Math.min(10,Math.max(4,Math.round((min+max)/2))),half=Math.ceil(total/2),dots='';
+ for(let i=0;i<total;i++){let left=i<half?22+(i%3)*11:60+(i%3)*10,top=25+(Math.floor((i%half)/3))*24+(i%3)*5;dots+=`<span class="edot ${i<half?'ea':'ed'}" style="left:${left}%;top:${Math.min(82,top)}%"></span>`}
+ return `<div class="econoDiagram"><div class="k">SETUP｜設営イメージ</div><div class="epitch">${dots}<span class="egoal" style="right:2%;top:35%"></span></div><div class="meta"><b>人数：</b>${min}〜${max}人　<b>GK：</b>${gk}<br><b>サイズ：</b>${esc(space)}<br><b>時間：</b>${+x?.minutes||15}分<br><span class="muted">※図は設営の目安。正確な配置はルール・制約と合わせて確認。</span></div></div>`
+}
+function storageHealthV75(){
+ let keys=['hc_practice_library_v54','hc_training_records','hc_today_plan'],bytes=0,parts=[];
+ keys.forEach(k=>{let v=localStorage.getItem(k)||'';bytes+=v.length*2;parts.push([k,v.length*2])});
+ return {bytes,mb:(bytes/1048576).toFixed(2),parts}
+}
+function renderStorageHealthV75(){
+ let e=document.getElementById('storageHealthV75');if(!e)return;let s=storageHealthV75(),pct=Math.min(100,Math.round(s.bytes/5242880*100));
+ e.innerHTML=`<b>端末データ：約 ${s.mb} MB</b><div class="meta">目安5MBに対して約${pct}%使用。戦術図・設営図は画像保存せずHTMLで都度描画するため、図を増やしてもlocalStorageを圧迫しません。</div>`
+}
 function resolvePracticeV701(ref){
  if(typeof ref==='number')return plan[ref]||null;
  return practiceData().find(x=>x.id===ref)||plan.find(x=>x.practiceId===ref||x.id===ref)||null
@@ -203,7 +219,7 @@ function practiceDetailV701(ref){
  let players=(d.minPlayers||d.maxPlayers)?`${+d.minPlayers||1}〜${+d.maxPlayers||30}人`:'自由';
  openModal(`<div class="k">PRACTICE DETAIL</div><h2>${esc(d.name||'練習')}</h2>
  <div class="menu"><b>コート設定</b><div class="meta"><b>人数：</b>${players}<br><b>GK：</b>${d.gkRequired?'必要':'なしでも可'}<br><b>サイズ：</b>${esc(d.space||'自由設定')}<br><b>時間：</b>${+d.minutes||15}分${d.difficulty?`<br><b>難易度：</b>${esc(d.difficulty)}`:''}</div></div>
- <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}
+ <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}${setupDiagramV75(d)}
  <div class="menu"><b>この練習で見ること</b><div class="meta"><b>目的：</b>${esc(d.purpose||'—')}<br><b>原則：</b>${esc((d.principles||[]).join(' / ')||'—')}<br><b>判断ポイント：</b>${esc(d.judgment||'—')}<br><b>選手への問い：</b>${esc(d.question||'—')}<br><b>KPI：</b>${esc(d.kpiHint||'—')}</div></div>
  ${safeUrl(d.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(d.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}`)
 }
@@ -287,9 +303,10 @@ function saveCloudConfigV70(){
 function renderCloudV70(){
  let c=cloudConfigV70(),e=document.getElementById('cloudStatusV70');if(document.getElementById('cloudUrlV70'))cloudUrlV70.value=c.url||'';if(document.getElementById('cloudKeyV70'))cloudKeyV70.value=c.publishableKey||'';
  if(e)e.innerHTML=c.url&&c.publishableKey?'<b>準備済み</b><div class="meta">Publishable keyのみ保存。現在は安全のため端末自動保存を継続し、RLS設定完了後に同期を有効化します。</div>':'<b>ローカル保存中</b><div class="meta">クラウド未接続でもV6.0までの機能はそのまま利用できます。</div>'
+ setTimeout(renderStorageHealthV75,0);
 }
 function autoSaveMetaV70(){
- localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.4-econo-60-diagrams'}))
+ localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.5-lightweight-setup'}))
 }
 
 
@@ -448,7 +465,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'7.4-econo-60-diagrams',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'7.5-lightweight-setup',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -475,4 +492,4 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V701_PRACTICE_DETAIL_CARD -->
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
 <!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
-<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --></body></html>
+<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --></body></html>
