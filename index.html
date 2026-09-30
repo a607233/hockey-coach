@@ -3284,4 +3284,85 @@ setTimeout(decorate,2600);
 </script>
 <!-- /HC_TODAY_ITEM_EDITOR_V33 -->
 
+
+<!-- HC_COACH_MODE_V34 -->
+<style>
+#hc34CoachBtn{width:100%;margin:10px 0;border:0;border-radius:14px;padding:13px;background:#d7ff39;color:#071014;font-weight:950}
+#hc34Mode{position:fixed;inset:0;z-index:100000;background:#061014;color:#eef6f2;display:flex;flex-direction:column}
+.hc34top{padding:15px 16px 10px;border-bottom:1px solid #263a42}.hc34k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.hc34title{font-size:21px;font-weight:950;margin-top:3px}
+.hc34progress{height:5px;background:#17272d;margin-top:10px;border-radius:99px;overflow:hidden}.hc34progress>div{height:100%;background:#d7ff39}
+.hc34body{flex:1;overflow:auto;padding:16px 16px 130px}.hc34step{font-size:12px;color:#91a3aa}.hc34name{font-size:28px;font-weight:950;line-height:1.2;margin:7px 0}
+.hc34clock{font-size:62px;font-weight:950;letter-spacing:-2px;color:#d7ff39;margin:12px 0;text-align:center}.hc34meta{background:#0d1a1f;border:1px solid #2b4149;border-radius:16px;padding:13px;margin-top:10px;line-height:1.6}
+.hc34meta b{color:#d7ff39}.hc34q{font-size:18px;font-weight:850}.hc34kpis{display:grid;gap:7px;margin-top:9px}.hc34kpi{display:grid;grid-template-columns:1fr 95px;gap:8px;align-items:center}.hc34in{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:10px;color:#fff;padding:10px}
+.hc34controls{position:fixed;left:0;right:0;bottom:0;background:rgba(6,16,20,.97);border-top:1px solid #263a42;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:7px}
+.hc34btn{border:1px solid #354b54;border-radius:13px;padding:12px 8px;background:#15242a;color:#fff;font-weight:900}.hc34btn.main{background:#d7ff39;color:#071014;border-color:#d7ff39}.hc34exit{position:absolute;right:14px;top:13px;border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px}
+.hc34done{background:#102119;border:1px solid #31523b;border-radius:14px;padding:13px;margin-top:10px;color:#d7ffb0}
+</style>
+<script>
+(function(){'use strict';
+let idx=0,seconds=0,timer=null,running=false,startedAt=null;
+function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
+function getPlan(){try{return Array.isArray(plan)?plan:safe('hc_today_plan',[])}catch(e){return safe('hc_today_plan',[])}}
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function fmt(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function meta(){return safe('hc_today_session_meta_v31',{})}
+function mountButton(){
+ const today=document.getElementById('today');if(!today||document.getElementById('hc34CoachBtn'))return;
+ let anchor=document.getElementById('hcTodayMetaV31')||document.getElementById('todayItems');
+ if(!anchor)return;
+ let b=document.createElement('button');b.id='hc34CoachBtn';b.textContent='▶ コーチモードを開始';
+ b.onclick=start;anchor.parentNode.insertBefore(b,anchor.nextSibling)
+}
+function start(){
+ const p=getPlan();if(!p.length)return alert('今日の練習メニューを先に追加してください。');
+ idx=0;startedAt=new Date().toISOString();open()
+}
+function open(){
+ clearInterval(timer);running=false;
+ const p=getPlan(),x=p[idx];if(!x)return finish();
+ seconds=(+x.minutes||0)*60;
+ document.getElementById('hc34Mode')?.remove();
+ let m=meta(),d=document.createElement('div');d.id='hc34Mode';
+ d.innerHTML=`<div class="hc34top"><div class="hc34k">COACH MODE｜LIVE SESSION</div><div class="hc34title">${esc(m.theme||'今日の練習')}</div><button class="hc34exit" id="hc34Exit">×</button><div class="hc34progress"><div style="width:${((idx+1)/p.length)*100}%"></div></div></div>
+ <div class="hc34body"><div class="hc34step">${idx+1} / ${p.length}｜${esc(x.type||'練習')}</div><div class="hc34name">${esc(x.name)}</div><div class="hc34clock" id="hc34Clock">${fmt(seconds)}</div>
+ ${(x.purpose||x.constraint||x.question)?`<div class="hc34meta">${x.purpose?'<b>狙い</b><br>'+esc(x.purpose)+'<br>':''}${x.constraint?'<b>制約・ルール</b><br>'+esc(x.constraint)+'<br>':''}${x.question?'<b>問い</b><br><span class="hc34q">'+esc(x.question)+'</span>':''}</div>`:''}
+ ${x.memo?`<div class="hc34meta"><b>メモ</b><br>${esc(x.memo)}</div>`:''}
+ ${idx===p.length-1?kpiHtml(m):''}
+ </div><div class="hc34controls"><button class="hc34btn" id="hc34Prev">← 前へ</button><button class="hc34btn main" id="hc34Play">開始</button><button class="hc34btn" id="hc34Next">${idx===p.length-1?'終了':'次へ →'}</button></div>`;
+ document.body.appendChild(d);bind()
+}
+function kpiHtml(m){
+ let ks=(m.kpis||[]);if(!ks.length)return '';
+ return `<div class="hc34meta"><b>KPI｜練習後に記録</b><div class="hc34kpis">${ks.map((k,i)=>`<div class="hc34kpi"><span>${esc(k.name||k)}</span><input class="hc34in hc34kv" data-i="${i}" placeholder="結果" value="${esc(k.value||'')}"></div>`).join('')}</div><label style="display:block;margin-top:10px"><b>振り返り</b></label><textarea id="hc34Reflection" class="hc34in" style="min-height:70px" placeholder="できたこと／次回の課題">${esc(m.reflection||'')}</textarea></div>`
+}
+function bind(){
+ document.getElementById('hc34Exit').onclick=()=>{clearInterval(timer);document.getElementById('hc34Mode')?.remove()};
+ document.getElementById('hc34Prev').onclick=()=>{if(idx>0){idx--;open()}};
+ document.getElementById('hc34Next').onclick=()=>{saveKpi();if(idx<getPlan().length-1){idx++;open()}else finish()};
+ document.getElementById('hc34Play').onclick=toggle
+}
+function toggle(){
+ let b=document.getElementById('hc34Play');
+ if(running){clearInterval(timer);running=false;b.textContent='再開';return}
+ running=true;b.textContent='一時停止';
+ timer=setInterval(()=>{seconds--;let c=document.getElementById('hc34Clock');if(c)c.textContent=fmt(seconds);if(seconds<=0){clearInterval(timer);running=false;if(b)b.textContent='完了 ✓'}},1000)
+}
+function saveKpi(){
+ let m=meta(),inputs=[...document.querySelectorAll('.hc34kv')];if(inputs.length){m.kpis=(m.kpis||[]).map((k,i)=>typeof k==='string'?{name:k,value:inputs[i]?.value||''}:Object.assign({},k,{value:inputs[i]?.value||''}));m.reflection=document.getElementById('hc34Reflection')?.value||m.reflection||'';localStorage.setItem('hc_today_session_meta_v31',JSON.stringify(m))}
+}
+function finish(){
+ clearInterval(timer);saveKpi();let m=meta(),p=getPlan();
+ let hist=safe('hc_training_records',[]);if(!Array.isArray(hist))hist=[];
+ hist.push({date:new Date().toISOString(),startedAt,completed:true,theme:m.theme||'',cat:m.cat||'',principles:m.principles||[],items:p,kpis:m.kpis||[],reflection:m.reflection||''});
+ localStorage.setItem('hc_training_records',JSON.stringify(hist));
+ let d=document.getElementById('hc34Mode');if(d)d.innerHTML=`<div class="hc34body" style="display:flex;flex-direction:column;justify-content:center"><div class="hc34k">SESSION COMPLETE</div><div class="hc34name">今日の練習、お疲れさまでした。</div><div class="hc34done">練習内容・KPI・振り返りを記録しました。分析とNEXT TRAININGに利用されます。</div><button class="hc34btn main" style="margin-top:14px" id="hc34Done">今日の練習へ戻る</button></div>`;
+ document.getElementById('hc34Done').onclick=()=>{document.getElementById('hc34Mode')?.remove();try{renderToday()}catch(e){}}
+}
+const pr=window.renderToday;if(typeof pr==='function')window.renderToday=function(){let r=pr.apply(this,arguments);setTimeout(mountButton,30);return r};
+const ps=window.show;if(typeof ps==='function')window.show=function(id){let r=ps.apply(this,arguments);if(id==='today')setTimeout(mountButton,180);return r};
+window.HCCoachModeV34={start,mountButton};setTimeout(mountButton,3000);
+})();
+</script>
+<!-- /HC_COACH_MODE_V34 -->
+
 </body></html>
