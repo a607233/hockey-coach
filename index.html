@@ -3210,4 +3210,78 @@ setTimeout(relabel,3000);
 </script>
 <!-- /HC_TODAY_ADD_TO_PLAN_V32 -->
 
+
+<!-- HC_TODAY_ITEM_EDITOR_V33 -->
+<style>
+.hc33-edit{margin-left:6px}
+#hc33Editor{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center}
+#hc33Editor .hc33sheet{width:min(680px,100%);max-height:88vh;overflow:auto;background:#0c171c;border:1px solid #314850;border-radius:22px 22px 0 0;padding:18px;color:#eef6f2;box-sizing:border-box}
+.hc33top{display:flex;justify-content:space-between;align-items:center;gap:10px}.hc33top h3{margin:0;font-size:20px}
+.hc33x{border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px;font-size:18px}
+.hc33lab{display:block;font-size:11px;font-weight:900;color:#94a6ad;margin:12px 0 6px}
+.hc33in,.hc33ta,.hc33sel{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:12px;color:#fff;padding:11px;font-size:14px}
+.hc33ta{min-height:76px;resize:vertical}.hc33grid{display:grid;grid-template-columns:1fr 110px;gap:8px}
+.hc33save{width:100%;margin-top:14px;border:0;border-radius:12px;padding:13px;background:#d7ff39;color:#071014;font-weight:950}
+.hc33delete{width:100%;margin-top:7px;border:1px solid #4a3838;border-radius:12px;padding:11px;background:#1c1517;color:#ffdede;font-weight:850}
+.hc33detail{margin-top:8px;padding:9px 10px;background:#0a1418;border-left:3px solid #d7ff39;border-radius:8px;color:#aebdc1;font-size:11px;line-height:1.55}
+</style>
+<script>
+(function(){'use strict';
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function ensure(){
+ try{
+  plan=(plan||[]).map(x=>Object.assign({type:'練習',name:'',minutes:10,purpose:'',constraint:'',question:'',memo:''},x));
+ }catch(e){}
+}
+function openEditor(i){
+ ensure();let p=plan[i];if(!p)return;
+ document.getElementById('hc33Editor')?.remove();
+ let d=document.createElement('div');d.id='hc33Editor';
+ d.innerHTML=`<div class="hc33sheet">
+ <div class="hc33top"><div><div style="font-size:10px;color:#d7ff39;font-weight:950">TODAY'S TRAINING</div><h3>練習項目を編集</h3></div><button class="hc33x" id="hc33Close">×</button></div>
+ <div class="hc33grid"><div><label class="hc33lab">項目名</label><input id="hc33Name" class="hc33in" value="${esc(p.name)}"></div><div><label class="hc33lab">時間</label><input id="hc33Min" class="hc33in" type="number" min="0" value="${+p.minutes||0}"></div></div>
+ <label class="hc33lab">種類</label><select id="hc33Type" class="hc33sel">${['動作改善','練習','GAME','振り返り'].map(x=>`<option ${p.type===x?'selected':''}>${x}</option>`).join('')}</select>
+ <label class="hc33lab">狙い｜何を学習させる？</label><textarea id="hc33Purpose" class="hc33ta" placeholder="例：ロスト直後にボール周辺を圧縮する">${esc(p.purpose||'')}</textarea>
+ <label class="hc33lab">制約・ルール</label><textarea id="hc33Constraint" class="hc33ta" placeholder="例：ロスト後4秒以内の奪回で2点">${esc(p.constraint||'')}</textarea>
+ <label class="hc33lab">コーチングの問い</label><textarea id="hc33Question" class="hc33ta" placeholder="例：誰が1st DFになる？">${esc(p.question||'')}</textarea>
+ <label class="hc33lab">メモ</label><textarea id="hc33Memo" class="hc33ta" placeholder="人数・コートサイズ・注意点など">${esc(p.memo||'')}</textarea>
+ <button class="hc33save" id="hc33Save">変更を保存</button><button class="hc33delete" id="hc33Delete">この項目を削除</button></div>`;
+ document.body.appendChild(d);
+ document.getElementById('hc33Close').onclick=()=>d.remove();
+ d.onclick=e=>{if(e.target===d)d.remove()};
+ document.getElementById('hc33Save').onclick=()=>{
+   p.name=document.getElementById('hc33Name').value;
+   p.minutes=+document.getElementById('hc33Min').value||0;
+   p.type=document.getElementById('hc33Type').value;
+   p.purpose=document.getElementById('hc33Purpose').value;
+   p.constraint=document.getElementById('hc33Constraint').value;
+   p.question=document.getElementById('hc33Question').value;
+   p.memo=document.getElementById('hc33Memo').value;
+   savePlan();d.remove();
+ };
+ document.getElementById('hc33Delete').onclick=()=>{if(confirm('この練習項目を削除しますか？')){plan.splice(i,1);savePlan();d.remove()}};
+}
+function decorate(){
+ ensure();
+ document.querySelectorAll('#todayItems .traincard').forEach((card,i)=>{
+   if(card.querySelector('.hc33-edit'))return;
+   let actions=card.querySelector('.actions');if(!actions)return;
+   let b=document.createElement('button');b.className='btn secondary small hc33-edit';b.textContent='編集';b.onclick=()=>openEditor(i);actions.prepend(b);
+   let p=plan[i];if(p&&(p.purpose||p.constraint||p.question)){
+     let z=document.createElement('div');z.className='hc33detail';
+     z.innerHTML=(p.purpose?'<b>狙い：</b>'+esc(p.purpose)+'<br>':'')+(p.constraint?'<b>制約：</b>'+esc(p.constraint)+'<br>':'')+(p.question?'<b>問い：</b>'+esc(p.question):'');
+     card.insertBefore(z,actions);
+   }
+ });
+}
+const prevRender=window.renderToday;
+if(typeof prevRender==='function')window.renderToday=function(){let r=prevRender.apply(this,arguments);setTimeout(decorate,0);return r};
+const prevAdd=window.addPlanItem;
+if(typeof prevAdd==='function')window.addPlanItem=function(){let r=prevAdd.apply(this,arguments);setTimeout(decorate,0);return r};
+window.HCTodayItemEditorV33={open:openEditor,decorate};
+setTimeout(decorate,2600);
+})();
+</script>
+<!-- /HC_TODAY_ITEM_EDITOR_V33 -->
+
 </body></html>
