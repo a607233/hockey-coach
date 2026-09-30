@@ -306,7 +306,37 @@ function renderSmartLibrarySuggestions(){
  let host=document.getElementById('smartLibrarySuggestions');if(!host)return;let opts=smartLibraryOptions();
  host.innerHTML=opts.length?opts.map((o,n)=>`<div class="menu"><div class="k">${['反復量重視','ゲーム性重視','全員参加重視'][n]||'候補'}｜${esc(o.x.phase)}</div><h3>${esc(o.x.name)}</h3><div class="meta">${esc(o.x.purpose||'')}<br>${o.why.length?'一致：'+o.why.join('・'):'ライブラリ候補'}</div><button onclick="addLibToday(${libData().findIndex(v=>v.id===o.x.id)})">この練習を追加</button></div>`).join(''):'<div class="empty">練習ライブラリに候補を追加すると、ここに提案されます。</div>'
 }
+
+/* ===== HC V5.8.7 PHOTO LIBRARY PACK 02 =====
+   Adds summarized hockey adaptations from the second uploaded photo set.
+   Data-only migration; existing menus and functions remain unchanged.
+*/
+const PHOTO_LIBRARY_V587=[
+{id:'photo587-01',phase:'攻撃',principle:'優位性をつくる ＞ 位置的優位 ＞ 空いた場所を使う',name:'スペースの認知｜3v3＋2フリーマン',minutes:15,players:'8',size:'18m×18m',purpose:'ボールを出した後に空いた場所を見つけ、次のパスコースを作り直す。',constraint:'3v3＋攻撃側2フリーマン。パス後は同じ場所に留まらず、味方と重ならない空間へ移動する。',question:'今、味方が使える空いている場所はどこ？ パスの後にどこへ動く？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-02',phase:'守備',principle:'ゴールを守る ＞ 構える ＞ ボールと相手を同一視野に入れる',name:'ディフェンスの体の向き｜3v3＋フリーマン＋2GK',minutes:18,players:'9',size:'25m×35m',purpose:'ボールとマークする相手を同時に確認できる身体の向きを保つ。',constraint:'守備はマンツーマンを基本とし、ボール移動に合わせて身体の向きと立ち位置を調整する。',question:'ボールと相手を同時に見るには、身体をどちらへ向ければいい？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-03',phase:'攻撃',principle:'優位性をつくる ＞ 位置的優位 ＞ バランスを保つ',name:'バランス｜4v3＋フリーマン',minutes:15,players:'8',size:'18m×18m',purpose:'味方と同じ場所へ集まらず、ピッチ全体の空間を埋めながら攻撃の選択肢を保つ。',constraint:'4つの区画を目安に配置。パス後は味方の移動を見て、空いた場所を補う。',question:'今、埋めるべきスペースはどこ？ 味方が動いたら自分はどこへ動く？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-04',phase:'攻撃',principle:'優位性をつくる ＞ 数的優位 ＞ フリーな選手を見つける',name:'フリーの選手｜3v3＋2フリーマン',minutes:15,players:'8',size:'18m×18m',purpose:'プレッシャーを受けていない味方を素早く認知し、前進につながる選択肢として使う。',constraint:'攻撃側フリーマンは1タッチを基本とする。守備はボール保持者へ素早く寄せる。',question:'誰がフリーになった？ ボールを受ける前に何を見ておく？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-05',phase:'攻撃',principle:'優位性をつくる ＞ 数的優位 ＞ 3人目を使う',name:'第3の選手｜5v5＋2フリーマン',minutes:18,players:'12',size:'18m×18m',purpose:'近い味方だけでなく、守備の背後や遠い位置の第3者を使ってプレッシャーを外す。',constraint:'攻撃側は近い選手への連続パスだけに偏らず、遠い選手へのパスコースも探す。',question:'近くが塞がれた時、遠い味方をどう使えば守備を外せる？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-06',phase:'攻撃',principle:'前進する ＞ 幅と深さを取る ＞ 横幅を確保する',name:'攻撃の広がり｜4v4＋フリーマン',minutes:16,players:'9',size:'16m×24m',purpose:'ボール周辺へ集まりすぎず、横幅を取って守備間の距離を広げる。',constraint:'区画を目安に攻撃側が異なるレーンを使う。パス後も幅を失わないよう再配置する。',question:'味方がボールへ近づいた時、自分まで近づく必要はある？ どこに幅を作れる？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-07',phase:'攻撃',principle:'前進する ＞ ブロックを越える ＞ 前方サポートを作る',name:'ブロックの突破｜3v3＋フリーマン＋2GK',minutes:18,players:'9',size:'20m×32m',purpose:'守備ブロックの前後に味方を配置し、ラインを越えるパスと次のサポートを作る。',constraint:'3ゾーンを設定。攻撃は前方の味方を使ってラインを越え、受け手へのサポートを続ける。',question:'守備ラインを越える前に、前方の味方を支える準備はできている？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-08',phase:'攻撃',principle:'前進する ＞ 幅と深さを取る ＞ チームの配置を整える',name:'チームの配置｜6v6＋2GK',minutes:20,players:'14',size:'40m×60m',purpose:'幅と深さを同時に確保し、複数の高さとレーンを使って前進できるチーム配置を作る。',constraint:'両チーム同じ基本配置で開始。ボール位置に応じて横幅・前後の高さ・中央の関係を保つ。',question:'幅を使うメリットは？ 複数の高さを作ると守備に何が起こる？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-09',phase:'攻撃',principle:'優位性をつくる ＞ 数的優位 ＞ 3人目を使う',name:'数的優位｜3v3＋フリーマン＋GK',minutes:16,players:'8',size:'20m×35m',purpose:'フリーマンを使って局所的な数的優位を作り、前進の出口を増やす。',constraint:'フリーマンは攻撃側を支援。ボール保持者・サポート・第3者の関係を作って前進する。',question:'今どこで数的優位を作れる？ 次のパスコースを増やすには誰が動く？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-10',phase:'攻撃',principle:'前進する ＞ キャリーとパスを選ぶ ＞ パスコースを複数作る',name:'パスコース｜3v3＋2フリーマン',minutes:15,players:'8',size:'16m×18m',purpose:'保持者に対して複数方向のパスコースを作り、守備に読まれにくい前進を行う。',constraint:'攻撃側は同じ直線上に並ばず、内外・前後に異なる角度の受け場所を作る。',question:'保持者から見て何本のパスコースがある？ 角度を変えると何が変わる？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-11',phase:'守備',principle:'ゴールを守る ＞ マークを管理する ＞ ボールと相手を同一視野に入れる',name:'マーキング①｜ボールと相手を見る',minutes:15,players:'7',size:'30m×32m',purpose:'マーク相手とボールを同時に確認できる立ち位置と身体の向きを身につける。',constraint:'4v3＋GKを目安に実施。守備はボール位置に応じてマーク距離と身体の向きを変える。',question:'ボールと相手を同時に見るため、自分はどこに立つ？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-12',phase:'守備',principle:'ボールを奪う ＞ 1st DFが制限する ＞ 動く相手へ対応する',name:'マーキング②｜止まって待たない',minutes:15,players:'8',size:'40m×25m',purpose:'動く相手に対して足を止めず、距離を調整しながら次のアクションへ対応する。',constraint:'4v4＋フリーマン。守備は相手の速度と方向に合わせて動き続け、飛び込みを避ける。',question:'相手が動いている時、どの距離なら次の方向転換にも対応できる？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-13',phase:'守備',principle:'ゴールを守る ＞ マークを管理する ＞ ゴール側を取る',name:'マーキング③｜ゴール側を守る',minutes:18,players:'10',size:'35m×35m',purpose:'自陣ゴールに近づくほど相手との距離を縮め、危険な場所で自由にプレーさせない。',constraint:'4v4＋2GKを目安に3ゾーンで実施。自陣ゴールへ近いほどマークをタイトにする。',question:'どのエリアで最も厳しく寄せる？ ゴールと相手の間に立てている？',videoUrl:'',archived:false,source:'PHOTO PACK 02'},
+{id:'photo587-14',phase:'守備',principle:'ゴールを守る ＞ マークを管理する ＞ 先に情報を取る',name:'マーキング④｜事前に情報を集める',minutes:15,players:'8',size:'25m×25m',purpose:'パスが出てから反応するのではなく、首を振って相手の位置と動きを先に把握する。',constraint:'3v3＋2フリーマン。守備はマーク相手だけを見続けず、ボール・相手・空間を繰り返し確認する。',question:'パスが出る前に何を確認できる？ マーク相手は次にどこへ動きそう？',videoUrl:'',archived:false,source:'PHOTO PACK 02'}
+];
+function migratePhotoLibraryV587(){
+ let a=jget('hc_training_library_v55',null);
+ if(!Array.isArray(a)) a=LIB0.map(x=>({...x}));
+ let ids=new Set(a.map(x=>x.id));
+ let add=PHOTO_LIBRARY_V587.filter(x=>!ids.has(x.id));
+ if(add.length){a.push(...add);localStorage.setItem('hc_training_library_v55',JSON.stringify(a));}
+}
+
 migratePhotoLibraryV586();
+migratePhotoLibraryV587();
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupTodayTabs();renderLib();acceptInviteFromUrl();
 
 /* ===== HC V5.8 STABLE PRINCIPLE MODEL =====
@@ -431,5 +461,6 @@ renderPrincipleTree();renderLib();
 <!-- HC_V581_HOTFIX_NAV_HEADER -->
 <!-- HC_V582_COUNTER_PLUS_MINUS -->
 <!-- HC_V585_ANALYSIS_CONTROLS_RESTORED -->
+<!-- HC_V587_PHOTO_LIBRARY_PACK_02_14_DRILLS -->
 <!-- HC_V586_PHOTO_LIBRARY_PACK_01_19_DRILLS -->
 </body></html>
