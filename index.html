@@ -57,7 +57,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <button id="recommendBtn" class="btn" style="margin-top:13px">✨ 3つの練習案を見る</button>
  </div>
  <div class="card"><div class="row"><div><div class="k">TODAY'S MENU</div><div class="title" style="font-size:19px">今日のメニュー</div></div><button class="btn2" onclick="addBlank()">＋追加</button></div><div id="menuList"></div><div class="row"><div class="muted">合計</div><div style="text-align:right"><b><span id="totalMin">0</span>分</b></div></div><button class="btn" style="margin-top:12px" onclick="startCoach()">▶ コーチモード開始</button></div>
-<div class="card"><div class="k">LIBRARY RECOMMEND</div><div class="title">ライブラリから3案</div><p class="muted">今日の局面・原則・選手案などから候補を出します。正解を決めるのではなく、選ぶための3案です。</p><button class="btn2" onclick="renderSmartLibrarySuggestions()">候補を更新</button><div id="smartLibrarySuggestions"></div></div></div><div id="tt-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">TRAINING LIBRARY</div><div class="title">練習メニュー</div></div><button class="btn2" onclick="editLib(-1)">＋ 練習追加</button></div><p class="muted">原則から探す／検索する／複製して育てる。登録した練習は今日の3案提案にも使います。</p>
+</div><div id="tt-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">TRAINING LIBRARY</div><div class="title">練習メニュー</div></div><button class="btn2" onclick="editLib(-1)">＋ 練習追加</button></div><p class="muted">原則から探す／検索する／複製して育てる。登録した練習は今日の3案提案にも使います。</p>
 <div class="field"><input id="libSearch" class="input" placeholder="練習名・原則・目的を検索" oninput="renderLib()"></div>
 <div id="libFilters" class="tabs"></div><div class="chipline" style="margin:8px 0"><button id="favFilterBtn" class="chip2" onclick="toggleFavFilter()">☆ お気に入りのみ</button></div><div id="principleFilters" class="tabs"></div>
 <div id="libCount" class="muted"></div><div id="libList"></div></div></div></section>
@@ -275,7 +275,7 @@ scoreV57=function(x,ctx){
  }
  return r
 }
-renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
+renderPrincipleTree();renderLib();
 </script>
 <!-- HC_PHILOSOPHY_V51_EDITABLE -->
 <!-- HC_MORE_V52_EDITABLE -->
@@ -288,4 +288,5 @@ renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 <!-- HC_V581_HOTFIX_NAV_HEADER -->
 <!-- HC_V582_COUNTER_PLUS_MINUS -->
 <!-- HC_V583_ANALYSIS_READONLY_COUNTER -->
+<!-- HC_V584_REMOVE_DUPLICATE_LIBRARY_3 -->
 </body></html>
