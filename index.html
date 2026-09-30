@@ -3414,4 +3414,79 @@ setTimeout(enhance,3000);
 </script>
 <!-- /HC_COACH_MODE_V35 -->
 
+
+<!-- HC_TODAY_HUB_V36 -->
+<style>
+#hc36Hub{margin:10px 0 14px}.hc36grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hc36act{border:1px solid #30464e;background:#102027;color:#fff;border-radius:14px;padding:13px 10px;text-align:left;min-height:76px}
+.hc36act b{display:block;font-size:13px}.hc36act span{display:block;font-size:10px;color:#9fb0b6;margin-top:4px;line-height:1.35}
+.hc36act.primary{background:#d7ff39;color:#071014;border-color:#d7ff39}.hc36act.primary span{color:#35400d}
+#hc36Rec{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.74);display:flex;align-items:flex-end}
+.hc36sheet{width:100%;max-height:90vh;overflow:auto;background:#081419;border:1px solid #314850;border-radius:22px 22px 0 0;padding:17px 14px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box;color:#fff}
+.hc36head{display:flex;justify-content:space-between;align-items:center}.hc36head h3{margin:2px 0 0}.hc36x{border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px}
+.hc36context{font-size:11px;color:#a7b6bb;margin:8px 0 12px}.hc36card{border:1px solid #2c4149;background:#0d1a1f;border-radius:15px;padding:12px;margin:8px 0}
+.hc36card h4{margin:0 0 4px;font-size:15px}.hc36card p{font-size:11px;color:#aebdc1;line-height:1.5;margin:5px 0}.hc36tags{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.hc36tag{font-size:9px;border:1px solid #3a5058;border-radius:999px;padding:4px 6px}
+.hc36add{width:100%;border:0;border-radius:10px;padding:10px;background:#d7ff39;color:#071014;font-weight:950;margin-top:7px}
+</style>
+<script>
+(function(){'use strict';
+const LIB=[
+{phase:'攻撃',name:'3ゾーン前進ゲーム',min:15,purpose:'ボールを前進させながら、前方の選択肢を増やす',constraint:'3ゾーン制。前進パスまたはキャリーでゾーン突破。後方への逃げ続けは禁止。',question:'前進できる瞬間はどこにある？'},
+{phase:'攻撃',name:'4v4+2 フリーマン前進',min:15,purpose:'数的優位を使って前進の出口を見つける',constraint:'外側2名は攻撃側。3本以内に前進を狙う。',question:'誰を使うと相手を一人外せる？'},
+{phase:'守備',name:'4v4 圧縮ディフェンス',min:15,purpose:'ボール周辺を圧縮し、中央を閉じる',constraint:'守備側は横幅を一定範囲以内に保つ。奪ったら即ゴールへ。',question:'どこを閉じれば相手の前進を止められる？'},
+{phase:'守備',name:'5v4 サークル守備',min:15,purpose:'ゴール前で優先順位を共有して守る',constraint:'攻撃5対守備4。守備は中央・ゴール方向を最優先。',question:'今、一番危険な選手とスペースはどこ？'},
+{phase:'攻→守',name:'4v4+GK 即時奪回ゲーム',min:15,purpose:'ボールロスト直後の即時奪回を習慣化する',constraint:'ロスト後4秒以内の奪回で2点。奪えなければ即撤退。',question:'誰が1st DFになり、誰がカバーする？'},
+{phase:'攻→守',name:'5v4→4v3 カウンター対応',min:18,purpose:'人数をかけた攻撃後のリスク管理を学ぶ',constraint:'攻撃終了・ロストで即逆方向へ4v3。後方選手は事前にバランスを取る。',question:'攻撃中に誰がカウンターを消しておく？'},
+{phase:'守→攻',name:'3v3+2 ターゲット速攻',min:15,purpose:'奪った瞬間に前方を認知し、速く前進する',constraint:'奪取後5秒以内にターゲットへ通せば2点。',question:'奪う前に次の出口を見られている？'},
+{phase:'守→攻',name:'4v4 奪取後6秒フィニッシュ',min:15,purpose:'ボール奪取からゴールまでの速度を上げる',constraint:'奪取後6秒以内のシュートは2点。',question:'最初のプレーでどこまで前進できる？'}
+];
+function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function context(){let m=safe('hc_today_session_meta_v31',{}),v=safe('hc_today_v21',{});return {theme:m.theme||v.theme||'',phase:m.cat||v.cat||v.phase||'',principles:m.principles||v.principles||[]}}
+function recs(){
+ let c=context(),phase=c.phase;
+ if(!['攻撃','守備','攻→守','守→攻'].includes(phase)){
+   let t=(c.theme+' '+c.principles.join(' '));
+   phase=/ロスト|奪回/.test(t)?'攻→守':/奪取|速攻|カウンター/.test(t)?'守→攻':/守備|プレス/.test(t)?'守備':'攻撃';
+ }
+ let same=LIB.filter(x=>x.phase===phase),other=LIB.filter(x=>x.phase!==phase);
+ return same.concat(other).slice(0,5)
+}
+function mount(){
+ const today=document.getElementById('today');if(!today||document.getElementById('hc36Hub'))return;
+ let anchor=document.getElementById('hcTodayMetaV31')||document.getElementById('todayItems');if(!anchor)return;
+ let d=document.createElement('div');d.id='hc36Hub';
+ d.innerHTML=`<div class="hc36grid">
+ <button class="hc36act" id="hc36Add"><b>＋ 練習を追加</b><span>空の項目を追加して自分で編集</span></button>
+ <button class="hc36act primary" id="hc36Recommend"><b>✨ おすすめ練習から追加</b><span>テーマ・原則・課題から選ぶ</span></button>
+ <button class="hc36act" id="hc36Design"><b>🧠 今日の練習を設計</b><span>テーマからセッション全体を組み立てる</span></button>
+ <button class="hc36act" id="hc36Coach"><b>▶ コーチモード開始</b><span>タイマー・説明・メモを使って実践</span></button></div>`;
+ anchor.parentNode.insertBefore(d,anchor.nextSibling);
+ document.getElementById('hc36Add').onclick=()=>{try{addPlanItem()}catch(e){let p=safe('hc_today_plan',[]);p.push({id:'pi-'+Date.now(),type:'練習',name:'新しい練習',minutes:10,purpose:'',constraint:'',question:'',memo:''});localStorage.setItem('hc_today_plan',JSON.stringify(p));try{plan=p;renderToday()}catch(_){} }};
+ document.getElementById('hc36Recommend').onclick=openRec;
+ document.getElementById('hc36Design').onclick=()=>{let u=document.getElementById('hcTodayUnifiedV3');if(u){u.style.display='block';u.scrollIntoView({behavior:'smooth',block:'start'})}else alert('設計画面を開けませんでした。')};
+ document.getElementById('hc36Coach').onclick=()=>window.HCCoachModeV34?.start();
+ let old=document.getElementById('hc34CoachBtn');if(old)old.style.display='none'
+}
+function openRec(){
+ document.getElementById('hc36Rec')?.remove();let c=context(),rs=recs(),d=document.createElement('div');d.id='hc36Rec';
+ d.innerHTML=`<div class="hc36sheet"><div class="hc36head"><div><div style="font-size:10px;color:#d7ff39;font-weight:950">RECOMMENDED TRAINING</div><h3>おすすめ練習メニュー</h3></div><button class="hc36x">×</button></div>
+ <div class="hc36context">テーマ：${esc(c.theme||'未設定')} ${c.phase?'｜局面：'+esc(c.phase):''}</div>
+ ${rs.map((x,i)=>`<div class="hc36card"><h4>${esc(x.name)}</h4><div class="hc36tags"><span class="hc36tag">${esc(x.phase)}</span><span class="hc36tag">${x.min}分</span></div><p><b>狙い：</b>${esc(x.purpose)}</p><p><b>制約：</b>${esc(x.constraint)}</p><p><b>問い：</b>${esc(x.question)}</p><button class="hc36add" data-i="${i}">＋ 今日の練習へ追加</button></div>`).join('')}</div>`;
+ document.body.appendChild(d);d.querySelector('.hc36x').onclick=()=>d.remove();d.onclick=e=>{if(e.target===d)d.remove()};
+ d.querySelectorAll('.hc36add').forEach(b=>b.onclick=()=>addRec(rs[+b.dataset.i],b))
+}
+function addRec(x,b){
+ let p=safe('hc_today_plan',[]);if(!Array.isArray(p))p=[];
+ p.push({id:'pi-'+Date.now(),type:'練習',name:x.name,minutes:x.min,purpose:x.purpose,constraint:x.constraint,question:x.question,memo:'',source:'recommended'});
+ localStorage.setItem('hc_today_plan',JSON.stringify(p));try{plan=p;renderToday()}catch(e){}
+ b.textContent='✓ 追加しました';b.disabled=true
+}
+const pr=window.renderToday;if(typeof pr==='function')window.renderToday=function(){let r=pr.apply(this,arguments);setTimeout(mount,50);return r};
+const ps=window.show;if(typeof ps==='function')window.show=function(id){let r=ps.apply(this,arguments);if(id==='today')setTimeout(mount,180);return r};
+window.HCTodayHubV36={mount,openRec};setTimeout(mount,3200);
+})();
+</script>
+<!-- /HC_TODAY_HUB_V36 -->
+
 </body></html>
