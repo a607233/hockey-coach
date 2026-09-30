@@ -24,7 +24,10 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .tab{flex:0 0 auto;border:1px solid #30464e;background:#0d1a20;color:#a9bac0;border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px}.tab.on{background:var(--lime);border-color:var(--lime);color:#071014}
 .tabpane{display:none}.tabpane.on{display:block}.kpirow{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid #203139}.counter{min-width:48px;text-align:center;font-size:25px;font-weight:950}.smallbtn{border:1px solid #344b54;background:#14242b;color:#fff;border-radius:11px;padding:9px 12px;font-weight:950}.score3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.score3 button{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:11px;padding:11px 5px;font-weight:900}.score3 button.on{background:var(--lime);color:#071014;border-color:var(--lime)}
 .videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}
+
+.invitebox{text-align:center}.qrwrap{display:inline-block;background:#fff;padding:14px;border-radius:16px;margin:10px auto}.inviteurl{font-size:12px;word-break:break-all;background:#071014;border:1px solid #30464e;border-radius:11px;padding:10px;text-align:left;color:#dce7ea}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <header><div class="brand">🏑 HOCKEY COACH <small>PERFORMANCE</small></div><div class="sub">TEAM DEVELOPMENT SYSTEM</div></header>
@@ -70,7 +73,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <div id="more-ph" class="tabpane on"><div class="card"><div class="row"><div><div class="k">TEAM IDENTITY</div><div class="title">Philosophy</div></div><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><p class="muted">チームが大切にする考え方。選手と一緒に育てていきます。</p><div id="philosophyList"></div></div></div>
  <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
  <div id="more-team" class="tabpane"><div class="card"><div class="k">TEAM</div><div class="title">チーム設定</div><div class="field"><label>チーム名</label><input id="teamName" class="input" placeholder="TEAM NAME"></div><div class="field"><label>シーズン</label><input id="seasonName" class="input" placeholder="2026"></div><button class="btn" onclick="saveTeamSettings()">保存</button></div></div>
- <div id="more-invite" class="tabpane"><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">STAFF / PLAYER / PARENTなどの役割を追加・編集できます。QR本体は次段階で接続します。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div></div>
+ <div id="more-invite" class="tabpane"><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">役割を選ぶと、招待URLとQRコードを発行します。URLはコピーしてLINE等でも共有できます。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div><div id="inviteResult"></div></div>
  <div id="more-settings" class="tabpane"><div class="card"><div class="k">DATA</div><div class="title">設定・データ</div><p class="muted">今日のメニューと練習記録の互換データを維持しています。</p><button class="btn2" onclick="exportData()">データを書き出す</button></div></div>
 </section>
 </main>
@@ -162,7 +165,13 @@ function deleteMethod(i){if(!confirm('この原則を削除しますか？'))ret
 function moveMethod(i,d){let a=methodData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];saveMethods(a)}
 function roleData(){let a=jget('hc_team_roles_v52',null);return Array.isArray(a)?a:[{id:'staff',name:'STAFF',desc:'指導者・スタッフ'},{id:'player',name:'PLAYER',desc:'選手'},{id:'parent',name:'PARENT',desc:'保護者'}]}
 function saveRoles(a){localStorage.setItem('hc_team_roles_v52',JSON.stringify(a));renderRoles()}
-function renderRoles(){let a=roleData();roleList.innerHTML=a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.name)}</div><div class="meta">${esc(x.desc||'')}</div><div class="actions"><button onclick="editRole(${i})">編集</button><button class="del" onclick="deleteRole(${i})">削除</button></div></div>`).join('')}
+function renderRoles(){let a=roleData();roleList.innerHTML=a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.name)}</div><div class="meta">${esc(x.desc||'')}</div><div class="actions"><button onclick="createInvite(${i})">QR招待</button><button onclick="editRole(${i})">編集</button><button class="del" onclick="deleteRole(${i})">削除</button></div></div>`).join('')}
+function inviteBase(){return location.origin+location.pathname}
+function createInvite(i){let role=roleData()[i],team=jget('hc_team_settings_v52',{}),token=crypto&&crypto.randomUUID?crypto.randomUUID():('inv-'+Date.now()+'-'+Math.random().toString(36).slice(2));let payload={token,roleId:role.id,role:role.name,team:team.name||'',createdAt:new Date().toISOString()};let all=jget('hc_invites_v54',[]);all.unshift(payload);localStorage.setItem('hc_invites_v54',JSON.stringify(all.slice(0,50)));let u=new URL(inviteBase());u.searchParams.set('invite',token);u.searchParams.set('role',role.name);showInvite(role,u.toString())}
+function showInvite(role,url){inviteResult.innerHTML=`<div class="card invitebox"><div class="k">${esc(role.name)} INVITE</div><div class="title" style="font-size:19px">招待QRコード</div><div id="qrTarget" class="qrwrap"></div><div class="inviteurl" id="inviteUrlText">${esc(url)}</div><div class="row" style="margin-top:10px"><button class="btn" onclick="copyInvite()">URLをコピー</button><button class="btn2" onclick="shareInvite()">共有</button></div><p class="muted">このQRまたはURLを参加者に送ってください。</p></div>`;if(window.QRCode)new QRCode(document.getElementById('qrTarget'),{text:url,width:190,height:190,correctLevel:QRCode.CorrectLevel.M});else qrTarget.innerHTML='<div style="color:#111;padding:20px">QRライブラリを読み込めませんでした。URLを共有してください。</div>';inviteResult.scrollIntoView({behavior:'smooth',block:'start'})}
+async function copyInvite(){let u=inviteUrlText.textContent;try{await navigator.clipboard.writeText(u);alert('招待URLをコピーしました')}catch(e){prompt('このURLをコピーしてください',u)}}
+async function shareInvite(){let u=inviteUrlText.textContent;try{if(navigator.share)await navigator.share({title:'HOCKEY COACH チーム招待',text:'HOCKEY COACHへの招待です',url:u});else await copyInvite()}catch(e){}}
+function acceptInviteFromUrl(){let q=new URLSearchParams(location.search),token=q.get('invite'),role=q.get('role');if(!token)return;setTimeout(()=>{openModal(`<div class="k">TEAM INVITE</div><h2>チーム招待</h2><p class="muted">役割：<b>${esc(role||'MEMBER')}</b></p><p>この端末で招待リンクを開きました。</p><button class="btn" onclick="localStorage.setItem('hc_joined_invite_v54',JSON.stringify({token:'${esc(token)}',role:'${esc(role||'MEMBER')}',joinedAt:new Date().toISOString()}));closeModal()">招待を受け取る</button>`)},350)}
 function addRole(){editRole(-1)}
 function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<div class="k">TEAM ROLE</div><h2>${i>=0?'役割を編集':'役割を追加'}</h2><div class="field"><label>役割名</label><input id="rName" class="input" value="${esc(x.name)}" placeholder="例：ANALYST"></div><div class="field"><label>説明</label><input id="rDesc" class="input" value="${esc(x.desc)}"></div><button class="btn" onclick="commitRole(${i})">保存</button>`)}
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
@@ -171,9 +180,10 @@ function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.str
 function exportData(){let data={version:'5.2',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethods();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
-renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
+renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();acceptInviteFromUrl();
 </script>
 <!-- HC_PHILOSOPHY_V51_EDITABLE -->
 <!-- HC_MORE_V52_EDITABLE -->
 <!-- HC_V53_BOTTOMUP_KPI_TABS_VIDEO_READY -->
+<!-- HC_V54_INVITE_URL_QR -->
 </body></html>
