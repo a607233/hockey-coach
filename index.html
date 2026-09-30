@@ -24,7 +24,10 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .tab{flex:0 0 auto;border:1px solid #30464e;background:#0d1a20;color:#a9bac0;border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px}.tab.on{background:var(--lime);border-color:var(--lime);color:#071014}
 .tabpane{display:none}.tabpane.on{display:block}.kpirow{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid #203139}.counter{min-width:48px;text-align:center;font-size:25px;font-weight:950}.smallbtn{border:1px solid #344b54;background:#14242b;color:#fff;border-radius:11px;padding:9px 12px;font-weight:950}.score3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.score3 button{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:11px;padding:11px 5px;font-weight:900}.score3 button.on{background:var(--lime);color:#071014;border-color:var(--lime)}
 .videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}.tag{display:inline-block;border:1px solid #31464e;border-radius:999px;padding:4px 7px;margin:3px 3px 0 0;font-size:10px;color:#b9c8cd}.libraryTools{display:grid;grid-template-columns:1fr auto;gap:7px;margin:10px 0}.libraryTools .btn2{width:auto}
-.methodMapV55 details{border:1px solid #2a3e47;border-radius:14px;margin:8px 0;padding:10px}.methodMapV55 summary{font-weight:950;cursor:pointer}.methodLine{margin:8px 0 0 10px;padding-left:10px;border-left:2px solid #294047}.methodJudge{font-size:11px;color:#9fb1b7;margin-top:4px;line-height:1.5}</style>
+.methodMapV55 details{border:1px solid #2a3e47;border-radius:14px;margin:8px 0;padding:10px}.methodMapV55 summary{font-weight:950;cursor:pointer}.methodLine{margin:8px 0 0 10px;padding-left:10px;border-left:2px solid #294047}.methodJudge{font-size:11px;color:#9fb1b7;margin-top:4px;line-height:1.5}
+/* HC_V75_TACTICAL_BOARD */
+.board75{background:#0b7a4b;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:8px;margin:10px 0;overflow:hidden}.board75 svg{display:block;width:100%;height:auto}.board75.small{max-width:360px}.boardLegend75{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:5px 0 9px}.dot75{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.src75{font-size:11px;color:var(--muted);margin-top:4px}.coverage75{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.coverage75>div{padding:10px;border-radius:12px;background:var(--card2);text-align:center}.coverage75 b{font-size:20px;display:block}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -70,7 +73,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  </div>
  <div id="more-ph" class="tabpane on"><div class="card"><div class="row"><div><div class="k">TEAM IDENTITY</div><div class="title">Philosophy</div></div><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><p class="muted">チームが大切にする考え方。選手と一緒に育てていきます。</p><div id="philosophyList"></div></div></div>
  <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div class="card" style="margin:10px 0"><div class="k">LINK SYSTEM</div><b>原則 ↔ 練習をIDで接続</b><p class="muted">原則が増えたら、練習ライブラリの「原則リンク」から関連付けるだけで推薦に反映できます。</p></div><div class="card"><div class="k">DEFENSE DECISION MODEL</div><div class="title">PREDICT → WIN / DELAY / RECOVER</div><p class="muted">失ってから反応するだけでなく、失う前に危険を予測。奪えるならWIN、奪い切れなければDELAY、突破されたらRECOVER。全員が同じ答えを取るのではなく、状況から役割を選びます。</p></div><div id="methodMapV55"></div><hr><div class="k">TEAM CUSTOM</div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
- <div id="more-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">PRACTICE LIBRARY</div><div class="title">練習ライブラリ</div></div><button class="btn2" onclick="editPractice(-1)">＋ 追加</button></div><p class="muted">原則と練習をつなぐチームの資産。追加・編集・削除でき、動画URLも保存できます。</p><div class="libraryTools"><select id="librarySource" class="input" onchange="renderLibrary()"><option value="">すべての練習</option><option value="photo60">写真由来60</option><option value="photoplus">追加写真36</option><option value="funino">FUNINO｜12メニュー</option></select><select id="libraryPhase" class="input" onchange="renderLibrary()"><option value="">全局面</option><option>攻撃</option><option>守備</option><option>攻→守</option><option>守→攻</option></select><button class="btn2" onclick="seedPracticeLibrary(true)">初期メニューを復元</button></div><div id="funinoGuide" class="card" style="display:none"><div class="k">FUNINO HOCKEY</div><div class="title">4ゴールが「判断」を引き出す</div><p class="muted">基本は3対3・4ゴール・GKなし。ゴールが2方向あることで、GO / SWITCH、幅、数的優位、切替、カバーなどをコーチの答えではなくゲーム環境から学びます。</p><div class="tags"><span class="tag">攻撃</span><span class="tag">守備</span><span class="tag">攻→守</span><span class="tag">守→攻</span></div></div><div id="practiceLibraryList"></div></div></div>
+ <div id="more-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">PRACTICE LIBRARY</div><div class="title">練習ライブラリ</div></div><button class="btn2" onclick="editPractice(-1)">＋ 追加</button></div><p class="muted">原則と練習をつなぐチームの資産。追加・編集・削除でき、動画URLも保存できます。</p><div class="coverage75"><div><b>81</b>受領写真</div><div><b>96</b>写真由来派生</div><div><b>全件</b>配置図対応</div></div><p class="muted">写真1枚＝1メニューとは限りません。現在は「元の判断テーマ」と「ホッケー用派生」を分けて管理しています。今後は写真単位のソースIDも付けて追跡できるようにします。</p><div class="libraryTools"><select id="librarySource" class="input" onchange="renderLibrary()"><option value="">すべての練習</option><option value="photo60">写真由来60</option><option value="photoplus">追加写真36</option><option value="funino">FUNINO｜12メニュー</option></select><select id="libraryPhase" class="input" onchange="renderLibrary()"><option value="">全局面</option><option>攻撃</option><option>守備</option><option>攻→守</option><option>守→攻</option></select><button class="btn2" onclick="seedPracticeLibrary(true)">初期メニューを復元</button></div><div id="funinoGuide" class="card" style="display:none"><div class="k">FUNINO HOCKEY</div><div class="title">4ゴールが「判断」を引き出す</div><p class="muted">基本は3対3・4ゴール・GKなし。ゴールが2方向あることで、GO / SWITCH、幅、数的優位、切替、カバーなどをコーチの答えではなくゲーム環境から学びます。</p><div class="tags"><span class="tag">攻撃</span><span class="tag">守備</span><span class="tag">攻→守</span><span class="tag">守→攻</span></div></div><div id="practiceLibraryList"></div></div></div>
  <div id="more-team" class="tabpane"><div class="card"><div class="k">TEAM</div><div class="title">チーム設定</div><div class="field"><label>チーム名</label><input id="teamName" class="input" placeholder="TEAM NAME"></div><div class="field"><label>シーズン</label><input id="seasonName" class="input" placeholder="2026"></div><button class="btn" onclick="saveTeamSettings()">保存</button></div></div>
  <div id="more-invite" class="tabpane"><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">STAFF / PLAYER / PARENTなどの役割を追加・編集できます。QR本体は次段階で接続します。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div></div>
  <div id="more-cloud" class="tabpane"><div class="card"><div class="k">V7.1 CLOUD / SECURE</div><div class="title">ログイン・クラウド基盤</div><p class="muted">端末保存を維持したまま、Supabase Authへ安全に接続します。データ同期はRLS適用後だけ有効化します。</p><div id="cloudStatusV70" class="menu"></div><div class="field"><label>Supabase Project URL</label><input id="cloudUrlV70" class="input" placeholder="https://xxxx.supabase.co"></div><div class="field"><label>Publishable key</label><input id="cloudKeyV70" class="input" placeholder="sb_publishable_..."></div><button class="btn2" onclick="saveCloudConfigV70()">接続設定を保存</button></div>
@@ -115,8 +118,8 @@ function renderMethodBuilder(){
  if(!m.phase){e.innerHTML=`<b>① 局面を選ぶ</b><div class="pills">${Object.keys(METHOD_V55).map(p=>`<button class="pill" onclick="mbPhase('${p}')">${p}</button>`).join('')}</div>`;return}
  let opts=methodOptionsV57(m.phase);
  if(!m.key){e.innerHTML=`<div class="tag">${m.phase}</div><h3>② 改善したい判断</h3>${opts.map((o,i)=>`<div class="rec"><b>${esc(o.leaf)}</b><div class="muted">${esc(o.judgment)}</div><button class="btn2" onclick="mbLeaf(${i})">選ぶ</button></div>`).join('')}<button class="ghost" onclick="window._mb={};renderMethodBuilder()">← 戻る</button>`;return}
- let cand=practiceData().filter(x=>x.phase===m.phase).map(x=>({x,score:(x.principles||[]).some(p=>String(p).includes(m.leaf)||m.leaf.includes(String(p)))?4:0})).sort((a,b)=>b.score-a.score).slice(0,3);
- e.innerHTML=`<div class="tag">${esc(m.phase)} ＞ ${esc(m.leaf)}</div><p class="muted">${esc(m.judgment)}</p><h3>③ 練習候補</h3>${cand.map(({x})=>`<div class="rec"><b>${esc(x.name)}</b> <span class="tag">${esc(x.style||'')}</span><div class="muted">${esc(x.purpose||'')}<br>問い：${esc(x.question||'')}${x.kpiHint?'<br>KPI：'+esc(x.kpiHint):''}</div><button class="btn2" onclick="mbAdd('${x.id}')">今日に追加</button></div>`).join('')||'<p class="muted">関連練習がまだありません。</p>'}<button class="ghost" onclick="window._mb.key='';renderMethodBuilder()">← 選び直す</button>`
+ let prevPhase=state.phase,prevPrinciples=[...(state.principles||[])];state.phase=m.phase;state.principles=[m.leaf];let cand=practiceData().filter(x=>x.phase===m.phase).map(practiceFitV511).sort((a,b)=>b.score-a.score).slice(0,3);state.phase=prevPhase;state.principles=prevPrinciples;
+ e.innerHTML=`<div class="tag">${esc(m.phase)} ＞ ${esc(m.leaf)}</div><p class="muted">${esc(m.judgment)}</p><h3>③ 練習候補</h3>${cand.map(({x,reasons})=>`<div class="rec"><b>${esc(x.name)}</b> <span class="tag">${esc(x.style||'')}</span><div class="muted"><b>候補理由：</b>${esc((reasons||[]).slice(0,3).join('・'))}<br>${esc(x.purpose||'')}<br>問い：${esc(x.question||'')}${x.kpiHint?'<br>KPI：'+esc(x.kpiHint):''}</div><button class="btn2" onclick="practiceDetailV701('${x.id}')">詳細</button> <button class="btn2" onclick="mbAdd('${x.id}')">今日に追加</button></div>`).join('')}||'<p class="muted">関連練習がまだありません。</p>'}<button class="ghost" onclick="window._mb.key='';renderMethodBuilder()">← 選び直す</button>`
 }
 function mbPhase(p){window._mb={phase:p,key:'',leaf:'',judgment:''};renderMethodBuilder()}
 function mbLeaf(i){let o=methodOptionsV57(window._mb.phase)[i];if(!o)return;window._mb.key=o.key;window._mb.leaf=o.leaf;window._mb.judgment=o.judgment;renderMethodBuilder()}
@@ -153,6 +156,32 @@ function togglePracticePrincipleV5111(practiceId,pid){let links=customPrincipleL
 function openPracticeLinksV5111(practiceId){let x=practiceData().find(v=>v.id===practiceId);if(!x)return;openModal(`<div class="k">PRINCIPLE LINK</div><h2>${esc(x.name)}</h2><p class="muted">この練習に関連する原則を追加で紐づけます。既存の原則は消しません。今後追加した原則もここから推薦へ接続できます。</p><div id="practiceLinksV5111"></div>`);renderPracticeLinksV5111(practiceId)}
 function renderPracticeLinksV5111(practiceId){let e=document.getElementById('practiceLinksV5111');if(!e)return;let x=practiceData().find(v=>v.id===practiceId),active=new Set(practicePrincipleIdsV5111(x)),cat=principleCatalogV5111();e.innerHTML=['攻撃','守備','攻→守','守→攻','その他'].map(phase=>{let rows=cat.filter(p=>phase==='その他'?!p.phase:p.phase===phase);return rows.length?`<h3>${phase}</h3><div class="pills">${rows.map(p=>`<button class="pill ${active.has(p.id)?'on':''}" onclick="togglePracticePrincipleV5111('${practiceId}','${p.id}')">${esc(p.label)}</button>`).join('')}</div>`:''}).join('')}
 
+const PRINCIPLE_ALIAS_V74={
+'守備のトライアングルを作る':['守備のトライアングルを作る'],
+'危険度に応じて距離を変える':['危険度に応じてマーク距離を変える'],
+'攻撃方向を限定する':['中央と前方のパスコースを閉じる','中央を閉じ攻撃方向を限定する','FWへのパスコースを閉じる'],
+'マークとカバーを連動する':['カバー距離を調整する','同ラインのバランスを取る'],
+'守備者間のギャップを閉じる':['同ラインのバランスを取る','守備者間のギャップを閉じる'],
+'マークを受け渡す':['受け渡しと継続を判断する','マークの受け渡しを判断する','保持者の状況でマークを受け渡す'],
+'背後を管理する':['背後ラン後に復帰する','斜めの背後ランについていく','パスが出なければ元の位置へ戻る'],
+'局所的な数的優位を作る':['数的優位を作るタイミングを選ぶ','パスコースを閉じながら数的優位を作る'],
+'PREDICT｜ロストを予測する':['PREDICT｜次の受け手を消す','PREDICT｜中央と背後を先に守る','失う前から準備する','ロストを予測しパスコースを閉じる'],
+'WIN｜奪い返す':['奪う・遅らせる・戻る','最寄りが1st DFになる'],
+'DELAY｜前進を遅らせる':['前方のパスコースを消す','奪う・遅らせる・戻る'],
+'RECOVER｜危険エリアへ戻る':['RECOVER｜斜めにゴール側へ戻る','奪う・遅らせる・戻る'],
+'再配置する':['前方のパスコースを消す','最寄りが1st DFになる'],
+'前進可能性を探す':['異なる高さでカウンター準備をする','GOを最初に見る','前方選手が異なる高さを取る'],
+'ライン間・背後を使う':['相手のライン間を利用する','異なる高さでカウンター準備をする'],
+'前進できなければ保持する':['HOLD・RESETを選ぶ']
+};
+function aliasAffinityV74(x){
+ let ps=(x.principles||[]).map(normPrincipleV5111),score=0,hits=[];
+ (state.principles||[]).forEach(sel=>{
+  let leaf=normPrincipleV5111(sel).split('>').pop().trim(), aliases=PRINCIPLE_ALIAS_V74[leaf]||[];
+  aliases.forEach(a=>ps.forEach(p=>{if(p===normPrincipleV5111(a)||p.includes(normPrincipleV5111(a))||normPrincipleV5111(a).includes(p)){score+=12;hits.push(leaf)}}));
+ });
+ return {score,hits:[...new Set(hits)]};
+}
 function principleAffinity(x){
  let ps=(x.principles||[]).map(String),sel=(state.principles||[]).map(String),score=0,hits=[];
  let linked=new Set(practicePrincipleIdsV5111(x)),selected=new Set(selectedPrincipleIdsV5111());
@@ -161,17 +190,20 @@ function principleAffinity(x){
  return {score,hits:[...new Set(hits)]}
 }
 function practiceFitV511(x){
- let a=principleAffinity(x),score=a.score,reasons=[];
- if(a.hits.length)reasons.push('今日の原則と一致');
+ let a=principleAffinity(x),sem=aliasAffinityV74(x),score=a.score+sem.score,reasons=[];
+ if(sem.hits.length)reasons.push('選んだ判断と直接リンク');
+ else if(a.hits.length)reasons.push('今日の原則と一致');
  if(x.phase===state.phase){score+=6;reasons.push('局面が一致')}
  let min=+x.minPlayers||1,max=+x.maxPlayers||99;
  if(state.players>=min&&state.players<=max){score+=5;reasons.push(`${state.players}人で実施しやすい`)}
  else {let d=state.players<min?min-state.players:state.players-max;score-=Math.min(6,d);reasons.push(`人数調整が必要（目安${min}〜${max}人）`)}
  if(x.gkRequired){if(state.gk>0){score+=3;reasons.push('GK条件に一致')}else{score-=8;reasons.push('GKが必要')}}else if(state.gk===0){score+=1}
  let mins=+x.minutes||15;if(mins<=state.duration){score+=2;reasons.push(`${mins}分で組み込みやすい`)}else score-=5;
+ if(String(x.id||'').startsWith('photo-plus-')){score+=2;reasons.push('守備メソッド拡張メニュー')}
  if(String(x.id||'').startsWith('photo60-'))score+=1;
  if(String(x.id||'').startsWith('funino-'))score+=1;
- return {x,score,reasons,a}
+ let words=(state.theme+' '+state.idea).trim().split(/\s+|、|。/).filter(v=>v.length>=2);let hay=[x.name,x.purpose,x.judgment,x.question].join(' ');if(words.some(w=>hay.includes(w))){score+=2;reasons.push('今日のテーマにも関連')}
+ return {x,score,reasons,a,sem}
 }
 function recommendationSet(){
  let all=practiceData().filter(x=>x.phase===state.phase),styles=['反復量重視','ゲーム性重視','全員参加重視'];
@@ -186,12 +218,32 @@ function resolvePracticeV701(ref){
  if(typeof ref==='number')return plan[ref]||null;
  return practiceData().find(x=>x.id===ref)||plan.find(x=>x.practiceId===ref||x.id===ref)||null
 }
+function hash75(t){let h=0;for(let i=0;i<String(t).length;i++)h=(h*31+String(t).charCodeAt(i))>>>0;return h}
+function tacticalBoard75(d){
+ let key=((d.principles||[]).join(' ')+d.name+' '+(d.judgment||'')),h=hash75(key),phase=d.phase||'守備';
+ let atk=phase==='守備'||phase==='攻→守'?'#ffcf3f':'#e9f0ff',def=phase==='守備'||phase==='攻→守'?'#e9f0ff':'#ffcf3f';
+ let nA=Math.max(3,Math.min(7,Math.round(((+d.maxPlayers||12)+(+d.minPlayers||6))/4))),nD=Math.max(3,nA-(h%2));
+ let layout=h%6, A=[],D=[];
+ const rows=[[22,38,54,70,86],[18,34,50,66,82],[26,50,74],[20,40,60,80]];
+ for(let i=0;i<nA;i++){let r=rows[(layout+i)%rows.length],x=r[i%r.length],y=70-Math.floor(i/r.length)*15;A.push([x,y])}
+ for(let i=0;i<nD;i++){let r=rows[(layout+2+i)%rows.length],x=r[(i+1)%r.length],y=35+Math.floor(i/r.length)*14;D.push([x,y])}
+ if(/中央|パスコース|ライン間|ギャップ/.test(key)){A=A.map((p,i)=>[p[0],68-(i%2)*10]);D=D.map((p,i)=>[30+(i%3)*20,38+Math.floor(i/3)*12])}
+ if(/マーク|受け渡|トライアングル/.test(key)){A=A.map((p,i)=>[24+(i%4)*18,68-Math.floor(i/4)*14]);D=A.slice(0,nD).map((p,i)=>[Math.min(90,p[0]+(i%2?5:-5)),p[1]-16])}
+ if(/背後|戻|RECOVER|ロスト|PREDICT/.test(key)){A=A.map((p,i)=>[18+(i%4)*20,58+Math.floor(i/4)*13]);D=D.map((p,i)=>[20+(i%4)*20,35+Math.floor(i/4)*12])}
+ let circles=(arr,c)=>arr.map((p,i)=>`<g><circle cx="${p[0]}" cy="${p[1]}" r="3.7" fill="${c}" stroke="#10261d" stroke-width="1"/><text x="${p[0]}" y="${p[1]+1.4}" text-anchor="middle" font-size="3.2" font-weight="800" fill="#10261d">${i+1}</text></g>`).join('');
+ let zones=''; if(/中央|ライン間|ギャップ/.test(key))zones='<rect x="36" y="8" width="28" height="84" fill="rgba(255,220,60,.13)" stroke="rgba(255,255,255,.35)" stroke-dasharray="2 2"/>';
+ if(/背後|ロスト|RECOVER|PREDICT/.test(key))zones='<rect x="8" y="8" width="84" height="22" fill="rgba(255,90,90,.12)" stroke="rgba(255,255,255,.35)" stroke-dasharray="2 2"/>';
+ let arrows=''; for(let i=0;i<Math.min(3,A.length,D.length);i++){let a=A[i],b=D[(i+1)%D.length];arrows+=`<path d="M ${a[0]} ${a[1]-4} Q ${(a[0]+b[0])/2} ${(a[1]+b[1])/2-5} ${b[0]} ${b[1]+4}" fill="none" stroke="#fff" stroke-width="1.3" stroke-dasharray="3 2" marker-end="url(#ar75)" opacity=".85"/>`}
+ let ball=A[0]||[50,70];
+ return `<div class="board75"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(d.name||'練習')}のホッケー配置図"><defs><marker id="ar75" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fff"/></marker></defs><rect x="3" y="3" width="94" height="94" rx="2" fill="#168557" stroke="#fff" stroke-width="1.2"/><line x1="3" y1="50" x2="97" y2="50" stroke="rgba(255,255,255,.55)"/><path d="M35 3 Q50 22 65 3M35 97 Q50 78 65 97" fill="none" stroke="rgba(255,255,255,.65)"/>${zones}${arrows}${circles(A,atk)}${circles(D,def)}<circle cx="${ball[0]+4}" cy="${ball[1]-2}" r="1.7" fill="#fff" stroke="#111" stroke-width=".6"/><rect x="42" y="1" width="16" height="3" fill="none" stroke="#fff"/><rect x="42" y="96" width="16" height="3" fill="none" stroke="#fff"/></svg></div><div class="boardLegend75"><span><i class="dot75" style="background:${atk}"></i>攻撃</span><span><i class="dot75" style="background:${def}"></i>守備</span><span>○ ボール</span><span>⇢ 主な動き／パス</span></div>`
+}
+function sourceLabel75(x){if(String(x.id||'').startsWith('photo60-'))return '写真由来・判断テーマ';if(String(x.id||'').startsWith('photo-plus-'))return '追加写真由来';if(String(x.id||'').startsWith('funino-'))return 'FUNINOホッケー';return 'チーム練習';}
 function practiceDetailV701(ref){
  let x=resolvePracticeV701(ref);if(!x)return;
  let lib=x.practiceId?practiceData().find(p=>p.id===x.practiceId):null;
  let d=lib?{...lib,...x,space:lib.space,constraint:x.constraint||lib.constraint,question:x.question||lib.question,judgment:x.judgment||lib.judgment,kpiHint:x.kpiHint||lib.kpiHint,minPlayers:lib.minPlayers,maxPlayers:lib.maxPlayers,gkRequired:lib.gkRequired,difficulty:lib.difficulty,principles:lib.principles}:x;
  let players=(d.minPlayers||d.maxPlayers)?`${+d.minPlayers||1}〜${+d.maxPlayers||30}人`:'自由';
- openModal(`<div class="k">PRACTICE DETAIL</div><h2>${esc(d.name||'練習')}</h2>
+ openModal(`<div class="k">PRACTICE DETAIL</div><h2>${esc(d.name||'練習')}</h2>${tacticalBoard75(d)}<div class="src75">出典区分：${sourceLabel75(d)}｜※図は書籍図版の複製ではなく、ホッケー用に再設計した配置図です。</div>
  <div class="menu"><b>コート設定</b><div class="meta"><b>人数：</b>${players}<br><b>GK：</b>${d.gkRequired?'必要':'なしでも可'}<br><b>サイズ：</b>${esc(d.space||'自由設定')}<br><b>時間：</b>${+d.minutes||15}分${d.difficulty?`<br><b>難易度：</b>${esc(d.difficulty)}`:''}</div></div>
  <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>
  <div class="menu"><b>この練習で見ること</b><div class="meta"><b>目的：</b>${esc(d.purpose||'—')}<br><b>原則：</b>${esc((d.principles||[]).join(' / ')||'—')}<br><b>判断ポイント：</b>${esc(d.judgment||'—')}<br><b>選手への問い：</b>${esc(d.question||'—')}<br><b>KPI：</b>${esc(d.kpiHint||'—')}</div></div>
@@ -279,7 +331,7 @@ function renderCloudV70(){
  if(e)e.innerHTML=c.url&&c.publishableKey?'<b>準備済み</b><div class="meta">Publishable keyのみ保存。現在は安全のため端末自動保存を継続し、RLS設定完了後に同期を有効化します。</div>':'<b>ローカル保存中</b><div class="meta">クラウド未接続でもV6.0までの機能はそのまま利用できます。</div>'
 }
 function autoSaveMetaV70(){
- localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.3-defense-method'}))
+ localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.5-tactical-board'}))
 }
 
 
@@ -396,7 +448,7 @@ function defaultPractices(){let out=[];Object.entries(REC).forEach(([phase,rows]
 function practiceData(){let a=jget('hc_practice_library_v54',null);if(!Array.isArray(a))a=[];if(!localStorage.getItem('hc_v56_seeded')){let ids=new Set(a.map(x=>x.id));V56_PRACTICES.forEach(x=>{if(!ids.has(x.id))a.push(JSON.parse(JSON.stringify(x)))});localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));localStorage.setItem('hc_v56_seeded','1')}if(!localStorage.getItem('hc_v510_funino_extra_seeded')){let ids=new Set(a.map(x=>x.id));FUNINO_EXTRA_V510.forEach(x=>{if(!ids.has(x.id))a.push(JSON.parse(JSON.stringify(x)))});localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));localStorage.setItem('hc_v510_funino_extra_seeded','1')}if(!localStorage.getItem('hc_v59_funino_seeded')){let ids=new Set(a.map(x=>x.id));FUNINO_V59.forEach(x=>{if(!ids.has(x.id))a.push(JSON.parse(JSON.stringify(x)))});localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));localStorage.setItem('hc_v59_funino_seeded','1')}if(!localStorage.getItem('hc_v73_photo_plus_seeded')){let ids=new Set(a.map(x=>x.id));PHOTO_PLUS_V73.forEach(x=>{if(!ids.has(x.id))a.push(JSON.parse(JSON.stringify(x)))});localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));localStorage.setItem('hc_v73_photo_plus_seeded','1')}if(!localStorage.getItem('hc_v58_photo60_seeded')){let ids=new Set(a.map(x=>x.id));PHOTO60_V58.forEach(x=>{if(!ids.has(x.id))a.push(JSON.parse(JSON.stringify(x)))});localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));localStorage.setItem('hc_v58_photo60_seeded','1')}if(!a.length){a=defaultPractices();localStorage.setItem('hc_practice_library_v54',JSON.stringify(a))}return a}
 function savePractices(a){localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));renderLibrary()}
 function seedPracticeLibrary(force){if(force&&!confirm('初期メニュー12件を追加しますか？既存メニューは残します。'))return;let a=practiceData(),ids=new Set(a.map(x=>x.id));defaultPractices().forEach(x=>{if(!ids.has(x.id))a.push(x)});savePractices(a)}
-function renderLibrary(){let e=document.getElementById('practiceLibraryList');if(!e)return;let phase=document.getElementById('libraryPhase')?.value||'',src=document.getElementById('librarySource')?.value||'',guide=document.getElementById('funinoGuide');if(guide)guide.style.display=src==='funino'?'block':'none';let a=practiceData().filter(x=>(!phase||x.phase===phase)&&(!src||(src==='photo60'&&String(x.id||'').startsWith('photo60-'))||(src==='photoplus'&&String(x.id||'').startsWith('photo-plus-'))||(src==='funino'&&String(x.id||'').startsWith('funino-'))));e.innerHTML=a.length?a.map(x=>`<div class="menu"><div class="k">${esc(x.phase)}｜${esc(x.style||'')}</div><h3>${esc(x.name)}</h3><div class="meta">${esc(x.purpose||'')}${x.judgment?`<br><b>判断：</b>${esc(x.judgment)}`:''}${x.kpiHint?`<br><b>KPI：</b>${esc(x.kpiHint)}`:''}<br>人数 ${+x.minPlayers||1}〜${+x.maxPlayers||30}｜${esc(x.space||'自由')}｜${+x.minutes||15}分</div><div>${(x.principles||[]).map(p=>`<span class="tag">${esc(p)}</span>`).join('')}</div>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="practiceDetailV701('${x.id}')">詳細を見る</button><button onclick="addPracticeToPlan('${x.id}')">今日へ追加</button><button onclick="editPracticeById('${x.id}')">編集</button><button onclick="openPracticeLinksV5111('${x.id}')">原則リンク</button><button class="del" onclick="deletePractice('${x.id}')">削除</button></div></div>`).join(''):'<div class="empty">この局面の練習はまだありません。</div>'}
+function renderLibrary(){let e=document.getElementById('practiceLibraryList');if(!e)return;let phase=document.getElementById('libraryPhase')?.value||'',src=document.getElementById('librarySource')?.value||'',guide=document.getElementById('funinoGuide');if(guide)guide.style.display=src==='funino'?'block':'none';let a=practiceData().filter(x=>(!phase||x.phase===phase)&&(!src||(src==='photo60'&&String(x.id||'').startsWith('photo60-'))||(src==='photoplus'&&String(x.id||'').startsWith('photo-plus-'))||(src==='funino'&&String(x.id||'').startsWith('funino-'))));e.innerHTML=a.length?a.map(x=>`<div class="menu"><div class="k">${esc(x.phase)}｜${esc(x.style||'')}</div><h3>${esc(x.name)}</h3>${tacticalBoard75(x)}<div class="src75">${sourceLabel75(x)}</div><div class="meta">${esc(x.purpose||'')}${x.judgment?`<br><b>判断：</b>${esc(x.judgment)}`:''}${x.kpiHint?`<br><b>KPI：</b>${esc(x.kpiHint)}`:''}<br>人数 ${+x.minPlayers||1}〜${+x.maxPlayers||30}｜${esc(x.space||'自由')}｜${+x.minutes||15}分</div><div>${(x.principles||[]).map(p=>`<span class="tag">${esc(p)}</span>`).join('')}</div>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="practiceDetailV701('${x.id}')">詳細を見る</button><button onclick="addPracticeToPlan('${x.id}')">今日へ追加</button><button onclick="editPracticeById('${x.id}')">編集</button><button onclick="openPracticeLinksV5111('${x.id}')">原則リンク</button><button class="del" onclick="deletePractice('${x.id}')">削除</button></div></div>`).join(''):'<div class="empty">この局面の練習はまだありません。</div>'}
 function editPracticeById(id){let a=practiceData(),i=a.findIndex(x=>x.id===id);editPractice(i)}
 function editPractice(i){let a=practiceData(),x=i>=0?a[i]:{name:'',phase:'攻撃',style:'ゲーム性重視',principles:[],purpose:'',minPlayers:6,maxPlayers:20,gkRequired:false,minutes:15,space:'',constraint:'',question:'',difficulty:'標準',videoUrl:''};let ps=PRINC[x.phase]||[];openModal(`<div class="k">PRACTICE LIBRARY</div><h2>${i>=0?'練習を編集':'練習を追加'}</h2><div class="field"><label>練習名</label><input id="pName" class="input" value="${esc(x.name)}"></div><div class="row"><div class="field"><label>局面</label><select id="pPhase" class="input" onchange="refreshPracticePrinciples()">${PHASES.map(p=>`<option ${p===x.phase?'selected':''}>${p}</option>`).join('')}</select></div><div class="field"><label>タイプ</label><select id="pStyle" class="input">${['反復量重視','ゲーム性重視','全員参加重視'].map(v=>`<option ${v===x.style?'selected':''}>${v}</option>`).join('')}</select></div></div><div class="field"><label>関連する原則（複数可）</label><div id="practicePrinciples" class="pills"></div></div><div class="field"><label>目的</label><textarea id="pPurpose" class="area">${esc(x.purpose)}</textarea></div><div class="row"><div class="field"><label>最少人数</label><input id="pMin" class="input" type="number" value="${+x.minPlayers||6}"></div><div class="field"><label>最大人数</label><input id="pMax" class="input" type="number" value="${+x.maxPlayers||20}"></div><div class="field"><label>時間</label><input id="pMinutes" class="input" type="number" value="${+x.minutes||15}"></div></div><div class="field"><label><input id="pGk" type="checkbox" ${x.gkRequired?'checked':''}> GKを使う／推奨</label></div><div class="field"><label>スペース</label><input id="pSpace" class="input" value="${esc(x.space||'')}" placeholder="例：30m×25m"></div><div class="field"><label>制約・ルール</label><textarea id="pConstraint" class="area">${esc(x.constraint)}</textarea></div><div class="field"><label>選手への問い</label><textarea id="pQuestion" class="area">${esc(x.question)}</textarea></div><div class="field"><label>判断基準</label><textarea id="pJudgment" class="area" placeholder="例：奪えるなら奪う。無理なら遅らせる。">${esc(x.judgment||'')}</textarea></div><div class="field"><label>KPIのヒント（任意）</label><input id="pKpiHint" class="input" value="${esc(x.kpiHint||'')}" placeholder="例：ロスト後4秒以内に前進を止めた回数"></div><div class="field"><label>動画URL（任意・http/https）</label><input id="pVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="commitPractice(${i})">保存</button>`);window._practiceSelected=[...(x.principles||[])];renderPracticePrinciples()}
 function refreshPracticePrinciples(){window._practiceSelected=[];renderPracticePrinciples()}
@@ -467,5 +519,6 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V701_PRACTICE_DETAIL_CARD -->
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
 <!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
-<!-- HC_V73_DEFENSE_METHOD_PREDICT_WDR_PHOTO_PLUS36 -->
+<!-- HC_V74_SMART_RECOMMEND_METHOD_LINKAGE -->
+<!-- HC_V75_TACTICAL_BOARD_ALL_PRACTICES -->
 </body></html>
