@@ -57,8 +57,10 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 
 <section id="more" class="page">
  <div class="card"><div class="row"><div><div class="k">TEAM IDENTITY</div><div class="title">Philosophy</div></div><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><p class="muted">チームが大切にする考え方を、自由に追加・編集・並び替えできます。</p><div id="philosophyList"></div></div>
- <div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">既存のV2招待リンクが保存されている場合は表示します。</p><div id="inviteBox"></div></div>
- <div class="card"><div class="k">DATA</div><div class="title">データ互換</div><p class="muted">旧アプリの <b>hc_today_plan</b> と <b>hc_training_records</b> をそのまま使用しています。今までの今日のメニューと記録を引き継げます。</p></div>
+ <div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">チームで共有する攻撃・守備・トランジションの原則を管理します。</p><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div>
+ <div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">STAFF / PLAYER / PARENT の役割を管理できます。QRリンク本体は次段階で安全に接続します。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div>
+ <div class="card"><div class="k">TEAM SETTINGS</div><div class="title">チーム設定</div><div class="field"><label>チーム名</label><input id="teamName" class="input" placeholder="TEAM NAME"></div><div class="field"><label>シーズン</label><input id="seasonName" class="input" placeholder="2026"></div><button class="btn" onclick="saveTeamSettings()">保存</button></div>
+ <div class="card"><div class="k">DATA</div><div class="title">データ</div><p class="muted">旧アプリの今日のメニューと練習記録は互換キーを維持しています。</p><button class="btn2" onclick="exportData()">データを書き出す</button></div>
 </section>
 </main>
 <nav class="bottom"><div>
@@ -125,8 +127,30 @@ function editPhilosophy(i){let a=philosophyData(),x=i>=0?a[i]:{title:'',body:''}
 function commitPhilosophy(i){let a=philosophyData(),x={id:i>=0?a[i].id:'ph-'+Date.now(),title:phTitle.value.trim()||'新しいPhilosophy',body:phBody.value.trim()};if(i>=0)a[i]=x;else a.push(x);savePhData(a);closeModal()}
 function deletePhilosophy(i){let a=philosophyData();if(!confirm('このPhilosophyを削除しますか？'))return;a.splice(i,1);savePhData(a)}
 function movePhilosophy(i,d){let a=philosophyData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];savePhData(a)}
-function renderMore(){renderPhilosophy();let invite=jget('hc_invite_link',null)||jget('hc_invite_links',null);inviteBox.innerHTML=invite?`<div class="menu"><div class="meta">${esc(typeof invite==='string'?invite:JSON.stringify(invite))}</div></div>`:`<div class="empty">保存済みの招待リンクは見つかりませんでした。招待機能は次の整理対象として安全に接続します。</div>`}
+function methodData(){let a=jget('hc_team_methods_v52',null);return Array.isArray(a)?a:[
+{id:'m1',phase:'攻撃',title:'前進する',body:'前進できるなら前進する。難しければ相手を動かして次の前進機会を作る。'},
+{id:'m2',phase:'守備',title:'中央とゴールを守る',body:'最も危険な場所を優先しながら、1st DFを基準に連動する。'},
+{id:'m3',phase:'攻→守',title:'ロスト直後に反応する',body:'奪い返す・遅らせる・戻るを素早く判断する。'},
+{id:'m4',phase:'守→攻',title:'奪った瞬間に前を見る',body:'GOできれば前進。難しければ保持して広がる。'}]}
+function saveMethods(a){localStorage.setItem('hc_team_methods_v52',JSON.stringify(a));renderMethods()}
+function renderMethods(){let a=methodData();methodList.innerHTML=a.length?a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.phase)}</div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.body||'')}</div><div class="actions"><button onclick="editMethod(${i})">編集</button><button onclick="moveMethod(${i},-1)">↑</button><button onclick="moveMethod(${i},1)">↓</button><button class="del" onclick="deleteMethod(${i})">削除</button></div></div>`).join(''):`<div class="empty">原則がありません</div>`}
+function addMethod(){editMethod(-1)}
+function editMethod(i){let a=methodData(),x=i>=0?a[i]:{phase:'攻撃',title:'',body:''};openModal(`<div class="k">TEAM METHOD</div><h2>${i>=0?'原則を編集':'原則を追加'}</h2><div class="field"><label>局面</label><select id="mPhase" class="input">${PHASES.map(p=>`<option ${p===x.phase?'selected':''}>${p}</option>`).join('')}</select></div><div class="field"><label>原則名</label><input id="mTitle" class="input" value="${esc(x.title)}"></div><div class="field"><label>説明</label><textarea id="mBody" class="area">${esc(x.body)}</textarea></div><button class="btn" onclick="commitMethod(${i})">保存</button>`)}
+function commitMethod(i){let a=methodData(),x={id:i>=0?a[i].id:'m-'+Date.now(),phase:mPhase.value,title:mTitle.value.trim()||'新しい原則',body:mBody.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveMethods(a);closeModal()}
+function deleteMethod(i){if(!confirm('この原則を削除しますか？'))return;let a=methodData();a.splice(i,1);saveMethods(a)}
+function moveMethod(i,d){let a=methodData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];saveMethods(a)}
+function roleData(){let a=jget('hc_team_roles_v52',null);return Array.isArray(a)?a:[{id:'staff',name:'STAFF',desc:'指導者・スタッフ'},{id:'player',name:'PLAYER',desc:'選手'},{id:'parent',name:'PARENT',desc:'保護者'}]}
+function saveRoles(a){localStorage.setItem('hc_team_roles_v52',JSON.stringify(a));renderRoles()}
+function renderRoles(){let a=roleData();roleList.innerHTML=a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.name)}</div><div class="meta">${esc(x.desc||'')}</div><div class="actions"><button onclick="editRole(${i})">編集</button><button class="del" onclick="deleteRole(${i})">削除</button></div></div>`).join('')}
+function addRole(){editRole(-1)}
+function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<div class="k">TEAM ROLE</div><h2>${i>=0?'役割を編集':'役割を追加'}</h2><div class="field"><label>役割名</label><input id="rName" class="input" value="${esc(x.name)}" placeholder="例：ANALYST"></div><div class="field"><label>説明</label><input id="rDesc" class="input" value="${esc(x.desc)}"></div><button class="btn" onclick="commitRole(${i})">保存</button>`)}
+function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
+function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
+function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
+function exportData(){let data={version:'5.2',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function renderMore(){renderPhilosophy();renderMethods();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();
 </script>
 <!-- HC_PHILOSOPHY_V51_EDITABLE -->
+<!-- HC_MORE_V52_EDITABLE -->
 </body></html>
