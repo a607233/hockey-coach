@@ -98,6 +98,26 @@ const METHOD_V55={
 '攻→守':[['相手の前進を止める',[['ロストを予測する','失う前から次の危険を認知する。'],['即時反応する','最寄りが1st DF、周囲は前方と中央を消す。'],['WIN・DELAY・RECOVER','奪う・遅らせる・戻るを判断する。']]]],
 '守→攻':[['奪った瞬間に前を見る',[['前進可能性を探す','GOを最初に見て、前方に異なる高さを作る。'],['前進できなければ保持する','HOLD・RESETで幅と深さを作り直す。']]]]
 };
+
+function methodOptionsV57(phase){
+ let out=[];(METHOD_V55[phase]||[]).forEach(g=>{let main=g[0];(g[1]||[]).forEach(s=>out.push({main,leaf:s[0],judgment:s[1],key:main+' ＞ '+s[0]}))});return out
+}
+function openMethodBuilder(){
+ openModal(`<div class="k">METHOD → TODAY</div><h2>原則から今日を作る</h2><p class="muted">試合で改善したいことから練習候補を探します。</p><div id="methodBuilder"></div>`);
+ window._mb={phase:'',key:'',leaf:'',judgment:''};renderMethodBuilder()
+}
+function renderMethodBuilder(){
+ let e=document.getElementById('methodBuilder'),m=window._mb||{};if(!e)return;
+ if(!m.phase){e.innerHTML=`<b>① 局面を選ぶ</b><div class="pills">${Object.keys(METHOD_V55).map(p=>`<button class="pill" onclick="mbPhase('${p}')">${p}</button>`).join('')}</div>`;return}
+ let opts=methodOptionsV57(m.phase);
+ if(!m.key){e.innerHTML=`<div class="tag">${m.phase}</div><h3>② 改善したい判断</h3>${opts.map((o,i)=>`<div class="rec"><b>${esc(o.leaf)}</b><div class="muted">${esc(o.judgment)}</div><button class="btn2" onclick="mbLeaf(${i})">選ぶ</button></div>`).join('')}<button class="ghost" onclick="window._mb={};renderMethodBuilder()">← 戻る</button>`;return}
+ let cand=practiceData().filter(x=>x.phase===m.phase).map(x=>({x,score:(x.principles||[]).some(p=>String(p).includes(m.leaf)||m.leaf.includes(String(p)))?4:0})).sort((a,b)=>b.score-a.score).slice(0,3);
+ e.innerHTML=`<div class="tag">${esc(m.phase)} ＞ ${esc(m.leaf)}</div><p class="muted">${esc(m.judgment)}</p><h3>③ 練習候補</h3>${cand.map(({x})=>`<div class="rec"><b>${esc(x.name)}</b> <span class="tag">${esc(x.style||'')}</span><div class="muted">${esc(x.purpose||'')}<br>問い：${esc(x.question||'')}${x.kpiHint?'<br>KPI：'+esc(x.kpiHint):''}</div><button class="btn2" onclick="mbAdd('${x.id}')">今日に追加</button></div>`).join('')||'<p class="muted">関連練習がまだありません。</p>'}<button class="ghost" onclick="window._mb.key='';renderMethodBuilder()">← 選び直す</button>`
+}
+function mbPhase(p){window._mb={phase:p,key:'',leaf:'',judgment:''};renderMethodBuilder()}
+function mbLeaf(i){let o=methodOptionsV57(window._mb.phase)[i];if(!o)return;window._mb.key=o.key;window._mb.leaf=o.leaf;window._mb.judgment=o.judgment;renderMethodBuilder()}
+function mbAdd(id){let x=practiceData().find(v=>v.id===id);if(!x)return;state.phase=x.phase;state.principles=[window._mb.leaf];addPractice(x);closeModal();show('today')}
+
 function renderMethodMapV55(){let e=document.getElementById('methodMapV55');if(!e)return;e.className='methodMapV55';e.innerHTML=Object.entries(METHOD_V55).map(([phase,groups])=>`<details><summary>${phase}</summary>${groups.map(([main,subs])=>`<div class="methodLine"><b>${esc(main)}</b>${subs.map(([sub,j])=>`<div class="methodLine"><span class="tag">${esc(sub)}</span><div class="methodJudge">判断基準：${esc(j)}</div></div>`).join('')}</div>`).join('')}</details>`).join('')}
 
 const REC={
@@ -193,7 +213,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'5.6',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'5.7',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -204,4 +224,5 @@ renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric(
 <!-- HC_V54_METHOD_PRACTICE_LIBRARY -->
 <!-- HC_V55_METHOD_JUDGMENT_PRACTICE_KPI_LINKAGE -->
 <!-- HC_V56_DEFENSE_TRANSITION_LIBRARY -->
+<!-- HC_V57_METHOD_TO_TODAY_BUILDER -->
 </body></html>
