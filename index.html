@@ -28,6 +28,8 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .invitebox{text-align:center}.qrwrap{display:inline-block;background:#fff;padding:14px;border-radius:16px;margin:10px auto}.inviteurl{font-size:12px;word-break:break-all;background:#071014;border:1px solid #30464e;border-radius:11px;padding:10px;text-align:left;color:#dce7ea}
 
 .principleTree{margin-top:10px}.treeGroup{border:1px solid #294047;border-radius:14px;margin:8px 0;overflow:hidden}.treeHead{padding:12px 14px;font-weight:800;cursor:pointer;background:#102027}.treeBody{padding:10px 12px}.chipline{display:flex;gap:7px;flex-wrap:wrap}.chip2{border:1px solid #36535d;background:#0b171c;color:#dce7ea;border-radius:999px;padding:7px 10px;font-size:12px}.libtop{display:flex;justify-content:space-between;gap:8px;align-items:center}.smalltag{font-size:11px;border:1px solid #34505a;border-radius:999px;padding:4px 7px;color:#bcd0d6}
+
+.favbtn{font-size:18px;line-height:1}.libmeta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.whybox{font-size:12px;padding:8px 10px;border-radius:10px;background:#0b171c;border:1px solid #294047;margin-top:8px}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -56,7 +58,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <div class="card"><div class="row"><div><div class="k">TODAY'S MENU</div><div class="title" style="font-size:19px">今日のメニュー</div></div><button class="btn2" onclick="addBlank()">＋追加</button></div><div id="menuList"></div><div class="row"><div class="muted">合計</div><div style="text-align:right"><b><span id="totalMin">0</span>分</b></div></div><button class="btn" style="margin-top:12px" onclick="startCoach()">▶ コーチモード開始</button></div>
 <div class="card"><div class="k">LIBRARY RECOMMEND</div><div class="title">ライブラリから3案</div><p class="muted">今日の局面・原則・選手案などから候補を出します。正解を決めるのではなく、選ぶための3案です。</p><button class="btn2" onclick="renderSmartLibrarySuggestions()">候補を更新</button><div id="smartLibrarySuggestions"></div></div></div><div id="tt-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">TRAINING LIBRARY</div><div class="title">練習メニュー</div></div><button class="btn2" onclick="editLib(-1)">＋ 練習追加</button></div><p class="muted">原則から探す／検索する／複製して育てる。登録した練習は今日の3案提案にも使います。</p>
 <div class="field"><input id="libSearch" class="input" placeholder="練習名・原則・目的を検索" oninput="renderLib()"></div>
-<div id="libFilters" class="tabs"></div><div id="principleFilters" class="tabs"></div>
+<div id="libFilters" class="tabs"></div><div class="chipline" style="margin:8px 0"><button id="favFilterBtn" class="chip2" onclick="toggleFavFilter()">☆ お気に入りのみ</button></div><div id="principleFilters" class="tabs"></div>
 <div id="libCount" class="muted"></div><div id="libList"></div></div></div></section>
 
 <section id="analysis" class="page">
@@ -266,7 +268,60 @@ function renderSmartLibrarySuggestions(){
  let host=document.getElementById('smartLibrarySuggestions');if(!host)return;let opts=smartLibraryOptions();
  host.innerHTML=opts.length?opts.map((o,n)=>`<div class="menu"><div class="k">${['反復量重視','ゲーム性重視','全員参加重視'][n]||'候補'}｜${esc(o.x.phase)}</div><h3>${esc(o.x.name)}</h3><div class="meta">${esc(o.x.purpose||'')}<br>${o.why.length?'一致：'+o.why.join('・'):'ライブラリ候補'}</div><button onclick="addLibToday(${libData().findIndex(v=>v.id===o.x.id)})">この練習を追加</button></div>`).join(''):'<div class="empty">練習ライブラリに候補を追加すると、ここに提案されます。</div>'
 }
-renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupTodayTabs();renderLib();acceptInviteFromUrl();renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
+renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupTodayTabs();renderLib();acceptInviteFromUrl();
+/* ===== HC V5.7 SMART LIBRARY ===== */
+let favOnly=false;
+function toggleFavFilter(){favOnly=!favOnly;renderLib()}
+function toggleFav(id){let a=libData(),x=a.find(v=>v.id===id);if(!x)return;x.favorite=!x.favorite;saveLib(a)}
+function parsePlayerRange(s){let m=String(s||'').match(/(\d+)(?:\D+(\d+))?/);return m?[+m[1],+(m[2]||m[1])]:[0,99]}
+function fitPlayers(x,n){let [lo,hi]=parsePlayerRange(x.players);return !n||n>=lo&&n<=hi}
+function styleType(x){let t=[x.name,x.purpose,x.constraint].join(' ');if(/ゲーム|対|v|V/.test(t))return 'ゲーム性重視';if(/全員|ローテ|ステーション|複数/.test(t))return '全員参加重視';return '反復量重視'}
+function scoreV57(x,ctx){
+ let s=0,why=[];
+ if(x.phase===ctx.phase){s+=12;why.push('局面')}
+ let xp=x.principle||'', ps=(ctx.principles||[]);
+ if(ps.some(p=>xp.includes(p)||p.includes(xp))&&xp){s+=8;why.push('原則')}
+ if(fitPlayers(x,ctx.players)){s+=3;why.push('人数')}
+ if((+x.minutes||15)<=Math.max(10,ctx.duration/3)){s+=2;why.push('時間')}
+ let words=(ctx.idea||'').split(/[\s、。・]+/).filter(w=>w.length>=2), txt=[x.name,x.purpose,x.constraint,x.question].join(' ');
+ if(words.some(w=>txt.includes(w))){s+=4;why.push('選手案')}
+ if(x.favorite){s+=1;why.push('お気に入り')}
+ return {s,why}
+}
+function ctxV57(){
+ let phase=(window.phase||document.querySelector('.phase.on')?.textContent||'攻撃');
+ let principles=window.selectedPrinciples||[];
+ // Fall back to checked/active principle buttons in the existing UI.
+ if(!principles.length) principles=[...document.querySelectorAll('[data-principle].on,[data-principle]:checked')].map(e=>e.dataset.principle||e.value).filter(Boolean);
+ return {phase,principles,players:+document.getElementById('players')?.value||0,duration:+document.getElementById('duration')?.value||90,idea:document.getElementById('teamIdea')?.value||''}
+}
+function pickThreeV57(){
+ let ctx=ctxV57(), ranked=libData().filter(x=>!x.archived).map(x=>({x,...scoreV57(x,ctx)})).sort((a,b)=>b.s-a.s);
+ let types=['反復量重視','ゲーム性重視','全員参加重視'], chosen=[];
+ types.forEach(t=>{let z=ranked.find(r=>styleType(r.x)===t&&!chosen.some(c=>c.x.id===r.x.id));if(z)chosen.push({...z,label:t})});
+ ranked.forEach(r=>{if(chosen.length<3&&!chosen.some(c=>c.x.id===r.x.id))chosen.push({...r,label:types[chosen.length]})});
+ return chosen.slice(0,3)
+}
+renderSmartLibrarySuggestions=function(){
+ let host=document.getElementById('smartLibrarySuggestions');if(!host)return;let opts=pickThreeV57();
+ host.innerHTML=opts.length?opts.map(o=>`<div class="menu"><div class="k">${o.label}｜${esc(o.x.phase)}</div><h3>${esc(o.x.name)}</h3><div class="libmeta"><span class="smalltag">${esc(o.x.principle||'原則未設定')}</span><span class="smalltag">${esc(o.x.players||'人数自由')}</span><span class="smalltag">${+o.x.minutes||15}分</span></div><div class="meta">${esc(o.x.purpose||'')}</div><div class="whybox">この候補：${o.why.length?o.why.join('・'):'ライブラリ候補'}</div><div class="actions"><button onclick="addLibToday(${libData().findIndex(v=>v.id===o.x.id)})">今日に追加</button><button onclick="openLibraryItem('${o.x.id}')">詳細</button></div></div>`).join(''):'<div class="empty">練習ライブラリに候補を登録してください。</div>'
+}
+function openLibraryItem(id){let a=libData(),i=a.findIndex(x=>x.id===id);if(i<0)return;let x=a[i];openModal(`<div class="k">${esc(x.phase)}｜${esc(x.principle||'')}</div><h2>${esc(x.name)}</h2><div class="libmeta"><span class="smalltag">${esc(x.players||'人数自由')}</span><span class="smalltag">${esc(x.size||'サイズ自由')}</span><span class="smalltag">${+x.minutes||15}分</span></div><p><b>目的</b><br>${esc(x.purpose||'')}</p><p><b>制約・ルール</b><br>${esc(x.constraint||'')}</p><p><b>選手への問い</b><br>${esc(x.question||'')}</p>${x.videoUrl?`<a class="videoLink" href="${safeVideoUrl(x.videoUrl)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button class="btn" onclick="addLibToday(${i});closeModal()">今日に追加</button><button class="btn2" onclick="closeModal();editLib(${i})">編集</button></div>`)}
+function safeVideoUrl(u){try{let z=new URL(u);return /^https?:$/.test(z.protocol)?esc(z.href):'#'}catch(e){return '#'}}
+const renderLibV56=renderLib;
+renderLib=function(){
+ if(!document.getElementById('libList'))return;
+ let phases=['すべて',...PHASES];
+ libFilters.innerHTML=phases.map(p=>`<button class="tab ${lf===p?'on':''}" onclick="lf='${p}';pf='すべて';renderLib()">${p}</button>`).join('');
+ favFilterBtn.textContent=favOnly?'★ お気に入りのみ':'☆ お気に入りのみ';
+ let ps=lf==='すべて'?[]:flatPrinciples(lf);
+ principleFilters.innerHTML=lf==='すべて'?'':[`すべて`,...ps].map(p=>`<button class="chip2" style="${pf===p?'outline:2px solid currentColor':''}" onclick="pf='${p}';renderLib()">${esc(p)}</button>`).join('');
+ let q=(document.getElementById('libSearch')?.value||'').trim().toLowerCase(),all=libData();
+ let a=all.filter(x=>!x.archived&&(!favOnly||x.favorite)&&(lf==='すべて'||x.phase===lf)&&(pf==='すべて'||(x.principle||'').includes(pf))&&(!q||[x.name,x.principle,x.purpose,x.constraint,x.question].join(' ').toLowerCase().includes(q)));
+ libCount.textContent=`${a.length}件の練習`;
+ libList.innerHTML=a.length?a.map(x=>{let i=all.findIndex(v=>v.id===x.id);return `<div class="menu"><div class="libtop"><div class="k">${esc(x.phase)}｜${esc(x.principle||'原則未設定')}</div><button class="favbtn" onclick="toggleFav('${x.id}')">${x.favorite?'★':'☆'}</button></div><h3 onclick="openLibraryItem('${x.id}')">${esc(x.name)}</h3><div class="libmeta"><span class="smalltag">${esc(x.players||'人数自由')}</span><span class="smalltag">${esc(x.size||'サイズ自由')}</span><span class="smalltag">${+x.minutes||15}分</span></div><div class="meta">目的：${esc(x.purpose||'')}</div><div class="actions"><button onclick="addLibToday(${i})">今日に追加</button><button onclick="openLibraryItem('${x.id}')">詳細</button><button onclick="duplicateLib(${i})">複製</button>${isOwner()?`<button onclick="archiveLib(${i})">保管</button>`:''}</div></div>`}).join(''):`<div class="empty">該当する練習はありません。</div>`
+}
+renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 </script>
 <!-- HC_PHILOSOPHY_V51_EDITABLE -->
 <!-- HC_MORE_V52_EDITABLE -->
@@ -274,4 +329,5 @@ renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric(
 <!-- HC_V54_INVITE_URL_QR -->
 <!-- HC_V55_OWNER_ARCHIVE_TRAINING_LIBRARY -->
 <!-- HC_V56_PRINCIPLE_TREE_SMART_LIBRARY -->
+<!-- HC_V57_SMART_LIBRARY_FAVORITES_MATCHING -->
 </body></html>
