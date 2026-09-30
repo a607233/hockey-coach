@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071014">
+<title>HOCKEY COACH</title>
+<style>
+:root{--bg:#071014;--panel:#0d181d;--panel2:#101f25;--line:#263942;--txt:#f4f8f6;--muted:#8fa1a8;--lime:#d7ff39;--danger:#ff7070}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{padding-bottom:88px}
+header{position:sticky;top:0;z-index:20;background:rgba(7,16,20,.95);border-bottom:1px solid #17272e;padding:18px 16px 14px;backdrop-filter:blur(14px)}
+.brand{font-size:22px;font-weight:950;letter-spacing:1px}.brand small{color:var(--lime);font-size:10px;letter-spacing:2px}.sub{font-size:11px;color:var(--muted);margin-top:4px}
+main{max-width:760px;margin:auto;padding:14px}.page{display:none}.page.on{display:block}.card{background:linear-gradient(180deg,#0f1d23,#0a151a);border:1px solid var(--line);border-radius:19px;padding:15px;margin:0 0 12px}
+.k{font-size:10px;color:var(--lime);font-weight:950;letter-spacing:1.4px}.title{font-size:22px;font-weight:950;margin:5px 0}.muted{color:var(--muted);font-size:12px;line-height:1.55}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.field label{display:block;color:#91a4ab;font-size:10px;margin-bottom:4px}.input,.area{width:100%;background:#071014;color:#fff;border:1px solid #30464e;border-radius:11px;padding:11px;font-size:15px}.area{min-height:82px;resize:vertical}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.pill{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:999px;padding:8px 10px;font-weight:850}.pill.on{background:var(--lime);border-color:var(--lime);color:#071014}
+.btn{width:100%;border:0;border-radius:13px;padding:13px;background:var(--lime);color:#071014;font-weight:950;font-size:14px}.btn2{width:100%;border:1px solid #344b54;border-radius:13px;padding:12px;background:#14242b;color:#fff;font-weight:900}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.menu{border:1px solid #2a3e47;background:#0c191e;border-radius:16px;padding:13px;margin:9px 0}.menu h3{margin:4px 0 7px}.meta{font-size:11px;color:#aab9be;line-height:1.55}.actions{display:flex;gap:6px;margin-top:9px}.actions button{border:1px solid #344b54;background:#14242b;color:#fff;border-radius:10px;padding:8px 10px;font-weight:800}.actions .del{color:#ffaaaa}
+.stat{font-size:30px;font-weight:950;color:var(--lime)}.bottom{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(5,11,14,.97);border-top:1px solid #203139;padding-bottom:env(safe-area-inset-bottom)}.bottom>div{display:grid;grid-template-columns:repeat(5,1fr);max-width:760px;margin:auto}.nav{border:0;background:transparent;color:#7e9097;padding:9px 2px;font-size:10px;font-weight:800}.nav b{display:block;font-size:19px;margin-bottom:2px}.nav.on{color:var(--lime)}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.78);display:flex;align-items:flex-end}.sheet{width:100%;max-height:91vh;overflow:auto;background:#081419;border-radius:22px 22px 0 0;padding:16px 14px calc(20px + env(safe-area-inset-bottom))}.x{float:right;width:38px;height:38px;border:0;border-radius:50%;background:#17272d;color:#fff;font-size:20px}.timer{font-size:58px;text-align:center;font-weight:950;margin:18px 0}.option{border:1px solid #2c424b;border-radius:15px;padding:12px;margin:9px 0;background:#0d1a1f}.option h3{margin:4px 0}.empty{text-align:center;color:var(--muted);padding:24px 8px}
+hr{border:0;border-top:1px solid #22343c;margin:14px 0}
+@media(max-width:390px){.grid3{grid-template-columns:1fr 1fr}.grid3 .field:last-child{grid-column:1/-1}}
+
+.tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 11px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1px solid #30464e;background:#0d1a20;color:#a9bac0;border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px}.tab.on{background:var(--lime);border-color:var(--lime);color:#071014}
+.tabpane{display:none}.tabpane.on{display:block}.kpirow{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid #203139}.counter{min-width:48px;text-align:center;font-size:25px;font-weight:950}.smallbtn{border:1px solid #344b54;background:#14242b;color:#fff;border-radius:11px;padding:9px 12px;font-weight:950}.score3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.score3 button{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:11px;padding:11px 5px;font-weight:900}.score3 button.on{background:var(--lime);color:#071014;border-color:var(--lime)}
+.videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}.tag{display:inline-block;border:1px solid #31464e;border-radius:999px;padding:4px 7px;margin:3px 3px 0 0;font-size:10px;color:#b9c8cd}.libraryTools{display:grid;grid-template-columns:1fr auto;gap:7px;margin:10px 0}.libraryTools .btn2{width:auto}
+.methodMapV55 details{border:1px solid #2a3e47;border-radius:14px;margin:8px 0;padding:10px}.methodMapV55 summary{font-weight:950;cursor:pointer}.methodLine{margin:8px 0 0 10px;padding-left:10px;border-left:2px solid #294047}.methodJudge{font-size:11px;color:#9fb1b7;margin-top:4px;line-height:1.5}</style>
+</head>
+<body>
+<header><div class="brand">🏑 HOCKEY COACH <small>PERFORMANCE</small></div><div class="sub">TEAM DEVELOPMENT SYSTEM</div></header>
+<main>
+<section id="home" class="page on">
+ <div class="card"><div class="k">COACH COCKPIT</div><div class="title">今日を、シンプルに。</div><p class="muted">条件を整理し、チームで選び、実践し、振り返る。</p><button class="btn" onclick="go('today')">今日の練習をつくる</button></div>
+ <div class="row"><div class="card"><div class="muted">今日のメニュー</div><div id="homeCount" class="stat">0</div></div><div class="card"><div class="muted">合計時間</div><div id="homeMin" class="stat">0</div></div></div>
+ <div class="card"><div class="k">FLOW</div><p class="muted">① 条件 → ② テーマ・原則 → ③ 3つの選択肢 → ④ 今日のメニュー → ⑤ コーチモード → ⑥ 振り返り</p></div>
+</section>
+
+<section id="today" class="page">
+ <div class="card"><div class="k">TODAY'S CONDITIONS</div><div class="title">今日のテーマを決める</div><div class="grid3">
+  <div class="field"><label>参加選手</label><input id="players" class="input" type="number" min="1"></div>
+  <div class="field"><label>GK</label><input id="gk" class="input" type="number" min="0"></div>
+  <div class="field"><label>練習時間</label><input id="duration" class="input" type="number" min="10"></div>
+ </div>
+ <div class="field"><label>今日のテーマ</label><input id="theme" class="input" placeholder="例：ボールロスト後の即時奪回"></div>
+ <div id="phasePills" class="pills"></div><div id="principlePills" class="pills"></div>
+ <div class="field" style="margin-top:10px"><label>選手・チームの案（任意）</label><input id="teamIdea" class="input" placeholder="例：今日はゲーム形式を多くしたい"></div>
+ <button id="recommendBtn" class="btn" style="margin-top:13px">✨ 3つの練習案を見る</button>
+ </div>
+ <div class="card"><div class="row"><div><div class="k">TODAY'S MENU</div><div class="title" style="font-size:19px">今日のメニュー</div></div><button class="btn2" onclick="addBlank()">＋追加</button></div><div id="menuList"></div><div class="row"><div class="muted">合計</div><div style="text-align:right"><b><span id="totalMin">0</span>分</b></div></div><button class="btn" style="margin-top:12px" onclick="startCoach()">▶ コーチモード開始</button></div>
+</section>
+
+<section id="analysis" class="page">
+ <div class="card"><div class="k">BOTTOM-UP REVIEW</div><div class="title">練習後の振り返り</div><p class="muted">全部を数える必要はありません。今日は「何を確かめたいか」に合わせて、使うKPIだけ選びます。</p>
+ <div class="tabs" id="kpiTabs"><button class="tab on" data-kpi="simple">かんたん評価</button><button class="tab" data-kpi="counter">カウンター</button><button class="tab" data-kpi="number">数値KPI</button></div>
+ <div id="kpi-simple" class="tabpane on"><div class="field"><label>今日のテーマはどのくらいできた？</label><div class="score3" id="simpleScore"><button data-score="1">まだ</button><button data-score="2">まあまあ</button><button data-score="3">できた</button></div></div></div>
+ <div id="kpi-counter" class="tabpane"><div id="reviewCounters"></div><p class="muted">成功数 ÷ 機会数は自動計算します。</p></div>
+ <div id="kpi-number" class="tabpane"><div id="numericKpis"></div><button class="btn2" onclick="addNumericKpi()">＋ 数値KPIを追加</button></div>
+ <hr><div class="field"><label>選手から見て、うまくいったこと</label><textarea id="playerGood" class="area" placeholder="選手の言葉を残す"></textarea></div>
+ <div class="field"><label>選手から見て、次に変えたいこと</label><textarea id="playerNext" class="area" placeholder="次回やってみたいこと・変えたいルール"></textarea></div>
+ <div class="field"><label>コーチの気づき</label><textarea id="reflection" class="area" placeholder="答えではなく、次の問いにつながる気づき"></textarea></div>
+ <button class="btn" onclick="saveRecord()">今日の記録を保存</button></div>
+</section>
+
+<section id="history" class="page"><div class="card"><div class="k">HISTORY</div><div class="title">練習記録</div><div id="historyList"></div></div></section>
+
+<section id="more" class="page">
+ <div class="tabs" id="moreTabs">
+  <button class="tab on" data-more="ph">Philosophy</button><button class="tab" data-more="method">原則・メソッド</button><button class="tab" data-more="library">練習ライブラリ</button><button class="tab" data-more="team">チーム</button><button class="tab" data-more="invite">招待</button><button class="tab" data-more="settings">設定</button>
+ </div>
+ <div id="more-ph" class="tabpane on"><div class="card"><div class="row"><div><div class="k">TEAM IDENTITY</div><div class="title">Philosophy</div></div><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><p class="muted">チームが大切にする考え方。選手と一緒に育てていきます。</p><div id="philosophyList"></div></div></div>
+ <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodMapV55"></div><hr><div class="k">TEAM CUSTOM</div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
+ <div id="more-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">PRACTICE LIBRARY</div><div class="title">練習ライブラリ</div></div><button class="btn2" onclick="editPractice(-1)">＋ 追加</button></div><p class="muted">原則と練習をつなぐチームの資産。追加・編集・削除でき、動画URLも保存できます。</p><div class="libraryTools"><select id="libraryPhase" class="input" onchange="renderLibrary()"><option value="">全局面</option><option>攻撃</option><option>守備</option><option>攻→守</option><option>守→攻</option></select><button class="btn2" onclick="seedPracticeLibrary(true)">初期メニューを復元</button></div><div id="practiceLibraryList"></div></div></div>
+ <div id="more-team" class="tabpane"><div class="card"><div class="k">TEAM</div><div class="title">チーム設定</div><div class="field"><label>チーム名</label><input id="teamName" class="input" placeholder="TEAM NAME"></div><div class="field"><label>シーズン</label><input id="seasonName" class="input" placeholder="2026"></div><button class="btn" onclick="saveTeamSettings()">保存</button></div></div>
+ <div id="more-invite" class="tabpane"><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">STAFF / PLAYER / PARENTなどの役割を追加・編集できます。QR本体は次段階で接続します。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div></div>
+ <div id="more-settings" class="tabpane"><div class="card"><div class="k">DATA</div><div class="title">設定・データ</div><p class="muted">今日のメニューと練習記録の互換データを維持しています。</p><button class="btn2" onclick="exportData()">データを書き出す</button></div></div>
+</section>
+</main>
+<nav class="bottom"><div>
+<button class="nav on" data-page="home"><b>⌂</b>ホーム</button>
+<button class="nav" data-page="today"><b>●</b>今日の練習</button>
+<button class="nav" data-page="analysis"><b>◎</b>分析</button>
+<button class="nav" data-page="history"><b>▤</b>記録</button>
+<button class="nav" data-page="more"><b>•••</b>その他</button>
+</div></nav>
+
+<script>
+const PHASES=['攻撃','守備','攻→守','守→攻'];
+const PRINC={
+'攻撃':['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る'],
+'守備':['ゴールと中央を守りながら奪う','1st DFが方向を制限する','2nd・3rd DFが連動する'],
+'攻→守':['ロスト後4秒で相手の前進を止める','最も近い選手が1st DFになる','中央への出口を消す'],
+'守→攻':['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる']
+};
+
+const METHOD_V55={
+'攻撃':[['前進し、ゴールへ向かう',[['前進できる場所を見つける','前進できるなら前進。難しければ相手を動かして出口を作る。'],['幅と深さを作る','保持者に複数の選択肢を作る。'],['優位性を作る','数的・位置的優位を探す。'],['攻撃しながら守備する','失った瞬間に誰が止めるか攻撃中から準備する。']]]],
+'守備':[['ゴールを守りながら奪う',[['攻撃方向を限定する','中央を閉じ、どこへ追い込むか共有する。'],['マークとカバーを連動する','ボール・相手・ゴールを認知し、味方が出た場所を埋める。'],['コンパクトに守る','ライン間と背後を管理する。']]]],
+'攻→守':[['相手の前進を止める',[['ロストを予測する','失う前から次の危険を認知する。'],['即時反応する','最寄りが1st DF、周囲は前方と中央を消す。'],['WIN・DELAY・RECOVER','奪う・遅らせる・戻るを判断する。']]]],
+'守→攻':[['奪った瞬間に前を見る',[['前進可能性を探す','GOを最初に見て、前方に異なる高さを作る。'],['前進できなければ保持する','HOLD・RESETで幅と深さを作り直す。']]]]
+};
+function renderMethodMapV55(){let e=document.getElementById('methodMapV55');if(!e)return;e.className='methodMapV55';e.innerHTML=Object.entries(METHOD_V55).map(([phase,groups])=>`<details><summary>${phase}</summary>${groups.map(([main,subs])=>`<div class="methodLine"><b>${esc(main)}</b>${subs.map(([sub,j])=>`<div class="methodLine"><span class="tag">${esc(sub)}</span><div class="methodJudge">判断基準：${esc(j)}</div></div>`).join('')}</div>`).join('')}</details>`).join('')}
+
+const REC={
+'攻撃':[['3ゾーン前進ゲーム','反復量重視','前進判断を増やす','3ゾーン制。パスかキャリーで前進','どこから前進できる？'],['4v4+2 前進ゲーム','ゲーム性重視','相手を動かして前進する','外2名を使える。3本以内に前進','誰を使えば相手を外せる？'],['前進→サークル侵入ゲーム','全員参加重視','前進を得点機会へつなぐ','最終ゾーン侵入で1点','運ぶ・つなぐ・逆、どれが有効？']],
+'守備':[['4v4 圧縮ディフェンス','反復量重視','中央を守る判断を増やす','中央優先。奪ったら即前進','一番危険な場所は？'],['誘導プレスゲーム','ゲーム性重視','狙った方向へ誘導する','外へ誘導して奪えば2点','どちらへ誘導する？'],['5v4 サークル守備','全員参加重視','ゴール前の役割を共有する','中央とゴール方向を最優先','誰と何を守る？']],
+'攻→守':[['4v4 即時奪回ゲーム','反復量重視','ロスト直後の反応を増やす','4秒以内奪回で2点','誰が1st DF？'],['5v4→4v3 トランジション','ゲーム性重視','攻撃時のリスク管理','ロストで即逆方向4v3','誰がカウンターを消す？'],['WIN・DELAY・RECOVER','全員参加重視','切替判断を共有する','奪えなければ遅らせて帰陣','奪う？遅らせる？戻る？']],
+'守→攻':[['3v3+2 ターゲット速攻','反復量重視','奪取後の出口を探す','奪取後5秒以内前進で2点','出口はどこ？'],['4v4 6秒フィニッシュ','ゲーム性重視','速攻からシュートへ','奪取後6秒以内シュートで2点','最初のプレーは？'],['GO・HOLD・RESET','全員参加重視','前進判断を共有する','奪取後に3判断を選択','今はGOできる？']]
+};
+const jget=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
+let state=Object.assign({players:18,gk:2,duration:100,theme:'',phase:'攻→守',principles:[],idea:''},jget('hc_v5_state',{}));
+let plan=jget('hc_today_plan',[]);
+function persist(){localStorage.setItem('hc_v5_state',JSON.stringify(state));localStorage.setItem('hc_today_plan',JSON.stringify(plan))}
+function esc(s){return String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function go(id){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('on',x.id===id));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('on',x.dataset.page===id));if(id==='history')renderHistory();if(id==='more')renderMore();window.scrollTo(0,0)}
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>go(b.dataset.page));
+function renderDesign(){players.value=state.players;gk.value=state.gk;duration.value=state.duration;theme.value=state.theme;teamIdea.value=state.idea;phasePills.innerHTML=PHASES.map(x=>`<button class="pill ${state.phase===x?'on':''}" data-p="${x}">${x}</button>`).join('');principlePills.innerHTML=PRINC[state.phase].map(x=>`<button class="pill ${state.principles.includes(x)?'on':''}" data-r="${esc(x)}">${esc(x)}</button>`).join('');document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{state.phase=b.dataset.p;state.principles=[];persist();renderDesign()});document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{let x=b.dataset.r;state.principles=state.principles.includes(x)?state.principles.filter(y=>y!==x):(state.principles.length<3?[...state.principles,x]:state.principles);persist();renderDesign()})}
+['players','gk','duration','theme','teamIdea'].forEach(id=>document.getElementById(id).oninput=()=>{state.players=+players.value||1;state.gk=+gk.value||0;state.duration=+duration.value||60;state.theme=theme.value;state.idea=teamIdea.value;persist()});
+recommendBtn.onclick=()=>openRecommendations();
+function recommendationSet(){let all=practiceData().filter(x=>x.phase===state.phase),styles=['反復量重視','ゲーム性重視','全員参加重視'];return styles.map(style=>{let pool=all.filter(x=>x.style===style);let scored=pool.map(x=>({x,score:(x.principles||[]).filter(p=>state.principles.includes(p)).length*3+(state.gk>0||!x.gkRequired?1:0)+(state.players>=+x.minPlayers&&state.players<=+x.maxPlayers?2:0)})).sort((a,b)=>b.score-a.score);return scored[0]?.x||all.find(x=>x.style===style)||all[0]}).filter(Boolean)}
+function openRecommendations(){let rs=recommendationSet(),groups=Math.max(1,Math.round(state.players/5));openModal(`<div class="k">3 OPTIONS｜${state.players}人＋GK${state.gk}人｜${state.duration}分</div><h2>チームで選ぶ練習案</h2><p class="muted">原則・人数・GK条件を手がかりに候補を出します。正解を決める機能ではなく、選手とコーチが選ぶための3案です。</p>${state.idea?`<p class="muted">選手・チーム案：${esc(state.idea)}</p>`:''}${rs.map((x,i)=>`<div class="option"><div class="k">${esc(x.style)}</div><h3>${esc(x.name)}</h3><p class="meta"><b>狙い：</b>${esc(x.purpose)}<br><b>人数：</b>${x.minPlayers}〜${x.maxPlayers}人 ${x.gkRequired?'｜GK推奨':''}<br><b>スペース：</b>${esc(x.space||'自由')}<br><b>制約：</b>${esc(x.constraint)}<br><b>問い：</b>${esc(x.question)}<br><b>運用：</b>${groups}グループを目安に待ち時間を調整</p>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<button class="btn" style="margin-top:9px" onclick="addPracticeToPlan('${x.id}')">＋ 今日の練習へ追加</button></div>`).join('')||'<div class="empty">この局面の練習がありません。練習ライブラリから追加できます。</div>'}`)}
+function addPracticeToPlan(id){let x=practiceData().find(v=>v.id===id);if(!x)return;plan.push({id:'v5-'+Date.now(),type:'練習',name:x.name,minutes:+x.minutes||15,purpose:x.purpose,constraint:x.constraint,question:x.question,memo:'',liveMemo:'',videoUrl:safeUrl(x.videoUrl),source:'library',practiceId:x.id});persist();renderPlan();closeModal()}
+function addBlank(){plan.push({id:'v5-'+Date.now(),type:'練習',name:'新しい練習',minutes:15,purpose:'',constraint:'',question:'',memo:'',videoUrl:''});persist();renderPlan();editItem(plan.length-1)}
+function renderPlan(){menuList.innerHTML=plan.length?plan.map((x,i)=>`<div class="menu"><div class="k">${esc(x.type||'練習')}｜${+x.minutes||0}分</div><h3>${esc(x.name||'')}</h3>${x.purpose?`<div class="meta">目的：${esc(x.purpose)}</div>`:''}${x.constraint?`<div class="meta">制約：${esc(x.constraint)}</div>`:''}${x.question?`<div class="meta">問い：${esc(x.question)}</div>`:''}${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="editItem(${i})">編集</button><button onclick="moveItem(${i},-1)">↑</button><button onclick="moveItem(${i},1)">↓</button><button class="del" onclick="delItem(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだメニューがありません</div>`;let t=plan.reduce((a,x)=>a+(+x.minutes||0),0);totalMin.textContent=t;homeCount.textContent=plan.length;homeMin.textContent=t}
+function editItem(i){let x=plan[i];openModal(`<div class="k">MENU EDIT</div><h2>練習を編集</h2><div class="field"><label>名称</label><input id="eName" class="input" value="${esc(x.name)}"></div><div class="field"><label>時間</label><input id="eMin" class="input" type="number" value="${+x.minutes||15}"></div><div class="field"><label>目的</label><textarea id="ePurpose" class="area">${esc(x.purpose||'')}</textarea></div><div class="field"><label>制約・ルール</label><textarea id="eConstraint" class="area">${esc(x.constraint||'')}</textarea></div><div class="field"><label>問い</label><textarea id="eQuestion" class="area">${esc(x.question||'')}</textarea></div><div class="field"><label>動画URL（任意）</label><input id="eVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="saveEdit(${i})">保存</button>`)}
+function saveEdit(i){let x=plan[i];x.name=eName.value;x.minutes=+eMin.value||0;x.purpose=ePurpose.value;x.constraint=eConstraint.value;x.question=eQuestion.value;x.videoUrl=safeUrl(eVideo.value.trim());persist();renderPlan();closeModal()}
+function delItem(i){plan.splice(i,1);persist();renderPlan()} function moveItem(i,d){let j=i+d;if(j<0||j>=plan.length)return;[plan[i],plan[j]]=[plan[j],plan[i]];persist();renderPlan()}
+function openModal(body){closeModal();let d=document.createElement('div');d.id='modal';d.className='modal';d.innerHTML=`<div class="sheet"><button class="x" onclick="closeModal()">×</button>${body}</div>`;document.body.appendChild(d)} function closeModal(){document.getElementById('modal')?.remove()}
+let ci=0,left=0,timer=null;
+function kpiConfig(){return jget('hc_kpi_config_v53',[{id:'opp',name:'機会',value:0},{id:'success',name:'成功',value:0}])}
+function saveKpiConfig(a){localStorage.setItem('hc_kpi_config_v53',JSON.stringify(a))}
+function bumpKpi(id){let a=kpiConfig(),x=a.find(v=>v.id===id);if(x)x.value=(+x.value||0)+1;saveKpiConfig(a);renderCoachCounters();renderReviewCounters()}
+function renderCoachCounters(){let e=document.getElementById('coachCounters');if(!e)return;e.innerHTML=kpiConfig().map(x=>`<div class="kpirow"><div><b>${esc(x.name)}</b></div><div class="counter">${+x.value||0}</div><button class="smallbtn" onclick="bumpKpi('${x.id}')">＋1</button></div>`).join('')}
+function resetKpi(){let a=kpiConfig().map(x=>({...x,value:0}));saveKpiConfig(a);renderCoachCounters();renderReviewCounters()}
+function startCoach(){if(!plan.length){alert('今日のメニューを追加してください');return}ci=0;coachItem()}
+function coachItem(){clearInterval(timer);timer=null;let x=plan[ci];left=(+x.minutes||15)*60;openModal(`<div class="k">COACH MODE ${ci+1}/${plan.length}</div><h2>${esc(x.name)}</h2><p class="meta"><b>目的：</b>${esc(x.purpose||'—')}<br><b>制約：</b>${esc(x.constraint||'—')}<br><b>問い：</b>${esc(x.question||'—')}</p><div id="timerText" class="timer"></div><div id="coachCounters"></div><button class="btn2" style="margin:8px 0" onclick="resetKpi()">カウンターを0に戻す</button><div class="row"><button class="btn2" onclick="coachMove(-1)">← 前</button><button id="playBtn" class="btn" onclick="toggleTimer()">▶ START</button><button class="btn2" onclick="coachMove(1)">次 →</button></div><div class="field" style="margin-top:14px"><label>LIVE COACH MEMO</label><textarea id="liveMemo" class="area" oninput="saveLive()">${esc(x.liveMemo||'')}</textarea></div>${ci===plan.length-1?`<button class="btn2" style="margin-top:10px" onclick="closeModal();go('analysis')">練習終了 → 振り返り</button>`:''}`);paintTimer();renderCoachCounters()}
+function paintTimer(){let e=document.getElementById('timerText');if(e)e.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0')}
+function toggleTimer(){if(timer){clearInterval(timer);timer=null;playBtn.textContent='▶ START'}else{playBtn.textContent='Ⅱ PAUSE';timer=setInterval(()=>{left=Math.max(0,left-1);paintTimer();if(!left){clearInterval(timer);timer=null}},1000)}}
+function coachMove(d){saveLive();ci=Math.max(0,Math.min(plan.length-1,ci+d));coachItem()} function saveLive(){if(document.getElementById('liveMemo')){plan[ci].liveMemo=liveMemo.value;persist()}}
+let simpleKpi=0,numericList=jget('hc_numeric_kpis_v53',[]);
+function setupKpiTabs(){document.querySelectorAll('[data-kpi]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-kpi]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="kpi-"]').forEach(x=>x.classList.toggle('on',x.id==='kpi-'+b.dataset.kpi))});document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>{simpleKpi=+b.dataset.score;document.querySelectorAll('[data-score]').forEach(x=>x.classList.toggle('on',x===b))})}
+function renderReviewCounters(){let e=document.getElementById('reviewCounters');if(!e)return;let a=kpiConfig(),opp=a.find(x=>x.id==='opp'),success=a.find(x=>x.id==='success'),rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):0;e.innerHTML=a.map(x=>`<div class="kpirow"><div>${esc(x.name)}</div><div class="counter">${+x.value||0}</div><button class="smallbtn" onclick="bumpKpi('${x.id}')">＋1</button></div>`).join('')+`<div class="menu"><div class="k">AUTO CALC</div><h3>成功率 ${rate}%</h3><div class="meta">${success?+success.value:0} / ${opp?+opp.value:0}</div></div>`}
+function renderNumeric(){numericKpis.innerHTML=numericList.length?numericList.map((x,i)=>`<div class="kpirow"><input class="input" value="${esc(x.name)}" onchange="numericList[${i}].name=this.value;saveNumeric()"><input class="input" style="width:85px" type="number" value="${esc(x.value)}" onchange="numericList[${i}].value=this.value;saveNumeric()"><button class="smallbtn" onclick="numericList.splice(${i},1);saveNumeric()">×</button></div>`).join(''):`<div class="empty">必要な日だけ数値KPIを追加</div>`}
+function addNumericKpi(){numericList.push({name:'',value:''});saveNumeric()} function saveNumeric(){localStorage.setItem('hc_numeric_kpis_v53',JSON.stringify(numericList));renderNumeric()}
+function saveRecord(){let c=kpiConfig(),opp=c.find(x=>x.id==='opp'),success=c.find(x=>x.id==='success'),rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):null;let rec=jget('hc_training_records',[]);rec.unshift({id:'r-'+Date.now(),date:new Date().toISOString(),theme:state.theme,phase:state.phase,principles:state.principles,players:state.players,gk:state.gk,duration:state.duration,plan:JSON.parse(JSON.stringify(plan)),simpleKpi,counters:c,counterRate:rate,numericKpis:numericList,playerGood:playerGood.value,playerNext:playerNext.value,reflection:reflection.value});localStorage.setItem('hc_training_records',JSON.stringify(rec));alert('練習記録を保存しました');go('history')}
+function renderHistory(){let rec=jget('hc_training_records',[]);historyList.innerHTML=rec.length?rec.map(r=>`<div class="menu"><div class="k">${new Date(r.date).toLocaleDateString('ja-JP')}｜${esc(r.phase||'')}</div><h3>${esc(r.theme||'練習記録')}</h3><div class="meta">${r.simpleKpi?`かんたん評価：${['','まだ','まあまあ','できた'][r.simpleKpi]}<br>`:''}${r.counterRate!=null?`カウンター成功率：${r.counterRate}%<br>`:''}${r.playerNext?`次に変えたいこと：${esc(r.playerNext)}`:(r.kpi?esc(r.kpi):'')}</div></div>`).join(''):`<div class="empty">まだ記録がありません</div>`}
+function safeUrl(u){u=String(u||'').trim();return /^https?:\/\//i.test(u)?u:''}
+function defaultPractices(){let out=[];Object.entries(REC).forEach(([phase,rows])=>rows.forEach((r,i)=>out.push({id:'seed-'+phase+'-'+i,name:r[0],phase,style:r[1],principles:[...(PRINC[phase]||[])],purpose:r[2],minPlayers:6,maxPlayers:24,gkRequired:false,minutes:15,space:'人数に合わせて調整',constraint:r[3],question:r[4],difficulty:'標準',videoUrl:''})));return out}
+function practiceData(){let a=jget('hc_practice_library_v54',null);if(Array.isArray(a))return a;let d=defaultPractices();localStorage.setItem('hc_practice_library_v54',JSON.stringify(d));return d}
+function savePractices(a){localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));renderLibrary()}
+function seedPracticeLibrary(force){if(force&&!confirm('初期メニュー12件を追加しますか？既存メニューは残します。'))return;let a=practiceData(),ids=new Set(a.map(x=>x.id));defaultPractices().forEach(x=>{if(!ids.has(x.id))a.push(x)});savePractices(a)}
+function renderLibrary(){let e=document.getElementById('practiceLibraryList');if(!e)return;let phase=document.getElementById('libraryPhase')?.value||'',a=practiceData().filter(x=>!phase||x.phase===phase);e.innerHTML=a.length?a.map(x=>`<div class="menu"><div class="k">${esc(x.phase)}｜${esc(x.style||'')}</div><h3>${esc(x.name)}</h3><div class="meta">${esc(x.purpose||'')}<br>人数 ${+x.minPlayers||1}〜${+x.maxPlayers||30}｜${esc(x.space||'自由')}｜${+x.minutes||15}分</div><div>${(x.principles||[]).map(p=>`<span class="tag">${esc(p)}</span>`).join('')}</div>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="addPracticeToPlan('${x.id}')">今日へ追加</button><button onclick="editPracticeById('${x.id}')">編集</button><button class="del" onclick="deletePractice('${x.id}')">削除</button></div></div>`).join(''):'<div class="empty">この局面の練習はまだありません。</div>'}
+function editPracticeById(id){let a=practiceData(),i=a.findIndex(x=>x.id===id);editPractice(i)}
+function editPractice(i){let a=practiceData(),x=i>=0?a[i]:{name:'',phase:'攻撃',style:'ゲーム性重視',principles:[],purpose:'',minPlayers:6,maxPlayers:20,gkRequired:false,minutes:15,space:'',constraint:'',question:'',difficulty:'標準',videoUrl:''};let ps=PRINC[x.phase]||[];openModal(`<div class="k">PRACTICE LIBRARY</div><h2>${i>=0?'練習を編集':'練習を追加'}</h2><div class="field"><label>練習名</label><input id="pName" class="input" value="${esc(x.name)}"></div><div class="row"><div class="field"><label>局面</label><select id="pPhase" class="input" onchange="refreshPracticePrinciples()">${PHASES.map(p=>`<option ${p===x.phase?'selected':''}>${p}</option>`).join('')}</select></div><div class="field"><label>タイプ</label><select id="pStyle" class="input">${['反復量重視','ゲーム性重視','全員参加重視'].map(v=>`<option ${v===x.style?'selected':''}>${v}</option>`).join('')}</select></div></div><div class="field"><label>関連する原則（複数可）</label><div id="practicePrinciples" class="pills"></div></div><div class="field"><label>目的</label><textarea id="pPurpose" class="area">${esc(x.purpose)}</textarea></div><div class="row"><div class="field"><label>最少人数</label><input id="pMin" class="input" type="number" value="${+x.minPlayers||6}"></div><div class="field"><label>最大人数</label><input id="pMax" class="input" type="number" value="${+x.maxPlayers||20}"></div><div class="field"><label>時間</label><input id="pMinutes" class="input" type="number" value="${+x.minutes||15}"></div></div><div class="field"><label><input id="pGk" type="checkbox" ${x.gkRequired?'checked':''}> GKを使う／推奨</label></div><div class="field"><label>スペース</label><input id="pSpace" class="input" value="${esc(x.space||'')}" placeholder="例：30m×25m"></div><div class="field"><label>制約・ルール</label><textarea id="pConstraint" class="area">${esc(x.constraint)}</textarea></div><div class="field"><label>選手への問い</label><textarea id="pQuestion" class="area">${esc(x.question)}</textarea></div><div class="field"><label>判断基準</label><textarea id="pJudgment" class="area" placeholder="例：奪えるなら奪う。無理なら遅らせる。">${esc(x.judgment||'')}</textarea></div><div class="field"><label>KPIのヒント（任意）</label><input id="pKpiHint" class="input" value="${esc(x.kpiHint||'')}" placeholder="例：ロスト後4秒以内に前進を止めた回数"></div><div class="field"><label>動画URL（任意・http/https）</label><input id="pVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="commitPractice(${i})">保存</button>`);window._practiceSelected=[...(x.principles||[])];renderPracticePrinciples()}
+function refreshPracticePrinciples(){window._practiceSelected=[];renderPracticePrinciples()}
+function renderPracticePrinciples(){let e=document.getElementById('practicePrinciples');if(!e)return;let phase=document.getElementById('pPhase')?.value||'攻撃',sel=window._practiceSelected||[];e.innerHTML=(PRINC[phase]||[]).map(p=>`<button type="button" class="pill ${sel.includes(p)?'on':''}" onclick="togglePracticePrinciple('${esc(p)}')">${esc(p)}</button>`).join('')}
+function togglePracticePrinciple(p){let a=window._practiceSelected||[];window._practiceSelected=a.includes(p)?a.filter(x=>x!==p):[...a,p];renderPracticePrinciples()}
+function commitPractice(i){let a=practiceData(),old=i>=0?a[i]:null,x={id:old?.id||'practice-'+Date.now(),name:pName.value.trim()||'新しい練習',phase:pPhase.value,style:pStyle.value,principles:window._practiceSelected||[],purpose:pPurpose.value.trim(),minPlayers:+pMin.value||1,maxPlayers:+pMax.value||30,gkRequired:pGk.checked,minutes:+pMinutes.value||15,space:pSpace.value.trim(),constraint:pConstraint.value.trim(),question:pQuestion.value.trim(),judgment:pJudgment.value.trim(),kpiHint:pKpiHint.value.trim(),difficulty:'標準',videoUrl:safeUrl(pVideo.value)};if(i>=0)a[i]=x;else a.push(x);savePractices(a);closeModal()}
+function deletePractice(id){if(!confirm('この練習をライブラリから削除しますか？'))return;savePractices(practiceData().filter(x=>x.id!==id))}
+function philosophyData(){
+ let a=jget('hc_philosophy_items_v51',null);
+ if(Array.isArray(a))return a;
+ let legacy=localStorage.getItem('hc_philosophy_v5')||localStorage.getItem('hc_philosophy')||'';
+ return legacy?[{id:'ph-'+Date.now(),title:'TEAM PHILOSOPHY',body:legacy}]:[
+  {id:'ph-1',title:'ワクワクを選ぶ',body:'挑戦すること、成長すること、仲間とプレーすることを楽しむ。'},
+  {id:'ph-2',title:'選手が活き活きとプレーする',body:'自分で観て、考えて、決める。個性と強みをピッチで表現する。'},
+  {id:'ph-3',title:'仲間と高め合う',body:'互いを尊重し、要求し合い、チームとして成長する。'}
+ ]}
+function savePhData(a){localStorage.setItem('hc_philosophy_items_v51',JSON.stringify(a));renderPhilosophy()}
+function renderPhilosophy(){let a=philosophyData();philosophyList.innerHTML=a.length?a.map((x,i)=>`<div class="menu"><div class="k">PHILOSOPHY ${i+1}</div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.body||'')}</div><div class="actions"><button onclick="editPhilosophy(${i})">編集</button><button onclick="movePhilosophy(${i},-1)">↑</button><button onclick="movePhilosophy(${i},1)">↓</button><button class="del" onclick="deletePhilosophy(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだPhilosophyがありません。＋追加から作れます。</div>`}
+function addPhilosophy(){editPhilosophy(-1)}
+function editPhilosophy(i){let a=philosophyData(),x=i>=0?a[i]:{title:'',body:''};openModal(`<div class="k">TEAM IDENTITY</div><h2>${i>=0?'Philosophyを編集':'Philosophyを追加'}</h2><div class="field"><label>タイトル</label><input id="phTitle" class="input" value="${esc(x.title)}" placeholder="例：ワクワクを選ぶ"></div><div class="field"><label>説明</label><textarea id="phBody" class="area" placeholder="チームで大切にしたい行動・考え方">${esc(x.body)}</textarea></div><button class="btn" onclick="commitPhilosophy(${i})">保存</button>`)}
+function commitPhilosophy(i){let a=philosophyData(),x={id:i>=0?a[i].id:'ph-'+Date.now(),title:phTitle.value.trim()||'新しいPhilosophy',body:phBody.value.trim()};if(i>=0)a[i]=x;else a.push(x);savePhData(a);closeModal()}
+function deletePhilosophy(i){let a=philosophyData();if(!confirm('このPhilosophyを削除しますか？'))return;a.splice(i,1);savePhData(a)}
+function movePhilosophy(i,d){let a=philosophyData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];savePhData(a)}
+function methodData(){let a=jget('hc_team_methods_v52',null);return Array.isArray(a)?a:[
+{id:'m1',phase:'攻撃',title:'前進する',body:'前進できるなら前進する。難しければ相手を動かして次の前進機会を作る。'},
+{id:'m2',phase:'守備',title:'中央とゴールを守る',body:'最も危険な場所を優先しながら、1st DFを基準に連動する。'},
+{id:'m3',phase:'攻→守',title:'ロスト直後に反応する',body:'奪い返す・遅らせる・戻るを素早く判断する。'},
+{id:'m4',phase:'守→攻',title:'奪った瞬間に前を見る',body:'GOできれば前進。難しければ保持して広がる。'}]}
+function saveMethods(a){localStorage.setItem('hc_team_methods_v52',JSON.stringify(a));renderMethods()}
+function renderMethods(){let a=methodData();methodList.innerHTML=a.length?a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.phase)}</div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.body||'')}</div><div class="actions"><button onclick="editMethod(${i})">編集</button><button onclick="moveMethod(${i},-1)">↑</button><button onclick="moveMethod(${i},1)">↓</button><button class="del" onclick="deleteMethod(${i})">削除</button></div></div>`).join(''):`<div class="empty">原則がありません</div>`}
+function addMethod(){editMethod(-1)}
+function editMethod(i){let a=methodData(),x=i>=0?a[i]:{phase:'攻撃',title:'',body:''};openModal(`<div class="k">TEAM METHOD</div><h2>${i>=0?'原則を編集':'原則を追加'}</h2><div class="field"><label>局面</label><select id="mPhase" class="input">${PHASES.map(p=>`<option ${p===x.phase?'selected':''}>${p}</option>`).join('')}</select></div><div class="field"><label>原則名</label><input id="mTitle" class="input" value="${esc(x.title)}"></div><div class="field"><label>説明</label><textarea id="mBody" class="area">${esc(x.body)}</textarea></div><button class="btn" onclick="commitMethod(${i})">保存</button>`)}
+function commitMethod(i){let a=methodData(),x={id:i>=0?a[i].id:'m-'+Date.now(),phase:mPhase.value,title:mTitle.value.trim()||'新しい原則',body:mBody.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveMethods(a);closeModal()}
+function deleteMethod(i){if(!confirm('この原則を削除しますか？'))return;let a=methodData();a.splice(i,1);saveMethods(a)}
+function moveMethod(i,d){let a=methodData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];saveMethods(a)}
+function roleData(){let a=jget('hc_team_roles_v52',null);return Array.isArray(a)?a:[{id:'staff',name:'STAFF',desc:'指導者・スタッフ'},{id:'player',name:'PLAYER',desc:'選手'},{id:'parent',name:'PARENT',desc:'保護者'}]}
+function saveRoles(a){localStorage.setItem('hc_team_roles_v52',JSON.stringify(a));renderRoles()}
+function renderRoles(){let a=roleData();roleList.innerHTML=a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.name)}</div><div class="meta">${esc(x.desc||'')}</div><div class="actions"><button onclick="editRole(${i})">編集</button><button class="del" onclick="deleteRole(${i})">削除</button></div></div>`).join('')}
+function addRole(){editRole(-1)}
+function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<div class="k">TEAM ROLE</div><h2>${i>=0?'役割を編集':'役割を追加'}</h2><div class="field"><label>役割名</label><input id="rName" class="input" value="${esc(x.name)}" placeholder="例：ANALYST"></div><div class="field"><label>説明</label><input id="rDesc" class="input" value="${esc(x.desc)}"></div><button class="btn" onclick="commitRole(${i})">保存</button>`)}
+function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
+function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
+function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
+function exportData(){let data={version:'5.5',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
+function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
+renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
+</script>
+<!-- HC_PHILOSOPHY_V51_EDITABLE -->
+<!-- HC_MORE_V52_EDITABLE -->
+<!-- HC_V53_BOTTOMUP_KPI_TABS_VIDEO_READY -->
+<!-- HC_V54_METHOD_PRACTICE_LIBRARY -->
+<!-- HC_V55_METHOD_JUDGMENT_PRACTICE_KPI_LINKAGE -->
+</body></html>
