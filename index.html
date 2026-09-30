@@ -130,8 +130,8 @@ function openModal(body){closeModal();let d=document.createElement('div');d.id='
 let ci=0,left=0,timer=null;
 function kpiConfig(){return jget('hc_kpi_config_v53',[{id:'opp',name:'機会',value:0},{id:'success',name:'成功',value:0}])}
 function saveKpiConfig(a){localStorage.setItem('hc_kpi_config_v53',JSON.stringify(a))}
-function bumpKpi(id){let a=kpiConfig(),x=a.find(v=>v.id===id);if(x)x.value=(+x.value||0)+1;saveKpiConfig(a);renderCoachCounters();renderReviewCounters()}
-function renderCoachCounters(){let e=document.getElementById('coachCounters');if(!e)return;e.innerHTML=kpiConfig().map(x=>`<div class="kpirow"><div><b>${esc(x.name)}</b></div><div class="counter">${+x.value||0}</div><button class="smallbtn" onclick="bumpKpi('${x.id}')">＋1</button></div>`).join('')}
+function bumpKpi(id,delta=1){let a=kpiConfig(),x=a.find(v=>v.id===id);if(x)x.value=Math.max(0,(+x.value||0)+delta);saveKpiConfig(a);renderCoachCounters();renderReviewCounters()}
+function renderCoachCounters(){let e=document.getElementById('coachCounters');if(!e)return;e.innerHTML=kpiConfig().map(x=>`<div class="kpirow"><div><b>${esc(x.name)}</b></div><button class="smallbtn" onclick="bumpKpi('${x.id}',-1)">−1</button><div class="counter">${+x.value||0}</div><button class="smallbtn" onclick="bumpKpi('${x.id}',1)">＋1</button></div>`).join('')}
 function resetKpi(){let a=kpiConfig().map(x=>({...x,value:0}));saveKpiConfig(a);renderCoachCounters();renderReviewCounters()}
 function startCoach(){if(!plan.length){alert('今日のメニューを追加してください');return}ci=0;coachItem()}
 function coachItem(){clearInterval(timer);timer=null;let x=plan[ci];left=(+x.minutes||15)*60;openModal(`<div class="k">COACH MODE ${ci+1}/${plan.length}</div><h2>${esc(x.name)}</h2><p class="meta"><b>目的：</b>${esc(x.purpose||'—')}<br><b>制約：</b>${esc(x.constraint||'—')}<br><b>問い：</b>${esc(x.question||'—')}</p><div id="timerText" class="timer"></div><div id="coachCounters"></div><button class="btn2" style="margin:8px 0" onclick="resetKpi()">カウンターを0に戻す</button><div class="row"><button class="btn2" onclick="coachMove(-1)">← 前</button><button id="playBtn" class="btn" onclick="toggleTimer()">▶ START</button><button class="btn2" onclick="coachMove(1)">次 →</button></div><div class="field" style="margin-top:14px"><label>LIVE COACH MEMO</label><textarea id="liveMemo" class="area" oninput="saveLive()">${esc(x.liveMemo||'')}</textarea></div>${ci===plan.length-1?`<button class="btn2" style="margin-top:10px" onclick="closeModal();go('analysis')">練習終了 → 振り返り</button>`:''}`);paintTimer();renderCoachCounters()}
@@ -391,4 +391,5 @@ renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 <!-- HC_V57_SMART_LIBRARY_FAVORITES_MATCHING -->
 <!-- HC_V58_STABLE_COMPLETE_PRINCIPLE_LINKAGE -->
 <!-- HC_V581_HOTFIX_NAV_HEADER -->
+<!-- HC_V582_COUNTER_PLUS_MINUS -->
 </body></html>
