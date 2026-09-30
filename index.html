@@ -3120,11 +3120,16 @@ function bind(){
  document.getElementById('tu3Add').onclick=()=>{let s=collect();s.items.push({name:'新しいメニュー',minutes:10});save(s);mount()};
  document.getElementById('tu3Save').onclick=()=>{let s=collect();let vals=[...document.querySelectorAll('.tu3KpiVal')].map(x=>x.value);let rec={date:new Date().toISOString(),theme:s.theme,cat:s.cat,principles:s.principles,duration:s.duration,items:s.items,kpis:s.kpis.map((k,i)=>({name:k,value:vals[i]||''})),reflection:document.getElementById('tu3Reflection')?.value||''};save(s);
 let mapped=s.items.map((x,i)=>({id:'pi-'+Date.now()+'-'+i,type:(i===0?'動作改善':(/game/i.test(x.name||'')?'GAME':'練習')),name:x.name||('メニュー'+(i+1)),minutes:+x.minutes||0}));
-localStorage.setItem('hc_today_plan',JSON.stringify(mapped));try{if(typeof plan!=='undefined')plan=mapped}catch(e){}
+let current=safe('hc_today_plan',[]);
+if(!Array.isArray(current))current=[];
+let existing=new Set(current.map(x=>String(x.name||'').trim()+'|'+String(+x.minutes||0)));
+let added=mapped.filter(x=>!existing.has(String(x.name||'').trim()+'|'+String(+x.minutes||0)));
+let merged=current.concat(added);
+localStorage.setItem('hc_today_plan',JSON.stringify(merged));try{if(typeof plan!=='undefined')plan=merged}catch(e){}
 localStorage.setItem('hc_today_session_meta_v31',JSON.stringify({theme:s.theme,cat:s.cat,principles:s.principles,kpis:rec.kpis,reflection:rec.reflection,updatedAt:new Date().toISOString()}));
 let hist=safe('hc_training_records',[]);if(!Array.isArray(hist))hist=[];hist.push(rec);localStorage.setItem('hc_training_records',JSON.stringify(hist));
 try{if(typeof renderToday==='function')renderToday()}catch(e){}
-alert('🔥 今日の練習に反映しました。');setTimeout(()=>{let u=document.getElementById('hcTodayUnifiedV3');if(u)u.style.display='none';try{if(typeof renderToday==='function')renderToday()}catch(e){};window.scrollTo({top:0,behavior:'smooth'})},80)};
+alert('🔥 今日の練習へ '+added.length+' 項目追加しました。');setTimeout(()=>{let u=document.getElementById('hcTodayUnifiedV3');if(u)u.style.display='none';try{if(typeof renderToday==='function')renderToday()}catch(e){};window.scrollTo({top:0,behavior:'smooth'})},80)};
  ['tu3Theme','tu3Duration'].forEach(id=>{let e=document.getElementById(id);if(e)e.onchange=()=>{let s=collect();save(s);mount()}});
  document.querySelectorAll('.tu3Minutes,.tu3Name').forEach(e=>e.onchange=()=>{let s=collect();save(s);mount()});
 }
@@ -3173,5 +3178,36 @@ setTimeout(syncUI,2500);
 })();
 </script>
 <!-- /HC_TODAY_SYNC_V31 -->
+
+
+<!-- HC_TODAY_ADD_TO_PLAN_V32 -->
+<style>
+#hcTodayUnifiedV3 .tu3-btn::before{content:"＋ ";font-weight:950}
+#hcTodayUnifiedV3 .tu3-btn{box-shadow:0 8px 24px rgba(0,0,0,.28)}
+</style>
+<script>
+(function(){'use strict';
+function relabel(){
+ const b=document.getElementById('tu3Save');
+ if(b)b.textContent='今日の練習へ項目追加';
+}
+const oldMount=window.HCTodayUnifiedV3?.mount;
+if(oldMount){
+ window.HCTodayUnifiedV3.mount=function(){
+   const r=oldMount.apply(this,arguments);
+   setTimeout(relabel,0);
+   return r;
+ };
+}
+const oldShow=window.show;
+if(oldShow)window.show=function(id){
+ const r=oldShow.apply(this,arguments);
+ if(id==='today')setTimeout(relabel,160);
+ return r;
+};
+setTimeout(relabel,3000);
+})();
+</script>
+<!-- /HC_TODAY_ADD_TO_PLAN_V32 -->
 
 </body></html>
