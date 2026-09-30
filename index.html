@@ -136,8 +136,33 @@ document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>go(b.dataset.page));
 function renderDesign(){players.value=state.players;gk.value=state.gk;duration.value=state.duration;theme.value=state.theme;teamIdea.value=state.idea;phasePills.innerHTML=PHASES.map(x=>`<button class="pill ${state.phase===x?'on':''}" data-p="${x}">${x}</button>`).join('');principlePills.innerHTML=PRINC[state.phase].map(x=>`<button class="pill ${state.principles.includes(x)?'on':''}" data-r="${esc(x)}">${esc(x)}</button>`).join('');document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{state.phase=b.dataset.p;state.principles=[];persist();renderDesign()});document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{let x=b.dataset.r;state.principles=state.principles.includes(x)?state.principles.filter(y=>y!==x):(state.principles.length<3?[...state.principles,x]:state.principles);persist();renderDesign()})}
 ['players','gk','duration','theme','teamIdea'].forEach(id=>document.getElementById(id).oninput=()=>{state.players=+players.value||1;state.gk=+gk.value||0;state.duration=+duration.value||60;state.theme=theme.value;state.idea=teamIdea.value;persist()});
 recommendBtn.onclick=()=>openRecommendations();
-function recommendationSet(){let all=practiceData().filter(x=>x.phase===state.phase),styles=['反復量重視','ゲーム性重視','全員参加重視'];return styles.map(style=>{let pool=all.filter(x=>x.style===style);let scored=pool.map(x=>({x,score:(x.principles||[]).filter(p=>state.principles.includes(p)).length*3+(state.gk>0||!x.gkRequired?1:0)+(state.players>=+x.minPlayers&&state.players<=+x.maxPlayers?2:0)})).sort((a,b)=>b.score-a.score);return scored[0]?.x||all.find(x=>x.style===style)||all[0]}).filter(Boolean)}
-function openRecommendations(){let rs=recommendationSet(),groups=Math.max(1,Math.round(state.players/5));openModal(`<div class="k">3 OPTIONS｜${state.players}人＋GK${state.gk}人｜${state.duration}分</div><h2>チームで選ぶ練習案</h2><p class="muted">原則・人数・GK条件を手がかりに候補を出します。正解を決める機能ではなく、選手とコーチが選ぶための3案です。</p>${state.idea?`<p class="muted">選手・チーム案：${esc(state.idea)}</p>`:''}${rs.map((x,i)=>`<div class="option"><div class="k">${esc(x.style)}</div><h3>${esc(x.name)}</h3><p class="meta"><b>狙い：</b>${esc(x.purpose)}<br><b>人数：</b>${x.minPlayers}〜${x.maxPlayers}人 ${x.gkRequired?'｜GK推奨':''}<br><b>スペース：</b>${esc(x.space||'自由')}<br><b>制約：</b>${esc(x.constraint)}<br><b>問い：</b>${esc(x.question)}<br><b>運用：</b>${groups}グループを目安に待ち時間を調整</p>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<button class="btn" style="margin-top:9px" onclick="addPracticeToPlan('${x.id}')">＋ 今日の練習へ追加</button></div>`).join('')||'<div class="empty">この局面の練習がありません。練習ライブラリから追加できます。</div>'}`)}
+
+function principleAffinity(x){
+ let ps=(x.principles||[]).map(String),sel=(state.principles||[]).map(String),score=0,hits=[];
+ sel.forEach(s=>ps.forEach(p=>{let a=s.split(' ＞ '),b=p.split(' ＞ ');if(s===p){score+=8;hits.push(p)}else if(a.some(v=>b.some(w=>v&&w&&(v.includes(w)||w.includes(v))))){score+=4;hits.push(p)}}));
+ return {score,hits:[...new Set(hits)]}
+}
+function practiceFitV511(x){
+ let a=principleAffinity(x),score=a.score,reasons=[];
+ if(a.hits.length)reasons.push('今日の原則と一致');
+ if(x.phase===state.phase){score+=6;reasons.push('局面が一致')}
+ let min=+x.minPlayers||1,max=+x.maxPlayers||99;
+ if(state.players>=min&&state.players<=max){score+=5;reasons.push(`${state.players}人で実施しやすい`)}
+ else {let d=state.players<min?min-state.players:state.players-max;score-=Math.min(6,d);reasons.push(`人数調整が必要（目安${min}〜${max}人）`)}
+ if(x.gkRequired){if(state.gk>0){score+=3;reasons.push('GK条件に一致')}else{score-=8;reasons.push('GKが必要')}}else if(state.gk===0){score+=1}
+ let mins=+x.minutes||15;if(mins<=state.duration){score+=2;reasons.push(`${mins}分で組み込みやすい`)}else score-=5;
+ if(String(x.id||'').startsWith('photo60-'))score+=1;
+ if(String(x.id||'').startsWith('funino-'))score+=1;
+ return {x,score,reasons,a}
+}
+function recommendationSet(){
+ let all=practiceData().filter(x=>x.phase===state.phase),styles=['反復量重視','ゲーム性重視','全員参加重視'];
+ return styles.map(style=>{let ranked=all.filter(x=>x.style===style).map(practiceFitV511).sort((a,b)=>b.score-a.score);return ranked[0]||null}).filter(Boolean)
+}
+function openRecommendations(){
+ let rs=recommendationSet(),groups=Math.max(1,Math.round(state.players/5));
+ openModal(`<div class="k">SMART 3 OPTIONS｜${state.players}人＋GK${state.gk}人｜${state.duration}分</div><h2>今日の条件から3案</h2><p class="muted">局面・原則・人数・GK・時間を照合し、3タイプから1案ずつ提示します。順位ではなく、チームで選ぶための選択肢です。</p>${state.idea?`<p class="muted"><b>選手・チーム案：</b>${esc(state.idea)}</p>`:''}${rs.map(({x,reasons,a})=>`<div class="option"><div class="k">${esc(x.style)}${String(x.id||'').startsWith('funino-')?'｜FUNINO':String(x.id||'').startsWith('photo60-')?'｜写真由来':''}</div><h3>${esc(x.name)}</h3><p class="meta"><b>この候補の理由：</b>${esc(reasons.slice(0,4).join('・'))}<br><b>狙い：</b>${esc(x.purpose||'')}<br><b>見るポイント：</b>${esc(x.judgment||x.purpose||'')}<br><b>選手への問い：</b>${esc(x.question||'')}<br><b>おすすめKPI：</b>${esc(x.kpiHint||'設定なし')}<br><b>人数：</b>${x.minPlayers}〜${x.maxPlayers}人 ${x.gkRequired?'｜GK必要':'｜GKなしでも可'}<br><b>スペース：</b>${esc(x.space||'自由')}<br><b>制約：</b>${esc(x.constraint||'')}<br><b>運用：</b>${groups}グループを目安に待ち時間を調整</p>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<button class="btn" style="margin-top:9px" onclick="addPracticeToPlan('${x.id}')">＋ 今日の練習へ追加</button></div>`).join('')||'<div class="empty">この局面の練習がありません。練習ライブラリから追加できます。</div>'}<button class="btn2" onclick="closeModal();show('more');setMoreTab('library')">練習ライブラリから別案を探す</button>`)
+}
 function addPracticeToPlan(id){let x=practiceData().find(v=>v.id===id);if(!x)return;plan.push({id:'v5-'+Date.now(),type:'練習',name:x.name,minutes:+x.minutes||15,purpose:x.purpose,constraint:x.constraint,question:x.question,judgment:x.judgment||'',kpiHint:x.kpiHint||'',memo:'',liveMemo:'',videoUrl:safeUrl(x.videoUrl),source:'library',practiceId:x.id});persist();renderPlan();closeModal()}
 function addBlank(){plan.push({id:'v5-'+Date.now(),type:'練習',name:'新しい練習',minutes:15,purpose:'',constraint:'',question:'',memo:'',videoUrl:''});persist();renderPlan();editItem(plan.length-1)}
 function renderPlan(){menuList.innerHTML=plan.length?plan.map((x,i)=>`<div class="menu"><div class="k">${esc(x.type||'練習')}｜${+x.minutes||0}分</div><h3>${esc(x.name||'')}</h3>${x.purpose?`<div class="meta">目的：${esc(x.purpose)}</div>`:''}${x.constraint?`<div class="meta">制約：${esc(x.constraint)}</div>`:''}${x.question?`<div class="meta">問い：${esc(x.question)}</div>`:''}${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="editItem(${i})">編集</button><button onclick="moveItem(${i},-1)">↑</button><button onclick="moveItem(${i},1)">↓</button><button class="del" onclick="delItem(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだメニューがありません</div>`;let t=plan.reduce((a,x)=>a+(+x.minutes||0),0);totalMin.textContent=t;homeCount.textContent=plan.length;homeMin.textContent=t}
@@ -216,7 +241,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'5.10',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'5.11',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -231,4 +256,5 @@ renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric(
 <!-- HC_V58_PHOTO20_X3_60_PATTERNS -->
 <!-- HC_V59_FUNINO_HOCKEY -->
 <!-- HC_V510_FUNINO_12_ENGINE -->
+<!-- HC_V511_SMART_3_RECOMMEND_ENGINE -->
 </body></html>
