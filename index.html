@@ -75,7 +75,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <div id="more-invite" class="tabpane"><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">STAFF / PLAYER / PARENTなどの役割を追加・編集できます。QR本体は次段階で接続します。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div></div>
  <div id="more-cloud" class="tabpane"><div class="card"><div class="k">V7.1 CLOUD / SECURE</div><div class="title">ログイン・クラウド基盤</div><p class="muted">端末保存を維持したまま、Supabase Authへ安全に接続します。データ同期はRLS適用後だけ有効化します。</p><div id="cloudStatusV70" class="menu"></div><div class="field"><label>Supabase Project URL</label><input id="cloudUrlV70" class="input" placeholder="https://xxxx.supabase.co"></div><div class="field"><label>Publishable key</label><input id="cloudKeyV70" class="input" placeholder="sb_publishable_..."></div><button class="btn2" onclick="saveCloudConfigV70()">接続設定を保存</button></div>
 <div class="card"><div class="k">AUTH</div><div class="title" style="font-size:19px">メールでログイン</div><div id="authStateV71" class="menu"></div><div class="field"><label>メールアドレス</label><input id="authEmailV71" class="input" type="email" autocomplete="email" placeholder="coach@example.com"></div><button class="btn" onclick="sendMagicLinkV71()">ログインリンクを送る</button><button class="btn2" style="margin-top:8px" onclick="signOutV71()">ログアウト</button></div>
-<div class="card"><div class="k">SECURITY GATE</div><b>同期はまだロック中</b><p class="muted">RLSテーブルとチーム権限の確認が終わるまで、Philosophy・原則・練習・記録はクラウドへ送信しません。</p><div class="meta">✓ Publishable keyのみ<br>✓ Secret/service-role key拒否<br>✓ AuthセッションはSupabase SDK管理<br>✓ RLS適用後に team_id 単位で同期<br>✓ ローカル保存は継続</div></div></div>
+<div class="card"><div class="k">TEAM SECURITY</div><div class="title" style="font-size:19px">チーム分離・RLS</div><div id="rlsStateV72" class="menu"><b>未確認</b><div class="meta">下のSQLをSupabase SQL Editorで1回実行してから「RLSを確認」を押します。</div></div><button class="btn2" onclick="checkRlsV72()">RLSを確認</button><button class="btn2" style="margin-top:8px" onclick="downloadSqlV72()">RLSセットアップSQLを保存</button><p class="muted">確認が成功するまでクラウド同期は解除されません。</p></div><div class="card"><div class="k">SECURITY GATE</div><b>同期はまだロック中</b><p class="muted">RLSテーブルとチーム権限の確認が終わるまで、Philosophy・原則・練習・記録はクラウドへ送信しません。</p><div class="meta">✓ Publishable keyのみ<br>✓ Secret/service-role key拒否<br>✓ AuthセッションはSupabase SDK管理<br>✓ RLS適用後に team_id 単位で同期<br>✓ ローカル保存は継続</div></div></div>
 <div id="more-settings" class="tabpane"><div class="card"><div class="k">DATA</div><div class="title">設定・データ</div><p class="muted">今日のメニューと練習記録の互換データを維持しています。</p><button class="btn2" onclick="exportData()">データを書き出す</button></div></div>
 </section>
 </main>
@@ -279,7 +279,7 @@ function renderCloudV70(){
  if(e)e.innerHTML=c.url&&c.publishableKey?'<b>準備済み</b><div class="meta">Publishable keyのみ保存。現在は安全のため端末自動保存を継続し、RLS設定完了後に同期を有効化します。</div>':'<b>ローカル保存中</b><div class="meta">クラウド未接続でもV6.0までの機能はそのまま利用できます。</div>'
 }
 function autoSaveMetaV70(){
- localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.1-auth-ready'}))
+ localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.2-rls-ready'}))
 }
 
 
@@ -301,6 +301,89 @@ async function sendMagicLinkV71(){
  if(error){alert('送信できませんでした：'+error.message);return}alert('ログインリンクをメールへ送りました。')
 }
 async function signOutV71(){if(!supabaseV71)return;await supabaseV71.auth.signOut();renderAuthV71()}
+
+
+async function checkRlsV72(){
+ let e=document.getElementById('rlsStateV72');if(!supabaseV71){if(e)e.innerHTML='<b>未接続</b><div class="meta">先にログインしてください。</div>';return}
+ let {data:s}=await supabaseV71.auth.getSession();if(!s?.session){if(e)e.innerHTML='<b>未ログイン</b><div class="meta">メール認証後に確認してください。</div>';return}
+ let {data,error}=await supabaseV71.from('hc_team_members').select('team_id,role').limit(20);
+ if(error){if(e)e.innerHTML=`<b>RLS未準備</b><div class="meta">${esc(error.message)}</div>`;return}
+ localStorage.setItem('hc_rls_ready_v72','1');
+ if(e)e.innerHTML=`<b>RLS接続確認済み</b><div class="meta">ログインユーザーに許可された所属だけ取得できました。${data?.length?` 所属 ${data.length}件`:' 現在の所属は0件'}</div>`;
+}
+function downloadSqlV72(){
+ const sql=`-- HOCKEY COACH V7.2 / Supabase team isolation
+create extension if not exists pgcrypto;
+create table if not exists public.hc_teams (
+ id uuid primary key default gen_random_uuid(),
+ name text not null check (char_length(name) between 1 and 100),
+ created_by uuid not null references auth.users(id) on delete restrict,
+ created_at timestamptz not null default now()
+);
+create table if not exists public.hc_team_members (
+ team_id uuid not null references public.hc_teams(id) on delete cascade,
+ user_id uuid not null references auth.users(id) on delete cascade,
+ role text not null check (role in ('STAFF','PLAYER','PARENT')),
+ created_at timestamptz not null default now(),
+ primary key(team_id,user_id)
+);
+create table if not exists public.hc_team_data (
+ team_id uuid not null references public.hc_teams(id) on delete cascade,
+ data_key text not null check (char_length(data_key) between 1 and 80),
+ payload jsonb not null default '{}'::jsonb,
+ updated_by uuid not null references auth.users(id) on delete restrict,
+ updated_at timestamptz not null default now(),
+ primary key(team_id,data_key)
+);
+create index if not exists hc_team_members_user_idx on public.hc_team_members(user_id,team_id);
+create index if not exists hc_team_data_team_idx on public.hc_team_data(team_id);
+
+alter table public.hc_teams enable row level security;
+alter table public.hc_team_members enable row level security;
+alter table public.hc_team_data enable row level security;
+
+create schema if not exists private;
+create or replace function private.hc_my_team_ids()
+returns setof uuid language sql stable security definer set search_path=''
+as $$ select team_id from public.hc_team_members where user_id=(select auth.uid()) $$;
+revoke execute on function private.hc_my_team_ids() from public, anon;
+grant usage on schema private to authenticated;
+grant execute on function private.hc_my_team_ids() to authenticated;
+
+drop policy if exists "members read teams" on public.hc_teams;
+create policy "members read teams" on public.hc_teams for select to authenticated
+using (id in (select private.hc_my_team_ids()));
+
+drop policy if exists "members read memberships" on public.hc_team_members;
+create policy "members read memberships" on public.hc_team_members for select to authenticated
+using (team_id in (select private.hc_my_team_ids()));
+
+drop policy if exists "members read team data" on public.hc_team_data;
+create policy "members read team data" on public.hc_team_data for select to authenticated
+using (team_id in (select private.hc_my_team_ids()));
+
+drop policy if exists "staff insert team data" on public.hc_team_data;
+create policy "staff insert team data" on public.hc_team_data for insert to authenticated
+with check (
+ updated_by=(select auth.uid()) and exists(
+  select 1 from public.hc_team_members m
+  where m.team_id=hc_team_data.team_id and m.user_id=(select auth.uid()) and m.role='STAFF'
+ )
+);
+drop policy if exists "staff update team data" on public.hc_team_data;
+create policy "staff update team data" on public.hc_team_data for update to authenticated
+using (exists(select 1 from public.hc_team_members m where m.team_id=hc_team_data.team_id and m.user_id=(select auth.uid()) and m.role='STAFF'))
+with check (updated_by=(select auth.uid()) and exists(select 1 from public.hc_team_members m where m.team_id=hc_team_data.team_id and m.user_id=(select auth.uid()) and m.role='STAFF'));
+drop policy if exists "staff delete team data" on public.hc_team_data;
+create policy "staff delete team data" on public.hc_team_data for delete to authenticated
+using (exists(select 1 from public.hc_team_members m where m.team_id=hc_team_data.team_id and m.user_id=(select auth.uid()) and m.role='STAFF'));
+
+revoke all on public.hc_teams, public.hc_team_members, public.hc_team_data from anon;
+grant select on public.hc_teams, public.hc_team_members to authenticated;
+grant select,insert,update,delete on public.hc_team_data to authenticated;
+`;
+ let b=new Blob([sql],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='hockey-coach-v72-rls.sql';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)
+}
 
 function safeUrl(u){u=String(u||'').trim();return /^https?:\/\//i.test(u)?u:''}
 const FUNINO_EXTRA_V510=[{"id":"funino-hockey-06","name":"3v3 フニーニョ｜中央封鎖","phase":"守備","style":"ゲーム性重視","principles":["中央を閉じ攻撃方向を限定する","守備者間のギャップを閉じる"],"purpose":"2つの守備ゴールを同時に守りながら、中央を閉じて外側へ誘導する。","minPlayers":6,"maxPlayers":9,"gkRequired":false,"minutes":15,"space":"25〜30m×20〜25m／4ミニゴール","constraint":"中央レーンから直接ゴールされたら2点。守備側は中央を閉じて外へ誘導する。","question":"2つのゴールを守りながら、まずどこを消す？","judgment":"ボールへ飛び込まず、中央を閉じて攻撃方向を限定する。","kpiHint":"中央突破を防ぎ外側へ誘導できた割合","difficulty":"標準","videoUrl":"","sourceTag":"FUNINO"},{"id":"funino-hockey-07","name":"3v3 フニーニョ｜カバー&バランス","phase":"守備","style":"反復量重視","principles":["味方を見てカバー範囲を調整する","相手とゴールの間を取る"],"purpose":"1st DFが出た瞬間の2nd・3rd DFのカバーと逆側ゴール管理を反復する。","minPlayers":6,"maxPlayers":9,"gkRequired":false,"minutes":12,"space":"24m×20m／4ミニゴール","constraint":"攻撃は左右どちらのゴールにも得点可能。守備は1st DF・カバー・逆側管理の3役を作る。","question":"味方が出た瞬間、自分はどのゴールと相手を守る？","judgment":"3人が同じ場所へ寄らず役割を分担する。","kpiHint":"1st DFを越えられても次の守備で止めた回数","difficulty":"標準","videoUrl":"","sourceTag":"FUNINO"},{"id":"funino-hockey-08","name":"3v3 フニーニョ｜背後ラン対応","phase":"守備","style":"全員参加重視","principles":["斜めの背後ランについていく","マークの受け渡しを判断する"],"purpose":"4ゴールへの斜めランに対して追従・受け渡し・復帰を判断する。","minPlayers":6,"maxPlayers":12,"gkRequired":false,"minutes":16,"space":"30m×24m／4ミニゴール","constraint":"ゴール前ゾーンへのオフザボールのランから得点したら2点。複数コートなら全員同時進行。","question":"そのランについていく？ 味方へ渡す？ 元へ戻る？","judgment":"保持者のプレッシャー状況を見て背後対応を変える。","kpiHint":"背後ランをフリーにせず対応できた割合","difficulty":"標準","videoUrl":"","sourceTag":"FUNINO"},{"id":"funino-hockey-09","name":"3v3 フニーニョ｜5秒リアクション","phase":"攻→守","style":"反復量重視","principles":["ロストを予測しパスコースを閉じる","最寄りが1st DFになる"],"purpose":"ロスト直後5秒の即時反応を高頻度で経験する。","minPlayers":6,"maxPlayers":9,"gkRequired":false,"minutes":12,"space":"22m×18m／4ミニゴール","constraint":"奪取後5秒以内の得点は2点。ロスト側は最寄りがボール、残りがゴールへの出口を閉じる。","question":"失った瞬間、最初の1歩はどこへ？","judgment":"ロスト後に止まらず、即座に役割を取る。","kpiHint":"ロスト後5秒以内に前進を止めた割合","difficulty":"標準","videoUrl":"","sourceTag":"FUNINO"},{"id":"funino-hockey-10","name":"3v3 フニーニョ｜WIN・DELAY・RECOVER","phase":"攻→守","style":"全員参加重視","principles":["奪う・遅らせる・戻る"],"purpose":"ロスト時に奪えるか、遅らせるか、戻るかを3人で判断する。","minPlayers":6,"maxPlayers":12,"gkRequired":false,"minutes":16,"space":"30m×24m／4ミニゴール","constraint":"奪い返しは+1点、5秒遅らせて全員復帰も+1点。無理な奪取だけを正解にしない。","question":"今はWIN？ DELAY？ RECOVER？","judgment":"ボール状況と味方の位置から切替行動を選ぶ。","kpiHint":"ロスト後に3人の役割が揃った回数","difficulty":"標準","videoUrl":"","sourceTag":"FUNINO"},{"id":"funino-hockey-11","name":"3v3 フニーニョ｜奪取後6秒GO","phase":"守→攻","style":"反復量重視","principles":["GOを最初に見る","前方選手が異なる高さを取る"],"purpose":"奪った瞬間の前方認知とサポートの高さを反復する。","minPlayers":6,"maxPlayers":9,"gkRequired":false,"minutes":12,"space":"24m×20m／4ミニゴール","constraint":"奪取後6秒以内の得点は2点。閉じていれば反対ゴールへ展開してよい。","question":"奪った瞬間、最初にどこを見た？","judgment":"GOを最初に確認し、無理なら別の出口へ変える。","kpiHint":"奪取後6秒以内に前進できた割合","difficulty":"標準","videoUrl":"","sourceTag":"FUNINO"},{"id":"funino-hockey-12","name":"3v3+2 フニーニョ｜CONNECT","phase":"守→攻","style":"全員参加重視","principles":["前方選手が異なる高さを取る","HOLD・RESETを選ぶ"],"purpose":"奪取後に次のプレーへつながる位置を取り、前進と保持を選択する。","minPlayers":8,"maxPlayers":12,"gkRequired":false,"minutes":16,"space":"30m×24m／4ミニゴール","constraint":"3対3＋外サポート2。外サポートは保持側を助ける。奪取後はGO・SWITCH・HOLDのどれを選んでもよい。","question":"次に何が起きそう？ どこにいれば次のプレーにつながる？","judgment":"ボールへ寄るだけでなく次のプレーにつながる位置を取る。","kpiHint":"奪取後に2つ以上の前進・保持選択肢を作れた回数","difficulty":"標準","videoUrl":"","sourceTag":"FUNINO"}];
@@ -355,7 +438,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'7.1-auth-ready',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'7.2-rls-ready',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -381,4 +464,5 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V70_CLOUD_SECURE_FOUNDATION -->
 <!-- HC_V701_PRACTICE_DETAIL_CARD -->
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
+<!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
 </body></html>
