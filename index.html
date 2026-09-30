@@ -24,7 +24,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .tab{flex:0 0 auto;border:1px solid #30464e;background:#0d1a20;color:#a9bac0;border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px}.tab.on{background:var(--lime);border-color:var(--lime);color:#071014}
 .tabpane{display:none}.tabpane.on{display:block}.kpirow{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid #203139}.counter{min-width:48px;text-align:center;font-size:25px;font-weight:950}.smallbtn{border:1px solid #344b54;background:#14242b;color:#fff;border-radius:11px;padding:9px 12px;font-weight:950}.score3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.score3 button{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:11px;padding:11px 5px;font-weight:900}.score3 button.on{background:var(--lime);color:#071014;border-color:var(--lime)}
 .videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}.tag{display:inline-block;border:1px solid #31464e;border-radius:999px;padding:4px 7px;margin:3px 3px 0 0;font-size:10px;color:#b9c8cd}.libraryTools{display:grid;grid-template-columns:1fr auto;gap:7px;margin:10px 0}.libraryTools .btn2{width:auto}
-.methodMapV55 details{border:1px solid #2a3e47;border-radius:14px;margin:8px 0;padding:10px}.methodMapV55 summary{font-weight:950;cursor:pointer}.methodLine{margin:8px 0 0 10px;padding-left:10px;border-left:2px solid #294047}.methodJudge{font-size:11px;color:#9fb1b7;margin-top:4px;line-height:1.5} .exmark{position:absolute;transform:translate(-50%,-50%);font-size:25px;font-weight:900;color:#d44;line-height:1}</style>
+.methodMapV55 details{border:1px solid #2a3e47;border-radius:14px;margin:8px 0;padding:10px}.methodMapV55 summary{font-weight:950;cursor:pointer}.methodLine{margin:8px 0 0 10px;padding-left:10px;border-left:2px solid #294047}.methodJudge{font-size:11px;color:#9fb1b7;margin-top:4px;line-height:1.5} .exmark{position:absolute;transform:translate(-50%,-50%);font-size:25px;font-weight:900;color:#d44;line-height:1} .miniGoal{position:absolute;width:8px;height:42px;border:2px solid #555}.miniGoal.right{right:2%;border-left:0}.miniGoal.left{left:2%;border-right:0}.zoneV76{position:absolute;border:2px dashed #d44;background:rgba(220,60,60,.05)}.serverV76{position:absolute;transform:translate(-50%,-50%);font-weight:900;background:#fff;border:2px solid #555;border-radius:50%;padding:2px 5px}.scoreZoneV76{position:absolute;width:12%;border:2px dashed #d44;background:rgba(220,60,60,.04)}.neutral{background:#f0b429;font-size:9px;color:#111;display:flex;align-items:center;justify-content:center}.rotateV76{position:absolute;left:4%;bottom:3%;font-size:10px;font-weight:800;background:#fff;padding:2px 5px;border-radius:5px}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>.econoDiagram{margin:10px 0;padding:10px;border:1px solid #d9e2e8;border-radius:14px;background:#f8fbfa}.epitch{height:150px;position:relative;border:2px solid #7aa38b;border-radius:10px;background:#eef6f0;overflow:hidden}.epitch:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #9bb5a4}.edot{position:absolute;width:18px;height:18px;border-radius:50%;transform:translate(-50%,-50%)}.ea{background:#2b78d0}.ed{background:#263238}.earrow{position:absolute;height:3px;background:#d44;transform-origin:left center}.earrow:after{content:"";position:absolute;right:-2px;top:-4px;border-left:8px solid #d44;border-top:5px solid transparent;border-bottom:5px solid transparent}.egoal{position:absolute;width:9px;height:45px;border:2px solid #555;border-left:0}</style></head>
 <body>
@@ -193,12 +193,45 @@ function econoDiagramV74(x){
  return `<div class="econoDiagram"><div class="k">戦術図｜${String(n).padStart(2,'0')}</div><b>${esc(d[0])}</b><div class="epitch">${z}<span class="egoal" style="right:2%;top:35%"></span></div><div class="meta"><b>図のコンセプト：</b>${esc(d[1])}<br>青＝攻撃／黒＝守備／赤矢印＝移動・狙い／×＝閉じたい場所</div></div>`
 }
 
-function setupDiagramV75(x){
- let min=+x?.minPlayers||1,max=+x?.maxPlayers||30,space=x?.space||'自由設定',gk=x?.gkRequired?'GKあり':'GKなしでも可';
- let total=Math.min(10,Math.max(4,Math.round((min+max)/2))),half=Math.ceil(total/2),dots='';
- for(let i=0;i<total;i++){let left=i<half?22+(i%3)*11:60+(i%3)*10,top=25+(Math.floor((i%half)/3))*24+(i%3)*5;dots+=`<span class="edot ${i<half?'ea':'ed'}" style="left:${left}%;top:${Math.min(82,top)}%"></span>`}
- return `<div class="econoDiagram"><div class="k">SETUP｜設営イメージ</div><div class="epitch">${dots}<span class="egoal" style="right:2%;top:35%"></span></div><div class="meta"><b>人数：</b>${min}〜${max}人　<b>GK：</b>${gk}<br><b>サイズ：</b>${esc(space)}<br><b>時間：</b>${+x?.minutes||15}分<br><span class="muted">※図は設営の目安。正確な配置はルール・制約と合わせて確認。</span></div></div>`
+function setupDiagramV76(x){
+ let id=String(x?.id||x?.practiceId||''),m=id.match(/photo60-(\d+)-(\d+)/),theme=m?+m[1]:0,variant=m?+m[2]:1;
+ let min=+x?.minPlayers||1,max=+x?.maxPlayers||30,space=x?.space||'自由設定';
+ let style=x?.style||'',title=style==='反復量重視'?'反復型':style==='全員参加重視'?'全員参加型':'ゲーム型';
+ let P=(c,l,t,lab='')=>`<span class="edot ${c}" style="left:${l}%;top:${t}%">${lab}</span>`;
+ let A=(l,t,w,r=0)=>`<span class="earrow" style="left:${l}%;top:${t}%;width:${w}%;transform:rotate(${r}deg)"></span>`;
+ let G=(side,top)=>`<span class="miniGoal ${side}" style="top:${top}%"></span>`;
+ let Z=(l,t,w,hh)=>`<span class="zoneV76" style="left:${l}%;top:${t}%;width:${w}%;height:${hh}%"></span>`;
+ let base=[
+  [P('ea',27,50)+P('ed',48,50)+P('ed',61,32)+G('right',38),A(33,50,20)],
+  [P('ea',30,45)+P('ed',53,45)+G('right',38),A(35,45,20)],
+  [P('ea',30,35)+P('ea',30,65)+P('ed',52,48)+G('right',38),A(35,38,22,18)],
+  [P('ea',28,50)+P('ed',48,48)+P('ed',60,30)+P('ea',57,20)+G('right',38),A(50,40,15,-35)],
+  [P('ea',30,50)+P('ea',53,25)+P('ed',48,48)+P('ed',64,36)+G('right',38),A(54,29,14,28)],
+  [P('ea',28,50)+P('ed',50,32)+P('ed',50,68)+G('right',38),Z(46,38,10,24)],
+  [P('ea',55,48)+P('ed',38,60)+G('right',38),A(42,58,25,-18)],
+  [P('ea',28,50)+P('ed',48,50)+P('ed',59,30)+G('right',38),A(33,48,26,-28)],
+  [P('ea',28,50)+P('ed',48,50)+P('ea',66,28)+G('right',38),A(49,42,14,-42)],
+  [P('ea',25,28)+P('ea',39,52)+P('ea',54,75)+P('ed',61,50)+G('right',38),A(42,50,23)],
+  [P('ed',47,28)+P('ed',47,72)+P('ea',33,50)+P('ea',59,50)+G('right',38),Z(49,37,13,26)+A(38,50,18)],
+  [P('ea',26,25)+P('ed',48,30)+P('ed',48,50)+P('ed',48,70)+G('right',38),A(48,30,13,90)],
+  [P('ea',27,50)+P('ed',47,50)+P('ea',68,50)+G('right',38),Z(55,44,12,12)],
+  [P('ea',28,50)+P('ed',47,34)+P('ed',47,52)+P('ed',58,68)+G('right',38),A(57,64,13,-85)],
+  [P('ea',28,50)+P('ed',47,42)+P('ed',53,62)+G('right',38),Z(56,40,12,22)+A(53,59,11,-55)],
+  [P('ea',47,28)+P('ed',44,48)+P('ed',62,48)+G('right',38),A(48,34,23,40)],
+  [P('ea',28,50)+P('ed',46,50)+P('ea',55,25)+P('ed',65,35)+G('right',38),A(34,50,12)+A(57,29,9,25)],
+  [P('ea',36,25)+P('ed',50,42)+G('right',38),A(40,30,32,32)],
+  [P('ea',39,28)+P('ed',54,43)+G('right',38),A(54,43,18,90)+A(54,63,18,-90)],
+  [P('ea',36,50)+P('ed',54,50)+P('ea',51,24)+G('right',38),Z(58,25,10,28)+A(45,28,16,28)]
+ ];
+ let z=(base[Math.max(0,theme-1)]||base[0]);
+ // Three variants of each theme: change environment, not merely the label.
+ if(variant===1) z+=`<span class="serverV76" style="left:12%;top:15%">S</span>`;
+ if(variant===2) z+=G('left',38)+`<span class="scoreZoneV76" style="right:1%;top:22%;height:56%"></span>`;
+ if(variant===3) z+=P('neutral',50,88,'+1')+`<span class="rotateV76">全員ローテーション</span>`;
+ let rule=variant===1?'サーバーから再開し、同じ判断を反復':variant===2?'両方向・得点条件を使ってゲーム化':'待ち時間を減らし、役割を順番に交代';
+ return `<div class="econoDiagram"><div class="k">UNIQUE SETUP｜${String(theme).padStart(2,'0')}-${variant} ${esc(title)}</div><div class="epitch">${z}</div><div class="meta"><b>サイズ：</b>${esc(space)}　<b>人数：</b>${min}〜${max}人　<b>時間：</b>${+x?.minutes||15}分<br><b>設営：</b>${esc(rule)}<br><b>ルール：</b>${esc(x?.constraint||'自由設定')}<br><span class="muted">青＝攻撃／黒＝守備／S＝サーバー／+1＝フリーマン。図はこのメニュー固有の設営イメージ。</span></div></div>`
 }
+function setupDiagramV75(x){return setupDiagramV76(x)}
 function storageHealthV75(){
  let keys=['hc_practice_library_v54','hc_training_records','hc_today_plan'],bytes=0,parts=[];
  keys.forEach(k=>{let v=localStorage.getItem(k)||'';bytes+=v.length*2;parts.push([k,v.length*2])});
@@ -219,7 +252,7 @@ function practiceDetailV701(ref){
  let players=(d.minPlayers||d.maxPlayers)?`${+d.minPlayers||1}〜${+d.maxPlayers||30}人`:'自由';
  openModal(`<div class="k">PRACTICE DETAIL</div><h2>${esc(d.name||'練習')}</h2>
  <div class="menu"><b>コート設定</b><div class="meta"><b>人数：</b>${players}<br><b>GK：</b>${d.gkRequired?'必要':'なしでも可'}<br><b>サイズ：</b>${esc(d.space||'自由設定')}<br><b>時間：</b>${+d.minutes||15}分${d.difficulty?`<br><b>難易度：</b>${esc(d.difficulty)}`:''}</div></div>
- <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}${setupDiagramV75(d)}
+ <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}${isEconoV73(d)?setupDiagramV76(d):setupDiagramV75(d)}
  <div class="menu"><b>この練習で見ること</b><div class="meta"><b>目的：</b>${esc(d.purpose||'—')}<br><b>原則：</b>${esc((d.principles||[]).join(' / ')||'—')}<br><b>判断ポイント：</b>${esc(d.judgment||'—')}<br><b>選手への問い：</b>${esc(d.question||'—')}<br><b>KPI：</b>${esc(d.kpiHint||'—')}</div></div>
  ${safeUrl(d.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(d.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}`)
 }
@@ -306,7 +339,7 @@ function renderCloudV70(){
  setTimeout(renderStorageHealthV75,0);
 }
 function autoSaveMetaV70(){
- localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.5-lightweight-setup'}))
+ localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.6-econo-60-unique-setup'}))
 }
 
 
@@ -465,7 +498,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'7.5-lightweight-setup',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'7.6-econo-60-unique-setup',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -492,4 +525,4 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V701_PRACTICE_DETAIL_CARD -->
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
 <!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
-<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --></body></html>
+<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --><!-- HC_V76_ECONO_60_UNIQUE_SETUP_LIGHTWEIGHT --></body></html>
