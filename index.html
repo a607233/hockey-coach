@@ -3489,4 +3489,68 @@ window.HCTodayHubV36={mount,openRec};setTimeout(mount,3200);
 </script>
 <!-- /HC_TODAY_HUB_V36 -->
 
+
+<!-- HC_TODAY_SIMPLE_FLOW_V37 -->
+<style>
+/* V3.7: 設計画面は STEP1 に集中 */
+#hcTodayUnifiedV3 .tu3-step:nth-of-type(2),
+#hcTodayUnifiedV3 .tu3-step:nth-of-type(3),
+#hcTodayUnifiedV3 .tu3-step:nth-of-type(4){display:none!important}
+#hcTodayUnifiedV3 #tu3Save{display:none!important}
+#hc37Recommend{width:100%;margin-top:14px;border:0;border-radius:16px;padding:15px;background:#d7ff39;color:#071014;font-size:15px;font-weight:950}
+#hc37KpiBtn{width:100%;margin-top:8px;border:1px solid #38505a;border-radius:14px;padding:12px;background:#122229;color:#fff;font-weight:900}
+#hc37KpiModal{position:fixed;inset:0;z-index:100003;background:rgba(0,0,0,.75);display:flex;align-items:flex-end}
+.hc37sheet{width:100%;max-height:88vh;overflow:auto;background:#081419;border:1px solid #314850;border-radius:22px 22px 0 0;padding:17px 14px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box;color:#fff}
+.hc37head{display:flex;justify-content:space-between;align-items:center}.hc37x{border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px}
+.hc37in{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:11px;color:#fff;padding:11px;margin-top:7px}.hc37save{width:100%;border:0;border-radius:11px;padding:12px;background:#d7ff39;color:#071014;font-weight:950;margin-top:10px}
+</style>
+<script>
+(function(){'use strict';
+function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
+function simplify(){
+ const root=document.getElementById('hcTodayUnifiedV3');if(!root)return;
+ let save=document.getElementById('tu3Save');if(!save)return;
+ if(!document.getElementById('hc37Recommend')){
+   let b=document.createElement('button');b.id='hc37Recommend';b.textContent='✨ このテーマのおすすめ練習を見る';
+   b.onclick=()=>{
+     /* STEP1の最新選択を保存して、おすすめ判定へ渡す */
+     try{
+       let s=window.HCTodayUnifiedV3?.collect?.();
+       if(s){
+         localStorage.setItem('hc_today_v21',JSON.stringify(s));
+         let m=safe('hc_today_session_meta_v31',{});
+         m.theme=s.theme||m.theme||'';m.cat=s.cat||m.cat||'';m.principles=s.principles||m.principles||[];
+         localStorage.setItem('hc_today_session_meta_v31',JSON.stringify(m));
+       }
+     }catch(e){}
+     window.HCTodayHubV36?.openRec();
+   };
+   save.parentNode.insertBefore(b,save);
+   let k=document.createElement('button');k.id='hc37KpiBtn';k.textContent='◎ KPI・振り返りを開く';
+   k.onclick=openKpi;b.after(k)
+ }
+}
+function openKpi(){
+ document.getElementById('hc37KpiModal')?.remove();
+ let m=safe('hc_today_session_meta_v31',{}),ks=m.kpis||[];
+ let d=document.createElement('div');d.id='hc37KpiModal';
+ d.innerHTML=`<div class="hc37sheet"><div class="hc37head"><div><div style="font-size:10px;color:#d7ff39;font-weight:950">SESSION REVIEW</div><h3 style="margin:2px 0">KPI・振り返り</h3></div><button class="hc37x">×</button></div>
+ <p style="font-size:11px;color:#9fb0b6">練習設計とは分けて、練習後に記録します。</p>
+ <div id="hc37Kpis">${ks.length?ks.map((k,i)=>`<input class="hc37in hc37kv" data-i="${i}" placeholder="${String(k.name||k).replace(/"/g,'&quot;')}" value="${String(k.value||'').replace(/"/g,'&quot;')}">`).join(''):'<div style="font-size:12px;color:#9fb0b6">KPIはコーチモード終了時にも入力できます。</div>'}</div>
+ <textarea id="hc37Reflection" class="hc37in" style="min-height:100px" placeholder="今日の気づき・次回の課題">${m.reflection||''}</textarea>
+ <button class="hc37save" id="hc37Save">保存</button></div>`;
+ document.body.appendChild(d);d.querySelector('.hc37x').onclick=()=>d.remove();d.onclick=e=>{if(e.target===d)d.remove()};
+ document.getElementById('hc37Save').onclick=()=>{
+   let mm=safe('hc_today_session_meta_v31',{});
+   let ins=[...document.querySelectorAll('.hc37kv')];
+   if(ins.length)mm.kpis=(mm.kpis||[]).map((k,i)=>typeof k==='string'?{name:k,value:ins[i]?.value||''}:Object.assign({},k,{value:ins[i]?.value||''}));
+   mm.reflection=document.getElementById('hc37Reflection').value;localStorage.setItem('hc_today_session_meta_v31',JSON.stringify(mm));d.remove()
+ }
+}
+const mo=new MutationObserver(()=>simplify());mo.observe(document.documentElement,{childList:true,subtree:true});
+window.HCTodaySimpleV37={simplify,openKpi};setTimeout(simplify,2800);
+})();
+</script>
+<!-- /HC_TODAY_SIMPLE_FLOW_V37 -->
+
 </body></html>
