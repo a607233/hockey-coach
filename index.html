@@ -3365,4 +3365,53 @@ window.HCCoachModeV34={start,mountButton};setTimeout(mountButton,3000);
 </script>
 <!-- /HC_COACH_MODE_V34 -->
 
+
+<!-- HC_COACH_MODE_V35 -->
+<style>
+.hc35info{margin-top:10px}.hc35toggle{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid #314750;background:#102027;color:#fff;border-radius:13px;padding:11px 12px;font-weight:900}
+.hc35panel{display:none;margin-top:7px;background:#0b171c;border:1px solid #294049;border-radius:13px;padding:12px;font-size:13px;line-height:1.65;color:#d7e1e4}.hc35panel.open{display:block}.hc35panel b{color:#d7ff39}
+.hc35memo{margin-top:10px;background:#0b171c;border:1px solid #294049;border-radius:14px;padding:12px}.hc35memo textarea{width:100%;box-sizing:border-box;min-height:105px;background:#071014;border:1px solid #30464e;border-radius:11px;color:#fff;padding:10px;font-size:14px;resize:vertical}
+.hc35save{width:100%;margin-top:7px;border:1px solid #3a5058;background:#17272d;color:#fff;border-radius:11px;padding:10px;font-weight:900}.hc35saved{font-size:10px;color:#d7ff39;margin-top:5px;min-height:14px}
+</style>
+<script>
+(function(){'use strict';
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function P(){try{return Array.isArray(plan)?plan:JSON.parse(localStorage.getItem('hc_today_plan')||'[]')}catch(e){return []}}
+function notes(){try{return JSON.parse(localStorage.getItem('hc_coach_live_notes_v35')||'{}')}catch(e){return {}}}
+function currentIndex(){
+ const s=document.querySelector('#hc34Mode .hc34step')?.textContent||'1 / 1';
+ return Math.max(0,(parseInt(s,10)||1)-1)
+}
+function enhance(){
+ const body=document.querySelector('#hc34Mode .hc34body');if(!body||body.querySelector('.hc35info'))return;
+ const i=currentIndex(),x=P()[i]||{},n=notes(),key=String(x.id||i),saved=n[key]||x.liveMemo||'';
+ const wrap=document.createElement('div');wrap.className='hc35info';
+ wrap.innerHTML=`<button class="hc35toggle" id="hc35Toggle"><span>📋 制約・説明を見る</span><span>⌄</span></button>
+ <div class="hc35panel" id="hc35Panel">
+ ${x.purpose?'<b>狙い</b><br>'+esc(x.purpose)+'<br><br>':''}
+ ${x.constraint?'<b>制約・ルール</b><br>'+esc(x.constraint)+'<br><br>':''}
+ ${x.question?'<b>コーチングの問い</b><br>'+esc(x.question)+'<br><br>':''}
+ ${x.memo?'<b>事前メモ</b><br>'+esc(x.memo):''}
+ ${(!x.purpose&&!x.constraint&&!x.question&&!x.memo)?'この項目にはまだ説明がありません。「今日の練習」の編集から追加できます。':''}
+ </div>
+ <div class="hc35memo"><div style="font-size:10px;color:#d7ff39;font-weight:950;letter-spacing:1px">LIVE COACH MEMO</div><div style="font-weight:900;margin:4px 0 7px">練習中メモ</div><textarea id="hc35Memo" placeholder="例：1st DFの寄せが遅い／右サイドでは即時奪回できた／次回はコート幅を狭くする">${esc(saved)}</textarea><button class="hc35save" id="hc35Save">メモを保存</button><div class="hc35saved" id="hc35Saved"></div></div>`;
+ const controls=body.querySelector('.hc34meta:last-of-type');
+ body.appendChild(wrap);
+ document.getElementById('hc35Toggle').onclick=()=>document.getElementById('hc35Panel').classList.toggle('open');
+ document.getElementById('hc35Save').onclick=saveMemo;
+}
+function saveMemo(){
+ const i=currentIndex(),x=P()[i]||{},key=String(x.id||i),n=notes(),v=document.getElementById('hc35Memo')?.value||'';
+ n[key]=v;localStorage.setItem('hc_coach_live_notes_v35',JSON.stringify(n));
+ let p=P();if(p[i]){p[i].liveMemo=v;localStorage.setItem('hc_today_plan',JSON.stringify(p));try{plan=p}catch(e){}}
+ const z=document.getElementById('hc35Saved');if(z){z.textContent='✓ 保存しました';setTimeout(()=>z.textContent='',1600)}
+}
+const observer=new MutationObserver(()=>{if(document.getElementById('hc34Mode'))setTimeout(enhance,20)});
+observer.observe(document.documentElement,{childList:true,subtree:true});
+window.HCCoachModeV35={enhance,saveMemo};
+setTimeout(enhance,3000);
+})();
+</script>
+<!-- /HC_COACH_MODE_V35 -->
+
 </body></html>
