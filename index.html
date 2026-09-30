@@ -40,7 +40,11 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .vb-pass{stroke:#fff;stroke-width:2.5;stroke-dasharray:7 4}.vb-scan{stroke:#ff9f43;stroke-width:2.5;stroke-dasharray:3 3}
 .vb-server{fill:#fff;stroke:#333;stroke-width:2}.vb-caption,.vb-rule{padding:9px 12px;font-size:12px;line-height:1.65}.vb-rule{background:#f5f8f6;border-top:1px solid #e1e9e3}
 </style>
-</head>
+<style>
+.fieldReadyV78{margin:12px 0;padding:12px;border:1px solid #d7e2da;border-radius:16px;background:#fff}
+.fr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.fr-grid>div{padding:9px;border-radius:10px;background:#f4f8f5}.fr-grid b,.fr-grid span{display:block}.fr-grid span{font-size:12px;line-height:1.5;margin-top:3px}.fr-step{margin-top:9px;padding:10px;border-left:4px solid #315f46;background:#f7faf8;font-size:12px;line-height:1.7}
+@media(max-width:480px){.fr-grid{grid-template-columns:1fr}}
+</style></head>
 <body>
 <header><div class="brand">🏑 HOCKEY COACH <small>PERFORMANCE</small></div><div class="sub">TEAM DEVELOPMENT SYSTEM</div></header>
 <main>
@@ -207,6 +211,35 @@ function econoDiagramV74(x){
  return `<div class="econoDiagram"><div class="k">戦術図｜${String(n).padStart(2,'0')}</div><b>${esc(d[0])}</b><div class="epitch">${z}<span class="egoal" style="right:2%;top:35%"></span></div><div class="meta"><b>図のコンセプト：</b>${esc(d[1])}<br>青＝攻撃／黒＝守備／赤矢印＝移動・狙い／×＝閉じたい場所</div></div>`
 }
 
+function fieldReadyV78(x){
+ const id=String(x?.id||''),m=id.match(/photo60-(\d+)-(\d+)/),t=m?+m[1]:0,v=m?+m[2]:0;
+ const min=+x?.minPlayers||4,max=+x?.maxPlayers||12,mins=+x?.minutes||15;
+ const groups=max<=6?1:max<=12?2:Math.ceil(max/6);
+ const starts={
+ 1:'攻撃者をゴール方向に置き、DFは正面から間合いを調整',
+ 2:'攻撃者―DF―ゴールが一直線になる位置から開始',
+ 3:'攻撃者を中央、DFを斜め前方に置いて身体の向きを作る',
+ 4:'1st DFとカバー役をずらして配置し、味方を見える位置にする',
+ 5:'ボール保持者とマーク対象を異なるレーンに配置',
+ 6:'DF2人の間に攻撃者が狙えるゲートを作る',
+ 7:'攻撃者をDFよりゴール側へ抜けた状態から開始',
+ 8:'中央レーンを作り、守備は中央を閉じた状態から開始',
+ 9:'DFの背後にも攻撃者を置き、首を振る必要がある配置',
+ 10:'攻撃3人を前・中・後の異なる高さに配置',
+ 11:'守備ライン2枚の間に受け手を置く',
+ 12:'MF役3人を横並びにし、ボール位置でスライド',
+ 13:'保持者と前方ターゲットの間にDFを配置',
+ 14:'ボール側に守備人数を集められる非対称配置',
+ 15:'縦コースとボール周辺を同時に守る配置',
+ 16:'攻撃者のクロスランに対してDF2人を配置',
+ 17:'保持者への1st DFと、受け渡し役DFを配置',
+ 18:'攻撃者が斜め背後へ走れるスタート位置',
+ 19:'背後ラン後に戻る基準位置をコーンで示す',
+ 20:'攻撃側が失い得る局面と、その先の出口を先に設定'
+ };
+ const variant=v===1?'1回ごとにサーバーから再開。短い反復を連続させる。':v===2?'得点条件をつけてゲーム化。プレーを止めず判断を増やす。':'待機列を作らず、フリーマン・役割交代で全員を動かす。';
+ return `<div class="fieldReadyV78"><div class="k">FIELD READY｜そのまま設営</div><div class="fr-grid"><div><b>① コート</b><span>${esc(x?.space||'自由設定')}</span></div><div><b>② 人数</b><span>${min}〜${max}人／目安${groups}グループ</span></div><div><b>③ スタート位置</b><span>${esc(starts[t]||'図の位置を基準に配置')}</span></div><div><b>④ 回し方</b><span>${esc(variant)}</span></div></div><div class="fr-step"><b>開始前に伝えること</b><br>${esc(x?.constraint||'ルール・制約を確認')}<br><b>選手への問い：</b>${esc(x?.question||'何が見えた？')}<br><b>ノルマ：</b>${esc(econoNormV73(x))}<br><b>1セット：</b>${Math.max(2,Math.min(5,Math.round(mins/3)))}分目安 × 複数セット</div></div>`
+}
 function setupDiagramV77(x){
  const id=String(x?.id||x?.practiceId||''),m=id.match(/photo60-(\d+)-(\d+)/),t=m?+m[1]:1,v=m?+m[2]:1;
  const min=+x?.minPlayers||4,max=+x?.maxPlayers||12,space=x?.space||'自由設定';
@@ -266,7 +299,7 @@ function practiceDetailV701(ref){
  let players=(d.minPlayers||d.maxPlayers)?`${+d.minPlayers||1}〜${+d.maxPlayers||30}人`:'自由';
  openModal(`<div class="k">PRACTICE DETAIL</div><h2>${esc(d.name||'練習')}</h2>
  <div class="menu"><b>コート設定</b><div class="meta"><b>人数：</b>${players}<br><b>GK：</b>${d.gkRequired?'必要':'なしでも可'}<br><b>サイズ：</b>${esc(d.space||'自由設定')}<br><b>時間：</b>${+d.minutes||15}分${d.difficulty?`<br><b>難易度：</b>${esc(d.difficulty)}`:''}</div></div>
- <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}${setupDiagramV77(d)}
+ <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}${setupDiagramV77(d)}${isEconoV73(d)?fieldReadyV78(d):''}
  <div class="menu"><b>この練習で見ること</b><div class="meta"><b>目的：</b>${esc(d.purpose||'—')}<br><b>原則：</b>${esc((d.principles||[]).join(' / ')||'—')}<br><b>判断ポイント：</b>${esc(d.judgment||'—')}<br><b>選手への問い：</b>${esc(d.question||'—')}<br><b>KPI：</b>${esc(d.kpiHint||'—')}</div></div>
  ${safeUrl(d.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(d.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}`)
 }
@@ -353,7 +386,7 @@ function renderCloudV70(){
  setTimeout(renderStorageHealthV75,0);
 }
 function autoSaveMetaV70(){
- localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.7-visual-training-board'}))
+ localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.8-field-ready'}))
 }
 
 
@@ -512,7 +545,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'7.7-visual-training-board',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'7.8-field-ready',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -539,4 +572,4 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V701_PRACTICE_DETAIL_CARD -->
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
 <!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
-<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --><!-- HC_V76_ECONO_60_UNIQUE_SETUP_LIGHTWEIGHT --><!-- HC_V77_PHOTO_LIKE_ECONO_VISUAL_BOARD --></body></html>
+<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --><!-- HC_V76_ECONO_60_UNIQUE_SETUP_LIGHTWEIGHT --><!-- HC_V77_PHOTO_LIKE_ECONO_VISUAL_BOARD --><!-- HC_V78_FIELD_READY_60_ALIGNMENT --></body></html>
