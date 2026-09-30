@@ -26,6 +26,8 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}
 
 .invitebox{text-align:center}.qrwrap{display:inline-block;background:#fff;padding:14px;border-radius:16px;margin:10px auto}.inviteurl{font-size:12px;word-break:break-all;background:#071014;border:1px solid #30464e;border-radius:11px;padding:10px;text-align:left;color:#dce7ea}
+
+.principleTree{margin-top:10px}.treeGroup{border:1px solid #294047;border-radius:14px;margin:8px 0;overflow:hidden}.treeHead{padding:12px 14px;font-weight:800;cursor:pointer;background:#102027}.treeBody{padding:10px 12px}.chipline{display:flex;gap:7px;flex-wrap:wrap}.chip2{border:1px solid #36535d;background:#0b171c;color:#dce7ea;border-radius:999px;padding:7px 10px;font-size:12px}.libtop{display:flex;justify-content:space-between;gap:8px;align-items:center}.smalltag{font-size:11px;border:1px solid #34505a;border-radius:999px;padding:4px 7px;color:#bcd0d6}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -52,7 +54,10 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <button id="recommendBtn" class="btn" style="margin-top:13px">✨ 3つの練習案を見る</button>
  </div>
  <div class="card"><div class="row"><div><div class="k">TODAY'S MENU</div><div class="title" style="font-size:19px">今日のメニュー</div></div><button class="btn2" onclick="addBlank()">＋追加</button></div><div id="menuList"></div><div class="row"><div class="muted">合計</div><div style="text-align:right"><b><span id="totalMin">0</span>分</b></div></div><button class="btn" style="margin-top:12px" onclick="startCoach()">▶ コーチモード開始</button></div>
-</div><div id="tt-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">TRAINING LIBRARY</div><div class="title">練習メニュー</div></div><button class="btn2" onclick="editLib(-1)">＋ 練習追加</button></div><p class="muted">追加・編集・動画URL・今日のメニューへの追加に対応。</p><div id="libFilters" class="tabs"></div><div id="libList"></div></div></div></section>
+<div class="card"><div class="k">LIBRARY RECOMMEND</div><div class="title">ライブラリから3案</div><p class="muted">今日の局面・原則・選手案などから候補を出します。正解を決めるのではなく、選ぶための3案です。</p><button class="btn2" onclick="renderSmartLibrarySuggestions()">候補を更新</button><div id="smartLibrarySuggestions"></div></div></div><div id="tt-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">TRAINING LIBRARY</div><div class="title">練習メニュー</div></div><button class="btn2" onclick="editLib(-1)">＋ 練習追加</button></div><p class="muted">原則から探す／検索する／複製して育てる。登録した練習は今日の3案提案にも使います。</p>
+<div class="field"><input id="libSearch" class="input" placeholder="練習名・原則・目的を検索" oninput="renderLib()"></div>
+<div id="libFilters" class="tabs"></div><div id="principleFilters" class="tabs"></div>
+<div id="libCount" class="muted"></div><div id="libList"></div></div></div></section>
 
 <section id="analysis" class="page">
  <div class="card"><div class="k">BOTTOM-UP REVIEW</div><div class="title">練習後の振り返り</div><p class="muted">全部を数える必要はありません。今日は「何を確かめたいか」に合わせて、使うKPIだけ選びます。</p>
@@ -73,7 +78,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
   <button class="tab on" data-more="ph">Philosophy</button><button class="tab" data-more="method">原則・メソッド</button><button class="tab" data-more="team">チーム</button><button class="tab" data-more="invite">招待</button><button class="tab" data-more="settings">設定</button>
  </div>
  <div id="more-ph" class="tabpane on"><div class="card"><div class="row"><div><div class="k">TEAM IDENTITY</div><div class="title">Philosophy</div></div><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><p class="muted">チームが大切にする考え方。選手と一緒に育てていきます。</p><div id="philosophyList"></div></div></div>
- <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
+ <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div class="card" style="margin-top:12px"><div class="k">PRINCIPLE TREE</div><div class="title">原則ツリー</div><p class="muted">局面 → 主原則 → 準原則。必要なところだけ開きます。</p><div id="principleTree" class="principleTree"></div></div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
  <div id="more-team" class="tabpane"><div class="card"><div class="k">TEAM</div><div class="title">チーム設定</div><div class="field"><label>チーム名</label><input id="teamName" class="input" placeholder="TEAM NAME"></div><div class="field"><label>シーズン</label><input id="seasonName" class="input" placeholder="2026"></div><button class="btn" onclick="saveTeamSettings()">保存</button></div></div>
  <div id="more-invite" class="tabpane"><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">役割を選ぶと、招待URLとQRコードを発行します。URLはコピーしてLINE等でも共有できます。</p><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button></div><div id="inviteResult"></div></div>
  <div id="more-settings" class="tabpane"><div class="card"><div class="k">OWNER CONTROL</div><div class="title">権限</div><div class="field"><label>現在の役割</label><select id="currentRole" class="input" onchange="saveOwnerRole()"><option>OWNER</option><option>STAFF</option><option>PLAYER</option><option>PARENT</option></select></div><p class="muted">アーカイブ・復元はOWNERのみ。正式なアカウント権限は後で認証と接続します。</p></div><div class="card"><div class="k">ARCHIVE</div><div class="title">アーカイブ管理</div><div id="archiveList"></div></div><div class="card"><div class="k">DATA</div><div class="title">データ</div><button class="btn2" onclick="exportData()">データを書き出す</button></div></div>
@@ -202,11 +207,71 @@ function renderArchive(){let e=document.getElementById('archiveList');if(!e)retu
 function exportData(){let data={version:'5.2',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethods();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';currentRole.value=ownerRole();renderArchive()}
-renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupTodayTabs();renderLib();acceptInviteFromUrl();
+
+/* ===== HC V5.6 PRINCIPLE TREE + SMART LIBRARY ===== */
+const PRINCIPLE_TREE_V56={
+'攻撃':[
+ {main:'前進する',subs:['前を認知する','幅と深さを取る','ラインを越える','キャリーとパスを選ぶ']},
+ {main:'優位性をつくる',subs:['数的優位','位置的優位','質的優位','相手を動かす']},
+ {main:'フィニッシュする',subs:['サークル侵入','ゴール前の優位','リバウンド','シュート選択']}
+],
+'守備':[
+ {main:'ゴールを守る',subs:['中央を閉じる','危険なスペースを消す','マークを管理する']},
+ {main:'ボールを奪う',subs:['1st DFが制限する','誘導する','2nd DFが連動する','奪う瞬間を共有する']},
+ {main:'コンパクトに守る',subs:['ライン間を狭くする','横の距離を保つ','背後を管理する']}
+],
+'攻→守':[
+ {main:'即時奪回',subs:['ロスト直後に反応する','最寄りが1st DF','周囲が前進を消す','ボール周辺を圧縮する']},
+ {main:'撤退・遅らせる',subs:['前進を遅らせる','中央を守る','数的不利を解消する']}
+],
+'守→攻':[
+ {main:'前進を狙う',subs:['奪った瞬間に前を見る','前方の選手を使う','キャリーで運ぶ']},
+ {main:'優位を広げる',subs:['幅を取る','サポートを作る','逆サイドを見る']},
+ {main:'保持を選ぶ',subs:['無理なら保持する','再配置する','次の前進機会を作る']}
+]};
+let pf='すべて';
+function flatPrinciples(phase){let groups=PRINCIPLE_TREE_V56[phase]||[];return groups.flatMap(g=>[g.main,...g.subs])}
+function renderPrincipleTree(){let e=document.getElementById('principleTree');if(!e)return;e.innerHTML=Object.entries(PRINCIPLE_TREE_V56).map(([phase,groups])=>`<div class="treeGroup"><div class="treeHead" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">${phase}　<span class="muted">› ${groups.length}主原則</span></div><div class="treeBody" hidden>${groups.map(g=>`<div style="margin-bottom:12px"><b>${esc(g.main)}</b><div class="chipline" style="margin-top:6px">${g.subs.map(s=>`<span class="chip2">${esc(s)}</span>`).join('')}</div></div>`).join('')}</div></div>`).join('')}
+function v56RenderLib(){
+ if(!document.getElementById('libList'))return;
+ let phases=['すべて',...PHASES];
+ libFilters.innerHTML=phases.map(p=>`<button class="tab ${lf===p?'on':''}" onclick="lf='${p}';pf='すべて';v56RenderLib()">${p}</button>`).join('');
+ let ps=lf==='すべて'?[]:flatPrinciples(lf);
+ principleFilters.innerHTML=lf==='すべて'?'':[`すべて`,...ps].map(p=>`<button class="chip2" style="${pf===p?'outline:2px solid currentColor':''}" onclick="pf='${p}';v56RenderLib()">${esc(p)}</button>`).join('');
+ let q=(document.getElementById('libSearch')?.value||'').trim().toLowerCase(), all=libData();
+ let a=all.filter(x=>!x.archived&&(lf==='すべて'||x.phase===lf)&&(pf==='すべて'||(x.principle||'').includes(pf))&&(!q||[x.name,x.principle,x.purpose,x.constraint,x.question].join(' ').toLowerCase().includes(q)));
+ libCount.textContent=`${a.length}件の練習`;
+ libList.innerHTML=a.length?a.map(x=>{let i=all.findIndex(v=>v.id===x.id);return `<div class="menu"><div class="libtop"><div class="k">${esc(x.phase)}｜${esc(x.principle||'原則未設定')}</div><span class="smalltag">${+x.minutes||15}分</span></div><h3>${esc(x.name)}</h3><div class="meta">${esc(x.players||'人数自由')}｜${esc(x.size||'サイズ自由')}<br>目的：${esc(x.purpose||'')}</div><details><summary>制約・問いを見る</summary><div class="meta" style="margin-top:8px">制約：${esc(x.constraint||'')}<br>問い：${esc(x.question||'')}</div></details>${x.videoUrl?`<a class="videoLink" href="${esc(x.videoUrl)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="addLibToday(${i})">今日に追加</button><button onclick="editLib(${i})">編集</button><button onclick="duplicateLib(${i})">複製</button>${isOwner()?`<button onclick="archiveLib(${i})">保管</button>`:''}</div></div>`}).join(''):`<div class="empty">該当する練習はありません。条件を変えるか、＋練習追加から登録できます。</div>`;
+}
+renderLib=v56RenderLib;
+function duplicateLib(i){let a=libData(),x=a[i];if(!x)return;let y={...x,id:'lib-'+Date.now(),name:x.name+'（コピー）',archived:false};a.splice(i+1,0,y);saveLib(a);setTimeout(()=>editLib(i+1),50)}
+function principleSelectHTML(phase,current){let groups=PRINCIPLE_TREE_V56[phase]||[];let opts=groups.flatMap(g=>[`<option value="${esc(g.main)}" ${current===g.main?'selected':''}>主｜${esc(g.main)}</option>`,...g.subs.map(s=>`<option value="${esc(g.main)} ＞ ${esc(s)}" ${current===(g.main+' ＞ '+s)?'selected':''}>　└ ${esc(s)}</option>`)]).join('');return `<option value="">選択してください</option>${opts}`}
+const oldEditLibV56=editLib;
+editLib=function(i){let a=libData(),x=i>=0?a[i]:{phase:'攻撃',principle:'',name:'',minutes:15,players:'',size:'',purpose:'',constraint:'',question:'',videoUrl:'',archived:false};openModal(`<div class="k">TRAINING LIBRARY</div><h2>${i>=0?'練習を編集':'練習を追加'}</h2><div class="field"><label>① 局面</label><select id="lPhase" class="input" onchange="lPrinciple.innerHTML=principleSelectHTML(this.value,'')">${PHASES.map(p=>`<option ${p===x.phase?'selected':''}>${p}</option>`).join('')}</select></div><div class="field"><label>② 原則</label><select id="lPrinciple" class="input">${principleSelectHTML(x.phase,x.principle||'')}</select></div><div class="field"><label>③ 練習名</label><input id="lName" class="input" value="${esc(x.name)}" placeholder="例：4v4 即時奪回"></div><div class="grid3"><div class="field"><label>時間</label><input id="lMin" class="input" type="number" value="${+x.minutes||15}"></div><div class="field"><label>人数</label><input id="lPlayers" class="input" value="${esc(x.players||'')}"></div><div class="field"><label>サイズ</label><input id="lSize" class="input" value="${esc(x.size||'')}"></div></div><div class="field"><label>目的</label><textarea id="lPurpose" class="area">${esc(x.purpose||'')}</textarea></div><div class="field"><label>制約・ルール</label><textarea id="lConstraint" class="area">${esc(x.constraint||'')}</textarea></div><div class="field"><label>選手への問い</label><textarea id="lQuestion" class="area">${esc(x.question||'')}</textarea></div><div class="field"><label>動画URL</label><input id="lVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="commitLib(${i})">保存</button>`)}
+function libScore(x,phase,principles,players,duration,idea){
+ let s=0,why=[];
+ if(x.phase===phase){s+=8;why.push('局面一致')}
+ let px=(x.principle||'').toLowerCase(), pp=(principles||[]).join(' ').toLowerCase();
+ if(pp&&px&&pp.split(/\s+/).some(k=>k&&px.includes(k))){s+=5;why.push('原則')}
+ let text=[x.name,x.purpose,x.constraint,x.question].join(' ').toLowerCase(), iq=(idea||'').toLowerCase().split(/\s+/).filter(Boolean);
+ if(iq.some(k=>k.length>1&&text.includes(k))){s+=3;why.push('選手案')}
+ if((+x.minutes||15)<=Math.max(10,(+duration||90)/3)){s+=1}
+ return {s,why}
+}
+function smartLibraryOptions(){
+ let all=libData().filter(x=>!x.archived), phase=(window.phase||document.querySelector('.phase.on')?.textContent||'攻撃'), principles=window.selectedPrinciples||[], players=+document.getElementById('players')?.value||0,duration=+document.getElementById('duration')?.value||90,idea=document.getElementById('teamIdea')?.value||'';
+ return all.map(x=>({x,...libScore(x,phase,principles,players,duration,idea)})).sort((a,b)=>b.s-a.s).slice(0,3)
+}
+function renderSmartLibrarySuggestions(){
+ let host=document.getElementById('smartLibrarySuggestions');if(!host)return;let opts=smartLibraryOptions();
+ host.innerHTML=opts.length?opts.map((o,n)=>`<div class="menu"><div class="k">${['反復量重視','ゲーム性重視','全員参加重視'][n]||'候補'}｜${esc(o.x.phase)}</div><h3>${esc(o.x.name)}</h3><div class="meta">${esc(o.x.purpose||'')}<br>${o.why.length?'一致：'+o.why.join('・'):'ライブラリ候補'}</div><button onclick="addLibToday(${libData().findIndex(v=>v.id===o.x.id)})">この練習を追加</button></div>`).join(''):'<div class="empty">練習ライブラリに候補を追加すると、ここに提案されます。</div>'
+}
+renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupTodayTabs();renderLib();acceptInviteFromUrl();renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 </script>
 <!-- HC_PHILOSOPHY_V51_EDITABLE -->
 <!-- HC_MORE_V52_EDITABLE -->
 <!-- HC_V53_BOTTOMUP_KPI_TABS_VIDEO_READY -->
 <!-- HC_V54_INVITE_URL_QR -->
 <!-- HC_V55_OWNER_ARCHIVE_TRAINING_LIBRARY -->
+<!-- HC_V56_PRINCIPLE_TREE_SMART_LIBRARY -->
 </body></html>
