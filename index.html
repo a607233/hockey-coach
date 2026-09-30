@@ -44,7 +44,23 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .fieldReadyV78{margin:12px 0;padding:12px;border:1px solid #d7e2da;border-radius:16px;background:#fff}
 .fr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.fr-grid>div{padding:9px;border-radius:10px;background:#f4f8f5}.fr-grid b,.fr-grid span{display:block}.fr-grid span{font-size:12px;line-height:1.5;margin-top:3px}.fr-step{margin-top:9px;padding:10px;border-left:4px solid #315f46;background:#f7faf8;font-size:12px;line-height:1.7}
 @media(max-width:480px){.fr-grid{grid-template-columns:1fr}}
-</style></head>
+</style>
+<style id="HC_V781_READABILITY_CSS">
+.visualBoardV77{color:#17231d!important;background:#fff!important}
+.visualBoardV77 .vb-caption,.visualBoardV77 .vb-rule{color:#17231d!important;background:#fff!important}
+.visualBoardV77 .vb-caption span{color:#4c5d54!important}
+.visualBoardV77 .vb-rule{background:#f2f6f3!important;border-top:1px solid #dbe5de!important}
+.visualBoardV77 .vb-head{color:#fff!important;background:#173b2b!important}
+.visualBoardV77 .vb-head span,.visualBoardV77 .vb-head b{color:#fff!important}
+.fieldReadyV78{color:#17231d!important;background:#fff!important}
+.fieldReadyV78 .k{color:#a7d900!important;font-weight:900!important;letter-spacing:.08em}
+.fieldReadyV78 .fr-grid>div{background:#f1f5f2!important;color:#17231d!important;border:1px solid #e2e9e4}
+.fieldReadyV78 .fr-grid b{color:#173b2b!important;font-weight:900!important}
+.fieldReadyV78 .fr-grid span{color:#33483d!important}
+.fieldReadyV78 .fr-step{color:#17231d!important;background:#f4f8f5!important;border-left:5px solid #2f704c!important}
+.fieldReadyV78 .fr-step b{color:#173b2b!important;font-weight:900!important}
+</style>
+</head>
 <body>
 <header><div class="brand">🏑 HOCKEY COACH <small>PERFORMANCE</small></div><div class="sub">TEAM DEVELOPMENT SYSTEM</div></header>
 <main>
@@ -386,7 +402,7 @@ function renderCloudV70(){
  setTimeout(renderStorageHealthV75,0);
 }
 function autoSaveMetaV70(){
- localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.8-field-ready'}))
+ localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.8.1-readability-fix'}))
 }
 
 
@@ -545,7 +561,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'7.8-field-ready',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'7.8.1-readability-fix',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -572,4 +588,4 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V701_PRACTICE_DETAIL_CARD -->
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
 <!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
-<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --><!-- HC_V76_ECONO_60_UNIQUE_SETUP_LIGHTWEIGHT --><!-- HC_V77_PHOTO_LIKE_ECONO_VISUAL_BOARD --><!-- HC_V78_FIELD_READY_60_ALIGNMENT --></body></html>
+<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --><!-- HC_V76_ECONO_60_UNIQUE_SETUP_LIGHTWEIGHT --><!-- HC_V77_PHOTO_LIKE_ECONO_VISUAL_BOARD --><!-- HC_V78_FIELD_READY_60_ALIGNMENT --><!-- HC_V781_FIELD_READY_READABILITY_FIX --></body></html>
