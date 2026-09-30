@@ -140,112 +140,7 @@ function toggleTimer(){if(timer){clearInterval(timer);timer=null;playBtn.textCon
 function coachMove(d){saveLive();ci=Math.max(0,Math.min(plan.length-1,ci+d));coachItem()} function saveLive(){if(document.getElementById('liveMemo')){plan[ci].liveMemo=liveMemo.value;persist()}}
 let simpleKpi=0,numericList=jget('hc_numeric_kpis_v53',[]);
 function setupKpiTabs(){document.querySelectorAll('[data-kpi]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-kpi]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="kpi-"]').forEach(x=>x.classList.toggle('on',x.id==='kpi-'+b.dataset.kpi))});document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>{simpleKpi=+b.dataset.score;document.querySelectorAll('[data-score]').forEach(x=>x.classList.toggle('on',x===b))})}
-function renderReviewCounters(){let e=document.getElementById('reviewCounters');if(!e)return;let a=kpiConfig(),opp=a.find(x=>x.id==='opp'),success=a.find(x=>x.id==='success'),rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):0;e.innerHTML=a.map(x=>`<div class="kpirow"><div>${esc(x.name)}</div><div class="counter">${+x.value||0}</div><button class="smallbtn" onclick="bumpKpi('${x.id}')">＋1</button></div>`).join('')+`<div class="menu"><div class="k">AUTO CALC</div><h3>成功率 ${rate}%</h3><div class="meta">${success?+success.value:0} / ${opp?+opp.value:0}</div></div>`}
-function renderNumeric(){numericKpis.innerHTML=numericList.length?numericList.map((x,i)=>`<div class="kpirow"><input class="input" value="${esc(x.name)}" onchange="numericList[${i}].name=this.value;saveNumeric()"><input class="input" style="width:85px" type="number" value="${esc(x.value)}" onchange="numericList[${i}].value=this.value;saveNumeric()"><button class="smallbtn" onclick="numericList.splice(${i},1);saveNumeric()">×</button></div>`).join(''):`<div class="empty">必要な日だけ数値KPIを追加</div>`}
-function addNumericKpi(){numericList.push({name:'',value:''});saveNumeric()} function saveNumeric(){localStorage.setItem('hc_numeric_kpis_v53',JSON.stringify(numericList));renderNumeric()}
-function saveRecord(){let c=kpiConfig(),opp=c.find(x=>x.id==='opp'),success=c.find(x=>x.id==='success'),rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):null;let rec=jget('hc_training_records',[]);rec.unshift({id:'r-'+Date.now(),date:new Date().toISOString(),theme:state.theme,phase:state.phase,principles:state.principles,players:state.players,gk:state.gk,duration:state.duration,plan:JSON.parse(JSON.stringify(plan)),simpleKpi,counters:c,counterRate:rate,numericKpis:numericList,playerGood:playerGood.value,playerNext:playerNext.value,reflection:reflection.value});localStorage.setItem('hc_training_records',JSON.stringify(rec));alert('練習記録を保存しました');go('history')}
-function renderHistory(){let rec=jget('hc_training_records',[]);historyList.innerHTML=rec.length?rec.map(r=>`<div class="menu"><div class="k">${new Date(r.date).toLocaleDateString('ja-JP')}｜${esc(r.phase||'')}</div><h3>${esc(r.theme||'練習記録')}</h3><div class="meta">${r.simpleKpi?`かんたん評価：${['','まだ','まあまあ','できた'][r.simpleKpi]}<br>`:''}${r.counterRate!=null?`カウンター成功率：${r.counterRate}%<br>`:''}${r.playerNext?`次に変えたいこと：${esc(r.playerNext)}`:(r.kpi?esc(r.kpi):'')}</div></div>`).join(''):`<div class="empty">まだ記録がありません</div>`}
-function philosophyData(){
- let a=jget('hc_philosophy_items_v51',null);
- if(Array.isArray(a))return a;
- let legacy=localStorage.getItem('hc_philosophy_v5')||localStorage.getItem('hc_philosophy')||'';
- return legacy?[{id:'ph-'+Date.now(),title:'TEAM PHILOSOPHY',body:legacy}]:[
-  {id:'ph-1',title:'ワクワクを選ぶ',body:'挑戦すること、成長すること、仲間とプレーすることを楽しむ。'},
-  {id:'ph-2',title:'選手が活き活きとプレーする',body:'自分で観て、考えて、決める。個性と強みをピッチで表現する。'},
-  {id:'ph-3',title:'仲間と高め合う',body:'互いを尊重し、要求し合い、チームとして成長する。'}
- ]}
-function savePhData(a){localStorage.setItem('hc_philosophy_items_v51',JSON.stringify(a));renderPhilosophy()}
-function renderPhilosophy(){let a=philosophyData();philosophyList.innerHTML=a.length?a.map((x,i)=>`<div class="menu"><div class="k">PHILOSOPHY ${i+1}</div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.body||'')}</div><div class="actions"><button onclick="editPhilosophy(${i})">編集</button><button onclick="movePhilosophy(${i},-1)">↑</button><button onclick="movePhilosophy(${i},1)">↓</button><button class="del" onclick="deletePhilosophy(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだPhilosophyがありません。＋追加から作れます。</div>`}
-function addPhilosophy(){editPhilosophy(-1)}
-function editPhilosophy(i){let a=philosophyData(),x=i>=0?a[i]:{title:'',body:''};openModal(`<div class="k">TEAM IDENTITY</div><h2>${i>=0?'Philosophyを編集':'Philosophyを追加'}</h2><div class="field"><label>タイトル</label><input id="phTitle" class="input" value="${esc(x.title)}" placeholder="例：ワクワクを選ぶ"></div><div class="field"><label>説明</label><textarea id="phBody" class="area" placeholder="チームで大切にしたい行動・考え方">${esc(x.body)}</textarea></div><button class="btn" onclick="commitPhilosophy(${i})">保存</button>`)}
-function commitPhilosophy(i){let a=philosophyData(),x={id:i>=0?a[i].id:'ph-'+Date.now(),title:phTitle.value.trim()||'新しいPhilosophy',body:phBody.value.trim()};if(i>=0)a[i]=x;else a.push(x);savePhData(a);closeModal()}
-function deletePhilosophy(i){let a=philosophyData();if(!confirm('このPhilosophyを削除しますか？'))return;a.splice(i,1);savePhData(a)}
-function movePhilosophy(i,d){let a=philosophyData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];savePhData(a)}
-function methodData(){let a=jget('hc_team_methods_v52',null);return Array.isArray(a)?a:[
-{id:'m1',phase:'攻撃',title:'前進する',body:'前進できるなら前進する。難しければ相手を動かして次の前進機会を作る。'},
-{id:'m2',phase:'守備',title:'中央とゴールを守る',body:'最も危険な場所を優先しながら、1st DFを基準に連動する。'},
-{id:'m3',phase:'攻→守',title:'ロスト直後に反応する',body:'奪い返す・遅らせる・戻るを素早く判断する。'},
-{id:'m4',phase:'守→攻',title:'奪った瞬間に前を見る',body:'GOできれば前進。難しければ保持して広がる。'}]}
-function saveMethods(a){localStorage.setItem('hc_team_methods_v52',JSON.stringify(a));renderMethods()}
-function renderMethods(){let a=methodData();methodList.innerHTML=a.length?a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.phase)}</div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.body||'')}</div><div class="actions"><button onclick="editMethod(${i})">編集</button><button onclick="moveMethod(${i},-1)">↑</button><button onclick="moveMethod(${i},1)">↓</button><button class="del" onclick="deleteMethod(${i})">削除</button></div></div>`).join(''):`<div class="empty">原則がありません</div>`}
-function addMethod(){editMethod(-1)}
-function editMethod(i){let a=methodData(),x=i>=0?a[i]:{phase:'攻撃',title:'',body:''};openModal(`<div class="k">TEAM METHOD</div><h2>${i>=0?'原則を編集':'原則を追加'}</h2><div class="field"><label>局面</label><select id="mPhase" class="input">${PHASES.map(p=>`<option ${p===x.phase?'selected':''}>${p}</option>`).join('')}</select></div><div class="field"><label>原則名</label><input id="mTitle" class="input" value="${esc(x.title)}"></div><div class="field"><label>説明</label><textarea id="mBody" class="area">${esc(x.body)}</textarea></div><button class="btn" onclick="commitMethod(${i})">保存</button>`)}
-function commitMethod(i){let a=methodData(),x={id:i>=0?a[i].id:'m-'+Date.now(),phase:mPhase.value,title:mTitle.value.trim()||'新しい原則',body:mBody.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveMethods(a);closeModal()}
-function deleteMethod(i){if(!confirm('この原則を削除しますか？'))return;let a=methodData();a.splice(i,1);saveMethods(a)}
-function moveMethod(i,d){let a=methodData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];saveMethods(a)}
-function roleData(){let a=jget('hc_team_roles_v52',null);return Array.isArray(a)?a:[{id:'staff',name:'STAFF',desc:'指導者・スタッフ'},{id:'player',name:'PLAYER',desc:'選手'},{id:'parent',name:'PARENT',desc:'保護者'}]}
-function saveRoles(a){localStorage.setItem('hc_team_roles_v52',JSON.stringify(a));renderRoles()}
-function renderRoles(){let a=roleData();roleList.innerHTML=a.map((x,i)=>`<div class="menu"><div class="k">${esc(x.name)}</div><div class="meta">${esc(x.desc||'')}</div><div class="actions"><button onclick="createInvite(${i})">QR招待</button><button onclick="editRole(${i})">編集</button><button class="del" onclick="deleteRole(${i})">削除</button></div></div>`).join('')}
-function inviteBase(){return location.origin+location.pathname}
-function createInvite(i){let role=roleData()[i],team=jget('hc_team_settings_v52',{}),token=crypto&&crypto.randomUUID?crypto.randomUUID():('inv-'+Date.now()+'-'+Math.random().toString(36).slice(2));let payload={token,roleId:role.id,role:role.name,team:team.name||'',createdAt:new Date().toISOString()};let all=jget('hc_invites_v54',[]);all.unshift(payload);localStorage.setItem('hc_invites_v54',JSON.stringify(all.slice(0,50)));let u=new URL(inviteBase());u.searchParams.set('invite',token);u.searchParams.set('role',role.name);showInvite(role,u.toString())}
-function showInvite(role,url){inviteResult.innerHTML=`<div class="card invitebox"><div class="k">${esc(role.name)} INVITE</div><div class="title" style="font-size:19px">招待QRコード</div><div id="qrTarget" class="qrwrap"></div><div class="inviteurl" id="inviteUrlText">${esc(url)}</div><div class="row" style="margin-top:10px"><button class="btn" onclick="copyInvite()">URLをコピー</button><button class="btn2" onclick="shareInvite()">共有</button></div><p class="muted">このQRまたはURLを参加者に送ってください。</p></div>`;if(window.QRCode)new QRCode(document.getElementById('qrTarget'),{text:url,width:190,height:190,correctLevel:QRCode.CorrectLevel.M});else qrTarget.innerHTML='<div style="color:#111;padding:20px">QRライブラリを読み込めませんでした。URLを共有してください。</div>';inviteResult.scrollIntoView({behavior:'smooth',block:'start'})}
-async function copyInvite(){let u=inviteUrlText.textContent;try{await navigator.clipboard.writeText(u);alert('招待URLをコピーしました')}catch(e){prompt('このURLをコピーしてください',u)}}
-async function shareInvite(){let u=inviteUrlText.textContent;try{if(navigator.share)await navigator.share({title:'HOCKEY COACH チーム招待',text:'HOCKEY COACHへの招待です',url:u});else await copyInvite()}catch(e){}}
-function acceptInviteFromUrl(){let q=new URLSearchParams(location.search),token=q.get('invite'),role=q.get('role');if(!token)return;setTimeout(()=>{openModal(`<div class="k">TEAM INVITE</div><h2>チーム招待</h2><p class="muted">役割：<b>${esc(role||'MEMBER')}</b></p><p>この端末で招待リンクを開きました。</p><button class="btn" onclick="localStorage.setItem('hc_joined_invite_v54',JSON.stringify({token:'${esc(token)}',role:'${esc(role||'MEMBER')}',joinedAt:new Date().toISOString()}));closeModal()">招待を受け取る</button>`)},350)}
-function addRole(){editRole(-1)}
-function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<div class="k">TEAM ROLE</div><h2>${i>=0?'役割を編集':'役割を追加'}</h2><div class="field"><label>役割名</label><input id="rName" class="input" value="${esc(x.name)}" placeholder="例：ANALYST"></div><div class="field"><label>説明</label><input id="rDesc" class="input" value="${esc(x.desc)}"></div><button class="btn" onclick="commitRole(${i})">保存</button>`)}
-function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
-function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
-function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-
-const LIB0=[
-{id:'l1',phase:'攻撃',principle:'前進',name:'3ゾーン前進ゲーム',minutes:15,players:'8〜16',size:'35m×25m',purpose:'前進できる場所とタイミングを見つける',constraint:'3ゾーン制。パスまたはキャリーで前進',question:'どこから前進できる？',videoUrl:'',archived:false},
-{id:'l2',phase:'攻撃',principle:'優位性',name:'4v4+2 前進ゲーム',minutes:18,players:'10',size:'30m×25m',purpose:'相手を動かして前進する',constraint:'外の2名を使える',question:'誰を使えば相手を外せる？',videoUrl:'',archived:false},
-{id:'l3',phase:'守備',principle:'誘導',name:'誘導プレスゲーム',minutes:15,players:'8〜12',size:'30m×25m',purpose:'奪う方向を共有する',constraint:'狙ったサイドで奪えば2点',question:'どちらへ誘導する？',videoUrl:'',archived:false},
-{id:'l4',phase:'攻→守',principle:'即時奪回',name:'4v4 即時奪回ゲーム',minutes:15,players:'8',size:'25m×25m',purpose:'ロスト直後の反応を高める',constraint:'4秒以内奪回で2点',question:'誰が1st DF？',videoUrl:'',archived:false},
-{id:'l5',phase:'守→攻',principle:'前進判断',name:'4v4 6秒フィニッシュ',minutes:18,players:'8〜12',size:'40m×30m',purpose:'奪取直後の判断を高める',constraint:'6秒以内シュートで2点',question:'GO・HOLD・RESET？',videoUrl:'',archived:false}
-];let lf='すべて';
-function libData(){let a=jget('hc_training_library_v55',null);return Array.isArray(a)?a:LIB0}
-function saveLib(a){localStorage.setItem('hc_training_library_v55',JSON.stringify(a));renderLib();renderArchive()}
-function setupTodayTabs(){document.querySelectorAll('[data-tt]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tt]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="tt-"]').forEach(x=>x.classList.toggle('on',x.id==='tt-'+b.dataset.tt));if(b.dataset.tt==='library')renderLib()})}
-function renderLib(){libFilters.innerHTML=['すべて',...PHASES].map(p=>`<button class="tab ${lf===p?'on':''}" onclick="lf='${p}';renderLib()">${p}</button>`).join('');let all=libData(),a=all.filter(x=>!x.archived&&(lf==='すべて'||x.phase===lf));libList.innerHTML=a.length?a.map(x=>{let i=all.findIndex(v=>v.id===x.id);return `<div class="menu"><div class="k">${esc(x.phase)}｜${esc(x.principle||'')}</div><h3>${esc(x.name)}</h3><div class="meta">${esc(x.players||'人数自由')}｜${esc(x.size||'サイズ自由')}｜${+x.minutes||15}分<br>目的：${esc(x.purpose||'')}<br>制約：${esc(x.constraint||'')}<br>問い：${esc(x.question||'')}</div>${x.videoUrl?`<a class="videoLink" href="${esc(x.videoUrl)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="addLibToday(${i})">今日に追加</button><button onclick="editLib(${i})">編集</button>${isOwner()?`<button onclick="archiveLib(${i})">保管</button>`:''}</div></div>`}).join(''):`<div class="empty">練習がありません。＋練習追加から作れます。</div>`}
-function editLib(i){let a=libData(),x=i>=0?a[i]:{phase:'攻撃',principle:'',name:'',minutes:15,players:'',size:'',purpose:'',constraint:'',question:'',videoUrl:'',archived:false};openModal(`<div class="k">TRAINING LIBRARY</div><h2>${i>=0?'練習を編集':'練習を追加'}</h2><div class="field"><label>局面</label><select id="lPhase" class="input">${PHASES.map(p=>`<option ${p===x.phase?'selected':''}>${p}</option>`).join('')}</select></div><div class="field"><label>練習名</label><input id="lName" class="input" value="${esc(x.name)}"></div><div class="field"><label>原則</label><input id="lPrinciple" class="input" value="${esc(x.principle||'')}"></div><div class="grid3"><div class="field"><label>時間</label><input id="lMin" class="input" type="number" value="${+x.minutes||15}"></div><div class="field"><label>人数</label><input id="lPlayers" class="input" value="${esc(x.players||'')}"></div><div class="field"><label>サイズ</label><input id="lSize" class="input" value="${esc(x.size||'')}"></div></div><div class="field"><label>目的</label><textarea id="lPurpose" class="area">${esc(x.purpose||'')}</textarea></div><div class="field"><label>制約</label><textarea id="lConstraint" class="area">${esc(x.constraint||'')}</textarea></div><div class="field"><label>選手への問い</label><textarea id="lQuestion" class="area">${esc(x.question||'')}</textarea></div><div class="field"><label>動画URL</label><input id="lVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="commitLib(${i})">保存</button>`)}
-function commitLib(i){let a=libData(),x={id:i>=0?a[i].id:'lib-'+Date.now(),phase:lPhase.value,principle:lPrinciple.value.trim(),name:lName.value.trim()||'新しい練習',minutes:+lMin.value||15,players:lPlayers.value.trim(),size:lSize.value.trim(),purpose:lPurpose.value.trim(),constraint:lConstraint.value.trim(),question:lQuestion.value.trim(),videoUrl:lVideo.value.trim(),archived:i>=0?!!a[i].archived:false};if(i>=0)a[i]=x;else a.push(x);saveLib(a);closeModal()}
-function addLibToday(i){let x=libData()[i];plan.push({id:'v55-'+Date.now(),type:x.phase,name:x.name,minutes:x.minutes,purpose:x.purpose,constraint:x.constraint,question:x.question,videoUrl:x.videoUrl||'',sourceLibraryId:x.id});persist();renderPlan();alert('今日のメニューに追加しました')}
-function ownerRole(){return localStorage.getItem('hc_current_role_v55')||'OWNER'}function isOwner(){return ownerRole()==='OWNER'}
-function saveOwnerRole(){localStorage.setItem('hc_current_role_v55',currentRole.value);renderLib();renderArchive()}
-function archiveLib(i){if(!isOwner())return alert('OWNERのみ利用できます');let a=libData();a[i].archived=true;saveLib(a)}
-function restoreLib(i){if(!isOwner())return;let a=libData();a[i].archived=false;saveLib(a)}
-function renderArchive(){let e=document.getElementById('archiveList');if(!e)return;if(!isOwner()){e.innerHTML='<div class="empty">OWNERのみ表示できます。</div>';return}let a=libData(),rows=[];a.forEach((x,i)=>{if(x.archived)rows.push(`<div class="menu"><div class="k">練習メニュー</div><h3>${esc(x.name)}</h3><button class="btn2" onclick="restoreLib(${i})">復元</button></div>`)});e.innerHTML=rows.join('')||'<div class="empty">アーカイブはありません。</div>'}
-function exportData(){let data={version:'5.2',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
-function renderMore(){renderPhilosophy();renderMethods();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';currentRole.value=ownerRole();renderArchive()}
-
-/* ===== HC V5.6 PRINCIPLE TREE + SMART LIBRARY ===== */
-const PRINCIPLE_TREE_V56={
-'攻撃':[
- {main:'前進する',subs:['前を認知する','幅と深さを取る','ラインを越える','キャリーとパスを選ぶ']},
- {main:'優位性をつくる',subs:['数的優位','位置的優位','質的優位','相手を動かす']},
- {main:'フィニッシュする',subs:['サークル侵入','ゴール前の優位','リバウンド','シュート選択']}
-],
-'守備':[
- {main:'ゴールを守る',subs:['中央を閉じる','危険なスペースを消す','マークを管理する']},
- {main:'ボールを奪う',subs:['1st DFが制限する','誘導する','2nd DFが連動する','奪う瞬間を共有する']},
- {main:'コンパクトに守る',subs:['ライン間を狭くする','横の距離を保つ','背後を管理する']}
-],
-'攻→守':[
- {main:'即時奪回',subs:['ロスト直後に反応する','最寄りが1st DF','周囲が前進を消す','ボール周辺を圧縮する']},
- {main:'撤退・遅らせる',subs:['前進を遅らせる','中央を守る','数的不利を解消する']}
-],
-'守→攻':[
- {main:'前進を狙う',subs:['奪った瞬間に前を見る','前方の選手を使う','キャリーで運ぶ']},
- {main:'優位を広げる',subs:['幅を取る','サポートを作る','逆サイドを見る']},
- {main:'保持を選ぶ',subs:['無理なら保持する','再配置する','次の前進機会を作る']}
-]};
-let pf='すべて';
-function flatPrinciples(phase){let groups=PRINCIPLE_TREE_V56[phase]||[];return groups.flatMap(g=>[g.main,...g.subs])}
-function renderPrincipleTree(){let e=document.getElementById('principleTree');if(!e)return;e.innerHTML=Object.entries(PRINCIPLE_TREE_V56).map(([phase,groups])=>`<div class="treeGroup"><div class="treeHead" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">${phase}　<span class="muted">› ${groups.length}主原則</span></div><div class="treeBody" hidden>${groups.map(g=>`<div style="margin-bottom:12px"><b>${esc(g.main)}</b><div class="chipline" style="margin-top:6px">${g.subs.map(s=>`<span class="chip2">${esc(s)}</span>`).join('')}</div></div>`).join('')}</div></div>`).join('')}
-function v56RenderLib(){
- if(!document.getElementById('libList'))return;
- let phases=['すべて',...PHASES];
- libFilters.innerHTML=phases.map(p=>`<button class="tab ${lf===p?'on':''}" onclick="lf='${p}';pf='すべて';v56RenderLib()">${p}</button>`).join('');
- let ps=lf==='すべて'?[]:flatPrinciples(lf);
- principleFilters.innerHTML=lf==='すべて'?'':[`すべて`,...ps].map(p=>`<button class="chip2" style="${pf===p?'outline:2px solid currentColor':''}" onclick="pf='${p}';v56RenderLib()">${esc(p)}</button>`).join('');
- let q=(document.getElementById('libSearch')?.value||'').trim().toLowerCase(), all=libData();
- let a=all.filter(x=>!x.archived&&(lf==='すべて'||x.phase===lf)&&(pf==='すべて'||(x.principle||'').includes(pf))&&(!q||[x.name,x.principle,x.purpose,x.constraint,x.question].join(' ').toLowerCase().includes(q)));
- libCount.textContent=`${a.length}件の練習`;
- libList.innerHTML=a.length?a.map(x=>{let i=all.findIndex(v=>v.id===x.id);return `<div class="menu"><div class="libtop"><div class="k">${esc(x.phase)}｜${esc(x.principle||'原則未設定')}</div><span class="smalltag">${+x.minutes||15}分</span></div><h3>${esc(x.name)}</h3><div class="meta">${esc(x.players||'人数自由')}｜${esc(x.size||'サイズ自由')}<br>目的：${esc(x.purpose||'')}</div><details><summary>制約・問いを見る</summary><div class="meta" style="margin-top:8px">制約：${esc(x.constraint||'')}<br>問い：${esc(x.question||'')}</div></details>${x.videoUrl?`<a class="videoLink" href="${esc(x.videoUrl)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="addLibToday(${i})">今日に追加</button><button onclick="editLib(${i})">編集</button><button onclick="duplicateLib(${i})">複製</button>${isOwner()?`<button onclick="archiveLib(${i})">保管</button>`:''}</div></div>`}).join(''):`<div class="empty">該当する練習はありません。条件を変えるか、＋練習追加から登録できます。</div>`;
-}
+function renderReviewCounters(){let e=document.getElementById('reviewCounters');if(!e)return;let a=kpiConfig(),opp=a.find(x=>x.id==='opp'),success=a.find(x=>x.id==='success'),rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):0;e.innerHTML=a.map(x=>`<div class="kpirow"><div>${esc(x.name)}</div><div class="counter">${+x.value||0}</div></div>`).join('')+`<div class="menu"><div class="k">COACH MODE RESULT</div><h3>成功率 ${rate}%</h3><div class="meta">${success?+success.value:0} / ${opp?+opp.value:0}</div></div>`}
 renderLib=v56RenderLib;
 function duplicateLib(i){let a=libData(),x=a[i];if(!x)return;let y={...x,id:'lib-'+Date.now(),name:x.name+'（コピー）',archived:false};a.splice(i+1,0,y);saveLib(a);setTimeout(()=>editLib(i+1),50)}
 function principleSelectHTML(phase,current){let groups=PRINCIPLE_TREE_V56[phase]||[];let opts=groups.flatMap(g=>[`<option value="${esc(g.main)}" ${current===g.main?'selected':''}>主｜${esc(g.main)}</option>`,...g.subs.map(s=>`<option value="${esc(g.main)} ＞ ${esc(s)}" ${current===(g.main+' ＞ '+s)?'selected':''}>　└ ${esc(s)}</option>`)]).join('');return `<option value="">選択してください</option>${opts}`}
@@ -392,4 +287,5 @@ renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 <!-- HC_V58_STABLE_COMPLETE_PRINCIPLE_LINKAGE -->
 <!-- HC_V581_HOTFIX_NAV_HEADER -->
 <!-- HC_V582_COUNTER_PLUS_MINUS -->
+<!-- HC_V583_ANALYSIS_READONLY_COUNTER -->
 </body></html>
