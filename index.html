@@ -3047,4 +3047,85 @@ window.HCNextTrainingV2={mount,rank,apply};setTimeout(mount,3000);
 </script>
 <!-- /HC_NEXT_TRAINING_ENGINE_V2 -->
 
+
+<!-- HC_TODAY_UNIFIED_V3 -->
+<style>
+#hcTodayUnifiedV3{margin:12px 0 120px}.tu3{background:#0d191e;border:1px solid #2c424a;border-radius:20px;padding:15px;color:#eef6f2}
+.tu3-k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.tu3-h{font-size:22px;font-weight:950;margin:4px 0}.tu3-s{font-size:12px;color:#91a3aa;line-height:1.5}
+.tu3-summary{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#071014;border:1px solid #2b4048;border-radius:15px;padding:12px;margin-top:10px}
+.tu3-time{font-size:27px;font-weight:950;color:#d7ff39}.tu3-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.tu3-pill{padding:5px 7px;border-radius:999px;background:#16262c;border:1px solid #3a5058;font-size:10px}
+.tu3-step{margin-top:9px;background:#071014;border:1px solid #293e46;border-radius:15px;overflow:hidden}.tu3-head{width:100%;display:flex;justify-content:space-between;align-items:center;background:transparent;color:#fff;border:0;padding:12px;text-align:left;font-weight:900}.tu3-body{padding:0 12px 12px}.tu3-step.closed .tu3-body{display:none}
+.tu3-in,.tu3-sel,.tu3-ta{width:100%;box-sizing:border-box;background:#0d181d;border:1px solid #30454e;border-radius:11px;color:#fff;padding:10px;font-size:14px}.tu3-ta{min-height:62px}.tu3-l{display:block;font-size:10px;color:#91a3aa;font-weight:900;margin:7px 0 5px}
+.tu3-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.tu3-tab,.tu3-chip{border:1px solid #354b54;background:#101c21;color:#c3cdd0;border-radius:10px;padding:9px 5px;font-size:11px;font-weight:850}.tu3-tab.on,.tu3-chip.on{background:#d7ff39;color:#071014;border-color:#d7ff39}.tu3-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.tu3-chip{border-radius:999px;padding:7px 9px}
+.tu3-menu{display:grid;grid-template-columns:1fr 64px;gap:7px;align-items:center;border-bottom:1px solid #1d3037;padding:8px 0}.tu3-menu:last-child{border-bottom:0}.tu3-min{text-align:center;font-weight:950;color:#d7ff39}
+.tu3-kpi{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #1d3037}.tu3-kpi:last-child{border-bottom:0}.tu3-kpi input{width:90px}
+.tu3-btn{width:100%;border:0;border-radius:12px;padding:12px;background:#d7ff39;color:#071014;font-weight:950;margin-top:10px}.tu3-sub{width:100%;border:1px solid #354b54;border-radius:12px;padding:10px;background:#15242a;color:#fff;font-weight:850;margin-top:7px}
+body.hc-today-active #hcTeamFab,body.hc-today-active .hcTeamFab,body.hc-today-active [id*="teamFab" i],body.hc-today-active [class*="teamFab" i]{display:none!important}
+@media(max-width:560px){.tu3-tabs{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script>
+(function(){'use strict';
+const CAT={
+ '攻撃':['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る','サークルへ侵入する'],
+ '守備':['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','最も近い選手が1st DFになる','2nd・3rd DFが中央を閉じて連動する'],
+ '攻→守':['ロスト後4秒で相手の前進を止める','ボール周辺を即時圧縮する','中央への出口を消す','奪えなければ撤退して整える'],
+ '守→攻':['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる','相手の守備が整う前に優位を使う']
+};
+const REC={
+ '攻→守':{name:'4v4+2 即時奪回ゲーム',rule:'30×25m。ロスト後4秒だけ即時奪回。奪った側は5秒以内の前進で2点。',q:'誰が1st DF？ 残りは何を消す？',k:['4秒以内奪回率','相手前進を許した回数','中央突破を許した回数']},
+ '攻撃':{name:'5v5+3 前進・侵入ゲーム',rule:'40×30m・3ゾーン。最終ゾーン侵入1点、そこから得点で追加点。',q:'運ぶ・つなぐ・逆を取る。今どれが最も前進できる？',k:['前進成功率','最終ゾーン侵入回数','決定機数']},
+ '守備':{name:'5v5 誘導プレスゲーム',rule:'35×30m。中央を守り外へ誘導して奪えば2点。',q:'1st DFはどこへ誘導し、2nd DFは何を消す？',k:['中央突破阻止率','狙った方向への誘導率','奪取回数']},
+ '守→攻':{name:'4v4+GK トランジションゲーム',rule:'35×25m。奪取後6秒以内シュートで2点。無理なら幅を取り再構築。',q:'奪った瞬間、前に何が見えた？',k:['奪取後前進成功率','6秒以内シュート','保持への切替成功率']}
+};
+function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
+function state(){
+ let a=safe('hc_today_v21',{}),b=safe('hc_today_v2',{});
+ let cat=a.cat||'攻→守',r=REC[cat]||REC['攻→守'];
+ return {theme:a.theme||b.theme||'',duration:+a.duration||+b.duration||90,cat,principles:(a.principles&&a.principles.length?a.principles:b.principles)||[],items:(b.items&&b.items.length?b.items:[
+ {name:'動作改善・ボールウォームアップ',minutes:15},{name:'テーマ導入ゲーム',minutes:20},{name:r.name,minutes:25},{name:'ゲーム',minutes:25},{name:'振り返り',minutes:5}
+ ]),kpis:(b.kpis&&b.kpis.length?b.kpis:r.k),question:r.q,rule:r.rule}
+}
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function total(s){return s.items.reduce((n,x)=>n+(+x.minutes||0),0)}
+function save(s){
+ localStorage.setItem('hc_today_v21',JSON.stringify({theme:s.theme,duration:s.duration,cat:s.cat,principles:s.principles}));
+ let b=safe('hc_today_v2',{});b.theme=s.theme;b.duration=s.duration;b.principles=s.principles;b.items=s.items;b.kpis=s.kpis;localStorage.setItem('hc_today_v2',JSON.stringify(b))
+}
+function mount(){
+ const page=document.getElementById('today');if(!page)return;
+ ['hcTodayV21','hcTodayV2'].forEach(id=>{let x=document.getElementById(id);if(x)x.style.display='none'});
+ let old=document.getElementById('hcTodayUnifiedV3');if(old)old.remove();
+ const s=state(),r=REC[s.cat]||REC['攻→守'];let d=document.createElement('div');d.id='hcTodayUnifiedV3';
+ d.innerHTML=`<div class="tu3"><div class="tu3-k">TODAY'S SESSION｜ONE SCREEN</div><div class="tu3-h">今日の練習</div><div class="tu3-s">テーマ・原則・メニュー・KPIをここだけで編集。変更はすべて連動します。</div>
+ <div class="tu3-summary"><div><b>${esc(s.theme||'テーマを設定')}</b><div class="tu3-pills"><span class="tu3-pill">${esc(s.cat)}</span>${s.principles.slice(0,3).map(p=>`<span class="tu3-pill">${esc(p)}</span>`).join('')}</div></div><div class="tu3-time">${total(s)}<small style="font-size:11px;color:#91a3aa"> / ${s.duration}分</small></div></div>
+ ${step('1','テーマと原則',`<label class="tu3-l">今日のテーマ</label><input id="tu3Theme" class="tu3-in" value="${esc(s.theme)}" placeholder="例：ボールロスト後の即時奪回"><label class="tu3-l">局面</label><div class="tu3-tabs">${Object.keys(CAT).map(c=>`<button class="tu3-tab ${s.cat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}</div><label class="tu3-l">原則｜最大3つ</label><div class="tu3-chips">${CAT[s.cat].map(p=>`<button class="tu3-chip ${s.principles.includes(p)?'on':''}" data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div>`)}
+ ${step('2','おすすめ環境',`<b>${esc(r.name)}</b><div class="tu3-s" style="margin-top:6px"><b>制約：</b>${esc(r.rule)}<br><b>問い：</b>${esc(r.q)}</div><button class="tu3-sub" id="tu3UseRec">おすすめ練習をメニューへ反映</button>`,'closed')}
+ ${step('3','練習メニュー',`<label class="tu3-l">予定時間</label><select id="tu3Duration" class="tu3-sel">${[60,75,90,100,120].map(n=>`<option ${s.duration===n?'selected':''}>${n}</option>`).join('')}</select><div id="tu3Menus">${s.items.map((x,i)=>`<div class="tu3-menu"><input class="tu3-in tu3Name" data-i="${i}" value="${esc(x.name)}"><div><input class="tu3-in tu3Minutes" data-i="${i}" type="number" min="0" value="${+x.minutes||0}"><div class="tu3-min">分</div></div></div>`).join('')}</div><button class="tu3-sub" id="tu3Add">＋ メニュー追加</button>`,'closed')}
+ ${step('4','KPI・振り返り',`<div id="tu3Kpis">${s.kpis.map((k,i)=>`<div class="tu3-kpi"><span>${esc(k)}</span><input class="tu3-in tu3KpiVal" data-i="${i}" placeholder="結果"></div>`).join('')}</div><label class="tu3-l">練習後メモ</label><textarea id="tu3Reflection" class="tu3-ta" placeholder="できたこと／次回の課題"></textarea>`,'closed')}
+ <button class="tu3-btn" id="tu3Save">今日の練習を保存</button></div>`;
+ page.prepend(d);bind();document.body.classList.add('hc-today-active')
+}
+function step(n,t,b,cl=''){return `<div class="tu3-step ${cl}"><button class="tu3-head"><span><span class="tu3-k">STEP ${n}</span><br>${t}</span><span>⌄</span></button><div class="tu3-body">${b}</div></div>`}
+function collect(){
+ let s=state();s.theme=document.getElementById('tu3Theme')?.value||s.theme;s.duration=+(document.getElementById('tu3Duration')?.value||s.duration);
+ s.principles=[...document.querySelectorAll('.tu3-chip.on')].map(x=>x.dataset.p);
+ s.items=[...document.querySelectorAll('.tu3-menu')].map(m=>({name:m.querySelector('.tu3Name').value,minutes:+m.querySelector('.tu3Minutes').value||0}));
+ return s
+}
+function bind(){
+ document.querySelectorAll('.tu3-head').forEach(b=>b.onclick=()=>b.parentElement.classList.toggle('closed'));
+ document.querySelectorAll('.tu3-tab').forEach(b=>b.onclick=()=>{let s=collect();s.cat=b.dataset.cat;s.principles=[];let r=REC[s.cat];s.kpis=r.k;s.theme=s.theme||r.name.replace('ゲーム','');save(s);mount()});
+ document.querySelectorAll('.tu3-chip').forEach(b=>b.onclick=()=>{let s=collect(),p=b.dataset.p,a=s.principles;if(a.includes(p))a=a.filter(z=>z!==p);else if(a.length<3)a.push(p);else return alert('原則は3つまでに絞りましょう。');s.principles=a;save(s);mount()});
+ document.getElementById('tu3UseRec').onclick=()=>{let s=collect(),r=REC[s.cat];let idx=s.items.findIndex(x=>/即時奪回|前進・侵入|誘導プレス|トランジション/.test(x.name));let item={name:r.name,minutes:25,purpose:'選択した原則をゲーム状況で学習',constraint:r.rule,question:r.q};if(idx>=0)s.items[idx]=item;else s.items.splice(Math.min(2,s.items.length),0,item);s.kpis=r.k;save(s);mount()};
+ document.getElementById('tu3Add').onclick=()=>{let s=collect();s.items.push({name:'新しいメニュー',minutes:10});save(s);mount()};
+ document.getElementById('tu3Save').onclick=()=>{let s=collect();let vals=[...document.querySelectorAll('.tu3KpiVal')].map(x=>x.value);let rec={date:new Date().toISOString(),theme:s.theme,cat:s.cat,principles:s.principles,duration:s.duration,items:s.items,kpis:s.kpis.map((k,i)=>({name:k,value:vals[i]||''})),reflection:document.getElementById('tu3Reflection')?.value||''};save(s);let hist=safe('hc_training_records',[]);if(!Array.isArray(hist))hist=[];hist.push(rec);localStorage.setItem('hc_training_records',JSON.stringify(hist));alert('今日の練習を保存しました。分析にも反映されます。');mount()};
+ ['tu3Theme','tu3Duration'].forEach(id=>{let e=document.getElementById(id);if(e)e.onchange=()=>{let s=collect();save(s);mount()}});
+ document.querySelectorAll('.tu3Minutes,.tu3Name').forEach(e=>e.onchange=()=>{let s=collect();save(s);mount()});
+}
+const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);document.body.classList.toggle('hc-today-active',id==='today');if(id==='today')setTimeout(mount,100);return r};
+window.HCTodayUnifiedV3={mount,state};setTimeout(()=>{let p=document.getElementById('today');if(p&&getComputedStyle(p).display!=='none')mount()},2800);
+})();
+</script>
+<!-- /HC_TODAY_UNIFIED_V3 -->
+
 </body></html>
