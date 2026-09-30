@@ -219,23 +219,37 @@ function resolvePracticeV701(ref){
  return practiceData().find(x=>x.id===ref)||plan.find(x=>x.practiceId===ref||x.id===ref)||null
 }
 function hash75(t){let h=0;for(let i=0;i<String(t).length;i++)h=(h*31+String(t).charCodeAt(i))>>>0;return h}
+function drillSteps76(d){
+ const p=(d.principles||[]).join(' '), j=d.judgment||'', s=d.style||'';
+ let start='攻撃側がボール保持。守備側は指定された基準位置からスタートする。';
+ let play='攻撃側は前進・突破を狙い、守備側は原則に沿って対応する。';
+ let win='守備側は奪取または前進阻止、攻撃側は設定ライン突破・ゴールで成功。';
+ if(/マーク|受け渡/.test(p)){start='攻撃3〜4人と守備3〜4人を対応させ、1人をボール保持者にする。';play='攻撃側は斜めラン・入れ替わりを使う。守備側は「ついていく／受け渡す／戻る」を判断する。';win='フリーで前向きに受けさせなければ守備成功。攻撃は背後・中央で前向きに受ければ成功。'}
+ if(/中央|パスコース|FW|ギャップ|ライン間/.test(p)){start='攻撃側を外・中央・前方に配置し、守備ラインをその間に置く。';play='保持者は中央または前方への縦パスを狙う。守備はボールへ寄りながら危険なコースを閉じる。';win='縦パス阻止・外側へ誘導できれば守備成功。中央突破なら攻撃成功。'}
+ if(/数的優位/.test(p)){start='ボール周辺に攻撃3人、守備2〜3人。後方守備者を1人置く。';play='保持者へのプレッシャーがかかった瞬間だけ後方守備者が前へ出て数的優位を作る。';win='出口を消したまま奪えれば守備成功。逆サイドを使われたら攻撃成功。'}
+ if(/背後|斜め/.test(p)){start='攻撃側に保持者＋背後へ走る選手、守備側にマーカー＋カバーを置く。';play='ランナーは斜めに背後へ走る。守備は保持者の状態を見て追従・受け渡しを判断する。';win='背後パスを阻止または安全に受け渡せば守備成功。'}
+ if(/ロスト|PREDICT|RECOVER|危険エリア|戻/.test(p+' '+j)){start='攻撃側が前進中の状態から開始し、コーチの合図またはミスで意図的にボールロストを起こす。';play='ロスト前から次の受け手と中央を認知。失った瞬間に最寄りは遅らせ、後方は中央・ゴール側へ回復する。';win='5秒以内に前進を止める／奪い返す／中央を閉じれば成功。'}
+ if(/守→攻|前方|高さ/.test((d.phase||'')+' '+p)){start='守備側がボールを奪った瞬間から開始。前方に複数の出口を作る。';play='最初にGOを探し、無理ならHOLD・RESET。前方選手は同じ高さに並ばない。';win='前進ライン突破または安全な保持継続で成功。'}
+ return {start,play,win};
+}
+function boardSpec76(d){
+ let key=(d.principles||[]).join(' ')+' '+(d.judgment||'');
+ let A=[[18,72],[38,68],[62,68],[82,72]],D=[[25,48],[43,45],[61,45],[77,48]],ar=[],zone=[];
+ if(/マーク|受け渡|トライアングル/.test(key)){A=[[20,70],[40,66],[60,66],[80,70]],D=[[23,51],[37,48],[63,48],[77,51]];ar=[[40,66,56,52,'run'],[60,66,44,52,'run'],[20,70,60,66,'pass']];}
+ else if(/中央|パスコース|FW|ギャップ|ライン間/.test(key)){A=[[12,72],[32,67],[50,57],[68,67],[88,72],[50,25]],D=[[22,48],[40,44],[60,44],[78,48],[50,34]];ar=[[12,72,50,57,'pass'],[50,57,50,25,'pass'],[88,72,50,57,'pass']];zone=[[38,20,24,58,'danger']];}
+ else if(/数的優位/.test(key)){A=[[28,68],[50,62],[72,68],[50,28]],D=[[37,48],[63,48],[50,38],[50,18]];ar=[[28,68,50,62,'pass'],[50,18,50,38,'run'],[50,62,50,28,'pass']];zone=[[30,34,40,24,'press']];}
+ else if(/背後|斜め/.test(key)){A=[[20,68],[45,62],[72,64],[80,28]],D=[[35,46],[58,45],[74,42],[50,25]];ar=[[45,62,80,28,'pass'],[72,64,80,28,'run'],[74,42,80,28,'run']];zone=[[8,8,84,24,'danger']];}
+ else if(/ロスト|PREDICT|RECOVER|危険エリア|戻/.test(key)){A=[[18,60],[40,66],[62,64],[82,58],[50,44]],D=[[25,42],[45,38],[65,40],[50,24]];ar=[[50,44,65,40,'turn'],[25,42,42,28,'recover'],[45,38,50,24,'recover'],[65,40,58,26,'recover']];zone=[[8,8,84,25,'danger']];}
+ else if(/カバー|バランス|距離/.test(key)){A=[[18,70],[42,64],[66,64],[84,70]],D=[[28,49],[47,44],[64,45],[76,50]];ar=[[18,70,42,64,'pass'],[28,49,37,48,'shift'],[47,44,54,42,'shift']];}
+ return {A,D,ar,zone};
+}
 function tacticalBoard75(d){
- let key=((d.principles||[]).join(' ')+d.name+' '+(d.judgment||'')),h=hash75(key),phase=d.phase||'守備';
- let atk=phase==='守備'||phase==='攻→守'?'#ffcf3f':'#e9f0ff',def=phase==='守備'||phase==='攻→守'?'#e9f0ff':'#ffcf3f';
- let nA=Math.max(3,Math.min(7,Math.round(((+d.maxPlayers||12)+(+d.minPlayers||6))/4))),nD=Math.max(3,nA-(h%2));
- let layout=h%6, A=[],D=[];
- const rows=[[22,38,54,70,86],[18,34,50,66,82],[26,50,74],[20,40,60,80]];
- for(let i=0;i<nA;i++){let r=rows[(layout+i)%rows.length],x=r[i%r.length],y=70-Math.floor(i/r.length)*15;A.push([x,y])}
- for(let i=0;i<nD;i++){let r=rows[(layout+2+i)%rows.length],x=r[(i+1)%r.length],y=35+Math.floor(i/r.length)*14;D.push([x,y])}
- if(/中央|パスコース|ライン間|ギャップ/.test(key)){A=A.map((p,i)=>[p[0],68-(i%2)*10]);D=D.map((p,i)=>[30+(i%3)*20,38+Math.floor(i/3)*12])}
- if(/マーク|受け渡|トライアングル/.test(key)){A=A.map((p,i)=>[24+(i%4)*18,68-Math.floor(i/4)*14]);D=A.slice(0,nD).map((p,i)=>[Math.min(90,p[0]+(i%2?5:-5)),p[1]-16])}
- if(/背後|戻|RECOVER|ロスト|PREDICT/.test(key)){A=A.map((p,i)=>[18+(i%4)*20,58+Math.floor(i/4)*13]);D=D.map((p,i)=>[20+(i%4)*20,35+Math.floor(i/4)*12])}
- let circles=(arr,c)=>arr.map((p,i)=>`<g><circle cx="${p[0]}" cy="${p[1]}" r="3.7" fill="${c}" stroke="#10261d" stroke-width="1"/><text x="${p[0]}" y="${p[1]+1.4}" text-anchor="middle" font-size="3.2" font-weight="800" fill="#10261d">${i+1}</text></g>`).join('');
- let zones=''; if(/中央|ライン間|ギャップ/.test(key))zones='<rect x="36" y="8" width="28" height="84" fill="rgba(255,220,60,.13)" stroke="rgba(255,255,255,.35)" stroke-dasharray="2 2"/>';
- if(/背後|ロスト|RECOVER|PREDICT/.test(key))zones='<rect x="8" y="8" width="84" height="22" fill="rgba(255,90,90,.12)" stroke="rgba(255,255,255,.35)" stroke-dasharray="2 2"/>';
- let arrows=''; for(let i=0;i<Math.min(3,A.length,D.length);i++){let a=A[i],b=D[(i+1)%D.length];arrows+=`<path d="M ${a[0]} ${a[1]-4} Q ${(a[0]+b[0])/2} ${(a[1]+b[1])/2-5} ${b[0]} ${b[1]+4}" fill="none" stroke="#fff" stroke-width="1.3" stroke-dasharray="3 2" marker-end="url(#ar75)" opacity=".85"/>`}
- let ball=A[0]||[50,70];
- return `<div class="board75"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(d.name||'練習')}のホッケー配置図"><defs><marker id="ar75" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#fff"/></marker></defs><rect x="3" y="3" width="94" height="94" rx="2" fill="#168557" stroke="#fff" stroke-width="1.2"/><line x1="3" y1="50" x2="97" y2="50" stroke="rgba(255,255,255,.55)"/><path d="M35 3 Q50 22 65 3M35 97 Q50 78 65 97" fill="none" stroke="rgba(255,255,255,.65)"/>${zones}${arrows}${circles(A,atk)}${circles(D,def)}<circle cx="${ball[0]+4}" cy="${ball[1]-2}" r="1.7" fill="#fff" stroke="#111" stroke-width=".6"/><rect x="42" y="1" width="16" height="3" fill="none" stroke="#fff"/><rect x="42" y="96" width="16" height="3" fill="none" stroke="#fff"/></svg></div><div class="boardLegend75"><span><i class="dot75" style="background:${atk}"></i>攻撃</span><span><i class="dot75" style="background:${def}"></i>守備</span><span>○ ボール</span><span>⇢ 主な動き／パス</span></div>`
+ let sp=boardSpec76(d), phase=d.phase||'守備', atk='#ffcf3f',def='#e9f0ff';
+ let circles=(arr,c,l)=>arr.map((p,i)=>`<g><circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${c}" stroke="#10261d" stroke-width="1"/><text x="${p[0]}" y="${p[1]+1.4}" text-anchor="middle" font-size="3.1" font-weight="900" fill="#10261d">${l}${i+1}</text></g>`).join('');
+ let zones=sp.zone.map(z=>`<rect x="${z[0]}" y="${z[1]}" width="${z[2]}" height="${z[3]}" rx="2" fill="${z[4]==='danger'?'rgba(255,90,90,.18)':'rgba(255,220,60,.16)'}" stroke="rgba(255,255,255,.55)" stroke-dasharray="2 2"/>`).join('');
+ let arrows=sp.ar.map(a=>`<path d="M ${a[0]} ${a[1]} L ${a[2]} ${a[3]}" fill="none" stroke="${a[4]==='pass'?'#fff':a[4]==='recover'?'#9ee7ff':'#ffe98c'}" stroke-width="1.5" ${a[4]==='pass'?'stroke-dasharray="3 2"':''} marker-end="url(#ar76)"/>`).join('');
+ let b=sp.A[0];
+ return `<div class="board75"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(d.name||'練習')}の戦術図"><defs><marker id="ar76" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#fff"/></marker></defs><rect x="3" y="3" width="94" height="94" rx="2" fill="#168557" stroke="#fff" stroke-width="1.2"/><line x1="3" y1="50" x2="97" y2="50" stroke="rgba(255,255,255,.55)"/><path d="M35 3 Q50 22 65 3M35 97 Q50 78 65 97" fill="none" stroke="rgba(255,255,255,.65)"/>${zones}${arrows}${circles(sp.A,atk,'A')}${circles(sp.D,def,'D')}<circle cx="${b[0]+5}" cy="${b[1]-2}" r="1.8" fill="#fff" stroke="#111" stroke-width=".6"/><rect x="42" y="1" width="16" height="3" fill="none" stroke="#fff"/><rect x="42" y="96" width="16" height="3" fill="none" stroke="#fff"/></svg></div><div class="boardLegend75"><span><i class="dot75" style="background:${atk}"></i>攻撃</span><span><i class="dot75" style="background:${def}"></i>守備</span><span>白破線＝パス</span><span>実線＝移動</span></div>`;
 }
 function sourceLabel75(x){if(String(x.id||'').startsWith('photo60-'))return '写真由来・判断テーマ';if(String(x.id||'').startsWith('photo-plus-'))return '追加写真由来';if(String(x.id||'').startsWith('funino-'))return 'FUNINOホッケー';return 'チーム練習';}
 function practiceDetailV701(ref){
@@ -246,6 +260,7 @@ function practiceDetailV701(ref){
  openModal(`<div class="k">PRACTICE DETAIL</div><h2>${esc(d.name||'練習')}</h2>${tacticalBoard75(d)}<div class="src75">出典区分：${sourceLabel75(d)}｜※図は書籍図版の複製ではなく、ホッケー用に再設計した配置図です。</div>
  <div class="menu"><b>コート設定</b><div class="meta"><b>人数：</b>${players}<br><b>GK：</b>${d.gkRequired?'必要':'なしでも可'}<br><b>サイズ：</b>${esc(d.space||'自由設定')}<br><b>時間：</b>${+d.minutes||15}分${d.difficulty?`<br><b>難易度：</b>${esc(d.difficulty)}`:''}</div></div>
  <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>
+ ${(()=>{let s=drillSteps76(d);return `<div class="menu"><b>進め方</b><div class="meta"><b>①開始：</b>${esc(s.start)}<br><b>②展開：</b>${esc(s.play)}<br><b>③成功条件：</b>${esc(s.win)}</div></div>`})()}
  <div class="menu"><b>この練習で見ること</b><div class="meta"><b>目的：</b>${esc(d.purpose||'—')}<br><b>原則：</b>${esc((d.principles||[]).join(' / ')||'—')}<br><b>判断ポイント：</b>${esc(d.judgment||'—')}<br><b>選手への問い：</b>${esc(d.question||'—')}<br><b>KPI：</b>${esc(d.kpiHint||'—')}</div></div>
  ${safeUrl(d.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(d.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}`)
 }
@@ -520,5 +535,6 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
 <!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
 <!-- HC_V74_SMART_RECOMMEND_METHOD_LINKAGE -->
+<!-- HC_V76_SPECIFIC_TACTICAL_DIAGRAMS_AND_FLOW -->
 <!-- HC_V75_TACTICAL_BOARD_ALL_PRACTICES -->
 </body></html>
