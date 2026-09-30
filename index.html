@@ -26,7 +26,21 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}.tag{display:inline-block;border:1px solid #31464e;border-radius:999px;padding:4px 7px;margin:3px 3px 0 0;font-size:10px;color:#b9c8cd}.libraryTools{display:grid;grid-template-columns:1fr auto;gap:7px;margin:10px 0}.libraryTools .btn2{width:auto}
 .methodMapV55 details{border:1px solid #2a3e47;border-radius:14px;margin:8px 0;padding:10px}.methodMapV55 summary{font-weight:950;cursor:pointer}.methodLine{margin:8px 0 0 10px;padding-left:10px;border-left:2px solid #294047}.methodJudge{font-size:11px;color:#9fb1b7;margin-top:4px;line-height:1.5} .exmark{position:absolute;transform:translate(-50%,-50%);font-size:25px;font-weight:900;color:#d44;line-height:1} .miniGoal{position:absolute;width:8px;height:42px;border:2px solid #555}.miniGoal.right{right:2%;border-left:0}.miniGoal.left{left:2%;border-right:0}.zoneV76{position:absolute;border:2px dashed #d44;background:rgba(220,60,60,.05)}.serverV76{position:absolute;transform:translate(-50%,-50%);font-weight:900;background:#fff;border:2px solid #555;border-radius:50%;padding:2px 5px}.scoreZoneV76{position:absolute;width:12%;border:2px dashed #d44;background:rgba(220,60,60,.04)}.neutral{background:#f0b429;font-size:9px;color:#111;display:flex;align-items:center;justify-content:center}.rotateV76{position:absolute;left:4%;bottom:3%;font-size:10px;font-weight:800;background:#fff;padding:2px 5px;border-radius:5px}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>.econoDiagram{margin:10px 0;padding:10px;border:1px solid #d9e2e8;border-radius:14px;background:#f8fbfa}.epitch{height:150px;position:relative;border:2px solid #7aa38b;border-radius:10px;background:#eef6f0;overflow:hidden}.epitch:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #9bb5a4}.edot{position:absolute;width:18px;height:18px;border-radius:50%;transform:translate(-50%,-50%)}.ea{background:#2b78d0}.ed{background:#263238}.earrow{position:absolute;height:3px;background:#d44;transform-origin:left center}.earrow:after{content:"";position:absolute;right:-2px;top:-4px;border-left:8px solid #d44;border-top:5px solid transparent;border-bottom:5px solid transparent}.egoal{position:absolute;width:9px;height:45px;border:2px solid #555;border-left:0}</style></head>
+<style>.econoDiagram{margin:10px 0;padding:10px;border:1px solid #d9e2e8;border-radius:14px;background:#f8fbfa}.epitch{height:150px;position:relative;border:2px solid #7aa38b;border-radius:10px;background:#eef6f0;overflow:hidden}.epitch:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #9bb5a4}.edot{position:absolute;width:18px;height:18px;border-radius:50%;transform:translate(-50%,-50%)}.ea{background:#2b78d0}.ed{background:#263238}.earrow{position:absolute;height:3px;background:#d44;transform-origin:left center}.earrow:after{content:"";position:absolute;right:-2px;top:-4px;border-left:8px solid #d44;border-top:5px solid transparent;border-bottom:5px solid transparent}.egoal{position:absolute;width:9px;height:45px;border:2px solid #555;border-left:0}</style>
+<style>
+.visualBoardV77{margin:12px 0;border-radius:16px;overflow:hidden;border:1px solid #ccd9d0;background:#fff;box-shadow:0 5px 18px rgba(0,0,0,.08)}
+.vb-head{padding:10px 12px;background:#173b2b;color:#fff;display:flex;justify-content:space-between;gap:8px;font-size:11px}.vb-head b{font-size:13px;text-align:right}
+.vb-svg{display:block;width:100%;background:#dfeee2}
+.vb-pitch{fill:#78ad78;stroke:#fff;stroke-width:2}.vb-half,.vb-circle{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.5}
+.vb-a{fill:#1976d2;stroke:#fff;stroke-width:2}.vb-d{fill:#263238;stroke:#fff;stroke-width:2}.vb-n{fill:#f4bd22;stroke:#fff;stroke-width:2}
+.vb-num{font:700 9px sans-serif;fill:#fff;text-anchor:middle}.vb-ball{fill:#fff;stroke:#222;stroke-width:1.5}
+.vb-cone{fill:#ff7a00;stroke:#fff;stroke-width:1}.vb-goal{fill:none;stroke:#fff;stroke-width:3}
+.vb-zone{fill:rgba(255,230,70,.24);stroke:#ffe45c;stroke-width:2;stroke-dasharray:5 4}.vb-ztext{font:700 9px sans-serif;fill:#fff}
+.vb-move,.vb-sprint,.vb-handover,.vb-return{stroke:#ffef5a;stroke-width:3;fill:none}.vb-sprint{stroke-dasharray:7 4}.vb-handover{stroke:#ff9f43;stroke-dasharray:4 3}.vb-return{stroke:#fff;stroke-dasharray:4 4}
+.vb-pass{stroke:#fff;stroke-width:2.5;stroke-dasharray:7 4}.vb-scan{stroke:#ff9f43;stroke-width:2.5;stroke-dasharray:3 3}
+.vb-server{fill:#fff;stroke:#333;stroke-width:2}.vb-caption,.vb-rule{padding:9px 12px;font-size:12px;line-height:1.65}.vb-rule{background:#f5f8f6;border-top:1px solid #e1e9e3}
+</style>
+</head>
 <body>
 <header><div class="brand">🏑 HOCKEY COACH <small>PERFORMANCE</small></div><div class="sub">TEAM DEVELOPMENT SYSTEM</div></header>
 <main>
@@ -193,45 +207,45 @@ function econoDiagramV74(x){
  return `<div class="econoDiagram"><div class="k">戦術図｜${String(n).padStart(2,'0')}</div><b>${esc(d[0])}</b><div class="epitch">${z}<span class="egoal" style="right:2%;top:35%"></span></div><div class="meta"><b>図のコンセプト：</b>${esc(d[1])}<br>青＝攻撃／黒＝守備／赤矢印＝移動・狙い／×＝閉じたい場所</div></div>`
 }
 
-function setupDiagramV76(x){
- let id=String(x?.id||x?.practiceId||''),m=id.match(/photo60-(\d+)-(\d+)/),theme=m?+m[1]:0,variant=m?+m[2]:1;
- let min=+x?.minPlayers||1,max=+x?.maxPlayers||30,space=x?.space||'自由設定';
- let style=x?.style||'',title=style==='反復量重視'?'反復型':style==='全員参加重視'?'全員参加型':'ゲーム型';
- let P=(c,l,t,lab='')=>`<span class="edot ${c}" style="left:${l}%;top:${t}%">${lab}</span>`;
- let A=(l,t,w,r=0)=>`<span class="earrow" style="left:${l}%;top:${t}%;width:${w}%;transform:rotate(${r}deg)"></span>`;
- let G=(side,top)=>`<span class="miniGoal ${side}" style="top:${top}%"></span>`;
- let Z=(l,t,w,hh)=>`<span class="zoneV76" style="left:${l}%;top:${t}%;width:${w}%;height:${hh}%"></span>`;
- let base=[
-  [P('ea',27,50)+P('ed',48,50)+P('ed',61,32)+G('right',38),A(33,50,20)],
-  [P('ea',30,45)+P('ed',53,45)+G('right',38),A(35,45,20)],
-  [P('ea',30,35)+P('ea',30,65)+P('ed',52,48)+G('right',38),A(35,38,22,18)],
-  [P('ea',28,50)+P('ed',48,48)+P('ed',60,30)+P('ea',57,20)+G('right',38),A(50,40,15,-35)],
-  [P('ea',30,50)+P('ea',53,25)+P('ed',48,48)+P('ed',64,36)+G('right',38),A(54,29,14,28)],
-  [P('ea',28,50)+P('ed',50,32)+P('ed',50,68)+G('right',38),Z(46,38,10,24)],
-  [P('ea',55,48)+P('ed',38,60)+G('right',38),A(42,58,25,-18)],
-  [P('ea',28,50)+P('ed',48,50)+P('ed',59,30)+G('right',38),A(33,48,26,-28)],
-  [P('ea',28,50)+P('ed',48,50)+P('ea',66,28)+G('right',38),A(49,42,14,-42)],
-  [P('ea',25,28)+P('ea',39,52)+P('ea',54,75)+P('ed',61,50)+G('right',38),A(42,50,23)],
-  [P('ed',47,28)+P('ed',47,72)+P('ea',33,50)+P('ea',59,50)+G('right',38),Z(49,37,13,26)+A(38,50,18)],
-  [P('ea',26,25)+P('ed',48,30)+P('ed',48,50)+P('ed',48,70)+G('right',38),A(48,30,13,90)],
-  [P('ea',27,50)+P('ed',47,50)+P('ea',68,50)+G('right',38),Z(55,44,12,12)],
-  [P('ea',28,50)+P('ed',47,34)+P('ed',47,52)+P('ed',58,68)+G('right',38),A(57,64,13,-85)],
-  [P('ea',28,50)+P('ed',47,42)+P('ed',53,62)+G('right',38),Z(56,40,12,22)+A(53,59,11,-55)],
-  [P('ea',47,28)+P('ed',44,48)+P('ed',62,48)+G('right',38),A(48,34,23,40)],
-  [P('ea',28,50)+P('ed',46,50)+P('ea',55,25)+P('ed',65,35)+G('right',38),A(34,50,12)+A(57,29,9,25)],
-  [P('ea',36,25)+P('ed',50,42)+G('right',38),A(40,30,32,32)],
-  [P('ea',39,28)+P('ed',54,43)+G('right',38),A(54,43,18,90)+A(54,63,18,-90)],
-  [P('ea',36,50)+P('ed',54,50)+P('ea',51,24)+G('right',38),Z(58,25,10,28)+A(45,28,16,28)]
+function setupDiagramV77(x){
+ const id=String(x?.id||x?.practiceId||''),m=id.match(/photo60-(\d+)-(\d+)/),t=m?+m[1]:1,v=m?+m[2]:1;
+ const min=+x?.minPlayers||4,max=+x?.maxPlayers||12,space=x?.space||'自由設定';
+ const P=(team,xp,yp,n='')=>`<g transform="translate(${xp} ${yp})"><circle r="11" class="vb-${team}"/><text class="vb-num" y="4">${n}</text></g>`;
+ const C=(xp,yp)=>`<path class="vb-cone" d="M${xp-6},${yp+7} L${xp},${yp-8} L${xp+6},${yp+7} Z"/>`;
+ const B=(xp,yp)=>`<circle cx="${xp}" cy="${yp}" r="5" class="vb-ball"/>`;
+ const G=(side,y=100)=>side==='R'?`<path class="vb-goal" d="M332 ${y-24}h12v48h-12"/>`:`<path class="vb-goal" d="M28 ${y-24}H16v48h12"/>`;
+ const A=(x1,y1,x2,y2,kind='move')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="vb-${kind}" marker-end="url(#arr${kind})"/>`;
+ const Z=(x,y,w,hh,lab='')=>`<g><rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="7" class="vb-zone"/><text x="${x+5}" y="${y+15}" class="vb-ztext">${lab}</text></g>`;
+ const base=[
+ [P('a',82,100,'A')+B(94,100)+P('d',178,100,'1')+P('d',230,70,'2')+G('R')+A(105,100,166,100,'move'),'間合いを詰める'],
+ [P('a',100,100,'A')+B(112,100)+P('d',205,100,'1')+G('R')+A(124,100,194,100,'pass'),'相手とゴールの間'],
+ [P('a',105,100,'A')+P('d',178,92,'1')+G('R')+Z(180,112,75,45,'進入させない')+A(116,100,165,92,'move'),'身体の向きで制限'],
+ [P('a',90,100,'A')+P('a',190,48,'B')+P('d',165,100,'1')+P('d',225,68,'2')+A(205,63,218,68,'move')+G('R'),'味方を見てカバー'],
+ [P('a',90,105,'A')+P('a',215,52,'B')+P('d',165,100,'1')+P('d',245,78,'2')+A(230,65,242,74,'move')+G('R'),'相手を見てカバー'],
+ [P('a',80,100,'A')+P('d',190,65,'1')+P('d',190,135,'2')+Z(176,82,28,36,'閉')+G('R'),'DF間のギャップ'],
+ [P('a',220,95,'A')+P('d',130,125,'1')+G('R')+A(145,120,245,102,'sprint'),'突破後リカバー'],
+ [P('a',90,100,'A')+B(102,100)+P('d',175,100,'1')+P('d',220,62,'2')+Z(215,82,55,38,'中央NG')+A(112,98,185,65,'pass')+G('R'),'中央を閉じ外へ誘導'],
+ [P('a',90,100,'A')+P('a',245,55,'B')+P('d',175,100,'1')+Z(205,83,42,34,'縦封鎖')+A(178,88,225,60,'scan')+G('R'),'背後確認＋中央封鎖'],
+ [P('a',78,55,'A')+P('a',145,105,'B')+P('a',220,150,'C')+P('d',255,100,'1')+A(155,105,238,102,'pass')+G('R'),'異なる高さを作る'],
+ [P('d',185,55,'1')+P('d',185,145,'2')+Z(190,75,60,50,'ライン間')+P('a',90,100,'A')+P('a',220,100,'B')+A(105,100,205,100,'pass')+G('R'),'ライン間を使う'],
+ [P('a',70,45,'A')+P('d',175,55,'1')+P('d',175,100,'2')+P('d',175,145,'3')+A(175,55,205,55,'move')+A(175,100,205,100,'move')+A(175,145,205,145,'move')+G('R'),'MFラインをスライド'],
+ [P('a',80,100,'A')+B(92,100)+P('d',170,100,'1')+P('a',270,100,'B')+Z(205,88,50,24,'縦コース')+G('R'),'FWへの縦パス封鎖'],
+ [P('a',100,100,'A')+P('d',175,70,'1')+P('d',175,105,'2')+P('d',225,130,'3')+Z(155,52,90,95,'3v1局面')+G('R'),'局所的数的優位'],
+ [P('a',100,100,'A')+P('d',175,80,'1')+P('d',190,120,'2')+Z(205,80,45,45,'封鎖')+A(190,115,220,100,'move')+G('R'),'コース封鎖＋数的優位'],
+ [P('a',180,50,'A')+P('d',165,100,'1')+P('d',235,100,'2')+A(180,62,250,120,'sprint')+A(175,92,205,100,'handover')+G('R'),'マーク受け渡し'],
+ [P('a',80,105,'A')+B(92,105)+P('d',155,105,'1')+P('a',205,50,'B')+P('d',250,70,'2')+A(165,98,230,72,'handover')+G('R'),'保持者の圧力で判断'],
+ [P('a',145,55,'A')+P('d',190,90,'1')+A(155,62,270,145,'sprint')+G('R'),'斜め背後ラン対応'],
+ [P('a',145,55,'A')+P('d',190,90,'1')+A(155,62,240,125,'sprint')+A(230,122,190,92,'return')+G('R'),'出なければ元へ戻る'],
+ [P('a',115,100,'A')+B(130,100)+P('a',185,55,'B')+P('d',210,105,'1')+Z(235,55,48,52,'次の出口')+A(185,65,240,80,'move')+G('R'),'ロスト前から準備']
  ];
- let z=(base[Math.max(0,theme-1)]||base[0]);
- // Three variants of each theme: change environment, not merely the label.
- if(variant===1) z+=`<span class="serverV76" style="left:12%;top:15%">S</span>`;
- if(variant===2) z+=G('left',38)+`<span class="scoreZoneV76" style="right:1%;top:22%;height:56%"></span>`;
- if(variant===3) z+=P('neutral',50,88,'+1')+`<span class="rotateV76">全員ローテーション</span>`;
- let rule=variant===1?'サーバーから再開し、同じ判断を反復':variant===2?'両方向・得点条件を使ってゲーム化':'待ち時間を減らし、役割を順番に交代';
- return `<div class="econoDiagram"><div class="k">UNIQUE SETUP｜${String(theme).padStart(2,'0')}-${variant} ${esc(title)}</div><div class="epitch">${z}</div><div class="meta"><b>サイズ：</b>${esc(space)}　<b>人数：</b>${min}〜${max}人　<b>時間：</b>${+x?.minutes||15}分<br><b>設営：</b>${esc(rule)}<br><b>ルール：</b>${esc(x?.constraint||'自由設定')}<br><span class="muted">青＝攻撃／黒＝守備／S＝サーバー／+1＝フリーマン。図はこのメニュー固有の設営イメージ。</span></div></div>`
+ let [scene,label]=base[t-1]||base[0];
+ let extra='',variantLabel='';
+ if(v===1){extra=C(45,35)+C(45,165)+`<g><circle cx="52" cy="100" r="15" class="vb-server"/><text x="52" y="105" class="vb-num">S</text></g>`;variantLabel='反復型｜サーバーから連続開始'}
+ if(v===2){extra=G('L',100)+Z(28,25,45,150,'得点ゾーン');variantLabel='ゲーム型｜方向と得点条件あり'}
+ if(v===3){extra=P('n',180,178,'+1')+C(55,25)+C(55,175)+C(305,25)+C(305,175);variantLabel='全員参加型｜フリーマン＋ローテーション'}
+ return `<div class="visualBoardV77"><div class="vb-head"><span>ECONO VISUAL BOARD</span><b>${String(t).padStart(2,'0')}-${v}｜${esc(label)}</b></div><svg viewBox="0 0 360 200" class="vb-svg" role="img" aria-label="${esc(label)}の設営図"><defs><marker id="arrmove" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z"/></marker><marker id="arrpass" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z"/></marker><marker id="arrsprint" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z"/></marker><marker id="arrscan" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z"/></marker><marker id="arrhandover" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z"/></marker><marker id="arrreturn" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z"/></marker></defs><rect x="8" y="8" width="344" height="184" rx="9" class="vb-pitch"/><line x1="180" y1="8" x2="180" y2="192" class="vb-half"/><circle cx="180" cy="100" r="28" class="vb-circle"/>${scene}${extra}</svg><div class="vb-caption"><b>${esc(variantLabel)}</b><br><span>●青 攻撃　●黒 守備　●黄 +1　●白S サーバー　▲ コーン</span><br><b>人数</b> ${min}〜${max}人　<b>サイズ</b> ${esc(space)}　<b>時間</b> ${+x?.minutes||15}分</div><div class="vb-rule"><b>ルール・制約：</b>${esc(x?.constraint||'自由設定')}</div></div>`
 }
-function setupDiagramV75(x){return setupDiagramV76(x)}
+function setupDiagramV75(x){return setupDiagramV77(x)}
 function storageHealthV75(){
  let keys=['hc_practice_library_v54','hc_training_records','hc_today_plan'],bytes=0,parts=[];
  keys.forEach(k=>{let v=localStorage.getItem(k)||'';bytes+=v.length*2;parts.push([k,v.length*2])});
@@ -252,7 +266,7 @@ function practiceDetailV701(ref){
  let players=(d.minPlayers||d.maxPlayers)?`${+d.minPlayers||1}〜${+d.maxPlayers||30}人`:'自由';
  openModal(`<div class="k">PRACTICE DETAIL</div><h2>${esc(d.name||'練習')}</h2>
  <div class="menu"><b>コート設定</b><div class="meta"><b>人数：</b>${players}<br><b>GK：</b>${d.gkRequired?'必要':'なしでも可'}<br><b>サイズ：</b>${esc(d.space||'自由設定')}<br><b>時間：</b>${+d.minutes||15}分${d.difficulty?`<br><b>難易度：</b>${esc(d.difficulty)}`:''}</div></div>
- <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}${isEconoV73(d)?setupDiagramV76(d):setupDiagramV75(d)}
+ <div class="menu"><b>ルール・制約</b><div class="meta">${esc(d.constraint||'自由設定')}</div></div>${isEconoV73(d)?`<div class="menu"><div class="k">ECONO METHOD</div><b>コンセプト</b><div class="meta">${esc(econoConceptV73(d))}</div>${econoDiagramV74(d)}<b>ノルマ</b><div class="meta">${esc(econoNormV73(d))}</div></div>`:''}${setupDiagramV77(d)}
  <div class="menu"><b>この練習で見ること</b><div class="meta"><b>目的：</b>${esc(d.purpose||'—')}<br><b>原則：</b>${esc((d.principles||[]).join(' / ')||'—')}<br><b>判断ポイント：</b>${esc(d.judgment||'—')}<br><b>選手への問い：</b>${esc(d.question||'—')}<br><b>KPI：</b>${esc(d.kpiHint||'—')}</div></div>
  ${safeUrl(d.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(d.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}`)
 }
@@ -339,7 +353,7 @@ function renderCloudV70(){
  setTimeout(renderStorageHealthV75,0);
 }
 function autoSaveMetaV70(){
- localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.6-econo-60-unique-setup'}))
+ localStorage.setItem(AUTO_META_V70,JSON.stringify({savedAt:new Date().toISOString(),version:'7.7-visual-training-board'}))
 }
 
 
@@ -498,7 +512,7 @@ function editRole(i){let a=roleData(),x=i>=0?a[i]:{name:'',desc:''};openModal(`<
 function commitRole(i){let a=roleData(),x={id:i>=0?a[i].id:'role-'+Date.now(),name:rName.value.trim()||'ROLE',desc:rDesc.value.trim()};if(i>=0)a[i]=x;else a.push(x);saveRoles(a);closeModal()}
 function deleteRole(i){if(!confirm('この役割を削除しますか？'))return;let a=roleData();a.splice(i,1);saveRoles(a)}
 function saveTeamSettings(){localStorage.setItem('hc_team_settings_v52',JSON.stringify({name:teamName.value.trim(),season:seasonName.value.trim()}));alert('チーム設定を保存しました')}
-function exportData(){let data={version:'7.6-econo-60-unique-setup',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportData(){let data={version:'7.7-visual-training-board',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),roles:roleData(),team:jget('hc_team_settings_v52',{})};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||''}
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();
@@ -525,4 +539,4 @@ setTimeout(()=>{try{renderHomeGrowthV60();renderNextThemeV60()}catch(e){}},0);
 <!-- HC_V701_PRACTICE_DETAIL_CARD -->
 <!-- HC_V71_SUPABASE_AUTH_READY_RLS_LOCKED -->
 <!-- HC_V72_TEAM_RLS_FOUNDATION_SYNC_LOCKED -->
-<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --><!-- HC_V76_ECONO_60_UNIQUE_SETUP_LIGHTWEIGHT --></body></html>
+<!-- HC_V73_ECONO_METHOD_60_CONCEPT_DIAGRAM_NORMA --><!-- HC_V74_ECONO_60_THEME_DIAGRAMS --><!-- HC_V75_LIGHTWEIGHT_RUNTIME_DIAGRAMS_STORAGE_HEALTH --><!-- HC_V76_ECONO_60_UNIQUE_SETUP_LIGHTWEIGHT --><!-- HC_V77_PHOTO_LIKE_ECONO_VISUAL_BOARD --></body></html>
