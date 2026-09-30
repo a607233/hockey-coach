@@ -195,6 +195,43 @@ const LIB0=[
 {id:'l4',phase:'攻→守',principle:'即時奪回',name:'4v4 即時奪回ゲーム',minutes:15,players:'8',size:'25m×25m',purpose:'ロスト直後の反応を高める',constraint:'4秒以内奪回で2点',question:'誰が1st DF？',videoUrl:'',archived:false},
 {id:'l5',phase:'守→攻',principle:'前進判断',name:'4v4 6秒フィニッシュ',minutes:18,players:'8〜12',size:'40m×30m',purpose:'奪取直後の判断を高める',constraint:'6秒以内シュートで2点',question:'GO・HOLD・RESET？',videoUrl:'',archived:false}
 ];let lf='すべて';
+
+/* ===== HC V5.8.6 PHOTO LIBRARY PACK 01 =====
+   Adds 19 summarized drills from the user's uploaded training-menu photos.
+   Data-only migration: existing app functions/UI are unchanged.
+*/
+const PHOTO_LIBRARY_V586=[
+{id:'photo586-01',phase:'攻撃',principle:'優位性をつくる ＞ 位置的優位 ＞ ライン間に立つ',name:'ポジショニング｜4v4＋2フリーマン',minutes:15,players:'10',size:'18m×25m',purpose:'ボール保持者に対して合理的な立ち位置を取り、パスコースを作り続ける。',constraint:'4v4＋攻撃側2フリーマン。守備は近い相手へプレッシャーをかける。攻守交代後は素早く役割を切り替える。',question:'味方が相手より多い状況では、どこに立つとボールを受けやすい？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-02',phase:'攻撃',principle:'優位性をつくる ＞ 数的優位 ＞ 3人目を使う',name:'サポート｜3v3＋フリーマン',minutes:15,players:'7〜8',size:'20m×30m',purpose:'プレッシャーを受けた味方を素早く助け、次のパスコースを作る。',constraint:'中央ゾーンで受けてから反対側へ前進。素早いパス回しを意識し、レベルに応じてフリーマン数を調整する。',question:'味方がプレッシャーを受けた瞬間、どこへ動けば助けられる？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-03',phase:'守備',principle:'ゴールを守る ＞ マークを管理する ＞ 受け手へ寄せる',name:'マーキング｜3v3＋GK',minutes:15,players:'7',size:'20m×30m',purpose:'担当する相手を明確にし、マークを継続しながら危険な選手をフリーにしない。',constraint:'一方向への攻撃。攻撃側はパス後に次のプレーへ動く。守備側は相手との対応関係を保つ。',question:'誰がフリーになっている？ 自分は誰を見続ける必要がある？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-04',phase:'攻撃',principle:'優位性をつくる ＞ 質的優位 ＞ 1v1を作る',name:'ボールキープ｜3v3＋2GK',minutes:15,players:'8',size:'18m×30m',purpose:'身体でボールを守り、相手との距離を確保しながら保持する。',constraint:'中央ゾーンで受け、条件を満たしてから外側ゾーンへ進入して攻撃する。実戦形式で継続する。',question:'相手からボールを遠ざけるには、身体のどこをどう使う？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-05',phase:'攻撃',principle:'優位性をつくる ＞ 質的優位 ＞ 1v1を作る',name:'レガテ｜3v3＋2GK',minutes:15,players:'8',size:'18m×28m',purpose:'相手を抜くために、止まらず方向を変えて前進する。',constraint:'守備は中央付近から開始。攻撃は相手の重心や進行方向を見て逆を取る。試合形式で実施する。',question:'相手に触られず抜くために、どのタイミングで方向を変える？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-06',phase:'攻撃',principle:'優位性をつくる ＞ 質的優位 ＞ 1v1を作る',name:'ボールキープ｜3v3＋フリーマン',minutes:15,players:'7',size:'18m×22m',purpose:'身体と腕を使って相手からボールを遠ざけ、安定して保持する。',constraint:'中央で保持し、外側ゾーンへ進入したら反対側へ攻撃を継続。マンツーマンを基本とする。',question:'相手をボールから遠ざけるには、身体のどの部分を使う？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-07',phase:'攻撃',principle:'前進する ＞ キャリーとパスを選ぶ ＞ 相手を引きつける',name:'ドリブルⅠ｜3v3＋GK',minutes:15,players:'7',size:'18m×28m',purpose:'スピードを落とさず、相手から遠い側でボールを運ぶ。',constraint:'守備は指定ゾーンを基準に対応。攻撃は守備の配置を見てドリブルで前進し、奪われたら交代する。',question:'速く運ぶには足のどの部分を使う？ 相手から遠い足はどちら？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-08',phase:'攻撃',principle:'前進する ＞ キャリーとパスを選ぶ ＞ 相手を引きつける',name:'ドリブルⅡ｜3v3＋フリーマン',minutes:15,players:'9',size:'18m×30m',purpose:'周囲を見ながら運び、相手との距離に応じてタッチとスピードを変える。',constraint:'外側ゾーンのフリーマンを活用して得点を狙う。フリーマンへのパス条件を設け、反対側へ攻撃を続ける。',question:'運びながらフリーマンを見るにはどうする？ 相手が近い時と遠い時でタッチはどう変わる？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-09',phase:'攻撃',principle:'優位性をつくる ＞ 質的優位 ＞ 1v1を作る',name:'レガテ｜3v3 ゾーンゴール',minutes:15,players:'6',size:'15m×20m',purpose:'フェイントと方向転換で相手を動かし、優位な方向へ抜け出す。',constraint:'マンツーマンを基本にし、攻撃は相手を抜いて反対側のゾーンへ進入する。',question:'相手を抜くために何ができる？ ボールを奪われないためにどう身体を使う？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-10',phase:'守備',principle:'ボールを奪う ＞ 1st DFが制限する ＞ 距離を詰める',name:'タックル｜3v3＋2GK',minutes:15,players:'8',size:'16m×24m',purpose:'相手の進行方向を限定し、簡単に突破させずボールを奪う。',constraint:'攻撃は指定ライン付近でボールを受ける。守備は正面から飛び込まず、方向を限定して対応する。',question:'相手が突破しにくい方向はどちら？ どう近づけば危険な方向へ行かせない？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-11',phase:'攻撃',principle:'優位性をつくる ＞ 位置的優位 ＞ ライン間に立つ',name:'サポート｜3v3＋フリーマン＋2GK',minutes:15,players:'9',size:'20m×30m',purpose:'ボール保持者の近くに正しい角度で現れ、プレッシャーから逃げる出口を作る。',constraint:'中央ゾーンを使いながらゴール方向へ攻撃。保持者が囲まれたら周囲が素早くサポートする。',question:'どの位置に立てば、相手の背中側でパスを受けられる？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-12',phase:'守備',principle:'ボールを奪う ＞ 2nd DFが連動する ＞ カバー位置を取る',name:'カバーリング｜3v3＋フリーマン＋GK',minutes:15,players:'8',size:'25m×35m',purpose:'1st DFを助けながら中央を守り、突破された時にすぐ次の守備へ移れる位置を取る。',constraint:'攻撃は中央側から外側ゾーンへの進入を狙う。守備はボール保持者と周囲の相手を同時に管理する。',question:'中央を通させないためにどこへ立つ？ 味方が抜かれた時にすぐ対応できる位置は？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-13',phase:'守備',principle:'ゴールを守る ＞ マークを管理する ＞ ボールと相手を同一視野に入れる',name:'マーキング｜4v4＋GK',minutes:15,players:'9',size:'26m×30m',purpose:'マークする相手を特定し、ゴールとの位置関係を保ちながら継続して対応する。',constraint:'攻撃は複数ゾーンを越えてゴールを目指す。守備は相手・ボール・ゴールを確認しながら距離を調整する。',question:'誰がフリー？ 誰をマークする？ 相手との距離はボール位置でどう変わる？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-14',phase:'攻撃',principle:'前進する ＞ キャリーとパスを選ぶ ＞ フリーな味方を使う',name:'コントロールオリエンテード｜3v3＋2GK',minutes:15,players:'8',size:'24m×30m',purpose:'次のプレー方向へボールを置き、相手から遠い足で前向きにコントロールする。',constraint:'GKから開始。受け手は次の方向を意識してコントロールし、プレッシャーを避けながら前進する。',question:'次のプレーへ優位になるにはどこへボールを置く？ 左右から来るボールはどちらの足で扱う？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-15',phase:'攻撃',principle:'前進する ＞ 幅と深さを取る ＞ 横幅を確保する',name:'攻撃の幅｜5v5＋フリーマン＋2GK',minutes:18,players:'13',size:'50m×40m',purpose:'幅を使って相手の守備を広げ、中央や逆サイドに前進スペースを作る。',constraint:'ゾーン条件を使い、ボールと反対側の幅も確保する。試合形式で攻撃を継続する。',question:'どこで幅を取れば味方が使えるスペースが増える？ 今いるゾーンの人数は適切？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-16',phase:'攻撃',principle:'前進する ＞ 幅と深さを取る ＞ 前後のラインを作る',name:'攻撃の深さ｜4v4＋フリーマン＋GK',minutes:18,players:'10',size:'40m×45m',purpose:'縦方向の距離を保ち、前方へのパスと斜めのサポートで守備を動かす。',constraint:'外側ラインと前方ゾーンを利用。前進後も攻撃の深さを失わず、次のパスコースを作る。',question:'攻撃の深さを保つにはどこに立つ？ 相手陣深くへ入るにはどんな動きが必要？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-17',phase:'攻撃',principle:'フィニッシュする ＞ シュート選択 ＞ 早く打つ',name:'シュート｜3v4＋フリーマン＋GK',minutes:15,players:'9',size:'40m×45m',purpose:'GKと守備の位置を見て、素早く正確にフィニッシュする。',constraint:'攻撃側は数的不利から開始。ゾーン条件を使い、シュート機会を作ったら迷わずゴールを狙う。',question:'GKが止めにくい場所はどこ？ セカンドボールに反応する準備はできている？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-18',phase:'攻撃',principle:'前進する ＞ キャリーとパスを選ぶ ＞ フリーな味方を使う',name:'パス｜4v4＋2フリーマン',minutes:15,players:'10',size:'30m×40m',purpose:'味方が次のプレーをしやすいパスを選び、連続して前進する。',constraint:'中央ゾーンでパスを受けてから反対側へ攻撃。受け手が有利になる強さ・方向・タイミングを意識する。',question:'今のパスは味方が次のプレーをしやすかった？ もっと有利になるパスは？',videoUrl:'',archived:false,source:'PHOTO PACK 01'},
+{id:'photo586-19',phase:'攻撃',principle:'優位性をつくる ＞ 位置的優位 ＞ 相手の視野外を取る',name:'デスマルケ｜3v3＋2フリーマン',minutes:15,players:'8',size:'18m×30m',purpose:'マークを外す動きで相手との距離を作り、フリーで受けられる場所へ移動する。',constraint:'中央はマンツーマン。外側フリーマンを使って得点を狙い、得点後は反対方向へ継続する。',question:'追われている時、どこへ動けばフリーで受けられる？ 相手とボールを同時に見るには？',videoUrl:'',archived:false,source:'PHOTO PACK 01'}
+];
+function migratePhotoLibraryV586(){
+ let a=jget('hc_training_library_v55',null);
+ if(!Array.isArray(a)) a=LIB0.map(x=>({...x}));
+ let ids=new Set(a.map(x=>x.id));
+ let add=PHOTO_LIBRARY_V586.filter(x=>!ids.has(x.id));
+ if(add.length){
+   a.push(...add);
+   localStorage.setItem('hc_training_library_v55',JSON.stringify(a));
+ }
+}
+
 function libData(){let a=jget('hc_training_library_v55',null);return Array.isArray(a)?a:LIB0}
 function saveLib(a){localStorage.setItem('hc_training_library_v55',JSON.stringify(a));renderLib();renderArchive()}
 function setupTodayTabs(){document.querySelectorAll('[data-tt]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tt]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="tt-"]').forEach(x=>x.classList.toggle('on',x.id==='tt-'+b.dataset.tt));if(b.dataset.tt==='library')renderLib()})}
@@ -269,6 +306,7 @@ function renderSmartLibrarySuggestions(){
  let host=document.getElementById('smartLibrarySuggestions');if(!host)return;let opts=smartLibraryOptions();
  host.innerHTML=opts.length?opts.map((o,n)=>`<div class="menu"><div class="k">${['反復量重視','ゲーム性重視','全員参加重視'][n]||'候補'}｜${esc(o.x.phase)}</div><h3>${esc(o.x.name)}</h3><div class="meta">${esc(o.x.purpose||'')}<br>${o.why.length?'一致：'+o.why.join('・'):'ライブラリ候補'}</div><button onclick="addLibToday(${libData().findIndex(v=>v.id===o.x.id)})">この練習を追加</button></div>`).join(''):'<div class="empty">練習ライブラリに候補を追加すると、ここに提案されます。</div>'
 }
+migratePhotoLibraryV586();
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupTodayTabs();renderLib();acceptInviteFromUrl();
 
 /* ===== HC V5.8 STABLE PRINCIPLE MODEL =====
@@ -393,4 +431,5 @@ renderPrincipleTree();renderLib();
 <!-- HC_V581_HOTFIX_NAV_HEADER -->
 <!-- HC_V582_COUNTER_PLUS_MINUS -->
 <!-- HC_V585_ANALYSIS_CONTROLS_RESTORED -->
+<!-- HC_V586_PHOTO_LIBRARY_PACK_01_19_DRILLS -->
 </body></html>
