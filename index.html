@@ -2715,939 +2715,142 @@ setTimeout(addPhilosophyToMore,2500);
 <!-- /HC_PHILOSOPHY_IN_MORE_FINAL_V1 -->
 
 
-<!-- HC_TODAY_SESSION_V2_01 -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- HC_TODAY_CLEAN_V4 -->
 <style>
-#hcTodayV2{margin:12px 0}
-.tdv2{background:linear-gradient(180deg,#101d22,#091317);border:1px solid #2b4149;border-radius:20px;padding:16px;color:#eef6f2}
-.tdv2-k{font-size:10px;font-weight:950;letter-spacing:1.3px;color:#d7ff39}
-.tdv2-title{font-size:23px;font-weight:950;margin:4px 0}
-.tdv2-sub{font-size:12px;color:#94a6ad;line-height:1.5}
-.tdv2-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
-.tdv2-box{background:#071014;border:1px solid #263b43;border-radius:14px;padding:12px}
-.tdv2-box label{display:block;font-size:10px;color:#91a3aa;font-weight:900;margin-bottom:6px;letter-spacing:.7px}
-.tdv2-in,.tdv2-sel,.tdv2-ta{width:100%;background:#0d181d;border:1px solid #30454e;border-radius:11px;color:#fff;padding:11px;font-size:14px}
-.tdv2-ta{min-height:70px;resize:vertical}
-.tdv2-chiprow{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-.tdv2-chip{border:1px solid #40545c;background:#101c21;color:#dce7e2;border-radius:999px;padding:7px 9px;font-size:12px}
-.tdv2-chip.on{background:#d7ff39;color:#071014;border-color:#d7ff39;font-weight:900}
-.tdv2-btn{border:0;border-radius:12px;padding:11px 13px;font-weight:950;background:#d7ff39;color:#071014}
-.tdv2-subbtn{border:1px solid #354b54;border-radius:12px;padding:10px 12px;font-weight:850;background:#15242a;color:#fff}
-.tdv2-menu{margin-top:9px;border:1px solid #294049;border-radius:15px;padding:12px;background:#0b161b}
-.tdv2-menuhead{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.tdv2-min{font-size:18px;font-weight:950;color:#d7ff39}
-.tdv2-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-.tdv2-total{font-size:30px;font-weight:950;color:#d7ff39}
-.tdv2-kpis{display:grid;gap:7px;margin-top:8px}
-.tdv2-foot{margin-top:12px;padding-top:12px;border-top:1px solid #263940}
-@media(max-width:560px){.tdv2-grid{grid-template-columns:1fr}}
+#hc4Design{margin:0 0 14px;padding:15px;border:1px solid #294049;border-radius:20px;background:#0b171c;color:#f4f8f6}
+.hc4-k{font-size:10px;letter-spacing:1.4px;font-weight:950;color:#d7ff39}.hc4-title{font-size:22px;font-weight:950;margin:5px 0}.hc4-sub{font-size:11px;line-height:1.55;color:#93a6ad}
+.hc4-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.hc4-field label{display:block;font-size:9px;color:#91a3aa;margin:0 0 4px}.hc4-in{width:100%;padding:10px;border-radius:11px;border:1px solid #30464e;background:#071014;color:#fff;font-size:14px}
+.hc4-tabs,.hc4-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.hc4-pill{padding:8px 10px;border-radius:999px;border:1px solid #344b54;background:#112027;color:#cbd6da;font-weight:850}.hc4-pill.on{background:#d7ff39;border-color:#d7ff39;color:#071014}
+.hc4-btn{width:100%;border:0;border-radius:14px;padding:14px;background:#d7ff39;color:#071014;font-weight:950;margin-top:13px}
+#hc4Sheet,#hc4Edit,#hc4Coach{position:fixed;inset:0;z-index:250000;background:rgba(0,0,0,.78);display:flex;align-items:flex-end}
+.hc4-sheet{width:100%;max-height:90vh;overflow:auto;padding:16px 14px calc(20px + env(safe-area-inset-bottom));background:#081419;color:#fff;border-radius:22px 22px 0 0}
+.hc4-x{float:right;width:38px;height:38px;border:0;border-radius:50%;background:#17272d;color:#fff;font-size:20px}.hc4-card{padding:12px;margin:9px 0;border:1px solid #2d434b;border-radius:15px;background:#0d1a1f}.hc4-card h4{margin:3px 0 6px}.hc4-card p{font-size:11px;line-height:1.55;color:#afbdc1}.hc4-add{width:100%;border:0;border-radius:10px;padding:10px;background:#d7ff39;color:#071014;font-weight:950}
+.hc4-editbtn{border:1px solid #344b54;border-radius:10px;background:#14242b;color:#fff;padding:7px 10px;font-weight:800;margin-top:8px}.hc4-coach{width:100%;border:1px solid #d7ff39;border-radius:13px;background:transparent;color:#d7ff39;padding:12px;font-weight:950;margin:12px 0}
+.hc4-timer{font-size:54px;font-weight:950;text-align:center;margin:18px 0}.hc4-live{width:100%;min-height:90px;background:#071014;color:#fff;border:1px solid #30464e;border-radius:12px;padding:11px}
 </style>
 <script>
 (function(){'use strict';
-const KEY='hc_today_v2';
-const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const defaults={
- theme:'',duration:90,principles:[],kpis:['テーマの成功回数','意図したプレーの成功率'],
- items:[
-  {name:'動作改善・ボールウォームアップ',minutes:15,purpose:'身体と認知をゲームへつなげる',constraint:'ボールを使い、見る・動く・判断するを同時に行う',question:'今、何が見えている？'},
-  {name:'テーマ導入ゲーム',minutes:20,purpose:'今日の課題をゲームから発見する',constraint:'人数・コート・得点条件をテーマに合わせる',question:'どこに優位がある？'},
-  {name:'制約付きトレーニング',minutes:25,purpose:'狙う行動が自然に増える環境をつくる',constraint:'時間・人数・ゾーン・得点条件のいずれかを変更',question:'何が変わるとプレーしやすい？'},
-  {name:'ゲーム',minutes:25,purpose:'制約を減らして試合へ転移する',constraint:'コーチ介入を減らし、選手の判断を観察',question:'今日の学びをどこで使える？'},
-  {name:'振り返り',minutes:5,purpose:'学習を言語化して次回へつなげる',constraint:'選手同士で短く共有',question:'今日できるようになったことは？'}
- ]};
-function load(){try{return Object.assign({},defaults,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return JSON.parse(JSON.stringify(defaults))}}
-function save(x){localStorage.setItem(KEY,JSON.stringify(x))}
-function methodNames(){
- try{
-  let raw=localStorage.getItem('hc_method_v3')||localStorage.getItem('hc_method')||'[]',a=JSON.parse(raw);
-  if(Array.isArray(a))return [...new Set(a.filter(x=>x&&x.active!==false).map(x=>x.name).filter(Boolean))].slice(0,18)
- }catch(e){}
- return ['前進する','幅と深さをつくる','優位をつくる','サークルへ侵入する','即時奪回','遅らせる','中央を守る','奪って前進する'];
-}
-function total(x){return (x.items||[]).reduce((a,b)=>a+(+b.minutes||0),0)}
-function render(){
- const host=document.getElementById('today');if(!host)return;
- let old=document.getElementById('hcTodayV2');if(old)old.remove();
- const x=load(), ps=methodNames();
- let d=document.createElement('div');d.id='hcTodayV2';
- d.innerHTML=`<div class="tdv2">
- <div class="tdv2-k">TODAY'S SESSION｜LEARNING DESIGN</div>
- <div class="tdv2-title">今日、何を学習させたい？</div>
- <div class="tdv2-sub">課題 → 原則 → 環境デザイン → KPI → 振り返りを1本につなげます。</div>
- <div class="tdv2-grid">
-  <div class="tdv2-box"><label>今日のテーマ</label><input id="tdv2Theme" class="tdv2-in" value="${esc(x.theme||'')}" placeholder="例：ボールロスト後4秒以内の即時奪回"></div>
-  <div class="tdv2-box"><label>セッション時間</label><select id="tdv2Duration" class="tdv2-sel">${[60,75,90,100,120].map(n=>`<option ${+x.duration===n?'selected':''} value="${n}">${n}分</option>`).join('')}</select></div>
- </div>
- <div class="tdv2-box" style="margin-top:8px"><label>今日扱う原則</label><div class="tdv2-chiprow">${ps.map(p=>`<button class="tdv2-chip ${(x.principles||[]).includes(p)?'on':''}" data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
- <div style="display:flex;justify-content:space-between;align-items:end;margin-top:15px"><div><div class="tdv2-k">SESSION FLOW</div><b>練習の流れ</b></div><div><span class="tdv2-total">${total(x)}</span><small> / ${x.duration}分</small></div></div>
- <div id="tdv2Items">${(x.items||[]).map((it,i)=>menuHTML(it,i)).join('')}</div>
- <div class="tdv2-actions"><button class="tdv2-subbtn" id="tdv2Add">＋ メニュー追加</button><button class="tdv2-btn" id="tdv2Save">今日の設計を保存</button></div>
- <div class="tdv2-box" style="margin-top:13px"><label>KPI｜今日は何を見取る？</label><div class="tdv2-kpis">${(x.kpis||[]).map((k,i)=>`<input class="tdv2-in tdv2Kpi" data-i="${i}" value="${esc(k)}" placeholder="例：4秒以内奪回率">`).join('')}</div><button class="tdv2-subbtn" id="tdv2AddKpi" style="margin-top:8px">＋ KPI追加</button></div>
- <div class="tdv2-foot"><div class="tdv2-k">AFTER SESSION</div><div class="tdv2-sub">練習後は既存の「練習終了・記録する」から理解度・達成度・KPI・次回課題を保存できます。</div></div>
- </div>`;
- host.prepend(d);bind();
-}
-function menuHTML(it,i){return `<div class="tdv2-menu" data-i="${i}"><div class="tdv2-menuhead"><input class="tdv2-in tdv2Name" value="${esc(it.name||'')}" style="font-weight:900"><div><input class="tdv2-in tdv2Minutes" type="number" min="0" value="${+it.minutes||0}" style="width:72px;text-align:center"><div class="tdv2-min" style="font-size:10px;text-align:center">MIN</div></div></div><div class="tdv2-grid"><div><label style="font-size:10px;color:#91a3aa">狙い</label><textarea class="tdv2-ta tdv2Purpose">${esc(it.purpose||'')}</textarea></div><div><label style="font-size:10px;color:#91a3aa">制約・ルール</label><textarea class="tdv2-ta tdv2Constraint">${esc(it.constraint||'')}</textarea></div></div><label style="font-size:10px;color:#91a3aa">コーチングの問い</label><input class="tdv2-in tdv2Question" value="${esc(it.question||'')}"><button class="tdv2-subbtn tdv2Del" style="margin-top:8px">削除</button></div>`}
-function collect(){
- let x=load();x.theme=document.getElementById('tdv2Theme')?.value||'';x.duration=+(document.getElementById('tdv2Duration')?.value||90);
- x.principles=[...document.querySelectorAll('#hcTodayV2 .tdv2-chip.on')].map(b=>b.dataset.p);
- x.items=[...document.querySelectorAll('#tdv2Items .tdv2-menu')].map(m=>({name:m.querySelector('.tdv2Name').value,minutes:+m.querySelector('.tdv2Minutes').value||0,purpose:m.querySelector('.tdv2Purpose').value,constraint:m.querySelector('.tdv2Constraint').value,question:m.querySelector('.tdv2Question').value}));
- x.kpis=[...document.querySelectorAll('.tdv2Kpi')].map(i=>i.value).filter(Boolean);return x
-}
-function bind(){
- document.querySelectorAll('#hcTodayV2 .tdv2-chip').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
- document.getElementById('tdv2Save').onclick=()=>{let x=collect();save(x);alert('今日のセッション設計を保存しました。');render()};
- document.getElementById('tdv2Add').onclick=()=>{let x=collect();x.items.push({name:'新しいメニュー',minutes:10,purpose:'',constraint:'',question:''});save(x);render()};
- document.getElementById('tdv2AddKpi').onclick=()=>{let x=collect();x.kpis.push('');save(x);render()};
- document.querySelectorAll('.tdv2Del').forEach((b,i)=>b.onclick=()=>{let x=collect();x.items.splice(i,1);save(x);render()});
- document.querySelectorAll('.tdv2Minutes').forEach(i=>i.onchange=()=>{let x=collect();save(x);render()});
- document.getElementById('tdv2Duration').onchange=()=>{let x=collect();save(x);render()};
-}
-const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);if(id==='today')setTimeout(render,50);return r};
-window.HCTodayV2={render,load};
-setTimeout(()=>{if(document.getElementById('today'))render()},2200);
-})();
-</script>
-<!-- /HC_TODAY_SESSION_V2_01 -->
-
-
-<!-- HC_TODAY_SESSION_V21 -->
-<style>
-#hcTodayV21{margin:12px 0 120px}
-.tv21{background:linear-gradient(180deg,#101d22,#091317);border:1px solid #2b4149;border-radius:20px;padding:16px;color:#eef6f2}
-.tv21-k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}
-.tv21-h{font-size:23px;font-weight:950;margin:5px 0}.tv21-s{font-size:12px;color:#94a6ad;line-height:1.55}
-.tv21-box{background:#071014;border:1px solid #263b43;border-radius:15px;padding:12px;margin-top:9px}
-.tv21-in,.tv21-sel,.tv21-ta{width:100%;box-sizing:border-box;background:#0d181d;border:1px solid #30454e;border-radius:11px;color:#fff;padding:11px;font-size:14px}
-.tv21-ta{min-height:66px}.tv21-l{display:block;font-size:10px;color:#91a3aa;font-weight:900;margin-bottom:6px}
-.tv21-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
-.tv21-tab{border:1px solid #354b54;background:#101c21;color:#b8c5c9;border-radius:10px;padding:9px 4px;font-size:11px;font-weight:900}
-.tv21-tab.on{background:#d7ff39;color:#071014;border-color:#d7ff39}
-.tv21-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tv21-chip{border:1px solid #40545c;background:#101c21;color:#dce7e2;border-radius:999px;padding:7px 9px;font-size:12px}.tv21-chip.on{background:#d7ff39;color:#071014;border-color:#d7ff39;font-weight:900}
-.tv21-selected{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.tv21-selected span{background:#1b2b30;border-radius:999px;padding:6px 8px;font-size:11px;color:#d7ff39}
-.tv21-card{background:#0b161b;border:1px solid #294049;border-radius:15px;padding:12px;margin-top:9px}.tv21-card h4{margin:3px 0 8px;font-size:16px}.tv21-meta{font-size:12px;color:#9badb3;line-height:1.55}
-.tv21-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tv21-btn{border:0;border-radius:12px;padding:11px 12px;font-weight:950;background:#d7ff39;color:#071014}.tv21-subbtn{border:1px solid #354b54;border-radius:12px;padding:10px 12px;font-weight:850;background:#15242a;color:#fff}
-.tv21-kpi{padding:9px 10px;border-left:3px solid #d7ff39;background:#0b1519;border-radius:8px;margin-top:6px;font-size:13px}
-body.hc-today-active #hcTeamFab,body.hc-today-active .hcTeamFab,body.hc-today-active [id*="teamFab" i],body.hc-today-active [class*="teamFab" i]{display:none!important}
-@media(max-width:560px){.tv21-grid{grid-template-columns:1fr}.tv21-tabs{grid-template-columns:repeat(2,1fr)}}
-</style>
-<script>
-(function(){'use strict';
-const KEY='hc_today_v21';
-const CAT={
- '攻撃':['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る','サークルへ侵入する','サークル内で決定機を作る'],
- '守備':['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','最も近い選手が1st DFになる','2nd・3rd DFが中央を閉じて連動する','コンパクトを保つ'],
- '攻→守':['ロスト後4秒で相手の前進を止める','ボール周辺を即時圧縮する','中央への出口を消す','奪えなければ撤退して整える'],
- '守→攻':['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる','相手の守備が整う前に優位を使う']
+const KEY='hc_today_plan', STATE='hc_today_clean_v4';
+const PRINC={
+ '攻撃':['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る'],
+ '守備':['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','2nd・3rd DFが連動する'],
+ '攻→守':['ロスト後4秒で相手の前進を止める','最も近い選手が1st DFになる','中央への出口を消す'],
+ '守→攻':['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる']
 };
 const REC={
- '攻→守':{name:'4v4+2 即時奪回ゲーム',setup:'30×25m｜4v4＋外サポート2人',rule:'攻撃側がボールを失ったら4秒間だけ即時奪回。守備側は奪ったら5秒以内に反対側へ前進すると2点。',q:'誰が1st DFになる？ その瞬間、残りの選手は何を消す？',k:['4秒以内奪回率','ロストから相手前進までの回数','中央突破を許した回数']},
- '攻撃':{name:'5v5+3 前進・侵入ゲーム',setup:'40×30m｜3ゾーン',rule:'幅を使って前進し、最終ゾーンへの侵入で1点。サークル想定ゾーンからの得点は追加点。',q:'今、運ぶ・つなぐ・逆を取るのどれが最も前進できる？',k:['前進成功率','最終ゾーン侵入回数','幅を使った前進回数']},
- '守備':{name:'5v5 誘導プレスゲーム',setup:'35×30m｜中央に制限ゾーン',rule:'守備側は中央を守り、外へ誘導して奪えば2点。攻撃側は中央突破で2点。',q:'1st DFはどこへ誘導する？ 2nd DFは何を消す？',k:['狙った方向への誘導率','中央突破を防いだ回数','奪取後5秒以内の前進']},
- '守→攻':{name:'4v4+GK トランジションゲーム',setup:'35×25m｜2ゴール',rule:'奪ったチームは6秒以内のシュートで2点。前進できなければ一度幅を取り保持して再構築。',q:'奪った瞬間、前に何が見えた？ 前進できない時の出口は？',k:['奪取後6秒以内シュート','奪取後の前進成功率','保持への切替成功率']}
+ '攻撃':[
+  ['3ゾーン前進ゲーム','反復量重視','前進の判断回数を増やす','3ゾーン制。パスまたはキャリーで前進','どこから前進できる？'],
+  ['4v4+2 前進ゲーム','ゲーム性重視','相手を動かして前進する','外2名を使える。3本以内に前進を狙う','誰を使えば相手を外せる？'],
+  ['前進→サークル侵入ゲーム','全員参加重視','前進をフィニッシュへつなぐ','最終ゾーン侵入で1点、シュートで追加点','運ぶ・つなぐ・逆、どれが有効？']],
+ '守備':[
+  ['4v4 圧縮ディフェンス','反復量重視','中央を守る判断を反復する','中央優先。奪ったら即前進','一番危険な場所は？'],
+  ['誘導プレスゲーム','ゲーム性重視','狙った方向へ誘導して奪う','外へ誘導して奪えば2点','どちらへ誘導する？'],
+  ['5v4 サークル守備','全員参加重視','ゴール前の役割を共有する','中央とゴール方向を最優先','誰と何を守る？']],
+ '攻→守':[
+  ['4v4 即時奪回ゲーム','反復量重視','ロスト直後の反応を増やす','4秒以内奪回で2点','誰が1st DF？'],
+  ['5v4→4v3 トランジション','ゲーム性重視','攻撃時のリスク管理を学ぶ','ロストした瞬間に逆方向4v3','誰がカウンターを消す？'],
+  ['WIN・DELAY・RECOVERゲーム','全員参加重視','チーム全体で切替判断を共有する','奪えなければ遅らせて帰陣','奪う？遅らせる？戻る？']],
+ '守→攻':[
+  ['3v3+2 ターゲット速攻','反復量重視','奪取後の出口を素早く探す','奪取後5秒以内の前進で2点','出口はどこ？'],
+  ['4v4 6秒フィニッシュ','ゲーム性重視','速攻からシュートへつなぐ','奪取後6秒以内シュートで2点','最初のプレーは？'],
+  ['GO・HOLD・RESETゲーム','全員参加重視','状況に応じた前進判断を共有する','奪取後に3つの判断を選択','今はGOできる？']]
 };
-function load(){try{return Object.assign({theme:'',duration:90,cat:'攻→守',principles:[]},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return {theme:'',duration:90,cat:'攻→守',principles:[]}}}
-function save(x){localStorage.setItem(KEY,JSON.stringify(x))}
+function get(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
 function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+let st=Object.assign({theme:'',phase:'攻→守',principles:[],players:18,gk:2,duration:100,idea:''},get(STATE,{}));
+function saveState(){localStorage.setItem(STATE,JSON.stringify(st))}
+function plan(){return get(KEY,[])}
+function savePlan(p){localStorage.setItem(KEY,JSON.stringify(p));try{window.plan=p;window.renderToday&&window.renderToday()}catch(e){} setTimeout(decorateCards,30)}
 function mount(){
- const page=document.getElementById('today');if(!page)return;
- let old=document.getElementById('hcTodayV21');if(old)old.remove();
- let v2=document.getElementById('hcTodayV2');if(v2)v2.style.display='none';
- const x=load(),rec=REC[x.cat]||REC['攻→守'];
- const d=document.createElement('div');d.id='hcTodayV21';
- d.innerHTML=`<div class="tv21">
- <div class="tv21-k">TODAY'S SESSION V2.1｜LEARNING DESIGN</div><div class="tv21-h">今日、何を変えたい？</div><div class="tv21-s">テーマを決め、原則を絞り、ゲームに近い環境をデザインします。</div>
- <div class="tv21-grid"><div class="tv21-box"><label class="tv21-l">今日のテーマ</label><input id="tv21Theme" class="tv21-in" value="${esc(x.theme)}" placeholder="例：ボールロスト後の即時奪回"></div><div class="tv21-box"><label class="tv21-l">時間</label><select id="tv21Duration" class="tv21-sel">${[60,75,90,100,120].map(n=>`<option ${+x.duration===n?'selected':''}>${n}</option>`).join('')}</select></div></div>
- <div class="tv21-box"><label class="tv21-l">① 局面を選ぶ</label><div class="tv21-tabs">${Object.keys(CAT).map(c=>`<button class="tv21-tab ${x.cat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}</div><label class="tv21-l" style="margin-top:12px">② 原則を2〜3個に絞る</label><div class="tv21-chips">${CAT[x.cat].map(p=>`<button class="tv21-chip ${(x.principles||[]).includes(p)?'on':''}" data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div><div class="tv21-selected">${(x.principles||[]).map(p=>`<span>✓ ${esc(p)}</span>`).join('')}</div></div>
- <div class="tv21-card"><div class="tv21-k">RECOMMENDED GAME</div><h4>${esc(rec.name)}</h4><div class="tv21-meta"><b>設定：</b>${esc(rec.setup)}<br><b>制約：</b>${esc(rec.rule)}</div><div class="tv21-box"><label class="tv21-l">COACHING QUESTION</label>${esc(rec.q)}</div><button class="tv21-btn" id="tv21Use" style="width:100%;margin-top:9px">この練習を今日のメニューに採用</button></div>
- <div class="tv21-card"><div class="tv21-k">KPI｜今日、何を見取る？</div>${rec.k.map(k=>`<div class="tv21-kpi">${esc(k)}</div>`).join('')}</div>
- <div class="tv21-card"><div class="tv21-k">SESSION FLOW</div><h4>${x.duration}分の基本構成</h4><div class="tv21-meta">① 動作改善・ボールウォームアップ 15分<br>② テーマ導入ゲーム 20分<br>③ ${esc(rec.name)} 25分<br>④ ゲーム 25分<br>⑤ 振り返り 5分</div><div class="tv21-grid" style="margin-top:10px"><button class="tv21-subbtn" id="tv21Edit">詳細を編集</button><button class="tv21-btn" id="tv21Save">今日の設計を保存</button></div></div>
- </div>`;
- page.prepend(d);bind();
- document.body.classList.add('hc-today-active');
+ const page=document.getElementById('today'); if(!page)return;
+ document.getElementById('hc4Design')?.remove();
+ const d=document.createElement('div'); d.id='hc4Design';
+ d.innerHTML=`<div class="hc4-k">TODAY'S TRAINING</div><div class="hc4-title">今日のテーマを決める</div><div class="hc4-sub">人数・時間・原則を整理し、正解ではなく「選べる3案」を出します。</div>
+ <div class="hc4-grid"><div class="hc4-field"><label>参加選手</label><input id="hc4p" class="hc4-in" type="number" min="1" value="${st.players}"></div><div class="hc4-field"><label>GK</label><input id="hc4g" class="hc4-in" type="number" min="0" value="${st.gk}"></div><div class="hc4-field"><label>練習時間</label><input id="hc4d" class="hc4-in" type="number" min="10" value="${st.duration}"></div></div>
+ <input id="hc4t" class="hc4-in" value="${esc(st.theme)}" placeholder="テーマ 例：ボールロスト後の即時奪回">
+ <div class="hc4-tabs">${Object.keys(PRINC).map(x=>`<button class="hc4-pill ${st.phase===x?'on':''}" data-phase="${x}">${x}</button>`).join('')}</div>
+ <div class="hc4-chips">${PRINC[st.phase].map(x=>`<button class="hc4-pill ${st.principles.includes(x)?'on':''}" data-pr="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+ <input id="hc4i" class="hc4-in" style="margin-top:9px" value="${esc(st.idea)}" placeholder="選手・チームの案（任意）">
+ <button id="hc4rec" class="hc4-btn">✨ このテーマのおすすめ練習を見る</button>
+ <button id="hc4coach" class="hc4-coach">▶ コーチモード開始</button>`;
+ page.prepend(d); bind(); decorateCards()
 }
 function bind(){
- document.querySelectorAll('#hcTodayV21 .tv21-tab').forEach(b=>b.onclick=()=>{let x=load();x.theme=document.getElementById('tv21Theme').value;x.duration=+document.getElementById('tv21Duration').value;x.cat=b.dataset.cat;x.principles=[];save(x);mount()});
- document.querySelectorAll('#hcTodayV21 .tv21-chip').forEach(b=>b.onclick=()=>{let x=load(),p=b.dataset.p,a=x.principles||[];if(a.includes(p))a=a.filter(z=>z!==p);else if(a.length<3)a.push(p);else{alert('原則は3つまでに絞りましょう。');return}x.principles=a;x.theme=document.getElementById('tv21Theme').value;x.duration=+document.getElementById('tv21Duration').value;save(x);mount()});
- document.getElementById('tv21Save').onclick=()=>{let x=load();x.theme=document.getElementById('tv21Theme').value;x.duration=+document.getElementById('tv21Duration').value;save(x);alert('今日の学習デザインを保存しました。')};
- document.getElementById('tv21Use').onclick=()=>{let x=load(),r=REC[x.cat];let old={};try{old=JSON.parse(localStorage.getItem('hc_today_v2')||'{}')}catch(e){};old.theme=document.getElementById('tv21Theme').value||x.theme;old.duration=+document.getElementById('tv21Duration').value;old.principles=x.principles;old.kpis=r.k;old.items=old.items||[];old.items.splice(Math.min(2,old.items.length),0,{name:r.name,minutes:25,purpose:'選択した原則をゲーム状況で学習する',constraint:r.rule,question:r.q});localStorage.setItem('hc_today_v2',JSON.stringify(old));alert('今日のメニューに追加しました。下の「詳細を編集」から調整できます。')};
- document.getElementById('tv21Edit').onclick=()=>{document.getElementById('hcTodayV2').style.display='block';document.getElementById('hcTodayV21').style.display='none';document.body.classList.add('hc-today-active');window.HCTodayV2?.render?.();setTimeout(()=>{let a=document.getElementById('hcTodayV21');if(a)a.style.display='none';let b=document.getElementById('hcTodayV2');if(b)b.style.display='block'},80)};
-}
-const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);document.body.classList.toggle('hc-today-active',id==='today');if(id==='today')setTimeout(mount,80);return r};
-window.HCTodayV21={mount:mount};setTimeout(()=>{let p=document.getElementById('today');if(p&&getComputedStyle(p).display!=='none')mount()},2200);
-})();
-</script>
-<!-- /HC_TODAY_SESSION_V21 -->
-
-
-<!-- HC_NEXT_TRAINING_ENGINE_V1 -->
-<style>
-#hcNextTrainingV1{margin:12px 0}
-.ntv1{background:linear-gradient(180deg,#101d22,#091317);border:1px solid #30464e;border-radius:20px;padding:16px;color:#eef6f2}
-.ntv1-k{font-size:10px;font-weight:950;letter-spacing:1.25px;color:#d7ff39}
-.ntv1-h{font-size:21px;font-weight:950;margin:5px 0}.ntv1-s{font-size:12px;color:#94a6ad;line-height:1.55}
-.ntv1-card{margin-top:10px;background:#071014;border:1px solid #293e46;border-radius:15px;padding:12px}
-.ntv1-score{font-size:28px;font-weight:950;color:#d7ff39}.ntv1-tag{display:inline-block;margin:4px 4px 0 0;padding:6px 8px;border-radius:999px;background:#16262c;border:1px solid #3a5058;font-size:11px}
-.ntv1-btn{width:100%;margin-top:10px;border:0;border-radius:12px;padding:12px;background:#d7ff39;color:#071014;font-weight:950}
-.ntv1-subbtn{width:100%;margin-top:7px;border:1px solid #354b54;border-radius:12px;padding:10px;background:#15242a;color:#fff;font-weight:850}
-.ntv1-reason{border-left:3px solid #d7ff39;padding-left:10px;margin-top:9px;font-size:12px;color:#c6d1d4;line-height:1.55}
-</style>
-<script>
-(function(){'use strict';
-const MAP={
- counter:{cat:'攻→守',theme:'ボールロスト後の即時奪回',principles:['ロスト後4秒で相手の前進を止める','ボール周辺を即時圧縮する','中央への出口を消す'],kpis:['4秒以内奪回率','ロストから相手前進までの回数','中央突破を許した回数']},
- attack:{cat:'攻撃',theme:'前進してサークルへ侵入する',principles:['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る'],kpis:['前進成功率','最終ゾーン侵入回数','幅を使った前進回数']},
- defend:{cat:'守備',theme:'中央を守りながら狙った方向へ誘導して奪う',principles:['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','2nd・3rd DFが中央を閉じて連動する'],kpis:['狙った方向への誘導率','中央突破を防いだ回数','奪取回数']},
- transition:{cat:'守→攻',theme:'奪った瞬間の前進判断',principles:['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる'],kpis:['奪取後6秒以内シュート','奪取後の前進成功率','保持への切替成功率']}
-};
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function records(){
- let arr=[];
- ['hc_records','hc_training_records','hc_history','hc_session_history','hc_match_records'].forEach(k=>{let v=safe(k,[]);if(Array.isArray(v))arr=arr.concat(v)});
- return arr
-}
-function analyses(){
- let arr=[];
- ['hc_analyses','hc_analysis','hc_match_analysis','hc_growth_analysis'].forEach(k=>{let v=safe(k,[]);if(Array.isArray(v))arr=arr.concat(v)});
- return arr
-}
-function textAll(){
- let chunks=[];
- records().slice(-12).forEach(x=>chunks.push(JSON.stringify(x)));
- analyses().slice(-12).forEach(x=>chunks.push(JSON.stringify(x)));
- return chunks.join(' ').toLowerCase()
-}
-function choose(){
- const t=textAll();
- let scores={counter:0,attack:0,defend:0,transition:0};
- const add=(key,words,w=1)=>words.forEach(z=>{if(t.includes(z.toLowerCase()))scores[key]+=w});
- add('counter',['カウンター','ロスト','即時奪回','4秒','攻守転換','被カウンター'],2);
- add('attack',['前進','サークル侵入','侵入','幅','深さ','攻撃','得点機会'],1);
- add('defend',['守備','中央','プレス','1st df','失点','被シュート','誘導'],1);
- add('transition',['守攻','守→攻','奪取後','奪って前進','トランジション'],2);
- let winner=Object.keys(scores).sort((a,b)=>scores[b]-scores[a])[0];
- if(scores[winner]===0) winner='counter';
- return {key:winner,score:scores[winner],all:scores,found:t.length>5}
-}
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function mount(){
- const host=document.getElementById('analysis')||document.getElementById('home')||document.querySelector('.page.active');
- if(!host)return;
- let old=document.getElementById('hcNextTrainingV1');if(old)old.remove();
- const c=choose(),m=MAP[c.key];
- const d=document.createElement('div');d.id='hcNextTrainingV1';
- d.innerHTML=`<div class="ntv1">
- <div class="ntv1-k">NEXT TRAINING ENGINE</div>
- <div class="ntv1-h">次の練習テーマ</div>
- <div class="ntv1-s">${c.found?'最近の記録・分析から、次のセッション候補を整理しました。':'まだ分析データが少ないため、チームモデルの重要テーマから候補を表示しています。'}</div>
- <div class="ntv1-card">
-   <div class="ntv1-k">${esc(m.cat)}｜PRIORITY</div>
-   <div style="font-size:18px;font-weight:950;margin-top:5px">${esc(m.theme)}</div>
-   <div style="margin-top:7px">${m.principles.map(p=>`<span class="ntv1-tag">${esc(p)}</span>`).join('')}</div>
-   <div class="ntv1-reason">${c.found?'記録内のキーワード・課題傾向をもとに候補化しています。最終判断はコーチが行い、必要なら「今日の練習」で変更できます。':'最初の候補として「攻→守」を提示しています。記録が増えると候補選択に反映します。'}</div>
-   <button class="ntv1-btn" id="ntv1Make">この課題から今日の練習を作る</button>
-   <button class="ntv1-subbtn" id="ntv1Other">別の局面から選ぶ</button>
- </div>
- </div>`;
- host.prepend(d);
- document.getElementById('ntv1Make').onclick=()=>apply(m);
- document.getElementById('ntv1Other').onclick=()=>{if(typeof window.show==='function')window.show('today');setTimeout(()=>window.HCTodayV21?.mount?.(),80)};
-}
-function apply(m){
- let x={theme:m.theme,duration:90,cat:m.cat,principles:m.principles};
- localStorage.setItem('hc_today_v21',JSON.stringify(x));
- let old=safe('hc_today_v2',{});
- old.theme=m.theme;old.duration=90;old.principles=m.principles;old.kpis=m.kpis;
- localStorage.setItem('hc_today_v2',JSON.stringify(old));
- if(typeof window.show==='function')window.show('today');
- setTimeout(()=>{if(window.HCTodayV21?.mount)window.HCTodayV21.mount()},120);
-}
-const oldShow=window.show;
-if(oldShow)window.show=function(id){
- const r=oldShow.apply(this,arguments);
- if(id==='analysis'||id==='home')setTimeout(mount,120);
- return r
-};
-window.HCNextTrainingV1={mount,choose,apply};
-setTimeout(mount,2600);
-})();
-</script>
-<!-- /HC_NEXT_TRAINING_ENGINE_V1 -->
-
-
-<!-- HC_NEXT_TRAINING_ENGINE_V2 -->
-<style>
-#hcNextTrainingV2{margin:12px 0 100px}.nt2{background:linear-gradient(180deg,#101d22,#091317);border:1px solid #30464e;border-radius:20px;padding:16px;color:#eef6f2}
-.nt2-k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.nt2-h{font-size:22px;font-weight:950;margin:5px 0}.nt2-s{font-size:12px;color:#94a6ad;line-height:1.55}
-.nt2-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.nt2-stat{background:#071014;border:1px solid #293e46;border-radius:13px;padding:10px}.nt2-stat b{display:block;font-size:18px}.nt2-stat small{font-size:10px;color:#91a3aa}
-.nt2-card{margin-top:10px;background:#071014;border:1px solid #293e46;border-radius:15px;padding:12px}.nt2-row{display:flex;justify-content:space-between;gap:10px;align-items:start}.nt2-score{font-size:27px;font-weight:950;color:#d7ff39}
-.nt2-bar{height:7px;background:#16252b;border-radius:99px;overflow:hidden;margin:7px 0}.nt2-fill{height:100%;background:#d7ff39;border-radius:99px}.nt2-tag{display:inline-block;margin:3px 3px 0 0;padding:5px 7px;border:1px solid #3a5058;border-radius:999px;font-size:10px}
-.nt2-why{margin-top:8px;padding:9px 10px;border-left:3px solid #d7ff39;background:#0c171b;border-radius:8px;font-size:11px;color:#c5d1d4;line-height:1.55}
-.nt2-btn{width:100%;margin-top:10px;border:0;border-radius:12px;padding:12px;background:#d7ff39;color:#071014;font-weight:950}.nt2-sub{width:100%;margin-top:7px;border:1px solid #354b54;border-radius:12px;padding:10px;background:#15242a;color:#fff;font-weight:850}
-@media(max-width:560px){.nt2-grid{grid-template-columns:1fr 1fr}.nt2-grid .nt2-stat:last-child{grid-column:1/-1}}
-</style>
-<script>
-(function(){'use strict';
-const AREAS={
- '攻→守':{theme:'ボールロスト後の即時奪回',principles:['ロスト後4秒で相手の前進を止める','ボール周辺を即時圧縮する','中央への出口を消す'],kpis:['4秒以内奪回率','被カウンター数','中央突破を許した回数'],words:['ロスト','4秒','即時奪回','被カウンター','攻守転換']},
- '攻撃':{theme:'前進してサークルへ侵入する',principles:['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る'],kpis:['前進成功率','サークル侵入回数','決定機数'],words:['前進','サークル','攻撃','幅','深さ','得点']},
- '守備':{theme:'中央を守りながら狙った方向へ誘導して奪う',principles:['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','2nd・3rd DFが中央を閉じて連動する'],kpis:['中央突破阻止率','狙った方向への誘導率','奪取回数'],words:['守備','中央','プレス','失点','被シュート','1st df']},
- '守→攻':{theme:'奪った瞬間の前進判断',principles:['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる'],kpis:['奪取後の前進成功率','6秒以内シュート','保持への切替成功率'],words:['守→攻','守攻','奪取後','奪って前進','トランジション']}
-};
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function arrays(keys){let a=[];keys.forEach(k=>{let v=safe(k,[]);if(Array.isArray(v))a=a.concat(v)});return a}
-function allData(){return arrays(['hc_records','hc_training_records','hc_history','hc_session_history','hc_match_records','hc_analyses','hc_analysis','hc_match_analysis','hc_growth_analysis'])}
-function dateOf(x){let v=x?.date||x?.created_at||x?.createdAt||x?.timestamp||'';let d=new Date(v);return isNaN(d)?null:d}
-function ageDays(x){let d=dateOf(x);return d?Math.max(0,(Date.now()-d.getTime())/86400000):999}
-function stringify(x){try{return JSON.stringify(x).toLowerCase()}catch(e){return ''}}
-function numericPairs(obj,prefix='',out=[]){
- if(!obj||typeof obj!=='object')return out;
- Object.entries(obj).forEach(([k,v])=>{let name=(prefix+' '+k).trim();if(typeof v==='number'&&isFinite(v))out.push([name,v]);else if(v&&typeof v==='object')numericPairs(v,name,out)});
- return out
-}
-function scoreArea(name,data){
- const A=AREAS[name];let score=20,reasons=[],mentions=0,recent=0,last=999,kpiSignal=0;
- data.forEach(x=>{let t=stringify(x),age=ageDays(x),hit=A.words.some(w=>t.includes(w.toLowerCase()));
-   if(hit){mentions++;last=Math.min(last,age); if(age<=14)recent++; score+=age<=14?7:3}
-   numericPairs(x).forEach(([k,v])=>{let lk=k.toLowerCase();if(A.kpis.some(q=>lk.includes(q.toLowerCase().replace('率','')))){ if(v<50){score+=8;kpiSignal++} }});
+ ['hc4p','hc4g','hc4d','hc4t','hc4i'].forEach(id=>document.getElementById(id).oninput=()=>{
+  st.players=+document.getElementById('hc4p').value||1;st.gk=+document.getElementById('hc4g').value||0;st.duration=+document.getElementById('hc4d').value||60;st.theme=document.getElementById('hc4t').value;st.idea=document.getElementById('hc4i').value;saveState()
  });
- // 未実施期間：最近扱っていない局面を少し押し上げる
- if(last>21){score+=18;reasons.push('最近3週間以上、関連する記録が少ない')}
- else if(last>14){score+=10;reasons.push('最近2週間、扱う量が少なめ')}
- else if(last<7){reasons.push('直近の記録に関連課題がある')}
- if(recent>=2)reasons.push('直近14日で関連する課題記録が複数ある');
- if(kpiSignal)reasons.push('関連KPIに改善余地がある');
- if(!reasons.length)reasons.push('ゲームモデル上の重要テーマとして継続確認');
- return {name,score:Math.min(99,score),mentions,recent,last,reasons,A}
+ document.querySelectorAll('[data-phase]').forEach(b=>b.onclick=()=>{st.phase=b.dataset.phase;st.principles=[];saveState();mount()});
+ document.querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>{let x=b.dataset.pr;st.principles=st.principles.includes(x)?st.principles.filter(y=>y!==x):(st.principles.length<3?[...st.principles,x]:st.principles);saveState();mount()});
+ document.getElementById('hc4rec').onclick=openRecommendations;
+ document.getElementById('hc4coach').onclick=startCoach;
 }
-function rank(){let d=allData();return Object.keys(AREAS).map(n=>scoreArea(n,d)).sort((a,b)=>b.score-a.score)}
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function mount(){
- const host=document.getElementById('analysis')||document.getElementById('home');if(!host)return;
- let old1=document.getElementById('hcNextTrainingV1');if(old1)old1.style.display='none';
- let old=document.getElementById('hcNextTrainingV2');if(old)old.remove();
- const rs=rank(),top=rs[0],data=allData(),recent=data.filter(x=>ageDays(x)<=14).length;
- const d=document.createElement('div');d.id='hcNextTrainingV2';
- d.innerHTML=`<div class="nt2"><div class="nt2-k">NEXT TRAINING ENGINE V2</div><div class="nt2-h">次に、何を伸ばす？</div><div class="nt2-s">最近の記録・KPI・取り組み頻度を合わせて、次の練習候補を整理します。</div>
- <div class="nt2-grid"><div class="nt2-stat"><small>参照データ</small><b>${data.length}</b><small>records</small></div><div class="nt2-stat"><small>直近14日</small><b>${recent}</b><small>records</small></div><div class="nt2-stat"><small>優先候補</small><b>${esc(top.name)}</b><small>phase</small></div></div>
- ${rs.map((r,i)=>`<div class="nt2-card"><div class="nt2-row"><div><div class="nt2-k">${i===0?'TOP PRIORITY':'CANDIDATE '+(i+1)}</div><b>${esc(r.name)}｜${esc(r.A.theme)}</b></div><div class="nt2-score">${r.score}</div></div><div class="nt2-bar"><div class="nt2-fill" style="width:${r.score}%"></div></div><div>${r.A.principles.map(p=>`<span class="nt2-tag">${esc(p)}</span>`).join('')}</div><div class="nt2-why"><b>WHY｜なぜ？</b><br>${r.reasons.map(z=>'・'+esc(z)).join('<br>')}</div>${i===0?'<button class="nt2-btn" data-use="'+esc(r.name)+'">この課題から今日の練習を作る</button>':''}</div>`).join('')}
- <button class="nt2-sub" id="nt2Refresh">最新データで再計算</button></div>`;
- host.prepend(d);
- d.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>apply(b.dataset.use));
- document.getElementById('nt2Refresh').onclick=mount;
+function openRecommendations(){
+ document.getElementById('hc4Sheet')?.remove(); const rs=REC[st.phase],d=document.createElement('div');d.id='hc4Sheet';
+ const groups=Math.max(1,Math.round(st.players/5));
+ d.innerHTML=`<div class="hc4-sheet"><button class="hc4-x">×</button><div class="hc4-k">3 OPTIONS｜${st.players}人＋GK${st.gk}人｜${st.duration}分</div><h3>チームで選ぶ練習案</h3>${st.idea?`<p class="hc4-sub">選手・チーム案：${esc(st.idea)}</p>`:''}${rs.map((x,i)=>`<div class="hc4-card"><div class="hc4-k">${x[1]}</div><h4>${x[0]}</h4><p><b>狙い：</b>${x[2]}<br><b>制約：</b>${x[3]}<br><b>問い：</b>${x[4]}<br><b>運用目安：</b>${groups}グループを基準に待ち時間を調整</p><button class="hc4-add" data-add="${i}">＋ 今日の練習へ追加</button></div>`).join('')}</div>`;
+ document.body.appendChild(d);d.querySelector('.hc4-x').onclick=()=>d.remove();d.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{let x=rs[+b.dataset.add],p=plan();p.push({id:'hc4-'+Date.now(),type:'練習',name:x[0],minutes:15,purpose:x[2],constraint:x[3],question:x[4],memo:'',liveMemo:'',source:'clean-v4'});savePlan(p);b.textContent='✓ 追加しました';b.disabled=true})
 }
-function apply(name){
- const A=AREAS[name];if(!A)return;
- localStorage.setItem('hc_today_v21',JSON.stringify({theme:A.theme,duration:90,cat:name,principles:A.principles}));
- let old=safe('hc_today_v2',{});old.theme=A.theme;old.duration=90;old.principles=A.principles;old.kpis=A.kpis;localStorage.setItem('hc_today_v2',JSON.stringify(old));
- if(typeof window.show==='function')window.show('today');setTimeout(()=>window.HCTodayV21?.mount?.(),120)
+function decorateCards(){
+ const root=document.getElementById('todayItems');if(!root)return;
+ [...root.querySelectorAll('.traincard')].forEach((card,i)=>{if(card.querySelector('.hc4-editbtn'))return;let b=document.createElement('button');b.className='hc4-editbtn';b.textContent='編集';b.onclick=()=>editItem(i);card.appendChild(b)})
 }
-const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);if(id==='analysis'||id==='home')setTimeout(mount,150);return r};
-window.HCNextTrainingV2={mount,rank,apply};setTimeout(mount,3000);
+function editItem(i){
+ let p=plan(),x=p[i];if(!x)return;document.getElementById('hc4Edit')?.remove();let d=document.createElement('div');d.id='hc4Edit';
+ d.innerHTML=`<div class="hc4-sheet"><button class="hc4-x">×</button><div class="hc4-k">MENU EDIT</div><h3>練習を編集</h3><label>名称</label><input id="eN" class="hc4-in" value="${esc(x.name)}"><label>時間</label><input id="eM" class="hc4-in" type="number" value="${+x.minutes||15}"><label>目的</label><textarea id="eP" class="hc4-live">${esc(x.purpose||'')}</textarea><label>制約・ルール</label><textarea id="eC" class="hc4-live">${esc(x.constraint||'')}</textarea><label>問い</label><textarea id="eQ" class="hc4-live">${esc(x.question||'')}</textarea><button id="eS" class="hc4-btn">保存</button><button id="eD" class="hc4-coach">削除</button></div>`;document.body.appendChild(d);d.querySelector('.hc4-x').onclick=()=>d.remove();d.querySelector('#eS').onclick=()=>{x.name=eN.value;x.minutes=+eM.value||0;x.purpose=eP.value;x.constraint=eC.value;x.question=eQ.value;p[i]=x;savePlan(p);d.remove()};d.querySelector('#eD').onclick=()=>{p.splice(i,1);savePlan(p);d.remove()}
+}
+let ci=0,timer=null,left=0;
+function startCoach(){let p=plan();if(!p.length){alert('今日の練習メニューを1つ以上追加してください');return}ci=0;openCoach()}
+function openCoach(){let p=plan(),x=p[ci];document.getElementById('hc4Coach')?.remove();left=(+x.minutes||15)*60;let d=document.createElement('div');d.id='hc4Coach';d.innerHTML=`<div class="hc4-sheet"><button class="hc4-x">×</button><div class="hc4-k">COACH MODE ${ci+1}/${p.length}</div><h2>${esc(x.name)}</h2><p class="hc4-sub"><b>目的：</b>${esc(x.purpose||'—')}<br><b>制約：</b>${esc(x.constraint||'—')}<br><b>問い：</b>${esc(x.question||'—')}</p><div id="hc4timer" class="hc4-timer"></div><div style="display:flex;gap:7px"><button id="hc4prev" class="hc4-pill">← 前</button><button id="hc4play" class="hc4-btn" style="margin:0">▶ START</button><button id="hc4next" class="hc4-pill">次 →</button></div><h4>LIVE COACH MEMO</h4><textarea id="hc4memo" class="hc4-live" placeholder="練習中に気づいたこと">${esc(x.liveMemo||'')}</textarea></div>`;document.body.appendChild(d);paintTimer();d.querySelector('.hc4-x').onclick=()=>{clearInterval(timer);d.remove()};hc4prev.onclick=()=>{clearInterval(timer);ci=Math.max(0,ci-1);openCoach()};hc4next.onclick=()=>{saveMemo();clearInterval(timer);ci=Math.min(p.length-1,ci+1);openCoach()};hc4play.onclick=()=>{if(timer){clearInterval(timer);timer=null;hc4play.textContent='▶ START'}else{hc4play.textContent='Ⅱ PAUSE';timer=setInterval(()=>{left=Math.max(0,left-1);paintTimer();if(!left){clearInterval(timer);timer=null}},1000)}};hc4memo.oninput=saveMemo}
+function paintTimer(){let e=document.getElementById('hc4timer');if(e)e.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0')}
+function saveMemo(){let p=plan(),e=document.getElementById('hc4memo');if(p[ci]&&e){p[ci].liveMemo=e.value;localStorage.setItem(KEY,JSON.stringify(p))}}
+const baseShow=window.show;if(typeof baseShow==='function')window.show=function(id){let r=baseShow.apply(this,arguments);if(id==='today')setTimeout(mount,50);return r};
+window.HCTodayCleanV4={mount};
+setTimeout(()=>{let p=document.getElementById('today');if(p&&!p.classList.contains('hidden'))mount()},700);
 })();
 </script>
-<!-- /HC_NEXT_TRAINING_ENGINE_V2 -->
-
-
-<!-- HC_TODAY_UNIFIED_V3 -->
-<style>
-#hcTodayUnifiedV3{margin:12px 0 120px}.tu3{background:#0d191e;border:1px solid #2c424a;border-radius:20px;padding:15px;color:#eef6f2}
-.tu3-k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.tu3-h{font-size:22px;font-weight:950;margin:4px 0}.tu3-s{font-size:12px;color:#91a3aa;line-height:1.5}
-.tu3-summary{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#071014;border:1px solid #2b4048;border-radius:15px;padding:12px;margin-top:10px}
-.tu3-time{font-size:27px;font-weight:950;color:#d7ff39}.tu3-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.tu3-pill{padding:5px 7px;border-radius:999px;background:#16262c;border:1px solid #3a5058;font-size:10px}
-.tu3-step{margin-top:9px;background:#071014;border:1px solid #293e46;border-radius:15px;overflow:hidden}.tu3-head{width:100%;display:flex;justify-content:space-between;align-items:center;background:transparent;color:#fff;border:0;padding:12px;text-align:left;font-weight:900}.tu3-body{padding:0 12px 12px}.tu3-step.closed .tu3-body{display:none}
-.tu3-in,.tu3-sel,.tu3-ta{width:100%;box-sizing:border-box;background:#0d181d;border:1px solid #30454e;border-radius:11px;color:#fff;padding:10px;font-size:14px}.tu3-ta{min-height:62px}.tu3-l{display:block;font-size:10px;color:#91a3aa;font-weight:900;margin:7px 0 5px}
-.tu3-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.tu3-tab,.tu3-chip{border:1px solid #354b54;background:#101c21;color:#c3cdd0;border-radius:10px;padding:9px 5px;font-size:11px;font-weight:850}.tu3-tab.on,.tu3-chip.on{background:#d7ff39;color:#071014;border-color:#d7ff39}.tu3-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.tu3-chip{border-radius:999px;padding:7px 9px}
-.tu3-menu{display:grid;grid-template-columns:1fr 64px;gap:7px;align-items:center;border-bottom:1px solid #1d3037;padding:8px 0}.tu3-menu:last-child{border-bottom:0}.tu3-min{text-align:center;font-weight:950;color:#d7ff39}
-.tu3-kpi{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #1d3037}.tu3-kpi:last-child{border-bottom:0}.tu3-kpi input{width:90px}
-.tu3-btn{width:100%;border:0;border-radius:12px;padding:12px;background:#d7ff39;color:#071014;font-weight:950;margin-top:10px}.tu3-sub{width:100%;border:1px solid #354b54;border-radius:12px;padding:10px;background:#15242a;color:#fff;font-weight:850;margin-top:7px}
-body.hc-today-active #hcTeamFab,body.hc-today-active .hcTeamFab,body.hc-today-active [id*="teamFab" i],body.hc-today-active [class*="teamFab" i]{display:none!important}
-@media(max-width:560px){.tu3-tabs{grid-template-columns:repeat(2,1fr)}}
-</style>
-<script>
-(function(){'use strict';
-const CAT={
- '攻撃':['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る','サークルへ侵入する'],
- '守備':['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','最も近い選手が1st DFになる','2nd・3rd DFが中央を閉じて連動する'],
- '攻→守':['ロスト後4秒で相手の前進を止める','ボール周辺を即時圧縮する','中央への出口を消す','奪えなければ撤退して整える'],
- '守→攻':['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる','相手の守備が整う前に優位を使う']
-};
-const REC={
- '攻→守':{name:'4v4+2 即時奪回ゲーム',rule:'30×25m。ロスト後4秒だけ即時奪回。奪った側は5秒以内の前進で2点。',q:'誰が1st DF？ 残りは何を消す？',k:['4秒以内奪回率','相手前進を許した回数','中央突破を許した回数']},
- '攻撃':{name:'5v5+3 前進・侵入ゲーム',rule:'40×30m・3ゾーン。最終ゾーン侵入1点、そこから得点で追加点。',q:'運ぶ・つなぐ・逆を取る。今どれが最も前進できる？',k:['前進成功率','最終ゾーン侵入回数','決定機数']},
- '守備':{name:'5v5 誘導プレスゲーム',rule:'35×30m。中央を守り外へ誘導して奪えば2点。',q:'1st DFはどこへ誘導し、2nd DFは何を消す？',k:['中央突破阻止率','狙った方向への誘導率','奪取回数']},
- '守→攻':{name:'4v4+GK トランジションゲーム',rule:'35×25m。奪取後6秒以内シュートで2点。無理なら幅を取り再構築。',q:'奪った瞬間、前に何が見えた？',k:['奪取後前進成功率','6秒以内シュート','保持への切替成功率']}
-};
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function state(){
- let a=safe('hc_today_v21',{}),b=safe('hc_today_v2',{});
- let cat=a.cat||'攻→守',r=REC[cat]||REC['攻→守'];
- return {theme:a.theme||b.theme||'',duration:+a.duration||+b.duration||90,cat,principles:(a.principles&&a.principles.length?a.principles:b.principles)||[],items:(b.items&&b.items.length?b.items:[
- {name:'動作改善・ボールウォームアップ',minutes:15},{name:'テーマ導入ゲーム',minutes:20},{name:r.name,minutes:25},{name:'ゲーム',minutes:25},{name:'振り返り',minutes:5}
- ]),kpis:(b.kpis&&b.kpis.length?b.kpis:r.k),question:r.q,rule:r.rule}
-}
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function total(s){return s.items.reduce((n,x)=>n+(+x.minutes||0),0)}
-function save(s){
- localStorage.setItem('hc_today_v21',JSON.stringify({theme:s.theme,duration:s.duration,cat:s.cat,principles:s.principles}));
- let b=safe('hc_today_v2',{});b.theme=s.theme;b.duration=s.duration;b.principles=s.principles;b.items=s.items;b.kpis=s.kpis;localStorage.setItem('hc_today_v2',JSON.stringify(b))
-}
-function mount(){
- const page=document.getElementById('today');if(!page)return;
- ['hcTodayV21','hcTodayV2'].forEach(id=>{let x=document.getElementById(id);if(x)x.style.display='none'});
- let old=document.getElementById('hcTodayUnifiedV3');if(old)old.remove();
- const s=state(),r=REC[s.cat]||REC['攻→守'];let d=document.createElement('div');d.id='hcTodayUnifiedV3';
- d.innerHTML=`<div class="tu3"><div class="tu3-k">TODAY'S SESSION｜ONE SCREEN</div><div class="tu3-h">今日の練習</div><div class="tu3-s">テーマ・原則・メニュー・KPIをここだけで編集。変更はすべて連動します。</div>
- <div class="tu3-summary"><div><b>${esc(s.theme||'テーマを設定')}</b><div class="tu3-pills"><span class="tu3-pill">${esc(s.cat)}</span>${s.principles.slice(0,3).map(p=>`<span class="tu3-pill">${esc(p)}</span>`).join('')}</div></div><div class="tu3-time">${total(s)}<small style="font-size:11px;color:#91a3aa"> / ${s.duration}分</small></div></div>
- ${step('1','テーマと原則',`<label class="tu3-l">今日のテーマ</label><input id="tu3Theme" class="tu3-in" value="${esc(s.theme)}" placeholder="例：ボールロスト後の即時奪回"><label class="tu3-l">局面</label><div class="tu3-tabs">${Object.keys(CAT).map(c=>`<button class="tu3-tab ${s.cat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}</div><label class="tu3-l">原則｜最大3つ</label><div class="tu3-chips">${CAT[s.cat].map(p=>`<button class="tu3-chip ${s.principles.includes(p)?'on':''}" data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div>`)}
- ${step('2','おすすめ環境',`<b>${esc(r.name)}</b><div class="tu3-s" style="margin-top:6px"><b>制約：</b>${esc(r.rule)}<br><b>問い：</b>${esc(r.q)}</div><button class="tu3-sub" id="tu3UseRec">おすすめ練習をメニューへ反映</button>`,'closed')}
- ${step('3','練習メニュー',`<label class="tu3-l">予定時間</label><select id="tu3Duration" class="tu3-sel">${[60,75,90,100,120].map(n=>`<option ${s.duration===n?'selected':''}>${n}</option>`).join('')}</select><div id="tu3Menus">${s.items.map((x,i)=>`<div class="tu3-menu"><input class="tu3-in tu3Name" data-i="${i}" value="${esc(x.name)}"><div><input class="tu3-in tu3Minutes" data-i="${i}" type="number" min="0" value="${+x.minutes||0}"><div class="tu3-min">分</div></div></div>`).join('')}</div><button class="tu3-sub" id="tu3Add">＋ メニュー追加</button>`,'closed')}
- ${step('4','KPI・振り返り',`<div id="tu3Kpis">${s.kpis.map((k,i)=>`<div class="tu3-kpi"><span>${esc(k)}</span><input class="tu3-in tu3KpiVal" data-i="${i}" placeholder="結果"></div>`).join('')}</div><label class="tu3-l">練習後メモ</label><textarea id="tu3Reflection" class="tu3-ta" placeholder="できたこと／次回の課題"></textarea>`,'closed')}
- <button class="tu3-btn" id="tu3Save">今日の練習を保存</button></div>`;
- page.prepend(d);bind();document.body.classList.add('hc-today-active')
-}
-function step(n,t,b,cl=''){return `<div class="tu3-step ${cl}"><button class="tu3-head"><span><span class="tu3-k">STEP ${n}</span><br>${t}</span><span>⌄</span></button><div class="tu3-body">${b}</div></div>`}
-function collect(){
- let s=state();s.theme=document.getElementById('tu3Theme')?.value||s.theme;s.duration=+(document.getElementById('tu3Duration')?.value||s.duration);
- s.principles=[...document.querySelectorAll('.tu3-chip.on')].map(x=>x.dataset.p);
- s.items=[...document.querySelectorAll('.tu3-menu')].map(m=>({name:m.querySelector('.tu3Name').value,minutes:+m.querySelector('.tu3Minutes').value||0}));
- return s
-}
-function bind(){
- document.querySelectorAll('.tu3-head').forEach(b=>b.onclick=()=>b.parentElement.classList.toggle('closed'));
- document.querySelectorAll('.tu3-tab').forEach(b=>b.onclick=()=>{let s=collect();s.cat=b.dataset.cat;s.principles=[];let r=REC[s.cat];s.kpis=r.k;s.theme=s.theme||r.name.replace('ゲーム','');save(s);mount()});
- document.querySelectorAll('.tu3-chip').forEach(b=>b.onclick=()=>{let s=collect(),p=b.dataset.p,a=s.principles;if(a.includes(p))a=a.filter(z=>z!==p);else if(a.length<3)a.push(p);else return alert('原則は3つまでに絞りましょう。');s.principles=a;save(s);mount()});
- document.getElementById('tu3UseRec').onclick=()=>{let s=collect(),r=REC[s.cat];let idx=s.items.findIndex(x=>/即時奪回|前進・侵入|誘導プレス|トランジション/.test(x.name));let item={name:r.name,minutes:25,purpose:'選択した原則をゲーム状況で学習',constraint:r.rule,question:r.q};if(idx>=0)s.items[idx]=item;else s.items.splice(Math.min(2,s.items.length),0,item);s.kpis=r.k;save(s);mount()};
- document.getElementById('tu3Add').onclick=()=>{let s=collect();s.items.push({name:'新しいメニュー',minutes:10});save(s);mount()};
- document.getElementById('tu3Save').onclick=()=>{let s=collect();let vals=[...document.querySelectorAll('.tu3KpiVal')].map(x=>x.value);let rec={date:new Date().toISOString(),theme:s.theme,cat:s.cat,principles:s.principles,duration:s.duration,items:s.items,kpis:s.kpis.map((k,i)=>({name:k,value:vals[i]||''})),reflection:document.getElementById('tu3Reflection')?.value||''};save(s);
-let mapped=s.items.map((x,i)=>({id:'pi-'+Date.now()+'-'+i,type:(i===0?'動作改善':(/game/i.test(x.name||'')?'GAME':'練習')),name:x.name||('メニュー'+(i+1)),minutes:+x.minutes||0}));
-let current=safe('hc_today_plan',[]);
-if(!Array.isArray(current))current=[];
-let existing=new Set(current.map(x=>String(x.name||'').trim()+'|'+String(+x.minutes||0)));
-let added=mapped.filter(x=>!existing.has(String(x.name||'').trim()+'|'+String(+x.minutes||0)));
-let merged=current.concat(added);
-localStorage.setItem('hc_today_plan',JSON.stringify(merged));try{if(typeof plan!=='undefined')plan=merged}catch(e){}
-localStorage.setItem('hc_today_session_meta_v31',JSON.stringify({theme:s.theme,cat:s.cat,principles:s.principles,kpis:rec.kpis,reflection:rec.reflection,updatedAt:new Date().toISOString()}));
-let hist=safe('hc_training_records',[]);if(!Array.isArray(hist))hist=[];hist.push(rec);localStorage.setItem('hc_training_records',JSON.stringify(hist));
-try{if(typeof renderToday==='function')renderToday()}catch(e){}
-alert('🔥 今日の練習へ '+added.length+' 項目追加しました。');setTimeout(()=>{let u=document.getElementById('hcTodayUnifiedV3');if(u)u.style.display='none';try{if(typeof renderToday==='function')renderToday()}catch(e){};window.scrollTo({top:0,behavior:'smooth'})},80)};
- ['tu3Theme','tu3Duration'].forEach(id=>{let e=document.getElementById(id);if(e)e.onchange=()=>{let s=collect();save(s);mount()}});
- document.querySelectorAll('.tu3Minutes,.tu3Name').forEach(e=>e.onchange=()=>{let s=collect();save(s);mount()});
-}
-const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);document.body.classList.toggle('hc-today-active',id==='today');if(id==='today')setTimeout(mount,100);return r};
-window.HCTodayUnifiedV3={mount,state};setTimeout(()=>{let p=document.getElementById('today');if(p&&getComputedStyle(p).display!=='none')mount()},2800);
-})();
-</script>
-<!-- /HC_TODAY_UNIFIED_V3 -->
-
-
-<!-- HC_TODAY_SYNC_V31 -->
-<style>
-body.hc-today-active #hcV2TeamFab,
-body.hc-today-active #hcTeamFab,
-body.hc-today-active .hcTeamFab,
-body.hc-today-active [id*="team" i][class*="fab" i],
-body.hc-today-active [class*="team"][class*="fab" i]{display:none!important}
-#hcTodayMetaV31{margin:0 0 12px;background:#0b161b;border:1px solid #294049;border-radius:14px;padding:11px;color:#eef6f2}
-#hcTodayMetaV31 .m31k{font-size:10px;font-weight:950;letter-spacing:1px;color:#d7ff39}
-#hcTodayMetaV31 .m31t{font-size:16px;font-weight:950;margin:4px 0}
-#hcTodayMetaV31 .m31p{display:flex;gap:5px;flex-wrap:wrap}.m31p span{font-size:10px;border:1px solid #3b5058;border-radius:999px;padding:5px 7px}
-#hcTodayUnifiedV3 .tu3-btn{position:sticky;bottom:86px;z-index:30}
-</style>
-<script>
-(function(){'use strict';
-function L(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function E(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function meta(){
- const host=document.getElementById('todayItems');if(!host)return;
- let old=document.getElementById('hcTodayMetaV31');if(old)old.remove();
- const m=L('hc_today_session_meta_v31',null);if(!m)return;
- const d=document.createElement('div');d.id='hcTodayMetaV31';
- d.innerHTML='<div class="m31k">TODAY THEME</div><div class="m31t">'+E(m.theme||'今日のテーマ')+'</div><div class="m31p"><span>'+E(m.cat||'')+'</span>'+((m.principles||[]).map(x=>'<span>'+E(x)+'</span>').join(''))+'</div>';
- host.parentNode.insertBefore(d,host);
-}
-function syncUI(){
- document.body.classList.toggle('hc-today-active',!!document.getElementById('today') && getComputedStyle(document.getElementById('today')).display!=='none');
- meta();
-}
-const prevRender=window.renderToday;
-if(typeof prevRender==='function')window.renderToday=function(){let r=prevRender.apply(this,arguments);setTimeout(meta,0);return r};
-const prevShow=window.show;
-if(typeof prevShow==='function')window.show=function(id){let r=prevShow.apply(this,arguments);setTimeout(syncUI,30);return r};
-window.HCTodaySyncV31={meta,syncUI};
-setTimeout(syncUI,2500);
-})();
-</script>
-<!-- /HC_TODAY_SYNC_V31 -->
-
-
-<!-- HC_TODAY_ADD_TO_PLAN_V32 -->
-<style>
-#hcTodayUnifiedV3 .tu3-btn::before{content:"＋ ";font-weight:950}
-#hcTodayUnifiedV3 .tu3-btn{box-shadow:0 8px 24px rgba(0,0,0,.28)}
-</style>
-<script>
-(function(){'use strict';
-function relabel(){
- const b=document.getElementById('tu3Save');
- if(b)b.textContent='今日の練習へ項目追加';
-}
-const oldMount=window.HCTodayUnifiedV3?.mount;
-if(oldMount){
- window.HCTodayUnifiedV3.mount=function(){
-   const r=oldMount.apply(this,arguments);
-   setTimeout(relabel,0);
-   return r;
- };
-}
-const oldShow=window.show;
-if(oldShow)window.show=function(id){
- const r=oldShow.apply(this,arguments);
- if(id==='today')setTimeout(relabel,160);
- return r;
-};
-setTimeout(relabel,3000);
-})();
-</script>
-<!-- /HC_TODAY_ADD_TO_PLAN_V32 -->
-
-
-<!-- HC_TODAY_ITEM_EDITOR_V33 -->
-<style>
-.hc33-edit{margin-left:6px}
-#hc33Editor{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center}
-#hc33Editor .hc33sheet{width:min(680px,100%);max-height:88vh;overflow:auto;background:#0c171c;border:1px solid #314850;border-radius:22px 22px 0 0;padding:18px;color:#eef6f2;box-sizing:border-box}
-.hc33top{display:flex;justify-content:space-between;align-items:center;gap:10px}.hc33top h3{margin:0;font-size:20px}
-.hc33x{border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px;font-size:18px}
-.hc33lab{display:block;font-size:11px;font-weight:900;color:#94a6ad;margin:12px 0 6px}
-.hc33in,.hc33ta,.hc33sel{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:12px;color:#fff;padding:11px;font-size:14px}
-.hc33ta{min-height:76px;resize:vertical}.hc33grid{display:grid;grid-template-columns:1fr 110px;gap:8px}
-.hc33save{width:100%;margin-top:14px;border:0;border-radius:12px;padding:13px;background:#d7ff39;color:#071014;font-weight:950}
-.hc33delete{width:100%;margin-top:7px;border:1px solid #4a3838;border-radius:12px;padding:11px;background:#1c1517;color:#ffdede;font-weight:850}
-.hc33detail{margin-top:8px;padding:9px 10px;background:#0a1418;border-left:3px solid #d7ff39;border-radius:8px;color:#aebdc1;font-size:11px;line-height:1.55}
-</style>
-<script>
-(function(){'use strict';
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function ensure(){
- try{
-  plan=(plan||[]).map(x=>Object.assign({type:'練習',name:'',minutes:10,purpose:'',constraint:'',question:'',memo:''},x));
- }catch(e){}
-}
-function openEditor(i){
- ensure();let p=plan[i];if(!p)return;
- document.getElementById('hc33Editor')?.remove();
- let d=document.createElement('div');d.id='hc33Editor';
- d.innerHTML=`<div class="hc33sheet">
- <div class="hc33top"><div><div style="font-size:10px;color:#d7ff39;font-weight:950">TODAY'S TRAINING</div><h3>練習項目を編集</h3></div><button class="hc33x" id="hc33Close">×</button></div>
- <div class="hc33grid"><div><label class="hc33lab">項目名</label><input id="hc33Name" class="hc33in" value="${esc(p.name)}"></div><div><label class="hc33lab">時間</label><input id="hc33Min" class="hc33in" type="number" min="0" value="${+p.minutes||0}"></div></div>
- <label class="hc33lab">種類</label><select id="hc33Type" class="hc33sel">${['動作改善','練習','GAME','振り返り'].map(x=>`<option ${p.type===x?'selected':''}>${x}</option>`).join('')}</select>
- <label class="hc33lab">狙い｜何を学習させる？</label><textarea id="hc33Purpose" class="hc33ta" placeholder="例：ロスト直後にボール周辺を圧縮する">${esc(p.purpose||'')}</textarea>
- <label class="hc33lab">制約・ルール</label><textarea id="hc33Constraint" class="hc33ta" placeholder="例：ロスト後4秒以内の奪回で2点">${esc(p.constraint||'')}</textarea>
- <label class="hc33lab">コーチングの問い</label><textarea id="hc33Question" class="hc33ta" placeholder="例：誰が1st DFになる？">${esc(p.question||'')}</textarea>
- <label class="hc33lab">メモ</label><textarea id="hc33Memo" class="hc33ta" placeholder="人数・コートサイズ・注意点など">${esc(p.memo||'')}</textarea>
- <button class="hc33save" id="hc33Save">変更を保存</button><button class="hc33delete" id="hc33Delete">この項目を削除</button></div>`;
- document.body.appendChild(d);
- document.getElementById('hc33Close').onclick=()=>d.remove();
- d.onclick=e=>{if(e.target===d)d.remove()};
- document.getElementById('hc33Save').onclick=()=>{
-   p.name=document.getElementById('hc33Name').value;
-   p.minutes=+document.getElementById('hc33Min').value||0;
-   p.type=document.getElementById('hc33Type').value;
-   p.purpose=document.getElementById('hc33Purpose').value;
-   p.constraint=document.getElementById('hc33Constraint').value;
-   p.question=document.getElementById('hc33Question').value;
-   p.memo=document.getElementById('hc33Memo').value;
-   savePlan();d.remove();
- };
- document.getElementById('hc33Delete').onclick=()=>{if(confirm('この練習項目を削除しますか？')){plan.splice(i,1);savePlan();d.remove()}};
-}
-function decorate(){
- ensure();
- document.querySelectorAll('#todayItems .traincard').forEach((card,i)=>{
-   if(card.querySelector('.hc33-edit'))return;
-   let actions=card.querySelector('.actions');if(!actions)return;
-   let b=document.createElement('button');b.className='btn secondary small hc33-edit';b.textContent='編集';b.onclick=()=>openEditor(i);actions.prepend(b);
-   let p=plan[i];if(p&&(p.purpose||p.constraint||p.question)){
-     let z=document.createElement('div');z.className='hc33detail';
-     z.innerHTML=(p.purpose?'<b>狙い：</b>'+esc(p.purpose)+'<br>':'')+(p.constraint?'<b>制約：</b>'+esc(p.constraint)+'<br>':'')+(p.question?'<b>問い：</b>'+esc(p.question):'');
-     card.insertBefore(z,actions);
-   }
- });
-}
-const prevRender=window.renderToday;
-if(typeof prevRender==='function')window.renderToday=function(){let r=prevRender.apply(this,arguments);setTimeout(decorate,0);return r};
-const prevAdd=window.addPlanItem;
-if(typeof prevAdd==='function')window.addPlanItem=function(){let r=prevAdd.apply(this,arguments);setTimeout(decorate,0);return r};
-window.HCTodayItemEditorV33={open:openEditor,decorate};
-setTimeout(decorate,2600);
-})();
-</script>
-<!-- /HC_TODAY_ITEM_EDITOR_V33 -->
-
-
-<!-- HC_COACH_MODE_V34 -->
-<style>
-#hc34CoachBtn{width:100%;margin:10px 0;border:0;border-radius:14px;padding:13px;background:#d7ff39;color:#071014;font-weight:950}
-#hc34Mode{position:fixed;inset:0;z-index:100000;background:#061014;color:#eef6f2;display:flex;flex-direction:column}
-.hc34top{padding:15px 16px 10px;border-bottom:1px solid #263a42}.hc34k{font-size:10px;font-weight:950;letter-spacing:1.2px;color:#d7ff39}.hc34title{font-size:21px;font-weight:950;margin-top:3px}
-.hc34progress{height:5px;background:#17272d;margin-top:10px;border-radius:99px;overflow:hidden}.hc34progress>div{height:100%;background:#d7ff39}
-.hc34body{flex:1;overflow:auto;padding:16px 16px 130px}.hc34step{font-size:12px;color:#91a3aa}.hc34name{font-size:28px;font-weight:950;line-height:1.2;margin:7px 0}
-.hc34clock{font-size:62px;font-weight:950;letter-spacing:-2px;color:#d7ff39;margin:12px 0;text-align:center}.hc34meta{background:#0d1a1f;border:1px solid #2b4149;border-radius:16px;padding:13px;margin-top:10px;line-height:1.6}
-.hc34meta b{color:#d7ff39}.hc34q{font-size:18px;font-weight:850}.hc34kpis{display:grid;gap:7px;margin-top:9px}.hc34kpi{display:grid;grid-template-columns:1fr 95px;gap:8px;align-items:center}.hc34in{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:10px;color:#fff;padding:10px}
-.hc34controls{position:fixed;left:0;right:0;bottom:0;background:rgba(6,16,20,.97);border-top:1px solid #263a42;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:7px}
-.hc34btn{border:1px solid #354b54;border-radius:13px;padding:12px 8px;background:#15242a;color:#fff;font-weight:900}.hc34btn.main{background:#d7ff39;color:#071014;border-color:#d7ff39}.hc34exit{position:absolute;right:14px;top:13px;border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px}
-.hc34done{background:#102119;border:1px solid #31523b;border-radius:14px;padding:13px;margin-top:10px;color:#d7ffb0}
-</style>
-<script>
-(function(){'use strict';
-let idx=0,seconds=0,timer=null,running=false,startedAt=null;
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function getPlan(){try{return Array.isArray(plan)?plan:safe('hc_today_plan',[])}catch(e){return safe('hc_today_plan',[])}}
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function fmt(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function meta(){return safe('hc_today_session_meta_v31',{})}
-function mountButton(){
- const today=document.getElementById('today');if(!today||document.getElementById('hc34CoachBtn'))return;
- let anchor=document.getElementById('hcTodayMetaV31')||document.getElementById('todayItems');
- if(!anchor)return;
- let b=document.createElement('button');b.id='hc34CoachBtn';b.textContent='▶ コーチモードを開始';
- b.onclick=start;anchor.parentNode.insertBefore(b,anchor.nextSibling)
-}
-function start(){
- const p=getPlan();if(!p.length)return alert('今日の練習メニューを先に追加してください。');
- idx=0;startedAt=new Date().toISOString();open()
-}
-function open(){
- clearInterval(timer);running=false;
- const p=getPlan(),x=p[idx];if(!x)return finish();
- seconds=(+x.minutes||0)*60;
- document.getElementById('hc34Mode')?.remove();
- let m=meta(),d=document.createElement('div');d.id='hc34Mode';
- d.innerHTML=`<div class="hc34top"><div class="hc34k">COACH MODE｜LIVE SESSION</div><div class="hc34title">${esc(m.theme||'今日の練習')}</div><button class="hc34exit" id="hc34Exit">×</button><div class="hc34progress"><div style="width:${((idx+1)/p.length)*100}%"></div></div></div>
- <div class="hc34body"><div class="hc34step">${idx+1} / ${p.length}｜${esc(x.type||'練習')}</div><div class="hc34name">${esc(x.name)}</div><div class="hc34clock" id="hc34Clock">${fmt(seconds)}</div>
- ${(x.purpose||x.constraint||x.question)?`<div class="hc34meta">${x.purpose?'<b>狙い</b><br>'+esc(x.purpose)+'<br>':''}${x.constraint?'<b>制約・ルール</b><br>'+esc(x.constraint)+'<br>':''}${x.question?'<b>問い</b><br><span class="hc34q">'+esc(x.question)+'</span>':''}</div>`:''}
- ${x.memo?`<div class="hc34meta"><b>メモ</b><br>${esc(x.memo)}</div>`:''}
- ${idx===p.length-1?kpiHtml(m):''}
- </div><div class="hc34controls"><button class="hc34btn" id="hc34Prev">← 前へ</button><button class="hc34btn main" id="hc34Play">開始</button><button class="hc34btn" id="hc34Next">${idx===p.length-1?'終了':'次へ →'}</button></div>`;
- document.body.appendChild(d);bind()
-}
-function kpiHtml(m){
- let ks=(m.kpis||[]);if(!ks.length)return '';
- return `<div class="hc34meta"><b>KPI｜練習後に記録</b><div class="hc34kpis">${ks.map((k,i)=>`<div class="hc34kpi"><span>${esc(k.name||k)}</span><input class="hc34in hc34kv" data-i="${i}" placeholder="結果" value="${esc(k.value||'')}"></div>`).join('')}</div><label style="display:block;margin-top:10px"><b>振り返り</b></label><textarea id="hc34Reflection" class="hc34in" style="min-height:70px" placeholder="できたこと／次回の課題">${esc(m.reflection||'')}</textarea></div>`
-}
-function bind(){
- document.getElementById('hc34Exit').onclick=()=>{clearInterval(timer);document.getElementById('hc34Mode')?.remove()};
- document.getElementById('hc34Prev').onclick=()=>{if(idx>0){idx--;open()}};
- document.getElementById('hc34Next').onclick=()=>{saveKpi();if(idx<getPlan().length-1){idx++;open()}else finish()};
- document.getElementById('hc34Play').onclick=toggle
-}
-function toggle(){
- let b=document.getElementById('hc34Play');
- if(running){clearInterval(timer);running=false;b.textContent='再開';return}
- running=true;b.textContent='一時停止';
- timer=setInterval(()=>{seconds--;let c=document.getElementById('hc34Clock');if(c)c.textContent=fmt(seconds);if(seconds<=0){clearInterval(timer);running=false;if(b)b.textContent='完了 ✓'}},1000)
-}
-function saveKpi(){
- let m=meta(),inputs=[...document.querySelectorAll('.hc34kv')];if(inputs.length){m.kpis=(m.kpis||[]).map((k,i)=>typeof k==='string'?{name:k,value:inputs[i]?.value||''}:Object.assign({},k,{value:inputs[i]?.value||''}));m.reflection=document.getElementById('hc34Reflection')?.value||m.reflection||'';localStorage.setItem('hc_today_session_meta_v31',JSON.stringify(m))}
-}
-function finish(){
- clearInterval(timer);saveKpi();let m=meta(),p=getPlan();
- let hist=safe('hc_training_records',[]);if(!Array.isArray(hist))hist=[];
- hist.push({date:new Date().toISOString(),startedAt,completed:true,theme:m.theme||'',cat:m.cat||'',principles:m.principles||[],items:p,kpis:m.kpis||[],reflection:m.reflection||''});
- localStorage.setItem('hc_training_records',JSON.stringify(hist));
- let d=document.getElementById('hc34Mode');if(d)d.innerHTML=`<div class="hc34body" style="display:flex;flex-direction:column;justify-content:center"><div class="hc34k">SESSION COMPLETE</div><div class="hc34name">今日の練習、お疲れさまでした。</div><div class="hc34done">練習内容・KPI・振り返りを記録しました。分析とNEXT TRAININGに利用されます。</div><button class="hc34btn main" style="margin-top:14px" id="hc34Done">今日の練習へ戻る</button></div>`;
- document.getElementById('hc34Done').onclick=()=>{document.getElementById('hc34Mode')?.remove();try{renderToday()}catch(e){}}
-}
-const pr=window.renderToday;if(typeof pr==='function')window.renderToday=function(){let r=pr.apply(this,arguments);setTimeout(mountButton,30);return r};
-const ps=window.show;if(typeof ps==='function')window.show=function(id){let r=ps.apply(this,arguments);if(id==='today')setTimeout(mountButton,180);return r};
-window.HCCoachModeV34={start,mountButton};setTimeout(mountButton,3000);
-})();
-</script>
-<!-- /HC_COACH_MODE_V34 -->
-
-
-<!-- HC_COACH_MODE_V35 -->
-<style>
-.hc35info{margin-top:10px}.hc35toggle{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid #314750;background:#102027;color:#fff;border-radius:13px;padding:11px 12px;font-weight:900}
-.hc35panel{display:none;margin-top:7px;background:#0b171c;border:1px solid #294049;border-radius:13px;padding:12px;font-size:13px;line-height:1.65;color:#d7e1e4}.hc35panel.open{display:block}.hc35panel b{color:#d7ff39}
-.hc35memo{margin-top:10px;background:#0b171c;border:1px solid #294049;border-radius:14px;padding:12px}.hc35memo textarea{width:100%;box-sizing:border-box;min-height:105px;background:#071014;border:1px solid #30464e;border-radius:11px;color:#fff;padding:10px;font-size:14px;resize:vertical}
-.hc35save{width:100%;margin-top:7px;border:1px solid #3a5058;background:#17272d;color:#fff;border-radius:11px;padding:10px;font-weight:900}.hc35saved{font-size:10px;color:#d7ff39;margin-top:5px;min-height:14px}
-</style>
-<script>
-(function(){'use strict';
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function P(){try{return Array.isArray(plan)?plan:JSON.parse(localStorage.getItem('hc_today_plan')||'[]')}catch(e){return []}}
-function notes(){try{return JSON.parse(localStorage.getItem('hc_coach_live_notes_v35')||'{}')}catch(e){return {}}}
-function currentIndex(){
- const s=document.querySelector('#hc34Mode .hc34step')?.textContent||'1 / 1';
- return Math.max(0,(parseInt(s,10)||1)-1)
-}
-function enhance(){
- const body=document.querySelector('#hc34Mode .hc34body');if(!body||body.querySelector('.hc35info'))return;
- const i=currentIndex(),x=P()[i]||{},n=notes(),key=String(x.id||i),saved=n[key]||x.liveMemo||'';
- const wrap=document.createElement('div');wrap.className='hc35info';
- wrap.innerHTML=`<button class="hc35toggle" id="hc35Toggle"><span>📋 制約・説明を見る</span><span>⌄</span></button>
- <div class="hc35panel" id="hc35Panel">
- ${x.purpose?'<b>狙い</b><br>'+esc(x.purpose)+'<br><br>':''}
- ${x.constraint?'<b>制約・ルール</b><br>'+esc(x.constraint)+'<br><br>':''}
- ${x.question?'<b>コーチングの問い</b><br>'+esc(x.question)+'<br><br>':''}
- ${x.memo?'<b>事前メモ</b><br>'+esc(x.memo):''}
- ${(!x.purpose&&!x.constraint&&!x.question&&!x.memo)?'この項目にはまだ説明がありません。「今日の練習」の編集から追加できます。':''}
- </div>
- <div class="hc35memo"><div style="font-size:10px;color:#d7ff39;font-weight:950;letter-spacing:1px">LIVE COACH MEMO</div><div style="font-weight:900;margin:4px 0 7px">練習中メモ</div><textarea id="hc35Memo" placeholder="例：1st DFの寄せが遅い／右サイドでは即時奪回できた／次回はコート幅を狭くする">${esc(saved)}</textarea><button class="hc35save" id="hc35Save">メモを保存</button><div class="hc35saved" id="hc35Saved"></div></div>`;
- const controls=body.querySelector('.hc34meta:last-of-type');
- body.appendChild(wrap);
- document.getElementById('hc35Toggle').onclick=()=>document.getElementById('hc35Panel').classList.toggle('open');
- document.getElementById('hc35Save').onclick=saveMemo;
-}
-function saveMemo(){
- const i=currentIndex(),x=P()[i]||{},key=String(x.id||i),n=notes(),v=document.getElementById('hc35Memo')?.value||'';
- n[key]=v;localStorage.setItem('hc_coach_live_notes_v35',JSON.stringify(n));
- let p=P();if(p[i]){p[i].liveMemo=v;localStorage.setItem('hc_today_plan',JSON.stringify(p));try{plan=p}catch(e){}}
- const z=document.getElementById('hc35Saved');if(z){z.textContent='✓ 保存しました';setTimeout(()=>z.textContent='',1600)}
-}
-const observer=new MutationObserver(()=>{if(document.getElementById('hc34Mode'))setTimeout(enhance,20)});
-observer.observe(document.documentElement,{childList:true,subtree:true});
-window.HCCoachModeV35={enhance,saveMemo};
-setTimeout(enhance,3000);
-})();
-</script>
-<!-- /HC_COACH_MODE_V35 -->
-
-
-<!-- HC_TODAY_HUB_V36 -->
-<style>
-#hc36Hub{margin:10px 0 14px}.hc36grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.hc36act{border:1px solid #30464e;background:#102027;color:#fff;border-radius:14px;padding:13px 10px;text-align:left;min-height:76px}
-.hc36act b{display:block;font-size:13px}.hc36act span{display:block;font-size:10px;color:#9fb0b6;margin-top:4px;line-height:1.35}
-.hc36act.primary{background:#d7ff39;color:#071014;border-color:#d7ff39}.hc36act.primary span{color:#35400d}
-#hc36Rec{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.74);display:flex;align-items:flex-end}
-.hc36sheet{width:100%;max-height:90vh;overflow:auto;background:#081419;border:1px solid #314850;border-radius:22px 22px 0 0;padding:17px 14px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box;color:#fff}
-.hc36head{display:flex;justify-content:space-between;align-items:center}.hc36head h3{margin:2px 0 0}.hc36x{border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px}
-.hc36context{font-size:11px;color:#a7b6bb;margin:8px 0 12px}.hc36card{border:1px solid #2c4149;background:#0d1a1f;border-radius:15px;padding:12px;margin:8px 0}
-.hc36card h4{margin:0 0 4px;font-size:15px}.hc36card p{font-size:11px;color:#aebdc1;line-height:1.5;margin:5px 0}.hc36tags{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.hc36tag{font-size:9px;border:1px solid #3a5058;border-radius:999px;padding:4px 6px}
-.hc36add{width:100%;border:0;border-radius:10px;padding:10px;background:#d7ff39;color:#071014;font-weight:950;margin-top:7px}
-</style>
-<script>
-(function(){'use strict';
-const LIB=[
-{phase:'攻撃',name:'3ゾーン前進ゲーム',min:15,purpose:'ボールを前進させながら、前方の選択肢を増やす',constraint:'3ゾーン制。前進パスまたはキャリーでゾーン突破。後方への逃げ続けは禁止。',question:'前進できる瞬間はどこにある？'},
-{phase:'攻撃',name:'4v4+2 フリーマン前進',min:15,purpose:'数的優位を使って前進の出口を見つける',constraint:'外側2名は攻撃側。3本以内に前進を狙う。',question:'誰を使うと相手を一人外せる？'},
-{phase:'守備',name:'4v4 圧縮ディフェンス',min:15,purpose:'ボール周辺を圧縮し、中央を閉じる',constraint:'守備側は横幅を一定範囲以内に保つ。奪ったら即ゴールへ。',question:'どこを閉じれば相手の前進を止められる？'},
-{phase:'守備',name:'5v4 サークル守備',min:15,purpose:'ゴール前で優先順位を共有して守る',constraint:'攻撃5対守備4。守備は中央・ゴール方向を最優先。',question:'今、一番危険な選手とスペースはどこ？'},
-{phase:'攻→守',name:'4v4+GK 即時奪回ゲーム',min:15,purpose:'ボールロスト直後の即時奪回を習慣化する',constraint:'ロスト後4秒以内の奪回で2点。奪えなければ即撤退。',question:'誰が1st DFになり、誰がカバーする？'},
-{phase:'攻→守',name:'5v4→4v3 カウンター対応',min:18,purpose:'人数をかけた攻撃後のリスク管理を学ぶ',constraint:'攻撃終了・ロストで即逆方向へ4v3。後方選手は事前にバランスを取る。',question:'攻撃中に誰がカウンターを消しておく？'},
-{phase:'守→攻',name:'3v3+2 ターゲット速攻',min:15,purpose:'奪った瞬間に前方を認知し、速く前進する',constraint:'奪取後5秒以内にターゲットへ通せば2点。',question:'奪う前に次の出口を見られている？'},
-{phase:'守→攻',name:'4v4 奪取後6秒フィニッシュ',min:15,purpose:'ボール奪取からゴールまでの速度を上げる',constraint:'奪取後6秒以内のシュートは2点。',question:'最初のプレーでどこまで前進できる？'}
-];
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function context(){let m=safe('hc_today_session_meta_v31',{}),v=safe('hc_today_v21',{});return {theme:m.theme||v.theme||'',phase:m.cat||v.cat||v.phase||'',principles:m.principles||v.principles||[]}}
-function recs(){
- let c=context(),phase=c.phase;
- if(!['攻撃','守備','攻→守','守→攻'].includes(phase)){
-   let t=(c.theme+' '+c.principles.join(' '));
-   phase=/ロスト|奪回/.test(t)?'攻→守':/奪取|速攻|カウンター/.test(t)?'守→攻':/守備|プレス/.test(t)?'守備':'攻撃';
- }
- let same=LIB.filter(x=>x.phase===phase),other=LIB.filter(x=>x.phase!==phase);
- return same.concat(other).slice(0,5)
-}
-function mount(){
- const today=document.getElementById('today');if(!today||document.getElementById('hc36Hub'))return;
- let anchor=document.getElementById('hcTodayMetaV31')||document.getElementById('todayItems');if(!anchor)return;
- let d=document.createElement('div');d.id='hc36Hub';
- d.innerHTML=`<div class="hc36grid">
- <button class="hc36act" id="hc36Add"><b>＋ 練習を追加</b><span>空の項目を追加して自分で編集</span></button>
- <button class="hc36act primary" id="hc36Recommend"><b>✨ おすすめ練習から追加</b><span>テーマ・原則・課題から選ぶ</span></button>
- <button class="hc36act" id="hc36Design"><b>🧠 今日の練習を設計</b><span>テーマからセッション全体を組み立てる</span></button>
- <button class="hc36act" id="hc36Coach"><b>▶ コーチモード開始</b><span>タイマー・説明・メモを使って実践</span></button></div>`;
- anchor.parentNode.insertBefore(d,anchor.nextSibling);
- document.getElementById('hc36Add').onclick=()=>{try{addPlanItem()}catch(e){let p=safe('hc_today_plan',[]);p.push({id:'pi-'+Date.now(),type:'練習',name:'新しい練習',minutes:10,purpose:'',constraint:'',question:'',memo:''});localStorage.setItem('hc_today_plan',JSON.stringify(p));try{plan=p;renderToday()}catch(_){} }};
- document.getElementById('hc36Recommend').onclick=openRec;
- document.getElementById('hc36Design').onclick=()=>{let u=document.getElementById('hcTodayUnifiedV3');if(u){u.style.display='block';u.scrollIntoView({behavior:'smooth',block:'start'})}else alert('設計画面を開けませんでした。')};
- document.getElementById('hc36Coach').onclick=()=>window.HCCoachModeV34?.start();
- let old=document.getElementById('hc34CoachBtn');if(old)old.style.display='none'
-}
-function openRec(){
- document.getElementById('hc36Rec')?.remove();let c=context(),rs=recs(),d=document.createElement('div');d.id='hc36Rec';
- d.innerHTML=`<div class="hc36sheet"><div class="hc36head"><div><div style="font-size:10px;color:#d7ff39;font-weight:950">RECOMMENDED TRAINING</div><h3>おすすめ練習メニュー</h3></div><button class="hc36x">×</button></div>
- <div class="hc36context">テーマ：${esc(c.theme||'未設定')} ${c.phase?'｜局面：'+esc(c.phase):''}</div>
- ${rs.map((x,i)=>`<div class="hc36card"><h4>${esc(x.name)}</h4><div class="hc36tags"><span class="hc36tag">${esc(x.phase)}</span><span class="hc36tag">${x.min}分</span></div><p><b>狙い：</b>${esc(x.purpose)}</p><p><b>制約：</b>${esc(x.constraint)}</p><p><b>問い：</b>${esc(x.question)}</p><button class="hc36add" data-i="${i}">＋ 今日の練習へ追加</button></div>`).join('')}</div>`;
- document.body.appendChild(d);d.querySelector('.hc36x').onclick=()=>d.remove();d.onclick=e=>{if(e.target===d)d.remove()};
- d.querySelectorAll('.hc36add').forEach(b=>b.onclick=()=>addRec(rs[+b.dataset.i],b))
-}
-function addRec(x,b){
- let p=safe('hc_today_plan',[]);if(!Array.isArray(p))p=[];
- p.push({id:'pi-'+Date.now(),type:'練習',name:x.name,minutes:x.min,purpose:x.purpose,constraint:x.constraint,question:x.question,memo:'',source:'recommended'});
- localStorage.setItem('hc_today_plan',JSON.stringify(p));try{plan=p;renderToday()}catch(e){}
- b.textContent='✓ 追加しました';b.disabled=true
-}
-const pr=window.renderToday;if(typeof pr==='function')window.renderToday=function(){let r=pr.apply(this,arguments);setTimeout(mount,50);return r};
-const ps=window.show;if(typeof ps==='function')window.show=function(id){let r=ps.apply(this,arguments);if(id==='today')setTimeout(mount,180);return r};
-window.HCTodayHubV36={mount,openRec};setTimeout(mount,3200);
-})();
-</script>
-<!-- /HC_TODAY_HUB_V36 -->
-
-
-<!-- HC_TODAY_SIMPLE_FLOW_V37 -->
-<style>
-/* V3.7: 設計画面は STEP1 に集中 */
-#hcTodayUnifiedV3 .tu3-step:nth-of-type(2),
-#hcTodayUnifiedV3 .tu3-step:nth-of-type(3),
-#hcTodayUnifiedV3 .tu3-step:nth-of-type(4){display:none!important}
-#hcTodayUnifiedV3 #tu3Save{display:none!important}
-#hc37Recommend{width:100%;margin-top:14px;border:0;border-radius:16px;padding:15px;background:#d7ff39;color:#071014;font-size:15px;font-weight:950}
-#hc37KpiBtn{width:100%;margin-top:8px;border:1px solid #38505a;border-radius:14px;padding:12px;background:#122229;color:#fff;font-weight:900}
-#hc37KpiModal{position:fixed;inset:0;z-index:100003;background:rgba(0,0,0,.75);display:flex;align-items:flex-end}
-.hc37sheet{width:100%;max-height:88vh;overflow:auto;background:#081419;border:1px solid #314850;border-radius:22px 22px 0 0;padding:17px 14px calc(20px + env(safe-area-inset-bottom));box-sizing:border-box;color:#fff}
-.hc37head{display:flex;justify-content:space-between;align-items:center}.hc37x{border:0;background:#17272d;color:#fff;border-radius:999px;width:38px;height:38px}
-.hc37in{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:11px;color:#fff;padding:11px;margin-top:7px}.hc37save{width:100%;border:0;border-radius:11px;padding:12px;background:#d7ff39;color:#071014;font-weight:950;margin-top:10px}
-</style>
-<script>
-(function(){'use strict';
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function simplify(){
- const root=document.getElementById('hcTodayUnifiedV3');if(!root)return;
- let save=document.getElementById('tu3Save');if(!save)return;
- if(!document.getElementById('hc37Recommend')){
-   let b=document.createElement('button');b.id='hc37Recommend';b.textContent='✨ このテーマのおすすめ練習を見る';
-   b.onclick=()=>{
-     /* STEP1の最新選択を保存して、おすすめ判定へ渡す */
-     try{
-       let s=window.HCTodayUnifiedV3?.collect?.();
-       if(s){
-         localStorage.setItem('hc_today_v21',JSON.stringify(s));
-         let m=safe('hc_today_session_meta_v31',{});
-         m.theme=s.theme||m.theme||'';m.cat=s.cat||m.cat||'';m.principles=s.principles||m.principles||[];
-         localStorage.setItem('hc_today_session_meta_v31',JSON.stringify(m));
-       }
-     }catch(e){}
-     window.HCTodayHubV36?.openRec();
-   };
-   save.parentNode.insertBefore(b,save);
-   let k=document.createElement('button');k.id='hc37KpiBtn';k.textContent='◎ KPI・振り返りを開く';
-   k.onclick=openKpi;b.after(k)
- }
-}
-function openKpi(){
- document.getElementById('hc37KpiModal')?.remove();
- let m=safe('hc_today_session_meta_v31',{}),ks=m.kpis||[];
- let d=document.createElement('div');d.id='hc37KpiModal';
- d.innerHTML=`<div class="hc37sheet"><div class="hc37head"><div><div style="font-size:10px;color:#d7ff39;font-weight:950">SESSION REVIEW</div><h3 style="margin:2px 0">KPI・振り返り</h3></div><button class="hc37x">×</button></div>
- <p style="font-size:11px;color:#9fb0b6">練習設計とは分けて、練習後に記録します。</p>
- <div id="hc37Kpis">${ks.length?ks.map((k,i)=>`<input class="hc37in hc37kv" data-i="${i}" placeholder="${String(k.name||k).replace(/"/g,'&quot;')}" value="${String(k.value||'').replace(/"/g,'&quot;')}">`).join(''):'<div style="font-size:12px;color:#9fb0b6">KPIはコーチモード終了時にも入力できます。</div>'}</div>
- <textarea id="hc37Reflection" class="hc37in" style="min-height:100px" placeholder="今日の気づき・次回の課題">${m.reflection||''}</textarea>
- <button class="hc37save" id="hc37Save">保存</button></div>`;
- document.body.appendChild(d);d.querySelector('.hc37x').onclick=()=>d.remove();d.onclick=e=>{if(e.target===d)d.remove()};
- document.getElementById('hc37Save').onclick=()=>{
-   let mm=safe('hc_today_session_meta_v31',{});
-   let ins=[...document.querySelectorAll('.hc37kv')];
-   if(ins.length)mm.kpis=(mm.kpis||[]).map((k,i)=>typeof k==='string'?{name:k,value:ins[i]?.value||''}:Object.assign({},k,{value:ins[i]?.value||''}));
-   mm.reflection=document.getElementById('hc37Reflection').value;localStorage.setItem('hc_today_session_meta_v31',JSON.stringify(mm));d.remove()
- }
-}
-const mo=new MutationObserver(()=>simplify());mo.observe(document.documentElement,{childList:true,subtree:true});
-window.HCTodaySimpleV37={simplify,openKpi};setTimeout(simplify,2800);
-})();
-</script>
-<!-- /HC_TODAY_SIMPLE_FLOW_V37 -->
-
-
-<!-- HC_THEME_FLOW_V38 -->
-<style>
-/* V3.8: STEP方式を廃止。「テーマを決める → おすすめを見る」に一本化 */
-#hcTodayUnifiedV3 .tu3-step:nth-of-type(n+2){display:none!important}
-#hcTodayUnifiedV3 #tu3Save,#hc37KpiBtn{display:none!important}
-#hcTodayUnifiedV3 .tu3-step:first-of-type [class*="step-label"],
-#hcTodayUnifiedV3 .tu3-step:first-of-type [class*="stepno"]{display:none!important}
-#hc38FlowTitle{margin:2px 0 13px}
-#hc38FlowTitle .eyebrow{font-size:10px;color:#d7ff39;font-weight:950;letter-spacing:1.2px}
-#hc38FlowTitle h2{font-size:21px;margin:4px 0 3px}
-#hc38FlowTitle p{font-size:11px;color:#9dafb5;margin:0;line-height:1.45}
-#hc37Recommend{font-size:16px!important;padding:16px!important;margin-top:16px!important}
-</style>
-<script>
-(function(){'use strict';
-function clean(){
- const root=document.getElementById('hcTodayUnifiedV3');if(!root)return;
- const first=root.querySelector('.tu3-step');if(!first)return;
- /* 既存STEP 1文字を、意味のある見出しへ変更 */
- [...first.querySelectorAll('*')].forEach(el=>{
-   if(el.children.length===0 && /^STEP\s*1$/i.test((el.textContent||'').trim()))el.style.display='none';
- });
- let old=document.getElementById('hc38FlowTitle');
- if(!old){
-   let t=document.createElement('div');t.id='hc38FlowTitle';
-   t.innerHTML='<div class="eyebrow">TRAINING DESIGN</div><h2>今日のテーマを決める</h2><p>局面と原則を選ぶと、その内容に合った練習メニューを提案します。</p>';
-   first.insertBefore(t,first.firstChild);
- }
- let b=document.getElementById('hc37Recommend');
- if(b)b.textContent='✨ このテーマのおすすめ練習を見る';
-}
-const mo=new MutationObserver(clean);mo.observe(document.documentElement,{childList:true,subtree:true});
-window.HCThemeFlowV38={clean};setTimeout(clean,2500);
-})();
-</script>
-<!-- /HC_THEME_FLOW_V38 -->
-
-<!-- HC_BOTTOMUP_RECOMMEND_V39 -->
-<style>
-#hc39Conditions{margin:10px 0 12px;background:#0c191e;border:1px solid #2d434b;border-radius:14px;padding:11px}.hc39label{font-size:10px;color:#d7ff39;font-weight:950;letter-spacing:1px}.hc39nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px}.hc39field label{display:block;font-size:9px;color:#96a8ae;margin-bottom:4px}.hc39field input{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:9px;color:#fff;padding:9px;text-align:center;font-weight:900}.hc39note{font-size:10px;color:#91a3aa;line-height:1.45;margin-top:7px}#hc39PlayerIdea{width:100%;box-sizing:border-box;margin-top:8px;background:#071014;border:1px solid #30464e;border-radius:10px;color:#fff;padding:10px;min-height:62px}.hc39why{font-size:10px;color:#d7ff39;margin:6px 0}.hc39setup{font-size:10px;color:#c5d1d4;line-height:1.5;background:#091419;border-radius:9px;padding:8px;margin-top:7px}
-</style>
-<script>
-(function(){'use strict';
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-function nums(){let att=18,gk=2,dur=100,t=document.getElementById('today')?.innerText||'',m=t.match(/参加\s*(\d+)/);if(m)att=+m[1];m=t.match(/GK\s*(\d+)/i);if(m)gk=+m[1];m=t.match(/予定\s*(\d+)\s*分/);if(m)dur=+m[1];let s=safe('hc_today_conditions_v39',{});return {players:s.players||att,gk:s.gk??gk,duration:s.duration||dur,playerIdea:s.playerIdea||''}}
-function save(){localStorage.setItem('hc_today_conditions_v39',JSON.stringify({players:+document.getElementById('hc39Players')?.value||18,gk:+document.getElementById('hc39Gk')?.value||0,duration:+document.getElementById('hc39Duration')?.value||100,playerIdea:document.getElementById('hc39PlayerIdea')?.value||''}))}
-function mount(){let root=document.getElementById('hcTodayUnifiedV3'),first=root?.querySelector('.tu3-step');if(!first||document.getElementById('hc39Conditions'))return;let n=nums(),d=document.createElement('div');d.id='hc39Conditions';d.innerHTML=`<div class="hc39label">TODAY'S CONDITIONS</div><div class="hc39nums"><div class="hc39field"><label>参加選手</label><input id="hc39Players" type="number" min="1" value="${n.players}"></div><div class="hc39field"><label>GK</label><input id="hc39Gk" type="number" min="0" value="${n.gk}"></div><div class="hc39field"><label>練習時間</label><input id="hc39Duration" type="number" min="10" value="${n.duration}"></div></div><div class="hc39note">人数は正解を決めるためではなく、今日できる選択肢を絞るために使います。</div><textarea id="hc39PlayerIdea" placeholder="選手・チームの案（任意）例：今日はゲーム形式を多くしたい">${n.playerIdea}</textarea>`;first.insertBefore(d,first.firstChild);['hc39Players','hc39Gk','hc39Duration','hc39PlayerIdea'].forEach(id=>document.getElementById(id).oninput=save)}
-function enrich(){let modal=document.getElementById('hc36Rec');if(!modal||modal.dataset.v39)return;modal.dataset.v39='1';let c=nums(),cards=[...modal.querySelectorAll('.hc36card')],modes=[['反復量重視','少人数化してボール関与と判断回数を増やす'],['ゲーム性重視','試合に近い情報とプレッシャーの中で学ぶ'],['全員参加重視','待ち時間を減らし全員が同時に課題へ関わる']];cards.forEach((card,i)=>{let md=modes[i%3],groups=Math.max(1,Math.floor(c.players/6)),setup=c.gk>0?`${c.players}人＋GK${c.gk}人｜${groups}グループ目安｜GKを交代・両方向で活用`:`${c.players}人｜${groups}グループ目安｜GKなしでも成立`;let w=document.createElement('div');w.innerHTML=`<div class="hc39why">選択肢 ${i+1}｜${md[0]} — ${md[1]}</div><div class="hc39setup"><b>今日の条件：</b>${setup}<br><b>練習時間：</b>${c.duration}分の中で調整可能</div>`;card.insertBefore(w,card.querySelector('.hc36add'))});let ctx=modal.querySelector('.hc36context');if(ctx&&c.playerIdea){let p=document.createElement('div');p.className='hc39setup';p.textContent='選手・チームの案：'+c.playerIdea;ctx.after(p)}}
-const mo=new MutationObserver(()=>{mount();enrich()});mo.observe(document.documentElement,{childList:true,subtree:true});window.HCBottomUpV39={mount,enrich,save};setTimeout(()=>{mount();enrich()},2500);
-})();
-</script><!-- /HC_BOTTOMUP_RECOMMEND_V39 -->
-
-<!-- HC_STABLE_TODAY_V310 -->
-<style>
-#hcTodayV21,#hcTodayV2,#hcTodayUnifiedV3,#hcNextTrainingV1{display:none!important}
-#hc310{margin:0 0 14px;background:#0b171c;border:1px solid #294049;border-radius:20px;padding:15px;color:#eef6f2}
-.h310k{font-size:10px;color:#d7ff39;font-weight:950;letter-spacing:1.2px}.h310h{font-size:22px;font-weight:950;margin:5px 0}.h310s{font-size:11px;color:#98aab0;line-height:1.5}
-.h310grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:12px 0}.h310f label{display:block;font-size:9px;color:#94a6ad;margin-bottom:4px}.h310f input,.h310theme{width:100%;box-sizing:border-box;background:#071014;border:1px solid #30464e;border-radius:10px;color:#fff;padding:10px}
-.h310tabs,.h310chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.h310tab,.h310chip{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:999px;padding:8px 10px;font-weight:850}.h310tab.on,.h310chip.on{background:#d7ff39;color:#071014;border-color:#d7ff39}
-.h310btn{width:100%;margin-top:14px;border:0;border-radius:14px;padding:14px;background:#d7ff39;color:#071014;font-weight:950}
-#hc310Modal{position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,.78);display:flex;align-items:flex-end}.h310sheet{width:100%;max-height:88vh;overflow:auto;background:#081419;color:#fff;border-radius:22px 22px 0 0;padding:16px 14px calc(20px + env(safe-area-inset-bottom))}.h310card{border:1px solid #2d434b;border-radius:15px;padding:12px;margin:9px 0;background:#0d1a1f}.h310card h4{margin:0 0 5px}.h310card p{font-size:11px;color:#afbdc1;line-height:1.5}.h310add{width:100%;border:0;border-radius:10px;padding:10px;background:#d7ff39;color:#071014;font-weight:950}.h310x{float:right;border:0;border-radius:50%;width:38px;height:38px;background:#17272d;color:#fff}
-</style>
-<script>
-(function(){'use strict';
-const P={攻撃:['ボールを前進させ、ゴールへ迫る','幅と深さを確保する','数的・位置的優位を作る'],守備:['ゴールと中央を守りながら奪う','1st DFが相手の方向を制限する','2nd・3rd DFが中央を閉じて連動する'],'攻→守':['ロスト後4秒で相手の前進を止める','最も近い選手が1st DFになる','中央への出口を消す'],'守→攻':['奪った瞬間に前方を見る','前進できれば素早く前進する','無理なら保持して広がる']};
-const R={攻撃:[['3ゾーン前進ゲーム','前進の出口を見つける','3ゾーン制。前進パスかキャリーで突破','どこから前進できる？'],['4v4+2 前進ゲーム','判断回数を増やす','外2名は攻撃側。3本以内に前進','誰を使えば相手を外せる？'],['ゲーム形式 前進→侵入','試合に近い状況で学ぶ','最終ゾーン侵入で1点','運ぶ・つなぐ・逆、どれが有効？']],守備:[['4v4 圧縮守備','中央を閉じる','守備は中央優先。奪ったら即前進','一番危険な場所は？'],['5v4 サークル守備','ゴール前の優先順位','中央とゴール方向を最優先','誰と何を守る？'],['誘導プレスゲーム','奪い所を共有','外へ誘導して奪えば2点','どちらへ誘導する？']],'攻→守':[['4v4 即時奪回','ロスト直後の反応','4秒以内奪回で2点','誰が1st DF？'],['5v4→4v3','攻撃後のリスク管理','ロストで即逆方向へ4v3','誰がカウンターを消す？'],['トランジションゲーム','全員で切替える','奪回困難なら即撤退','奪う？遅らせる？戻る？']],'守→攻':[['3v3+2 速攻','奪取後の前進','奪取後5秒以内の前進で2点','出口はどこ？'],['4v4 6秒フィニッシュ','速攻判断','奪取後6秒以内シュートで2点','最初のプレーは？'],['GO/HOLD/RESETゲーム','前進と保持を選ぶ','奪取後に3判断を選択','今はGOできる？']]};
-function safe(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-let s=Object.assign({theme:'',phase:'攻→守',principles:[],players:18,gk:2,duration:100,idea:''},safe('hc310_state',{}));
-function save(){localStorage.setItem('hc310_state',JSON.stringify(s))}
-function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function mount(){
- let page=document.getElementById('today');if(!page)return;
- ['hcTodayV21','hcTodayV2','hcTodayUnifiedV3'].forEach(id=>document.getElementById(id)?.remove());
- let old=document.getElementById('hc310');if(old)old.remove();
- let d=document.createElement('div');d.id='hc310';d.innerHTML=`<div class="h310k">TRAINING DESIGN</div><div class="h310h">今日のテーマを決める</div><div class="h310s">条件を整理し、チームで選べる練習案を出します。</div>
- <div class="h310grid"><div class="h310f"><label>参加選手</label><input id="h310p" type="number" value="${s.players}"></div><div class="h310f"><label>GK</label><input id="h310g" type="number" value="${s.gk}"></div><div class="h310f"><label>練習時間</label><input id="h310d" type="number" value="${s.duration}"></div></div>
- <input id="h310t" class="h310theme" value="${esc(s.theme)}" placeholder="今日のテーマ 例：ボールロスト後の即時奪回">
- <div class="h310tabs">${Object.keys(P).map(x=>`<button class="h310tab ${s.phase===x?'on':''}" data-x="${x}">${x}</button>`).join('')}</div>
- <div class="h310chips">${P[s.phase].map(x=>`<button class="h310chip ${s.principles.includes(x)?'on':''}" data-x="${esc(x)}">${esc(x)}</button>`).join('')}</div>
- <input id="h310i" class="h310theme" style="margin-top:9px" value="${esc(s.idea)}" placeholder="選手・チームの案（任意）">
- <button id="h310rec" class="h310btn">✨ このテーマのおすすめ練習を見る</button>`;
- page.prepend(d);bind()
-}
-function bind(){
- ['h310p','h310g','h310d','h310t','h310i'].forEach(id=>document.getElementById(id).oninput=()=>{s.players=+document.getElementById('h310p').value||1;s.gk=+document.getElementById('h310g').value||0;s.duration=+document.getElementById('h310d').value||60;s.theme=document.getElementById('h310t').value;s.idea=document.getElementById('h310i').value;save()});
- document.querySelectorAll('.h310tab').forEach(b=>b.onclick=()=>{s.phase=b.dataset.x;s.principles=[];save();mount()});
- document.querySelectorAll('.h310chip').forEach(b=>b.onclick=()=>{let x=b.dataset.x;if(s.principles.includes(x))s.principles=s.principles.filter(z=>z!==x);else if(s.principles.length<3)s.principles.push(x);save();mount()});
- document.getElementById('h310rec').onclick=openRec
-}
-function openRec(){document.getElementById('hc310Modal')?.remove();let d=document.createElement('div');d.id='hc310Modal',rs=R[s.phase];d.innerHTML=`<div class="h310sheet"><button class="h310x">×</button><div class="h310k">3 OPTIONS｜${s.players}人＋GK${s.gk}人｜${s.duration}分</div><h3>チームで選ぶおすすめ練習</h3>${s.idea?`<p class="h310s">選手・チーム案：${esc(s.idea)}</p>`:''}${rs.map((x,i)=>`<div class="h310card"><div class="h310k">${['反復量重視','ゲーム性重視','全員参加重視'][i]}</div><h4>${x[0]}</h4><p><b>狙い：</b>${x[1]}<br><b>制約：</b>${x[2]}<br><b>問い：</b>${x[3]}<br><b>人数調整：</b>${s.players}人を複数グループに分け、待ち時間を最小化</p><button class="h310add" data-i="${i}">＋ 今日の練習へ追加</button></div>`).join('')}</div>`;document.body.appendChild(d);d.querySelector('.h310x').onclick=()=>d.remove();d.querySelectorAll('.h310add').forEach(b=>b.onclick=()=>{let x=rs[+b.dataset.i],p=safe('hc_today_plan',[]);p.push({id:'pi-'+Date.now(),type:'練習',name:x[0],minutes:15,purpose:x[1],constraint:x[2],question:x[3],memo:'',source:'v310'});localStorage.setItem('hc_today_plan',JSON.stringify(p));try{plan=p;renderToday()}catch(e){}b.textContent='✓ 追加しました';b.disabled=true})}
-const oldShow=window.show;if(oldShow)window.show=function(id){let r=oldShow.apply(this,arguments);if(id==='today')setTimeout(mount,80);return r};
-window.HCStableTodayV310={mount};setTimeout(()=>{let p=document.getElementById('today');if(p&&getComputedStyle(p).display!=='none')mount()},1200);
-})();
-</script>
-<!-- /HC_STABLE_TODAY_V310 -->
+<!-- /HC_TODAY_CLEAN_V4 -->
 
 </body></html>
