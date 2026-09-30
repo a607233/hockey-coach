@@ -56,7 +56,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 <section id="history" class="page"><div class="card"><div class="k">HISTORY</div><div class="title">練習記録</div><div id="historyList"></div></div></section>
 
 <section id="more" class="page">
- <div class="card"><div class="k">TEAM IDENTITY</div><div class="title">Philosophy</div><textarea id="philosophy" class="area" placeholder="チームのフィロソフィー"></textarea><button class="btn" style="margin-top:10px" onclick="savePhilosophy()">保存</button></div>
+ <div class="card"><div class="row"><div><div class="k">TEAM IDENTITY</div><div class="title">Philosophy</div></div><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><p class="muted">チームが大切にする考え方を、自由に追加・編集・並び替えできます。</p><div id="philosophyList"></div></div>
  <div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">既存のV2招待リンクが保存されている場合は表示します。</p><div id="inviteBox"></div></div>
  <div class="card"><div class="k">DATA</div><div class="title">データ互換</div><p class="muted">旧アプリの <b>hc_today_plan</b> と <b>hc_training_records</b> をそのまま使用しています。今までの今日のメニューと記録を引き継げます。</p></div>
 </section>
@@ -109,8 +109,24 @@ function toggleTimer(){if(timer){clearInterval(timer);timer=null;playBtn.textCon
 function coachMove(d){saveLive();ci=Math.max(0,Math.min(plan.length-1,ci+d));coachItem()} function saveLive(){if(document.getElementById('liveMemo')){plan[ci].liveMemo=liveMemo.value;persist()}}
 function saveRecord(){let rec=jget('hc_training_records',[]);rec.unshift({id:'r-'+Date.now(),date:new Date().toISOString(),theme:state.theme,phase:state.phase,principles:state.principles,players:state.players,gk:state.gk,duration:state.duration,plan:JSON.parse(JSON.stringify(plan)),understand:+understand.value||3,achieve:+achieve.value||3,kpi:kpi.value,reflection:reflection.value});localStorage.setItem('hc_training_records',JSON.stringify(rec));alert('練習記録を保存しました');go('history')}
 function renderHistory(){let rec=jget('hc_training_records',[]);historyList.innerHTML=rec.length?rec.map(r=>`<div class="menu"><div class="k">${new Date(r.date).toLocaleDateString('ja-JP')}｜${esc(r.phase||'')}</div><h3>${esc(r.theme||'練習記録')}</h3><div class="meta">理解度 ${r.understand||'—'} / 達成度 ${r.achieve||'—'}<br>${esc(r.kpi||'')}</div></div>`).join(''):`<div class="empty">まだ記録がありません</div>`}
-function savePhilosophy(){localStorage.setItem('hc_philosophy_v5',philosophy.value);alert('保存しました')}
-function renderMore(){philosophy.value=localStorage.getItem('hc_philosophy_v5')||localStorage.getItem('hc_philosophy')||'';let invite=jget('hc_invite_link',null)||jget('hc_invite_links',null);inviteBox.innerHTML=invite?`<div class="menu"><div class="meta">${esc(typeof invite==='string'?invite:JSON.stringify(invite))}</div></div>`:`<div class="empty">保存済みの招待リンクは見つかりませんでした。招待機能は次の整理対象として安全に接続します。</div>`}
+function philosophyData(){
+ let a=jget('hc_philosophy_items_v51',null);
+ if(Array.isArray(a))return a;
+ let legacy=localStorage.getItem('hc_philosophy_v5')||localStorage.getItem('hc_philosophy')||'';
+ return legacy?[{id:'ph-'+Date.now(),title:'TEAM PHILOSOPHY',body:legacy}]:[
+  {id:'ph-1',title:'ワクワクを選ぶ',body:'挑戦すること、成長すること、仲間とプレーすることを楽しむ。'},
+  {id:'ph-2',title:'選手が活き活きとプレーする',body:'自分で観て、考えて、決める。個性と強みをピッチで表現する。'},
+  {id:'ph-3',title:'仲間と高め合う',body:'互いを尊重し、要求し合い、チームとして成長する。'}
+ ]}
+function savePhData(a){localStorage.setItem('hc_philosophy_items_v51',JSON.stringify(a));renderPhilosophy()}
+function renderPhilosophy(){let a=philosophyData();philosophyList.innerHTML=a.length?a.map((x,i)=>`<div class="menu"><div class="k">PHILOSOPHY ${i+1}</div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.body||'')}</div><div class="actions"><button onclick="editPhilosophy(${i})">編集</button><button onclick="movePhilosophy(${i},-1)">↑</button><button onclick="movePhilosophy(${i},1)">↓</button><button class="del" onclick="deletePhilosophy(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだPhilosophyがありません。＋追加から作れます。</div>`}
+function addPhilosophy(){editPhilosophy(-1)}
+function editPhilosophy(i){let a=philosophyData(),x=i>=0?a[i]:{title:'',body:''};openModal(`<div class="k">TEAM IDENTITY</div><h2>${i>=0?'Philosophyを編集':'Philosophyを追加'}</h2><div class="field"><label>タイトル</label><input id="phTitle" class="input" value="${esc(x.title)}" placeholder="例：ワクワクを選ぶ"></div><div class="field"><label>説明</label><textarea id="phBody" class="area" placeholder="チームで大切にしたい行動・考え方">${esc(x.body)}</textarea></div><button class="btn" onclick="commitPhilosophy(${i})">保存</button>`)}
+function commitPhilosophy(i){let a=philosophyData(),x={id:i>=0?a[i].id:'ph-'+Date.now(),title:phTitle.value.trim()||'新しいPhilosophy',body:phBody.value.trim()};if(i>=0)a[i]=x;else a.push(x);savePhData(a);closeModal()}
+function deletePhilosophy(i){let a=philosophyData();if(!confirm('このPhilosophyを削除しますか？'))return;a.splice(i,1);savePhData(a)}
+function movePhilosophy(i,d){let a=philosophyData(),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];savePhData(a)}
+function renderMore(){renderPhilosophy();let invite=jget('hc_invite_link',null)||jget('hc_invite_links',null);inviteBox.innerHTML=invite?`<div class="menu"><div class="meta">${esc(typeof invite==='string'?invite:JSON.stringify(invite))}</div></div>`:`<div class="empty">保存済みの招待リンクは見つかりませんでした。招待機能は次の整理対象として安全に接続します。</div>`}
 renderDesign();renderPlan();
 </script>
+<!-- HC_PHILOSOPHY_V51_EDITABLE -->
 </body></html>
