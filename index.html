@@ -269,6 +269,54 @@ function renderSmartLibrarySuggestions(){
  host.innerHTML=opts.length?opts.map((o,n)=>`<div class="menu"><div class="k">${['反復量重視','ゲーム性重視','全員参加重視'][n]||'候補'}｜${esc(o.x.phase)}</div><h3>${esc(o.x.name)}</h3><div class="meta">${esc(o.x.purpose||'')}<br>${o.why.length?'一致：'+o.why.join('・'):'ライブラリ候補'}</div><button onclick="addLibToday(${libData().findIndex(v=>v.id===o.x.id)})">この練習を追加</button></div>`).join(''):'<div class="empty">練習ライブラリに候補を追加すると、ここに提案されます。</div>'
 }
 renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupTodayTabs();renderLib();acceptInviteFromUrl();
+
+/* ===== HC V5.8 STABLE PRINCIPLE MODEL =====
+   Scope frozen: principle depth + library linkage only.
+   Existing invite/KPI/Coach/OWNER/archive modules are intentionally untouched.
+*/
+const PRINCIPLE_DETAIL_V58={
+'攻撃':[
+ ['前進する',[['前を認知する',['受ける前に前方を見る','前進可能なら前を選ぶ']],['幅と深さを取る',['横幅を確保する','前後のラインを作る']],['ラインを越える',['パスで越える','キャリーで越える']],['キャリーとパスを選ぶ',['相手を引きつける','フリーな味方を使う']]]],
+ ['優位性をつくる',[['数的優位',['ボール周辺に＋1を作る','3人目を使う']],['位置的優位',['ライン間に立つ','相手の視野外を取る']],['質的優位',['1v1を作る','得意な選手を活かす']],['相手を動かす',['逆サイドを使う','テンポを変える']]]],
+ ['フィニッシュする',[['サークル侵入',['有利な角度で入る','侵入後にゴールを見る']],['ゴール前の優位',['ファーポストを取る','GK前に人数をかける']],['リバウンド',['シュート後に詰める','セカンドボールを回収する']],['シュート選択',['早く打つ','より良い位置へつなぐ']]]]
+],
+'守備':[
+ ['ゴールを守る',[['中央を閉じる',['ゴールとボールの間に立つ','中央へのパスを消す']],['危険なスペースを消す',['サークル中央を優先する','背後を管理する']],['マークを管理する',['ボールと相手を同一視野に入れる','受け手へ寄せる']]]],
+ ['ボールを奪う',[['1st DFが制限する',['前進方向を限定する','距離を詰める']],['誘導する',['サイドへ追い込む','罠へ運ぶ']],['2nd DFが連動する',['カバー位置を取る','次のパスを狙う']],['奪う瞬間を共有する',['相手のミスを合図にする','複数で圧力をかける']]]],
+ ['コンパクトに守る',[['ライン間を狭くする',['縦距離を縮める','中間ポジションを消す']],['横の距離を保つ',['スライドする','逆サイドを絞る']],['背後を管理する',['最終ラインを揃える','ロングボールに備える']]]]
+],
+'攻→守':[
+ ['即時奪回',[['ロスト直後に反応する',['最初の3〜5秒を逃さない','全員が切り替える']],['最寄りが1st DF',['ボールへ即時圧力','前向きにさせない']],['周囲が前進を消す',['近いパスコースを切る','中央を閉じる']],['ボール周辺を圧縮する',['距離を縮める','複数で囲う']]]],
+ ['撤退・遅らせる',[['前進を遅らせる',['飛び込まず時間を作る','外へ誘導する']],['中央を守る',['ゴールへの最短経路を消す','中央の人数を確保する']],['数的不利を解消する',['帰陣する','味方の復帰時間を作る']]]]
+],
+'守→攻':[
+ ['前進を狙う',[['奪った瞬間に前を見る',['前方を認知する','最初のパスを前へ狙う']],['前方の選手を使う',['高い位置の味方を見る','背後を狙う']],['キャリーで運ぶ',['前方スペースへ運ぶ','相手を引きつける']]]],
+ ['優位を広げる',[['幅を取る',['タッチライン側へ広がる','逆サイドを使う']],['サポートを作る',['斜め後方を作る','3人目を作る']],['逆サイドを見る',['相手の密集から離れる','大きく展開する']]]],
+ ['保持を選ぶ',[['無理なら保持する',['安全なパスを選ぶ','ボールを失わない']],['再配置する',['幅と深さを作り直す','ポジションを整える']],['次の前進機会を作る',['相手を動かす','前進の出口を探す']]]]
+]};
+function principleRowsV58(phase){return PRINCIPLE_DETAIL_V58[phase]||[]}
+function principleSelectV58(phase,current){
+ let opts=[];
+ principleRowsV58(phase).forEach(([main,subs])=>{
+  opts.push(`<option value="${esc(main)}" ${current===main?'selected':''}>主｜${esc(main)}</option>`);
+  subs.forEach(([sub,details])=>{
+   let sv=main+' ＞ '+sub;opts.push(`<option value="${esc(sv)}" ${current===sv?'selected':''}>　準｜${esc(sub)}</option>`);
+   details.forEach(d=>{let dv=sv+' ＞ '+d;opts.push(`<option value="${esc(dv)}" ${current===dv?'selected':''}>　　準々｜${esc(d)}</option>`})
+  })
+ });
+ return `<option value="">選択してください</option>${opts.join('')}`
+}
+principleSelectHTML=principleSelectV58;
+flatPrinciples=function(phase){let out=[];principleRowsV58(phase).forEach(([m,subs])=>{out.push(m);subs.forEach(([s,ds])=>{out.push(m+' ＞ '+s);ds.forEach(d=>out.push(m+' ＞ '+s+' ＞ '+d))})});return out}
+renderPrincipleTree=function(){
+ let e=document.getElementById('principleTree');if(!e)return;
+ e.innerHTML=Object.entries(PRINCIPLE_DETAIL_V58).map(([phase,groups])=>`<div class="treeGroup"><div class="treeHead" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">${phase}　<span class="muted">› ${groups.length}主原則</span></div><div class="treeBody" hidden>${groups.map(([m,subs])=>`<details><summary><b>${esc(m)}</b></summary>${subs.map(([s,ds])=>`<div style="margin:9px 0 12px 12px"><b style="font-size:13px">${esc(s)}</b><div class="chipline" style="margin-top:6px">${ds.map(d=>`<span class="chip2">${esc(d)}</span>`).join('')}</div></div>`).join('')}</details>`).join('')}</div></div>`).join('')
+}
+function principleMatchV58(a,b){
+ if(!a||!b)return false;
+ let A=a.split(' ＞ '),B=b.split(' ＞ ');
+ return A.some(x=>B.includes(x)) || a.includes(b) || b.includes(a)
+}
 /* ===== HC V5.7 SMART LIBRARY ===== */
 let favOnly=false;
 function toggleFavFilter(){favOnly=!favOnly;renderLib()}
@@ -321,6 +369,16 @@ renderLib=function(){
  libCount.textContent=`${a.length}件の練習`;
  libList.innerHTML=a.length?a.map(x=>{let i=all.findIndex(v=>v.id===x.id);return `<div class="menu"><div class="libtop"><div class="k">${esc(x.phase)}｜${esc(x.principle||'原則未設定')}</div><button class="favbtn" onclick="toggleFav('${x.id}')">${x.favorite?'★':'☆'}</button></div><h3 onclick="openLibraryItem('${x.id}')">${esc(x.name)}</h3><div class="libmeta"><span class="smalltag">${esc(x.players||'人数自由')}</span><span class="smalltag">${esc(x.size||'サイズ自由')}</span><span class="smalltag">${+x.minutes||15}分</span></div><div class="meta">目的：${esc(x.purpose||'')}</div><div class="actions"><button onclick="addLibToday(${i})">今日に追加</button><button onclick="openLibraryItem('${x.id}')">詳細</button><button onclick="duplicateLib(${i})">複製</button>${isOwner()?`<button onclick="archiveLib(${i})">保管</button>`:''}</div></div>`}).join(''):`<div class="empty">該当する練習はありません。</div>`
 }
+
+const scoreV57Base=scoreV57;
+scoreV57=function(x,ctx){
+ let r=scoreV57Base(x,ctx), ps=ctx.principles||[];
+ if(ps.some(p=>principleMatchV58(x.principle||'',p))){
+   if(!r.why.includes('原則'))r.why.push('原則');
+   r.s+=6;
+ }
+ return r
+}
 renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 </script>
 <!-- HC_PHILOSOPHY_V51_EDITABLE -->
@@ -330,4 +388,5 @@ renderPrincipleTree();renderLib();renderSmartLibrarySuggestions();
 <!-- HC_V55_OWNER_ARCHIVE_TRAINING_LIBRARY -->
 <!-- HC_V56_PRINCIPLE_TREE_SMART_LIBRARY -->
 <!-- HC_V57_SMART_LIBRARY_FAVORITES_MATCHING -->
+<!-- HC_V58_STABLE_COMPLETE_PRINCIPLE_LINKAGE -->
 </body></html>
