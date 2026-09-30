@@ -3553,4 +3553,42 @@ window.HCTodaySimpleV37={simplify,openKpi};setTimeout(simplify,2800);
 </script>
 <!-- /HC_TODAY_SIMPLE_FLOW_V37 -->
 
+
+<!-- HC_THEME_FLOW_V38 -->
+<style>
+/* V3.8: STEP方式を廃止。「テーマを決める → おすすめを見る」に一本化 */
+#hcTodayUnifiedV3 .tu3-step:nth-of-type(n+2){display:none!important}
+#hcTodayUnifiedV3 #tu3Save,#hc37KpiBtn{display:none!important}
+#hcTodayUnifiedV3 .tu3-step:first-of-type [class*="step-label"],
+#hcTodayUnifiedV3 .tu3-step:first-of-type [class*="stepno"]{display:none!important}
+#hc38FlowTitle{margin:2px 0 13px}
+#hc38FlowTitle .eyebrow{font-size:10px;color:#d7ff39;font-weight:950;letter-spacing:1.2px}
+#hc38FlowTitle h2{font-size:21px;margin:4px 0 3px}
+#hc38FlowTitle p{font-size:11px;color:#9dafb5;margin:0;line-height:1.45}
+#hc37Recommend{font-size:16px!important;padding:16px!important;margin-top:16px!important}
+</style>
+<script>
+(function(){'use strict';
+function clean(){
+ const root=document.getElementById('hcTodayUnifiedV3');if(!root)return;
+ const first=root.querySelector('.tu3-step');if(!first)return;
+ /* 既存STEP 1文字を、意味のある見出しへ変更 */
+ [...first.querySelectorAll('*')].forEach(el=>{
+   if(el.children.length===0 && /^STEP\s*1$/i.test((el.textContent||'').trim()))el.style.display='none';
+ });
+ let old=document.getElementById('hc38FlowTitle');
+ if(!old){
+   let t=document.createElement('div');t.id='hc38FlowTitle';
+   t.innerHTML='<div class="eyebrow">TRAINING DESIGN</div><h2>今日のテーマを決める</h2><p>局面と原則を選ぶと、その内容に合った練習メニューを提案します。</p>';
+   first.insertBefore(t,first.firstChild);
+ }
+ let b=document.getElementById('hc37Recommend');
+ if(b)b.textContent='✨ このテーマのおすすめ練習を見る';
+}
+const mo=new MutationObserver(clean);mo.observe(document.documentElement,{childList:true,subtree:true});
+window.HCThemeFlowV38={clean};setTimeout(clean,2500);
+})();
+</script>
+<!-- /HC_THEME_FLOW_V38 -->
+
 </body></html>
