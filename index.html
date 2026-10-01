@@ -111,7 +111,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodMapV55"></div><hr><div class="k">TEAM CUSTOM</div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
  <div id="more-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">PRACTICE LIBRARY</div><div class="title">練習ライブラリ</div></div><button class="btn2" onclick="editPractice(-1)">＋ 追加</button></div><p class="muted">まず「1つの練習を見れば、その場で再現できる」フォーマットを完成させます。4局面の代表メニューを、同じ標準フォーマットで確認できます。</p><div class="librarySearch"><input id="librarySearch" class="input" placeholder="練習名・原則・問いで検索" oninput="renderLibrary()"><select id="libraryPhase" class="input" onchange="renderLibrary()"><option value="">全局面</option><option>攻撃</option><option>守備</option><option>攻→守</option><option>守→攻</option></select></div><div class="libraryQuick"><button class="btn2" id="favFilterBtn" onclick="toggleLibraryFavFilter()">☆ お気に入り</button><button class="btn2" id="recentFilterBtn" onclick="toggleLibraryRecentFilter()">◷ 最近使った</button><button class="btn2" onclick="clearLibraryFilters()">クリア</button><button class="btn2" onclick="seedPracticeLibrary(true)">初期メニューを復元</button></div><div class="filterCount" id="libraryCount"></div><div id="practiceLibraryList"></div></div></div>
  <div id="more-team" class="tabpane"><div class="card"><div class="k">TEAM / SEASON</div><div class="title">チーム・シーズン管理</div><p class="muted">現在使うチームとシーズンを保存できます。分析・練習記録は選択中のシーズンごとに表示を分離します。</p><div class="field"><label>チーム名</label><input id="teamName" class="input" placeholder="TEAM NAME"></div><div class="field"><label>シーズン</label><input id="seasonName" class="input" placeholder="2026"></div><button class="btn" onclick="saveTeamSettings()">現在の設定を保存</button><div id="seasonProfiles" class="seasonList"></div><button class="btn2" onclick="addSeasonProfile()">＋ シーズンを登録</button></div></div>
- <div id="more-invite" class="tabpane"><div class="card"><div class="k">CLOUD STATUS</div><div class="title">Supabase チーム共有</div><div id="cloudStatus" class="menu"><b>接続確認中…</b></div><div id="cloudActions" class="actions"></div></div><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">役割を選ぶと招待URLとQRを発行します。URLはLINE等で共有できます。</p><div id="inviteRoleButtons" class="inviteGrid"></div><div id="inviteOutput"></div><hr><div class="k">ROLE SETTINGS</div><div id="roleList"></div><button class="btn2" onclick="addRole()">＋ 役割を追加</button><p class="autosaveNote">クラウド接続後は、招待URL/QRをSupabase側で検証して同じチームへ参加します。</p></div></div>
+ <div id="more-invite" class="tabpane"><div class="card"><div class="k">CLOUD STATUS</div><div class="title">Supabase チーム共有</div><div id="cloudStatus" class="menu"><b>接続確認中…</b></div><div id="cloudActions" class="actions"></div></div><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">役割を選ぶと招待URLとQRを発行します。URLはLINE等で共有できます。</p><div id="inviteRoleButtons" class="inviteGrid"></div><div id="inviteOutput"></div><hr><div class="k">ROLE SETTINGS</div><div id="roleAdminArea"><div id="roleList"></div><button id="addRoleBtn" class="btn2" onclick="addRole()">＋ 役割を追加</button></div><p class="autosaveNote">クラウド接続後は、招待URL/QRをSupabase側で検証して同じチームへ参加します。</p></div></div>
  <div id="more-settings" class="tabpane"><div class="card"><div class="k">DATA</div><div class="title">設定・データ</div><p class="muted">今日のメニューと練習記録の互換データを維持しています。</p><button class="btn2" onclick="exportData()">バックアップを書き出す</button><div class="restoreBox"><b>バックアップから復元</b><p class="muted">HOCKEY COACHのJSONバックアップを選択します。現在データは上書きされます。</p><input id="restoreFile" type="file" accept="application/json,.json" class="input" onchange="restoreDataFromFile(this)"><div id="restoreStatus" class="tinyStatus"></div></div><p class="autosaveNote">入力・編集内容はこの端末へ自動保存されます。</p></div></div>
 </section>
 </main>
@@ -460,4 +460,67 @@ setTimeout(hcInitCloud,50);
 </script>
 <!-- HC_V587_SUPABASE_CLOUD_INVITE_FOUNDATION -->
 <!-- HC_V586_ANALYSIS_TAG_SEASON_DATA_FOUNDATION -->
+
+<script>
+/* HC_V588_TEAM_CLOUD_SYNC */
+let hcCloudSyncBusy=false,hcCloudSyncTimer=null;
+function hcIsStaff(){return String(hcCloudMembership?.role||'').toLowerCase()==='staff'}
+function hcApplyRoleUI(){
+  const staff=hcIsStaff(), area=document.getElementById('roleAdminArea');
+  if(area) area.style.display=staff?'block':'none';
+  document.querySelectorAll('#more-team input,#more-team button,#more-method button,#more-library button[onclick*="editPractice"],#more-ph button').forEach(el=>{
+    if(!staff && hcCloudMembership) el.style.display='none'; else el.style.display='';
+  });
+}
+function hcCloudPayloads(){
+  saveScopedPlanV586?.();
+  return {
+    today_plan_by_profile:jget('hc_today_plan_by_profile_v586',{}),
+    analysis_history:jget('hc_team_analysis_history_v577',[]),
+    training_records:jget('hc_training_records',[])
+  };
+}
+async function hcCloudPushKey(key,value){
+  if(!hcCloudReady||!hcCloudMembership||!hcIsStaff())return;
+  const row={team_id:hcCloudMembership.team_id,data_key:key,payload:value,updated_by:hcCloudUser.id,updated_at:new Date().toISOString()};
+  const {error}=await hcCloud.from('team_shared_state').upsert(row,{onConflict:'team_id,data_key'}); if(error)throw error;
+}
+function hcScheduleCloudPush(keys){
+  if(!hcIsStaff())return; clearTimeout(hcCloudSyncTimer);
+  hcCloudSyncTimer=setTimeout(async()=>{try{const p=hcCloudPayloads();for(const k of keys)await hcCloudPushKey(k,p[k]);hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・同期済み',true)}catch(e){console.error(e);hcCloudMsg('接続中・同期エラー：'+e.message)}},500);
+}
+async function hcCloudInitialSync(){
+  if(!hcCloudReady||!hcCloudMembership||hcCloudSyncBusy)return;hcCloudSyncBusy=true;
+  try{
+    const {data,error}=await hcCloud.from('team_shared_state').select('data_key,payload,updated_at').eq('team_id',hcCloudMembership.team_id); if(error)throw error;
+    const rows=Object.fromEntries((data||[]).map(r=>[r.data_key,r])); const local=hcCloudPayloads();
+    if(hcIsStaff()){
+      for(const k of Object.keys(local)) if(!rows[k]) await hcCloudPushKey(k,local[k]);
+    }
+    const {data:fresh,error:e2}=await hcCloud.from('team_shared_state').select('data_key,payload').eq('team_id',hcCloudMembership.team_id); if(e2)throw e2;
+    for(const r of fresh||[]){
+      if(r.data_key==='today_plan_by_profile') localStorage.setItem('hc_today_plan_by_profile_v586',JSON.stringify(r.payload||{}));
+      if(r.data_key==='analysis_history') localStorage.setItem('hc_team_analysis_history_v577',JSON.stringify(r.payload||[]));
+      if(r.data_key==='training_records') localStorage.setItem('hc_training_records',JSON.stringify(r.payload||[]));
+    }
+    let buckets=jget('hc_today_plan_by_profile_v586',{}),pid=currentDataScopeV586();plan=JSON.parse(JSON.stringify(buckets[pid]||[]));localStorage.setItem('hc_today_plan',JSON.stringify(plan));
+    renderPlan();renderHistory();renderTeamAnalysis();hcApplyRoleUI();
+    hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・クラウド同期OK',true);
+  }catch(e){console.error(e);hcCloudMsg('チーム接続OK・データ同期未完了：'+e.message)}finally{hcCloudSyncBusy=false}
+}
+const _hcInitCloudV588=hcInitCloud;
+hcInitCloud=async function(){await _hcInitCloudV588();if(hcCloudMembership){hcApplyRoleUI();await hcCloudInitialSync()}};
+const _persistV588=persist;
+persist=function(){_persistV588();saveScopedPlanV586?.();hcScheduleCloudPush(['today_plan_by_profile'])};
+const _saveTeamObservationV588=saveTeamObservation;
+saveTeamObservation=function(){_saveTeamObservationV588();hcScheduleCloudPush(['analysis_history'])};
+const _saveRecordV588=saveRecord;
+saveRecord=function(){_saveRecordV588();hcScheduleCloudPush(['training_records'])};
+const _renderRolesV588=renderRoles;
+renderRoles=function(){_renderRolesV588();hcApplyRoleUI()};
+// Re-run cloud init after overrides are installed.
+setTimeout(hcInitCloud,250);
+</script>
+<!-- HC_V588_TEAM_CLOUD_SYNC -->
+
 </body></html>
