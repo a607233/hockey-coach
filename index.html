@@ -406,7 +406,7 @@ bindAutosaveFields();acceptInviteFromUrl();renderDesign();renderPlan();setupKpiT
 <!-- HC_V582_AUTOSAVE_INVITE -->
 <!-- HC_V579_TEAM_ANALYSIS_RATING_UI_FIX -->
 <!-- HC_V585_DIAGRAM_EDITOR_SEASON_ISOLATION -->
-\n<script>
+<script>
 /* HC_V586_ANALYSIS_TAG_SEASON_DATA_FOUNDATION */
 const PRACTICE_ANALYSIS_MAP_V586={
 'prototype-v571-forward-4v4':['A1','A3','A4'],'standard-v573-defense-central':['D2','D3','D4'],'standard-v573-transition-loss':['T1','T2','T3'],'standard-v573-transition-win':['T7','T8','T11'],
@@ -523,5 +523,92 @@ renderRoles=function(){_renderRolesV588();hcApplyRoleUI()};
 setTimeout(hcInitCloud,250);
 </script>
 <!-- HC_V588_TEAM_CLOUD_SYNC -->
-\n<script>\n/* HC_V589_MANUAL_TEAM_SHARE */\nfunction hcSharedPlanEnvelope(){\n  saveScopedPlanV586?.();\n  return {schemaVersion:1,profiles:jget('hc_today_plan_by_profile_v586',{}),sharedPlan:JSON.parse(JSON.stringify(plan||[])),sharedAt:new Date().toISOString(),sharedBy:hcCloudUser?.id||null};\n}\nfunction hcRenderTodayShare(message,isError=false){\n  const st=document.getElementById('teamTodayShareStatus'), ac=document.getElementById('teamTodayShareActions'), help=document.getElementById('teamTodayShareHelp');\n  if(!st||!ac)return;\n  if(!hcCloudReady){st.innerHTML='<b>クラウド未接続</b>';ac.innerHTML='<button onclick="hcInitCloud()">再接続</button>';return}\n  if(!hcCloudMembership){st.innerHTML='<b>クラウドチーム未参加</b>';ac.innerHTML='';return}\n  const team=hcCloudMembership?.teams?.name||'チーム',role=String(hcCloudMembership.role||'').toUpperCase();\n  st.innerHTML=`<b>${esc(message||team+' / ROLE '+role)}</b>${isError?'<div class="meta">同期内容を確認してください。</div>':''}`;\n  if(hcIsStaff()){\n    if(help)help.textContent='今日のメニューを確定したら「チームに登録」を押してください。PLAYER/PARENT端末へ共有されます。';\n    ac.innerHTML='<button class="btn" onclick="hcShareTodayNow()">☁ チームに登録</button><button class="btn2" onclick="hcFetchTodayNow()">↻ クラウド内容を確認</button>';\n  }else{\n    if(help)help.textContent='STAFFが登録した今日の練習を取得します。メニューは閲覧用です。';\n    ac.innerHTML='<button class="btn" onclick="hcFetchTodayNow()">↻ 最新の練習を取得</button>';\n  }\n}\nasync function hcShareTodayNow(){\n  if(!hcCloudReady||!hcCloudMembership||!hcIsStaff()){hcRenderTodayShare('STAFFのみ登録できます',true);return}\n  try{\n    hcRenderTodayShare('チームへ登録中…');\n    const payload=hcSharedPlanEnvelope();\n    await hcCloudPushKey('today_plan_by_profile',payload);\n    const tm=new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});\n    hcRenderTodayShare('✓ チームに登録済み '+tm);\n  }catch(e){console.error(e);hcRenderTodayShare('登録エラー：'+e.message,true)}\n}\nasync function hcFetchTodayNow(){\n  if(!hcCloudReady||!hcCloudMembership){hcRenderTodayShare('クラウドチームへ接続してください',true);return}\n  try{\n    hcRenderTodayShare('最新の練習を取得中…');\n    const {data,error}=await hcCloud.from('team_shared_state').select('payload,updated_at').eq('team_id',hcCloudMembership.team_id).eq('data_key','today_plan_by_profile').maybeSingle();\n    if(error)throw error;\n    if(!data){hcRenderTodayShare('まだSTAFFから登録されていません');return}\n    const p=data.payload||{};\n    let shared=Array.isArray(p.sharedPlan)?p.sharedPlan:null;\n    if(!shared){\n      const profiles=p.profiles&&typeof p.profiles==='object'?p.profiles:p;\n      const vals=Object.values(profiles||{}).filter(Array.isArray);\n      shared=vals.length?vals[0]:[];\n    }\n    plan=JSON.parse(JSON.stringify(shared||[]));\n    localStorage.setItem('hc_today_plan',JSON.stringify(plan));\n    renderPlan();\n    const tm=data.updated_at?new Date(data.updated_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}):'';\n    hcRenderTodayShare(`✓ 最新メニュー取得済み${tm?' '+tm:''}｜${plan.length}件`);\n  }catch(e){console.error(e);hcRenderTodayShare('取得エラー：'+e.message,true)}\n}\n// V5.8.8 automatic today-plan push used device-specific profile IDs.\n// Keep local autosave, but make cloud publication explicit and deterministic in V5.8.9.\nconst _hcScheduleCloudPushV589=hcScheduleCloudPush;\nhcScheduleCloudPush=function(keys){\n  const filtered=(keys||[]).filter(k=>k!=='today_plan_by_profile');\n  if(filtered.length)_hcScheduleCloudPushV589(filtered);\n};\nconst _hcInitCloudV589=hcInitCloud;\nhcInitCloud=async function(){\n  await _hcInitCloudV589();\n  hcRenderTodayShare();\n  if(hcCloudMembership && !hcIsStaff()) await hcFetchTodayNow();\n};\nconst _renderPlanV589=renderPlan;\nrenderPlan=function(){_renderPlanV589();hcRenderTodayShare()};\nsetTimeout(()=>hcRenderTodayShare(),600);\n</script>\n<!-- HC_V589_MANUAL_TEAM_SHARE -->\n
+
+<script>
+/* HC_V589_MANUAL_TEAM_SHARE */
+function hcSharedPlanEnvelope(){
+  saveScopedPlanV586?.();
+  return {schemaVersion:1,profiles:jget('hc_today_plan_by_profile_v586',{}),sharedPlan:JSON.parse(JSON.stringify(plan||[])),sharedAt:new Date().toISOString(),sharedBy:hcCloudUser?.id||null};
+}
+function hcRenderTodayShare(message,isError=false){
+  const st=document.getElementById('teamTodayShareStatus'), ac=document.getElementById('teamTodayShareActions'), help=document.getElementById('teamTodayShareHelp');
+  if(!st||!ac)return;
+  if(!hcCloudReady){st.innerHTML='<b>クラウド未接続</b>';ac.innerHTML='<button onclick="hcInitCloud()">再接続</button>';return}
+  if(!hcCloudMembership){st.innerHTML='<b>クラウドチーム未参加</b>';ac.innerHTML='';return}
+  const team=hcCloudMembership?.teams?.name||'チーム',role=String(hcCloudMembership.role||'').toUpperCase();
+  st.innerHTML=`<b>${esc(message||team+' / ROLE '+role)}</b>${isError?'<div class="meta">同期内容を確認してください。</div>':''}`;
+  if(hcIsStaff()){
+    if(help)help.textContent='今日のメニューを確定したら「チームに登録」を押してください。PLAYER/PARENT端末へ共有されます。';
+    ac.innerHTML='<button class="btn" onclick="hcShareTodayNow()">☁ チームに登録</button><button class="btn2" onclick="hcFetchTodayNow()">↻ クラウド内容を確認</button>';
+  }else{
+    if(help)help.textContent='STAFFが登録した今日の練習を取得します。メニューは閲覧用です。';
+    ac.innerHTML='<button class="btn" onclick="hcFetchTodayNow()">↻ 最新の練習を取得</button>';
+  }
+}
+async function hcShareTodayNow(){
+  if(!hcCloudReady||!hcCloudMembership||!hcIsStaff()){hcRenderTodayShare('STAFFのみ登録できます',true);return}
+  try{
+    hcRenderTodayShare('チームへ登録中…');
+    const payload=hcSharedPlanEnvelope();
+    await hcCloudPushKey('today_plan_by_profile',payload);
+    const tm=new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+    hcRenderTodayShare('✓ チームに登録済み '+tm);
+  }catch(e){console.error(e);hcRenderTodayShare('登録エラー：'+e.message,true)}
+}
+async function hcFetchTodayNow(){
+  if(!hcCloudReady||!hcCloudMembership){hcRenderTodayShare('クラウドチームへ接続してください',true);return}
+  try{
+    hcRenderTodayShare('最新の練習を取得中…');
+    const {data,error}=await hcCloud.from('team_shared_state').select('payload,updated_at').eq('team_id',hcCloudMembership.team_id).eq('data_key','today_plan_by_profile').maybeSingle();
+    if(error)throw error;
+    if(!data){hcRenderTodayShare('まだSTAFFから登録されていません');return}
+    const p=data.payload||{};
+    let shared=Array.isArray(p.sharedPlan)?p.sharedPlan:null;
+    if(!shared){
+      const profiles=p.profiles&&typeof p.profiles==='object'?p.profiles:p;
+      const vals=Object.values(profiles||{}).filter(Array.isArray);
+      shared=vals.length?vals[0]:[];
+    }
+    plan=JSON.parse(JSON.stringify(shared||[]));
+    localStorage.setItem('hc_today_plan',JSON.stringify(plan));
+    renderPlan();
+    const tm=data.updated_at?new Date(data.updated_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}):'';
+    hcRenderTodayShare(`✓ 最新メニュー取得済み${tm?' '+tm:''}｜${plan.length}件`);
+  }catch(e){console.error(e);hcRenderTodayShare('取得エラー：'+e.message,true)}
+}
+// V5.8.8 automatic today-plan push used device-specific profile IDs.
+// Keep local autosave, but make cloud publication explicit and deterministic in V5.8.10.
+const _hcScheduleCloudPushV589=hcScheduleCloudPush;
+hcScheduleCloudPush=function(keys){
+  const filtered=(keys||[]).filter(k=>k!=='today_plan_by_profile');
+  if(filtered.length)_hcScheduleCloudPushV589(filtered);
+};
+const _hcInitCloudV589=hcInitCloud;
+hcInitCloud=async function(){
+  await _hcInitCloudV589();
+  hcRenderTodayShare();
+  if(hcCloudMembership && !hcIsStaff()) await hcFetchTodayNow();
+};
+const _renderPlanV589=renderPlan;
+renderPlan=function(){_renderPlanV589();hcRenderTodayShare()};
+setTimeout(()=>hcRenderTodayShare(),600);
+</script>
+<!-- HC_V589_MANUAL_TEAM_SHARE -->
+<script>
+/* HC_V5810_CLOUD_SYNC_FIX */
+(function(){
+  let tries=0;
+  async function syncCloudUI(){
+    tries++;
+    try{
+      if(!hcCloudReady){ await hcInitCloud(); }
+      else { hcRenderTodayShare(); if(hcCloudMembership && !hcIsStaff()) await hcFetchTodayNow(); }
+    }catch(e){ console.error('V5.8.10 cloud init',e); hcRenderTodayShare('接続エラー：'+(e?.message||e),true); }
+    if(!hcCloudReady && tries<4) setTimeout(syncCloudUI,800);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(syncCloudUI,250));
+  else setTimeout(syncCloudUI,250);
+})();
+</script>
+<!-- HC_V5810_CLOUD_SYNC_FIX -->
 </body></html>
