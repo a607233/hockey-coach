@@ -1140,4 +1140,49 @@ migrate();
 })();
 </script>
 
+
+<style id="HC_V5834_ANALYSIS_DIAGNOSTIC_STYLE">
+.analysisDiagnostic{margin-top:12px;padding:14px;border:1px solid #29434c;border-radius:16px;background:#0d1b20}.analysisDiagnostic .diagTitle{font-weight:900;color:#dfff52;margin-bottom:8px}.diagGrid{display:grid;gap:8px}.diagRow{padding:10px 12px;border-radius:12px;background:#13272e}.diagRow b{display:block;color:#fff;margin-bottom:3px}.diagRow span{color:#9db0b7;font-size:13px;line-height:1.55}.diagCause{display:inline-block;margin:4px 5px 0 0;padding:5px 8px;border:1px solid #36515a;border-radius:999px;color:#dce8ec;font-size:12px}.diagQuestion{margin-top:9px;padding:10px 12px;border-left:3px solid #dfff52;background:#102229;color:#eaf3f5;border-radius:8px}.analysisHead{cursor:pointer}.analysisHead:after{content:'詳細 ›';margin-left:auto;color:#dfff52;font-size:12px;font-weight:900}
+</style>
+<script id="HC_V5834_ANALYSIS_DIAGNOSTIC_STEP2">
+const HC_ANALYSIS_DIAG_V5834={
+A1:{observe:'保持者が前方・中央・背後を認知し、前進可能なら迷わずラインを越えているか。',causes:['前方認知が遅い','受け手の高さ不足','ボール保持者の身体向き','前進路を作る動き不足'],question:'前へ行ける瞬間は、何を見れば分かる？'},
+A2:{observe:'ボールから遠い選手も幅を保ち、相手守備を横に広げられているか。',causes:['全員がボールへ寄る','逆サイドの幅不足','受ける位置が内側すぎる'],question:'相手を広げるために、誰がどこまで幅を取る？'},
+A3:{observe:'同じ高さに並ばず、前後に異なる高さの選択肢があるか。',causes:['横一列になる','背後を取る選手不足','後方サポート不足'],question:'同じ高さに並ばないため、誰が前・誰が後ろを取る？'},
+A4:{observe:'保持者に前・横・後ろの複数選択肢が継続して作られているか。',causes:['パス後に止まる','サポート距離が遠い','相手の影に入る'],question:'保持者が困らないために、次の選択肢を誰が作る？'},
+A5:{observe:'人数差または立ち位置の優位を作り、その優位を前進へ使えているか。',causes:['優位を認知できない','数的優位でも距離が悪い','有利な場所へ運べない'],question:'今の優位は人数？位置？それをどう前進に変える？'},
+A6:{observe:'ボールに直接関与しない3人目・4人目が次のプレーを先取りして動いているか。',causes:['ボールだけを見る','パス後に止まる','次の受け手を作れない'],question:'次の次にボールを受けるのは誰？'},
+A7:{observe:'片側に相手を集めた後、逆サイドの空いたスペースを使えているか。',causes:['近い選択肢だけを見る','逆サイドの幅不足','展開のタイミングが遅い'],question:'相手が寄った瞬間、逆側に何が生まれる？'},
+A8:{observe:'中央・外・背後など複数ルートからサークルへ侵入できているか。',causes:['侵入方法が単調','サークル手前で停滞','オフザボールの侵入不足'],question:'今は運ぶ・通す・背後を取るのどれが有効？'},
+A9:{observe:'サークル侵入後、シュート・PC・リバウンドへ素早くつなげているか。',causes:['侵入で満足する','シュート準備が遅い','ゴール前人数不足'],question:'侵入した瞬間、得点へ一番近い選択は何？'},
+A10:{observe:'攻撃中もロスト地点の後方・中央を管理し、カウンターへの準備があるか。',causes:['全員が前へ出る','中央の残り方が悪い','ロスト予測がない'],question:'今ここで失ったら、誰が最初に止める？'},
+D1:{observe:'ボールよりもゴールに近い危険を優先し、最危険エリアを守れているか。',causes:['ボールへ引きつけられる','ゴール側を失う','危険順位が共有されない'],question:'今いちばん守るべき場所・相手はどこ？'},
+D2:{observe:'中央への前進路を閉じ、相手を外側へ向かわせているか。',causes:['中央を空ける','寄せる角度が悪い','後方が内側を締めない'],question:'相手に使わせたくないコースはどこ？'},
+D3:{observe:'1st DFが適切な距離・角度・速度で寄せ、相手の選択肢を減らしているか。',causes:['寄せが速すぎる','間合いが遠い','正面から入り両側を許す','スティック位置が不適切'],question:'奪う前に、まず何を消す？'},
+D4:{observe:'チームで狙った方向へボール保持者を誘導できているか。',causes:['誘導方向が不統一','2nd DFの位置が合わない','タッチラインを使えない'],question:'どこへ追い込めば次の守備が有利になる？'},
+D5:{observe:'2nd DFが1st DFの制限に合わせ、次のパス・突破を消しているか。',causes:['1stへ近づきすぎる','カバーが深すぎる','次の相手を見ていない'],question:'1st DFが抜かれた時とパスされた時、両方に対応できる位置は？'},
+D6:{observe:'突破された後も次の守備者が前進を止められるカバー関係があるか。',causes:['守備間隔が広い','同時に食いつく','背後の準備不足'],question:'味方が抜かれた瞬間、誰が次の1st DFになる？'},
+D7:{observe:'縦横の守備間隔を保ち、ライン間・守備者間を簡単に使わせていないか。',causes:['ラインが間延び','横スライド不足','ボール側へ寄りすぎる'],question:'ボールへ寄りながら、どのスペースは残してはいけない？'},
+D8:{observe:'悪いトラップ・バックパス・孤立などの奪取トリガーに全員が反応しているか。',causes:['奪いどころが不統一','1人だけプレス','後方ラインが連動しない'],question:'今が奪いに出る合図だと、何で判断する？'},
+D9:{observe:'ゴール前でマーク、カバー、シュートコース、リバウンドを同時に管理できているか。',causes:['ボールウォッチ','ゴール側を失う','リバウンド準備不足'],question:'ボール・相手・ゴールを同時に見る身体の向きは？'},
+D10:{observe:'奪取後すぐに前進可能性を見て、無理なら保持へ切り替えられているか。',causes:['奪った直後に下を見る','縦へ急ぎすぎる','周囲のサポートが遅い'],question:'奪った瞬間、GOできる条件は何？'},
+T1:{observe:'ロスト後4秒でWIN・DELAY・RECOVERのどれかをチームとして選べているか。',causes:['反応が遅い','全員が奪いに行く','撤退判断が遅い'],question:'今は奪える？遅らせる？戻る？'},
+T2:{observe:'ロスト地点に最も近く、前進を止められる選手が即座に1st DFになっているか。',causes:['ボールを失った本人だけが追う','最寄りの反応が遅い','寄せる方向が悪い'],question:'誰が一番早く相手の前進を止められる？'},
+T3:{observe:'1st DFの周囲が中央・次のパス・背後を即座にカバーしているか。',causes:['全員がボールへ行く','中央が空く','2ndの決定が遅い'],question:'1st DFが行った瞬間、次に危険なのはどこ？'},
+T4:{observe:'即時奪回が難しい時、ゴール側へ戻り守備組織を素早く再形成しているか。',causes:['追い続けて分断','帰陣コースが外側','切替の基準がない'],question:'奪えないと判断したら、最初にどこへ戻る？'},
+T5:{observe:'ロスト後、中央・ゴール方向など危険度の高い場所を優先して埋めているか。',causes:['自分の元位置へ戻るだけ','中央の危険を見ない','ボールだけを追う'],question:'元の場所ではなく、今いちばん危険な場所はどこ？'},
+T6:{observe:'ボールを失う前から後方・中央に守備準備を作れているか。',causes:['攻撃人数をかけすぎる','次の相手を捕まえていない','ロスト地点を予測しない'],question:'この攻撃が失敗した時、相手の最初の出口はどこ？'},
+T7:{observe:'奪取前後に前方・味方・相手を認知し、次のプレーを準備できているか。',causes:['奪ってから見る','身体が後ろ向き','前方選手の準備不足'],question:'奪う前に何を見ておけば次が速くなる？'},
+T8:{observe:'奪取後の1stパスが前進または安全な保持につながっているか。',causes:['難しい縦パスを選ぶ','受け手の準備不足','パス速度・方向が悪い'],question:'最初のパスで何を達成したい？'},
+T9:{observe:'奪取と同時に前方選手が幅・深さ・背後へ走り出しているか。',causes:['ボールを見て止まる','同じコースへ走る','幅がない'],question:'奪った瞬間、ボールを持たない選手はどこへ走る？'},
+T10:{observe:'カウンター時の人数差を認知し、優位なら速く攻め切れているか。',causes:['人数差を見ない','ボール保持が長い','走るコースが重なる'],question:'今は何対何？その優位をどこで使う？'},
+T11:{observe:'奪取後4秒以内にGO・HOLD・RESETを状況に応じて選択できているか。',causes:['常にGOを選ぶ','前進可能性を見ない','RESETの共通理解不足'],question:'GOする条件とHOLDする条件は何？'},
+T12:{observe:'カウンターをシュート・PC・決定機までつなげて終えられているか。',causes:['最後の判断が遅い','ゴール前の人数不足','横パスが増えすぎる'],question:'このカウンターをどう終わらせれば成功？'}
+};
+function hcDiagV5834(code){return HC_ANALYSIS_DIAG_V5834[code]||null}
+function openAnalysisDiagnosticV5834(itemId){let item=teamAnalysisItems().find(x=>x.id===itemId);if(!item)return;let d=hcDiagV5834(item.code),link=ANALYSIS_LINKS_V580[item.code]||[item.name];if(!d){openAnalysisPracticeFlow(itemId);return}openModal(`<div class="k">STEP 2 | OBSERVE → WHY → PRINCIPLE</div><h2>${esc(item.code)}｜${esc(item.name)}</h2><div class="analysisDiagnostic"><div class="diagTitle">① 何を見る？</div><div class="diagRow"><span>${esc(d.observe)}</span></div><div class="diagTitle" style="margin-top:12px">② うまくいかない時の原因候補</div><div>${d.causes.map(c=>`<span class="diagCause">${esc(c)}</span>`).join('')}</div><div class="diagTitle" style="margin-top:12px">③ 関連原則</div><div class="diagRow"><b>${esc(link[0])}</b><span>${link.slice(1).map(esc).join(' ／ ')}</span></div><div class="diagQuestion"><b>選手への問い</b><br>${esc(d.question)}</div></div><button class="btn" style="margin-top:12px" onclick="openAnalysisPracticeFlow('${item.id}')">この課題の練習候補を見る →</button>`)}
+const _renderTeamAnalysisV5834=renderTeamAnalysis;renderTeamAnalysis=function(){_renderTeamAnalysisV5834();document.querySelectorAll('#teamAnalysisItems .analysisItem').forEach((el,i)=>{let list=teamAnalysisItems().filter(x=>x.phase===teamAnalysisPhase),x=list[i],head=el.querySelector('.analysisHead');if(head&&x){head.onclick=()=>openAnalysisDiagnosticV5834(x.id);head.setAttribute('role','button');head.setAttribute('aria-label',x.code+'の観察基準と原因候補を見る')}})};
+const _renderAnalysisNextActionV5834=renderAnalysisNextAction;renderAnalysisNextAction=function(){_renderAnalysisNextActionV5834();let e=document.getElementById('analysisNextAction');if(!e)return;e.querySelectorAll('.issueCard').forEach((card,i)=>{let issues=analysisIssuesV580(),low=issues.filter(x=>x.score<=3).slice(0,3);if(!low.length)low=issues.slice(0,3);let x=low[i];if(!x)return;let b=card.querySelector('button');if(b){b.textContent='原因候補・原則・練習を見る →';b.onclick=()=>openAnalysisDiagnosticV5834(x.item.id)}})};
+</script>
+
 </body></html>
