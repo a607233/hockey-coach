@@ -104,7 +104,10 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  </div>
 </section>
 
-<section id="history" class="page"><div class="card"><div class="k">HISTORY</div><div class="title">練習記録</div><div id="historyList"></div></div></section>
+<section id="history" class="page">
+<div class="card" id="todayResultCard"><div class="k">TODAY RESULT</div><div class="title">今日の結果を1画面で確認</div><div id="todayResultBody" class="menu">今日の記録・PLAYER VOICEを確認中…</div></div>
+<div class="card"><div class="k">HISTORY</div><div class="title">練習記録</div><div id="historyList"></div></div>
+</section>
 
 <section id="more" class="page">
  <div class="tabs" id="moreTabs">
@@ -435,7 +438,7 @@ openTeamAnalysisHistory=function(){let pid=currentDataScopeV586(),h=jget('hc_tea
 analysisPracticeCandidatesV580=function(item){let all=practiceData().filter(x=>x.phase===item.phase);return all.map(x=>{let exact=(x.analysisCodes||[]).includes(item.code),tags=x.tags||[],keys=ANALYSIS_LINKS_V580[item.code]||[item.name],score=exact?100:0,reasons=exact?[item.code+' 個別リンク']:[];keys.forEach((k,i)=>{if(tags.some(t=>String(t).toLowerCase().includes(String(k).toLowerCase()))){score+=i===0?12:6;reasons.push(k)}});return{x,score,reasons}}).sort((a,b)=>b.score-a.score||String(a.x.name).localeCompare(String(b.x.name),'ja')).slice(0,3)}
 const _renderLibraryV586=renderLibrary;renderLibrary=function(){standardizePracticeTagsV586();_renderLibraryV586();document.querySelectorAll('#practiceLibraryList .menu').forEach((el,i)=>{});}
 const _commitPracticeV586=commitPractice;commitPractice=function(i){_commitPracticeV586(i);setTimeout(standardizePracticeTagsV586,0)}
-const _exportDataV586=exportData;exportData=function(){saveScopedPlanV586();let data={version:'5.8.13',schemaVersion:2,exportedAt:new Date().toISOString(),todayPlanByProfile:jget('hc_today_plan_by_profile_v586',{}),todayPlan:plan,trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+const _exportDataV586=exportData;exportData=function(){saveScopedPlanV586();let data={version:'5.8.14',schemaVersion:2,exportedAt:new Date().toISOString(),todayPlanByProfile:jget('hc_today_plan_by_profile_v586',{}),todayPlan:plan,trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function initV586(){migrateSeasonDataV586();standardizePracticeTagsV586();renderPlan();renderHistory();renderTeamAnalysis();renderLibrary();renderSeasonProfiles()}
 initV586();
 </script>
@@ -735,5 +738,39 @@ renderPlan=function(){_renderPlanV5813();hc5813RenderCockpit()};
 setTimeout(hc5813RenderCockpit,700);
 </script>
 <!-- HC_V5813_FAST_SAFE_LOOP -->
+
+
+<script>
+/* HC_V5814_TODAY_RESULT_HUB
+   UI/read-only aggregation only. No DB/schema/storage migration. */
+function hc5814LatestRecord(){
+  try{const pid=currentDataScopeV586();return jget('hc_training_records',[]).filter(r=>!pid||r.profileId===pid).sort((a,b)=>new Date(b.date)-new Date(a.date))[0]||null}catch(e){return null}
+}
+function hc5814KpiText(r){
+  if(!r)return 'まだ練習記録がありません';
+  const parts=[];
+  if(r.simpleKpi)parts.push('かんたん評価：'+(['','まだ','まあまあ','できた'][r.simpleKpi]||r.simpleKpi));
+  if(r.counterRate!=null)parts.push('成功率：'+r.counterRate+'%');
+  if(Array.isArray(r.numericKpis)&&r.numericKpis.length)parts.push(r.numericKpis.slice(0,2).map(x=>hc5813Esc(x.name||'KPI')+' '+hc5813Esc(x.value)).join(' ／ '));
+  return parts.join('<br>')||'KPIは未入力です';
+}
+async function hc5814RenderTodayResult(){
+  const box=document.getElementById('todayResultBody');if(!box)return;
+  const r=hc5814LatestRecord();let voice='PLAYER VOICEはクラウド接続後に表示します';
+  if(hcCloudReady&&hcCloudMembership&&hcIsStaff()&&(plan||[]).length){
+    try{const {data,error}=await hcCloud.from('team_player_feedback').select('attendance,understanding,good,next_try').eq('team_id',hcCloudMembership.team_id).eq('share_id',hcTodayShareId());if(error)throw error;const a=data||[];if(a.length){const avg=a.reduce((z,x)=>z+(+x.understanding||0),0)/a.length;voice=`回答 ${a.length}人 ／ 理解度 ${avg.toFixed(1)}/3`+(a.some(x=>x.next_try)?'<br>次に変えたい声：'+hc5813Esc(a.find(x=>x.next_try)?.next_try||''):'')}else voice='PLAYER VOICEはまだありません'}catch(e){voice='PLAYER VOICEを取得できませんでした'}
+  }
+  const issue=hc5813IssueCandidates()[0];
+  box.innerHTML=`<div class="row"><div><div class="k">COACH KPI</div><b>${hc5814KpiText(r)}</b></div><div><div class="k">PLAYER VOICE</div><b>${voice}</b></div></div>${r?.reflection?`<div class="loopLink"><b>コーチの気づき</b><div class="source">${hc5813Esc(r.reflection)}</div></div>`:''}${r?.nextQuestion?`<div class="loopLink"><b>次に確かめたい問い</b><div class="source">${hc5813Esc(r.nextQuestion)}</div></div>`:''}${issue?`<div class="learningTarget"><span class="loopBadge">NEXT</span><b>${hc5813Esc(issue.item.code)}｜${hc5813Esc(issue.item.name)}</b><div class="source">最新評価 ${issue.score}/5</div><div class="actions" style="margin-top:8px"><button class="btn2" onclick="openAnalysisPracticeFlow('${issue.item.id}')">練習候補3つを見る</button><button class="btn2" onclick="go('analysis')">32項目分析</button></div></div>`:''}<div class="tinyStatus">表示専用です。既存の記録・分析・PLAYER VOICEを書き換えません。</div>`;
+}
+const _renderHistory5814=renderHistory;
+renderHistory=function(){_renderHistory5814();hc5814RenderTodayResult()};
+const _saveRecord5814=saveRecord;
+saveRecord=function(){_saveRecord5814();setTimeout(hc5814RenderTodayResult,100)};
+const _hcSubmitPlayerVoice5814=hcSubmitPlayerVoice;
+hcSubmitPlayerVoice=async function(){await _hcSubmitPlayerVoice5814();setTimeout(hc5814RenderTodayResult,100)};
+setTimeout(hc5814RenderTodayResult,1000);
+</script>
+<!-- HC_V5814_TODAY_RESULT_HUB -->
 
 </body></html>
