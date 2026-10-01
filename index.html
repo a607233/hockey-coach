@@ -1439,4 +1439,45 @@ setTimeout(hc5842Install,0);
 <!-- HC_V5842_TEAM_GROWTH_DASHBOARD -->
 <!-- HC_V5843_BOTTOM_CLEANUP: removed accidental literal \n text around V5836; no data/cloud/philosophy/tactical changes -->
 
+
+<!-- HC_V5844_GROWTH_INSIGHTS -->
+<style id="HC_V5844_GROWTH_INSIGHTS_STYLE">
+.growthInsight5844{padding:14px;border:1px solid #314b54;border-radius:16px;background:#0d2026;margin-top:10px}
+.growthInsight5844 .label{font-size:10px;letter-spacing:.16em;font-weight:950;color:#dfff52;margin-bottom:5px}
+.growthInsight5844 .headline{font-size:17px;font-weight:900;line-height:1.45;color:#f4f8f9}
+.growthInsight5844 .sub{font-size:12px;line-height:1.6;color:#9fb1b6;margin-top:5px}
+.growthKpiDef5844{font-size:11px;line-height:1.55;color:#9fb1b6;margin-top:5px;padding-left:8px;border-left:2px solid #29434b}
+</style>
+<script id="HC_V5844_GROWTH_INSIGHTS_SCRIPT">
+/* V5.8.44 STEP 5 finish — read-only insights layered on the existing dashboard. */
+function hc5844Insights(obs){
+  if(!obs||obs.length<2)return '';
+  let first=obs[0],latest=obs[obs.length-1],items=teamAnalysisItems();
+  let changes=items.map(x=>{let a=+first?.scores?.[x.id]||0,b=+latest?.scores?.[x.id]||0;return {x,a,b,d:(a&&b)?b-a:null}}).filter(z=>z.d!==null);
+  if(!changes.length)return '';
+  let improved=changes.filter(z=>z.d>0).sort((a,b)=>b.d-a.d).slice(0,3);
+  let watch=changes.filter(z=>z.b>0).sort((a,b)=>a.b-b.b).slice(0,3);
+  let blocks=[];
+  if(improved.length)blocks.push(`<div class="growthInsight5844"><div class="label">CHANGE</div><div class="headline">変化が見えている項目</div><div class="sub">${improved.map(z=>`${esc(z.x.code)} ${esc(z.x.name)}　${z.a} → ${z.b}（+${z.d}）`).join('<br>')}</div></div>`);
+  if(watch.length)blocks.push(`<div class="growthInsight5844"><div class="label">NEXT QUESTION</div><div class="headline">次のテーマを考える材料</div><div class="sub">${watch.map(z=>`${esc(z.x.code)} ${esc(z.x.name)}　最新 ${z.b}/5`).join('<br>')}<br>※自動的に「次に練習すべき」と決める表示ではありません。</div></div>`);
+  return blocks.join('');
+}
+const _hc5842Render5844=hc5842Render;
+hc5842Render=function(){
+  _hc5842Render5844();
+  let host=document.getElementById('growthDashboard5842');if(!host)return;
+  let root=host.querySelector('.growth5842');if(!root)return;
+  let old=document.getElementById('growthInsights5844');if(old)old.remove();
+  let insights=hc5844Insights(hc5842Obs());
+  if(insights){let box=document.createElement('div');box.id='growthInsights5844';box.innerHTML=`<div class="card"><div class="k">TEAM CHANGE</div><div class="title" style="font-size:19px">このチームに起きている変化</div>${insights}</div>`;let hero=root.querySelector('.growthHero5842');if(hero)hero.insertAdjacentElement('afterend',box);else root.prepend(box)}
+  root.querySelectorAll('.growthRow5842').forEach(row=>{});
+  let kpiCards=[...root.querySelectorAll('.card')].filter(c=>c.querySelector('.k')?.textContent==='PRACTICE KPI');
+  if(kpiCards[0]){
+    let rows=kpiCards[0].querySelectorAll('.growthRow5842');let kpis=hc5842Kpi(hc5842Records());
+    rows.forEach((row,i)=>{let z=kpis[i];if(!z)return;if((z.oppDef||z.sucDef)&&!row.querySelector('.growthKpiDef5844')){let d=document.createElement('div');d.className='growthKpiDef5844';d.innerHTML=`${z.oppDef?'機会：'+esc(z.oppDef):''}${z.oppDef&&z.sucDef?'<br>':''}${z.sucDef?'成功：'+esc(z.sucDef):''}`;row.appendChild(d)}})
+  }
+}
+</script>
+<!-- /HC_V5844_GROWTH_INSIGHTS -->
+
 </body></html>
