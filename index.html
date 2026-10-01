@@ -159,7 +159,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <div id="more-library" class="tabpane"><div class="card"><div class="row"><div><div class="k">PRACTICE LIBRARY</div><div class="title">練習ライブラリ</div></div><button class="btn2" onclick="editPractice(-1)">＋ 追加</button></div><p class="muted">STEP 1｜練習の「数」より「再現できる質」を優先。目的・開始配置・進め方・ルール・成功条件・判断基準・問い・KPI・難易度調整・専用図を標準フォーマットとして揃えます。</p><div id="hc5819CoverageHome" class="coverageHome"><div class="k">32 ANALYSIS × PRACTICE</div><div class="row"><div><div class="coverageBig" id="hc5819CoverageBig">— / 32</div><div class="coverageLabel">32項目カバレッジ</div></div><button class="btn2" onclick="hc5817OpenCoverage()">32項目の対応状況を見る</button></div><div id="hc5819CoveragePhases" class="coveragePhaseChips"></div><div class="tinyStatus">各分析項目に、専用の練習候補が何件あるかを確認できます。</div></div><div class="libraryFinder"><div class="finderTitle">どう探しますか？</div><div class="phaseChips" id="hc5818PhaseChips"><button onclick="hc5818SetPhase('')" class="on">すべて</button><button onclick="hc5818SetPhase('攻撃')">攻撃</button><button onclick="hc5818SetPhase('守備')">守備</button><button onclick="hc5818SetPhase('攻→守')">攻→守</button><button onclick="hc5818SetPhase('守→攻')">守→攻</button></div><select id="libraryPhase" class="input" onchange="hc5818SyncPhase();renderLibrary()" style="display:none"><option value="">全局面</option><option>攻撃</option><option>守備</option><option>攻→守</option><option>守→攻</option></select><div class="searchWrap"><span>⌕</span><input id="librarySearch" class="input" placeholder="例：D3、カバー、前進、ロスト…" oninput="renderLibrary()"><button type="button" onclick="hc5818ClearWord()">×</button></div><div class="quickFind"><button onclick="hc5818Keyword('前進')">前進</button><button onclick="hc5818Keyword('幅')">幅</button><button onclick="hc5818Keyword('サークル')">サークル</button><button onclick="hc5818Keyword('プレス')">プレス</button><button onclick="hc5818Keyword('カバー')">カバー</button><button onclick="hc5818Keyword('ロスト')">ロスト</button><button onclick="hc5818Keyword('奪取')">奪取</button><button onclick="hc5818Keyword('カウンター')">カウンター</button></div><button class="btn2 fullFinder" onclick="hc5818Open32Picker()">◎ 32項目から練習を探す</button></div><div class="libraryQuick"><button class="btn2" id="favFilterBtn" onclick="toggleLibraryFavFilter()">☆ お気に入り</button><button class="btn2" id="recentFilterBtn" onclick="toggleLibraryRecentFilter()">◷ 最近使った</button><button class="btn2" onclick="clearLibraryFilters()">クリア</button><button class="btn2" onclick="seedPracticeLibrary(true)">初期メニューを復元</button></div><div class="filterCount" id="libraryCount"></div><div id="practiceLibraryList"></div></div></div>
  <div id="more-team" class="tabpane"><div class="card"><div class="k">TEAM / SEASON</div><div class="title">チーム・シーズン管理</div><p class="muted">現在使うチームとシーズンを保存できます。分析・練習記録は選択中のシーズンごとに表示を分離します。</p><div class="field"><label>チーム名</label><input id="teamName" class="input" placeholder="TEAM NAME"></div><div class="field"><label>シーズン</label><input id="seasonName" class="input" placeholder="2026"></div><button class="btn" onclick="saveTeamSettings()">現在の設定を保存</button><div id="seasonProfiles" class="seasonList"></div><button class="btn2" onclick="addSeasonProfile()">＋ シーズンを登録</button></div></div>
  <div id="more-invite" class="tabpane"><div class="card"><div class="k">CLOUD STATUS</div><div class="title">Supabase チーム共有</div><div id="cloudStatus" class="menu"><b>接続確認中…</b></div><div id="cloudActions" class="actions"></div></div><div class="card"><div class="k">TEAM SHARE</div><div class="title">チーム招待</div><p class="muted">役割を選ぶと招待URLとQRを発行します。URLはLINE等で共有できます。</p><div id="inviteRoleButtons" class="inviteGrid"></div><div id="inviteOutput"></div><hr><div class="k">ROLE SETTINGS</div><div id="roleAdminArea"><div id="roleList"></div><button id="addRoleBtn" class="btn2" onclick="addRole()">＋ 役割を追加</button></div><p class="autosaveNote">クラウド接続後は、招待URL/QRをSupabase側で検証して同じチームへ参加します。</p></div></div>
- <div id="more-settings" class="tabpane"><div class="card"><div class="k">DATA</div><div class="title">設定・データ</div><p class="muted">今日のメニューと練習記録の互換データを維持しています。</p><button class="btn2" onclick="exportData()">バックアップを書き出す</button><div class="restoreBox"><b>バックアップから復元</b><p class="muted">HOCKEY COACHのJSONバックアップを選択します。現在データは上書きされます。</p><input id="restoreFile" type="file" accept="application/json,.json" class="input" onchange="restoreDataFromFile(this)"><div id="restoreStatus" class="tinyStatus"></div></div><p class="autosaveNote">入力・編集内容はこの端末へ自動保存されます。</p></div></div>
+ <div id="more-settings" class="tabpane"><div class="card"><div class="k">FINAL CHECK</div><div class="title">端末の安定性チェック</div><p class="muted">データを書き換えず、この端末で主要機能の土台が正常か確認します。</p><button class="btn2" onclick="hc5845RunCheck()">✓ 端末チェックを実行</button><div id="hc5845CheckResult" class="hc5845CheckResult"><span class="muted">未実行</span></div></div><div class="card"><div class="k">DATA</div><div class="title">設定・データ</div><p class="muted">今日のメニューと練習記録の互換データを維持しています。</p><button class="btn2" onclick="exportData()">バックアップを書き出す</button><div class="restoreBox"><b>バックアップから復元</b><p class="muted">HOCKEY COACHのJSONバックアップを選択します。現在データは上書きされます。</p><input id="restoreFile" type="file" accept="application/json,.json" class="input" onchange="restoreDataFromFile(this)"><div id="restoreStatus" class="tinyStatus"></div></div><p class="autosaveNote">入力・編集内容はこの端末へ自動保存されます。</p></div></div>
 </section>
 </main>
 <nav class="bottom"><div>
@@ -1479,5 +1479,34 @@ hc5842Render=function(){
 }
 </script>
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
+
+
+<!-- HC_V5845_RELEASE_CHECK -->
+<style id="HC_V5845_RELEASE_CHECK_STYLE">
+.hc5845CheckResult{margin-top:12px;display:grid;gap:7px}.hc5845CheckRow{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #29434b;border-radius:12px;background:#0d1d22}.hc5845CheckRow b{font-size:12px}.hc5845CheckRow span{font-size:12px;font-weight:900}.hc5845Ok{color:#dfff52}.hc5845Warn{color:#ffd36b}.hc5845Summary{margin-top:4px;padding:12px;border-radius:14px;background:#10242b;border:1px solid #35535c;font-size:12px;line-height:1.65}
+</style>
+<script id="HC_V5845_RELEASE_CHECK_SCRIPT">
+/* V5.8.45 STEP 6 — read-only/local diagnostic. Does not modify user content. */
+function hc5845RunCheck(){
+ const host=document.getElementById('hc5845CheckResult'); if(!host)return;
+ const rows=[]; const add=(name,ok,note='')=>rows.push({name,ok:!!ok,note});
+ try{
+  const key='__hc5845_storage_test__', old=localStorage.getItem(key); localStorage.setItem(key,'ok'); const ok=localStorage.getItem(key)==='ok'; if(old===null)localStorage.removeItem(key);else localStorage.setItem(key,old); add('端末保存',ok,ok?'読み書きOK':'保存できません');
+ }catch(e){add('端末保存',false,'Safariの保存領域を確認');}
+ try{const p=jget('hc_today_plan',[]);add('今日の練習データ',Array.isArray(p),Array.isArray(p)?p.length+'件':'形式エラー')}catch(e){add('今日の練習データ',false,'読込エラー')}
+ try{const r=jget('hc_training_records',[]);add('練習記録',Array.isArray(r),Array.isArray(r)?r.length+'件':'形式エラー')}catch(e){add('練習記録',false,'読込エラー')}
+ try{const a=jget('hc_team_analysis_history_v577',[]);add('32項目分析',Array.isArray(a),Array.isArray(a)?a.length+'回保存':'形式エラー')}catch(e){add('32項目分析',false,'読込エラー')}
+ try{const ph=philosophyData();add('Philosophy',Array.isArray(ph)&&ph.length>0,Array.isArray(ph)?ph.length+'項目保持':'読込エラー')}catch(e){add('Philosophy',false,'読込エラー')}
+ add('Coach Mode',typeof coachItem==='function'&&typeof renderCoachCounters==='function','練習別KPI');
+ add('作図エディタ',typeof openTacticalEditorFromPractice==='function','起動関数');
+ add('バックアップ',typeof exportData==='function'&&typeof restoreDataFromFile==='function','書出し・復元');
+ add('シーズン分離',typeof saveScopedPlanV586==='function'&&typeof useSeasonProfile==='function','保存領域');
+ add('クラウド基盤',typeof hcCloudInit==='function'||typeof hcCloudRefresh==='function','接続機能');
+ add('PLAYER VOICE',typeof hcRenderPlayerVoice==='function'||typeof hcPlayerVoiceRender==='function'||document.querySelector('[id*="playerVoice"],[id*="PlayerVoice"]'),'共有UI');
+ const bad=rows.filter(x=>!x.ok).length;
+ host.innerHTML=rows.map(x=>`<div class="hc5845CheckRow"><b>${esc(x.name)}</b><span class="${x.ok?'hc5845Ok':'hc5845Warn'}">${x.ok?'✓ OK':'△ 確認'}${x.note?'｜'+esc(x.note):''}</span></div>`).join('')+`<div class="hc5845Summary"><b>${bad?'確認が必要な項目があります':'この端末の基本チェックはすべてOKです'}</b><br>${bad?'「△ 確認」の項目だけ実機で確認してください。既存データは変更していません。':'次は2台で QR参加 → チーム共有 → PLAYER VOICE の実機確認を行えば、最終確認に進めます。'}<br><span class="muted">V5.8.45｜STEP 6 RELEASE CHECK</span></div>`;
+}
+</script>
+<!-- /HC_V5845_RELEASE_CHECK -->
 
 </body></html>
