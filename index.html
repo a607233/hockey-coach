@@ -1268,4 +1268,70 @@ recommendationRanked=function(style){return practiceData().filter(x=>x.phase===s
 function hc5837Reason(x,style){return hc5837Score(x,style).reasons.filter(r=>r!=='最近実施済み').slice(0,5)}
 renderRecommendationsModal=function(){let rs=recommendationCurrent(),groups=Math.max(1,Math.round(state.players/5)),c=hc5837Context(),styles=['反復量重視','ゲーム性重視','全員参加重視'];let ctx=c.issue?`<div class="recContext5837"><strong>最新分析 ${esc(c.issue.item.code)}｜${esc(c.issue.item.name)} ${c.issue.score}/5</strong>${c.evidence?`<br>観察：${esc(c.evidence)}`:''}<br><span class="muted">分析は候補順位の材料。最終決定はコーチ・選手が行います。</span></div>`:'';openModal(`<div class="k">STEP 3｜SMART 3 OPTIONS｜${state.players}人＋GK${state.gk}人｜${state.duration}分</div><h2>なぜこの3つ？が分かる練習案</h2>${ctx}${state.idea?`<p class="muted">選手・チーム案：${esc(state.idea)}</p>`:''}${rs.map((x,i)=>{let why=hc5837Reason(x,styles[i]);return `<div class="option"><div class="k">${esc(x.style||styles[i])}</div><h3>${esc(x.name)}</h3><div class="recWhy5837"><b>この候補の理由</b><br>${why.length?why.map(w=>`<span class="chip">${esc(w)}</span>`).join(''):'同じ局面から候補を表示'}</div><p class="meta"><b>狙い：</b>${esc(x.purpose||'')}<br><b>人数：</b>${x.minPlayers}〜${x.maxPlayers}人 ${x.gkRequired?'｜GK推奨':''}<br><b>スペース：</b>${esc(x.space||'自由')}<br><b>制約：</b>${esc(x.constraint||'')}<br><b>問い：</b>${esc(x.question||'')}<br><b>運用：</b>${groups}グループを目安に待ち時間を調整</p>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions" style="margin-top:9px"><button class="btn" onclick="addPracticeToPlan('${x.id}')">＋ 今日の練習へ追加</button><button class="btn2" onclick="swapRecommendation(${i})">↻ 入れ替える</button></div></div>`}).join('')||'<div class="empty">この局面の練習がありません。</div>'}`)};
 </script>
+
+<style id="HC_V5838_RECOMMENDER_FINISH_STYLE">
+.recFinish5838{margin:12px 0;padding:11px;border:1px solid #38515a;border-radius:14px;background:#0d2026}.recFinish5838 b{color:#dfff52}.recFinish5838 .meta{margin-top:4px}.recFeedback5838{margin-top:7px;font-size:11px;color:#b8c8cc}.recFeedback5838 strong{color:#fff}.recBundle5838{width:100%;margin:8px 0 14px}
+</style>
+<script id="HC_V5838_RECOMMENDER_FINISH_STEP3">
+// V5.8.38 STEP 3 finish: diversity + previous-result context + optional one-tap bundle.
+// Read-only recommendation logic. No cloud/schema/philosophy/tactical-board changes.
+function hc5838LastRecord(){
+  let pid=currentProfileIdV585();
+  return jget('hc_training_records',[]).filter(r=>!pid||!r.profileId||r.profileId===pid).sort((a,b)=>new Date(b.date)-new Date(a.date))[0]||null;
+}
+function hc5838Feedback(){
+  let r=hc5838LastRecord(); if(!r)return {r:null,text:'',needs:false,label:''};
+  let parts=[r.playerNext,r.reflection,r.nextQuestion].filter(Boolean);
+  let needs=(+r.simpleKpi>0&&+r.simpleKpi<=2)||(+r.learningResult>0&&+r.learningResult<=2)||(r.counterRate!=null&&+r.counterRate<60);
+  let labels=[];
+  if(+r.simpleKpi)labels.push('前回 '+(['','まだ','まあまあ','できた'][+r.simpleKpi]||''));
+  if(+r.learningResult)labels.push('検証 '+(['','まだ','変化あり','できた'][+r.learningResult]||''));
+  if(r.counterRate!=null)labels.push('成功率 '+r.counterRate+'%');
+  return {r,text:parts.join(' '),needs,label:labels.join(' ／ ')};
+}
+function hc5838Overlap(a,b){
+  if(!a||!b)return 0; let n=0;
+  let ap=new Set(a.principles||[]),bp=new Set(b.principles||[]); ap.forEach(x=>{if(bp.has(x))n+=2});
+  let ac=new Set(a.analysisCodes||[]),bc=new Set(b.analysisCodes||[]); ac.forEach(x=>{if(bc.has(x))n+=2});
+  if(a.boardType&&a.boardType===b.boardType)n+=1;
+  if(a.name&&b.name){let A=new Set(a.name.split(/[｜・\s]+/).filter(x=>x.length>1)),B=new Set(b.name.split(/[｜・\s]+/).filter(x=>x.length>1));A.forEach(x=>{if(B.has(x))n+=1})}
+  return n;
+}
+const _hc5837ScoreV5838=hc5837Score;
+hc5837Score=function(x,style){
+  let z=_hc5837ScoreV5838(x,style),f=hc5838Feedback(),hay=hc5837Hay(x),extra=[];
+  if(f.r){
+    let prevCodes=(f.r.learningTargets||[]).map(t=>t.code).filter(Boolean);
+    if(f.needs&&prevCodes.some(c=>(x.analysisCodes||[]).includes(c))){z.score+=8;extra.push('前回課題を再検証')}
+    if(f.needs&&f.r.phase===x.phase){z.score+=3;extra.push('前回の局面を継続')}
+    let words=f.text.toLowerCase().split(/[\s、。・／/]+/).filter(w=>w.length>=2);
+    let hits=[...new Set(words.filter(w=>hay.includes(w)))].slice(0,3);
+    if(hits.length){z.score+=Math.min(6,hits.length*2);extra.push('前回の振り返りを反映')}
+  }
+  z.reasons=[...new Set([...(z.reasons||[]),...extra])]; return z;
+};
+recommendationCurrent=function(){
+  let styles=['反復量重視','ゲーム性重視','全員参加重視'],used=[];
+  return styles.map((style,i)=>{
+    let ranked=practiceData().filter(x=>x.phase===state.phase).map(x=>({x,s:hc5837Score(x,style).score})).sort((a,b)=>b.s-a.s);
+    let start=recommendationSwapOffsets[i]||0,candidates=ranked.slice(start).concat(ranked.slice(0,start));
+    let best=null,bestVal=-1e9;
+    candidates.forEach((r,idx)=>{if(used.some(u=>u.id===r.x.id))return;let overlap=used.reduce((q,u)=>q+hc5838Overlap(r.x,u),0),v=r.s-overlap*4-idx*.03;if(v>bestVal){bestVal=v;best=r.x}});
+    if(best)used.push(best); return best;
+  }).filter(Boolean)
+};
+function hc5838AddBundle(ids){
+  let added=0; ids.forEach(id=>{let p=practiceData().find(x=>x.id===id);if(!p)return;if(!plan.some(z=>z.libraryId===p.id||z.id===p.id)){addPracticeToPlan(id);added++}});
+  closeModal();renderPlan(); if(added)alert(added+'件を今日のメニューへ追加しました');
+}
+renderRecommendationsModal=function(){
+  let rs=recommendationCurrent(),groups=Math.max(1,Math.round(state.players/5)),c=hc5837Context(),f=hc5838Feedback(),styles=['反復量重視','ゲーム性重視','全員参加重視'];
+  let ctx=c.issue?`<div class="recContext5837"><strong>最新分析 ${esc(c.issue.item.code)}｜${esc(c.issue.item.name)} ${c.issue.score}/5</strong>${c.evidence?`<br>観察：${esc(c.evidence)}`:''}<br><span class="muted">分析は候補順位の材料。最終決定はコーチ・選手が行います。</span></div>`:'';
+  let prev=f.r?`<div class="recFinish5838"><b>前回からのつながり</b><div class="meta">${esc(f.label||'前回記録あり')}${f.r.playerNext?`<br>次に変えたい：${esc(f.r.playerNext)}`:''}${f.r.nextQuestion?`<br>次の問い：${esc(f.r.nextQuestion)}`:''}</div><div class="recFeedback5838">${f.needs?'前回の課題を再検証できる候補を少し優先しています。':'前回結果は参考にしつつ、今日の条件を優先しています。'}</div></div>`:'';
+  let cards=rs.map((x,i)=>{let why=hc5837Reason(x,styles[i]);return `<div class="option"><div class="k">${esc(x.style||styles[i])}</div><h3>${esc(x.name)}</h3><div class="recWhy5837"><b>この候補の理由</b><br>${why.length?why.map(w=>`<span class="chip">${esc(w)}</span>`).join(''):'同じ局面から候補を表示'}</div><p class="meta"><b>狙い：</b>${esc(x.purpose||'')}<br><b>人数：</b>${x.minPlayers}〜${x.maxPlayers}人 ${x.gkRequired?'｜GK推奨':''}<br><b>スペース：</b>${esc(x.space||'自由')}<br><b>制約：</b>${esc(x.constraint||'')}<br><b>問い：</b>${esc(x.question||'')}<br><b>運用：</b>${groups}グループを目安に待ち時間を調整</p>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions" style="margin-top:9px"><button class="btn" onclick="addPracticeToPlan('${x.id}')">＋ この練習を追加</button><button class="btn2" onclick="swapRecommendation(${i})">↻ この枠だけ入れ替える</button></div></div>`}).join('');
+  let bundle=rs.length>1?`<button class="btn recBundle5838" onclick='hc5838AddBundle(${JSON.stringify(rs.map(x=>x.id))})'>＋ 3案をまとめて今日のメニューへ</button><div class="tinyStatus">3案は別タイプになるよう重複を抑えています。まとめて追加せず、1つだけ選んでもOKです。</div>`:'';
+  openModal(`<div class="k">STEP 3｜SMART RECOMMENDER FINISH｜${state.players}人＋GK${state.gk}人｜${state.duration}分</div><h2>今日の条件から、違う3案を比べる</h2>${ctx}${prev}${state.idea?`<p class="muted">選手・チーム案：${esc(state.idea)}</p>`:''}${cards||'<div class="empty">この局面の練習がありません。</div>'}${bundle}`)
+};
+</script>
+
 </body></html>
