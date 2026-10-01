@@ -785,4 +785,56 @@ setTimeout(hc5814RenderTodayResult,1000);
 </script>
 <!-- HC_V5814_TODAY_RESULT_HUB -->
 
+
+<style>
+/* HC_V5817_SMART_COVERAGE */
+.coverageGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.coverageItem{border:1px solid var(--line);border-radius:14px;padding:10px;background:rgba(255,255,255,.035)}.coverageItem b{display:block}.coverageOk{font-size:12px;font-weight:900}.coverageWeak{font-size:12px;font-weight:900}.candidateWhy{margin-top:7px;font-size:12px;opacity:.82}.coveragePhase{margin:14px 0 6px;font-weight:900}.coverageSummary{padding:12px;border-radius:14px;background:rgba(255,255,255,.05);margin:8px 0 12px}@media(max-width:520px){.coverageGrid{grid-template-columns:1fr}}
+</style>
+<script>
+/* HC_V5817_SMART_COVERAGE
+   Safe library/recommendation upgrade. No DB/schema/storage migration. */
+function hc5817AllCodes(){return teamAnalysisItems().filter(x=>/^(A|D|T)\\d+$/.test(x.code||''))}
+function hc5817Coverage(){
+  const ps=practiceData(), map={}; hc5817AllCodes().forEach(i=>map[i.code]=[]);
+  ps.forEach(p=>(p.analysisCodes||[]).forEach(c=>{if(map[c])map[c].push(p)}));
+  return map;
+}
+function hc5817OpenCoverage(){
+  const items=hc5817AllCodes(), map=hc5817Coverage();
+  const covered=items.filter(i=>(map[i.code]||[]).length>0).length;
+  const strong=items.filter(i=>(map[i.code]||[]).length>=2).length;
+  const phases=['攻撃','守備','攻→守','守→攻'];
+  let html=`<div class="k">32 ANALYSIS × PRACTICE</div><h2>練習カバレッジ</h2><div class="coverageSummary"><b>${covered}/32項目に専用リンク</b><div class="meta">うち ${strong}項目は候補2つ以上。0〜1件の項目を優先して補強します。</div></div>`;
+  phases.forEach(ph=>{const a=items.filter(i=>i.phase===ph);html+=`<div class="coveragePhase">${esc(ph)}｜${a.filter(i=>(map[i.code]||[]).length>0).length}/${a.length}</div><div class="coverageGrid">`+a.map(i=>{const n=(map[i.code]||[]).length;return `<div class="coverageItem"><b>${esc(i.code)}｜${esc(i.name)}</b><span class="${n>=2?'coverageOk':'coverageWeak'}">${n>=2?'✓':n===1?'△':'!'} 練習候補 ${n}件</span><div class="meta">${esc(i.desc||'')}</div>${n?`<button class="btn2" style="margin-top:7px" onclick="closeModal();setTimeout(()=>openAnalysisPracticeFlow('${i.id}'),30)">候補を見る</button>`:''}</div>`}).join('')+'</div>'});
+  html+='<div class="tinyStatus">既存データは変更しません。カバレッジは練習ライブラリの analysisCodes から自動集計しています。</div><button class="ghost" onclick="closeModal()">閉じる</button>';openModal(html)
+}
+function hc5817InstallCoverageButton(){
+  const q=document.querySelector('#more-library .libraryQuick');if(!q||document.getElementById('coverageBtn5817'))return;
+  const b=document.createElement('button');b.className='btn2';b.id='coverageBtn5817';b.textContent='◎ 32項目カバレッジ';b.onclick=hc5817OpenCoverage;q.appendChild(b)
+}
+// Exact analysis-code linkage is the primary signal; then diversify styles and respect today's conditions.
+const _analysisPracticeCandidatesV5817=analysisPracticeCandidatesV580;
+analysisPracticeCandidatesV580=function(item){
+  try{
+    const players=+(state?.players||0),gk=+(state?.gk||0), keys=ANALYSIS_LINKS_V580[item.code]||[item.name];
+    let ranked=practiceData().filter(x=>x.phase===item.phase).map(x=>{
+      const exact=(x.analysisCodes||[]).includes(item.code);let score=exact?1000:0,reasons=exact?[item.code+' 専用']:[];
+      const hay=[x.name,x.purpose,x.judgment,x.question,...(x.principles||[]),...(x.tags||[])].join(' ').toLowerCase();
+      keys.forEach((k,i)=>{if(hay.includes(String(k).toLowerCase())){score+=i===0?40:18;if(!reasons.includes(k))reasons.push(k)}});
+      if(players&&players>=+(x.minPlayers||1)&&players<=+(x.maxPlayers||99)){score+=25;reasons.push('人数適合')}
+      if(x.gkRequired&&gk<1)score-=120; else if(x.gkRequired&&gk>0){score+=15;reasons.push('GK適合')}
+      return{x,score,reasons};
+    }).sort((a,b)=>b.score-a.score||String(a.x.name).localeCompare(String(b.x.name),'ja'));
+    const picked=[],styles=new Set();
+    for(const r of ranked){const st=String(r.x.style||'標準');if(!styles.has(st)){picked.push(r);styles.add(st)}if(picked.length===3)break}
+    for(const r of ranked){if(picked.length===3)break;if(!picked.some(p=>p.x.id===r.x.id))picked.push(r)}
+    return picked.slice(0,3)
+  }catch(e){return _analysisPracticeCandidatesV5817(item)}
+};
+const _renderLibraryV5817=renderLibrary;
+renderLibrary=function(){_renderLibraryV5817();hc5817InstallCoverageButton()};
+setTimeout(()=>{hc5817InstallCoverageButton();try{renderLibrary()}catch(e){}},900);
+</script>
+<!-- HC_V5817_SMART_COVERAGE -->
+
 </body></html>
