@@ -56,6 +56,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 <section id="home" class="page on">
  <div class="card"><div class="k">COACH COCKPIT</div><div class="title">今日を、シンプルに。</div><p class="muted">条件を整理し、チームで選び、実践し、振り返る。</p><button class="btn" onclick="go('today')">今日の練習をつくる</button></div>
  <div class="row"><div class="card"><div class="muted">今日のメニュー</div><div id="homeCount" class="stat">0</div></div><div class="card"><div class="muted">合計時間</div><div id="homeMin" class="stat">0</div></div></div>
+ <div class="card" id="nextSessionCockpit"><div class="k">NEXT SESSION</div><div class="title" style="font-size:19px">分析から次の練習へ</div><div id="nextSessionCockpitBody" class="menu">最新の分析を確認中…</div></div>
  <div class="card"><div class="k">FLOW</div><p class="muted">① 条件 → ② テーマ・原則 → ③ 3つの選択肢 → ④ 今日のメニュー → ⑤ コーチモード → ⑥ 振り返り</p></div>
 </section>
 
@@ -434,7 +435,7 @@ openTeamAnalysisHistory=function(){let pid=currentDataScopeV586(),h=jget('hc_tea
 analysisPracticeCandidatesV580=function(item){let all=practiceData().filter(x=>x.phase===item.phase);return all.map(x=>{let exact=(x.analysisCodes||[]).includes(item.code),tags=x.tags||[],keys=ANALYSIS_LINKS_V580[item.code]||[item.name],score=exact?100:0,reasons=exact?[item.code+' 個別リンク']:[];keys.forEach((k,i)=>{if(tags.some(t=>String(t).toLowerCase().includes(String(k).toLowerCase()))){score+=i===0?12:6;reasons.push(k)}});return{x,score,reasons}}).sort((a,b)=>b.score-a.score||String(a.x.name).localeCompare(String(b.x.name),'ja')).slice(0,3)}
 const _renderLibraryV586=renderLibrary;renderLibrary=function(){standardizePracticeTagsV586();_renderLibraryV586();document.querySelectorAll('#practiceLibraryList .menu').forEach((el,i)=>{});}
 const _commitPracticeV586=commitPractice;commitPractice=function(i){_commitPracticeV586(i);setTimeout(standardizePracticeTagsV586,0)}
-const _exportDataV586=exportData;exportData=function(){saveScopedPlanV586();let data={version:'5.8.9',schemaVersion:2,exportedAt:new Date().toISOString(),todayPlanByProfile:jget('hc_today_plan_by_profile_v586',{}),todayPlan:plan,trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+const _exportDataV586=exportData;exportData=function(){saveScopedPlanV586();let data={version:'5.8.13',schemaVersion:2,exportedAt:new Date().toISOString(),todayPlanByProfile:jget('hc_today_plan_by_profile_v586',{}),todayPlan:plan,trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function initV586(){migrateSeasonDataV586();standardizePracticeTagsV586();renderPlan();renderHistory();renderTeamAnalysis();renderLibrary();renderSeasonProfiles()}
 initV586();
 </script>
@@ -660,5 +661,79 @@ hcShareTodayNow=async function(){await _hcShareTodayNow5811();await hcLoadPlayer
 setTimeout(hcLoadPlayerVoice,900);
 </script>
 <!-- HC_V5811_PLAYER_VOICE -->
+
+<script>
+/* HC_V5812_SAFE_LEARNING_LOOP
+   Read-only decision support. No new DB tables, no migrations, no automatic score writes. */
+function hc5812NextStepHtml(rows,avg){
+  const linked=(plan||[]).filter(x=>x.analysisItemId).map(x=>({code:x.analysisCode||'',name:x.analysisName||'',principle:x.analysisPrinciple||'',question:x.question||''}));
+  const uniq=[]; const seen=new Set();
+  linked.forEach(x=>{const k=x.code||x.name;if(k&&!seen.has(k)){seen.add(k);uniq.push(x)}});
+  let signal='回答が集まると、次回の問いを考える材料になります。';
+  if(rows.length){
+    if(avg<2) signal='理解度はまだ低めです。同じテーマを、制約や人数を変えてもう一度確かめる選択肢があります。';
+    else if(avg<2.5) signal='理解は進んでいます。選手の「次に変えたいこと」を見ながら、同じ原則を別のゲームで確かめられます。';
+    else signal='理解度は高めです。条件を難しくするか、次の関連原則へ進む材料にできます。';
+  }
+  const targets=uniq.length?`<div style="margin-top:10px"><b>今日つながっている分析課題</b>${uniq.slice(0,3).map(x=>`<div class="loopLink"><b>${hcVoiceEsc((x.code?x.code+'｜':'')+x.name)}</b>${x.principle?`<div class="source">原則：${hcVoiceEsc(x.principle)}</div>`:''}</div>`).join('')}</div>`:'';
+  return `<div class="learningTarget" style="margin-top:14px"><span class="loopBadge">TODAY → NEXT</span><h3>次回につなげるヒント</h3><div class="source">${hcVoiceEsc(signal)}</div>${targets}<div class="actions" style="margin-top:10px"><button class="btn2" onclick="go('analysis')">32項目分析を見る</button><button class="btn2" onclick="go('more');setTimeout(()=>{try{openMoreTab('library')}catch(e){}},0)">練習ライブラリを見る</button></div><div class="tinyStatus">※ 自動で評価を書き換えません。最終判断はコーチ・選手が行います。</div></div>`;
+}
+const _hcRenderVoiceSummary5812=hcRenderVoiceSummary;
+hcRenderVoiceSummary=async function(box,sid){
+  try{
+    const {data,error}=await hcCloud.from('team_player_feedback').select('attendance,understanding,good,next_try,updated_at').eq('team_id',hcCloudMembership.team_id).eq('share_id',sid);
+    if(error)throw error;
+    const a=data||[],n=a.length,avg=n?(a.reduce((z,x)=>z+(+x.understanding||0),0)/n):0,att={参加:0,見学:0,欠席:0};
+    a.forEach(x=>{if(att[x.attendance]!=null)att[x.attendance]++});
+    const base=n?`<div class="k">回答 ${n}人</div><h3>理解度 平均 ${avg.toFixed(1)} / 3</h3><div class="meta">参加 ${att['参加']}人 ／ 見学 ${att['見学']}人 ／ 欠席 ${att['欠席']}人</div><div style="margin-top:12px"><b>うまくいったこと</b>${a.filter(x=>x.good).map(x=>'<div class="loopLink">'+hcVoiceEsc(x.good)+'</div>').join('')||'<div class="meta">まだありません</div>'}</div><div style="margin-top:12px"><b>次に変えたいこと</b>${a.filter(x=>x.next_try).map(x=>'<div class="loopLink">'+hcVoiceEsc(x.next_try)+'</div>').join('')||'<div class="meta">まだありません</div>'}</div><button class="btn2" style="margin-top:12px" onclick="hcLoadPlayerVoice()">↻ 回答を更新</button>`:'<b>まだPLAYERから回答はありません。</b><div class="meta">回答が届くとここに集約されます。</div><button class="btn2" style="margin-top:12px" onclick="hcLoadPlayerVoice()">↻ 回答を更新</button>';
+    box.innerHTML=base+hc5812NextStepHtml(a,avg);
+  }catch(e){box.innerHTML='<b>回答を読み込めません</b><div class="meta">'+hcVoiceEsc(e.message)+'</div>'}
+};
+setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},1000);
+
+/* HC_V5813_FAST_SAFE_LOOP
+   Safe bundle: no DB/schema/storage migration. Read-only cockpit + diverse practice candidates. */
+function hc5813Esc(v){return hcVoiceEsc(v==null?'':v)}
+function hc5813IssueCandidates(){
+  try{
+    const all=analysisIssuesV580();
+    if(!all||!all.length)return [];
+    let low=all.filter(x=>x.score<=3);
+    if(!low.length)low=all;
+    return low.slice(0,3);
+  }catch(e){return []}
+}
+function hc5813RenderCockpit(){
+  const box=document.getElementById('nextSessionCockpitBody'); if(!box)return;
+  const issues=hc5813IssueCandidates();
+  if(!issues.length){box.innerHTML='<b>まず32項目分析を1回保存</b><div class="meta">保存すると、課題候補 → 原則 → 練習候補へすぐ進めます。</div><button class="btn2" style="margin-top:10px" onclick="go(\'analysis\')">32項目分析を開く</button>';return}
+  const top=issues[0], link=ANALYSIS_LINKS_V580[top.item.code]||[top.item.name];
+  box.innerHTML=`<div class="k">PRIORITY CANDIDATE</div><h3>${hc5813Esc(top.item.code)}｜${hc5813Esc(top.item.name)}</h3><div class="meta">最新評価 ${top.score} / 5　｜　関連原則：${hc5813Esc(link[0]||'')}</div><div class="actions" style="margin-top:10px"><button class="btn" onclick="openAnalysisPracticeFlow('${top.item.id}')">練習候補3つを見る</button><button class="btn2" onclick="go('analysis')">分析全体を見る</button></div><div class="tinyStatus">候補表示のみ。評価や練習内容は自動変更しません。</div>`;
+}
+// Keep 3 options meaningfully different where the library allows it.
+const _analysisPracticeCandidatesV5813=analysisPracticeCandidatesV580;
+analysisPracticeCandidatesV580=function(item){
+  let ranked=[];
+  try{
+    const all=practiceData().filter(x=>x.phase===item.phase);
+    ranked=all.map(x=>{
+      const exact=(x.analysisCodes||[]).includes(item.code), tags=x.tags||[], keys=ANALYSIS_LINKS_V580[item.code]||[item.name];
+      let score=exact?100:0,reasons=exact?[item.code+' 個別リンク']:[];
+      keys.forEach((k,i)=>{if(tags.some(t=>String(t).toLowerCase().includes(String(k).toLowerCase()))){score+=i===0?12:6;reasons.push(k)}});
+      return{x,score,reasons};
+    }).sort((a,b)=>b.score-a.score||String(a.x.name).localeCompare(String(b.x.name),'ja'));
+  }catch(e){return _analysisPracticeCandidatesV5813(item)}
+  const picked=[],styles=new Set();
+  for(const r of ranked){const st=String(r.x.style||'標準');if(!styles.has(st)){picked.push(r);styles.add(st)}if(picked.length===3)break}
+  for(const r of ranked){if(picked.length===3)break;if(!picked.some(p=>p.x.id===r.x.id))picked.push(r)}
+  return picked.slice(0,3);
+};
+const _saveTeamObservationV5813=saveTeamObservation;
+saveTeamObservation=function(){_saveTeamObservationV5813();setTimeout(hc5813RenderCockpit,50)};
+const _renderPlanV5813=renderPlan;
+renderPlan=function(){_renderPlanV5813();hc5813RenderCockpit()};
+setTimeout(hc5813RenderCockpit,700);
+</script>
+<!-- HC_V5813_FAST_SAFE_LOOP -->
 
 </body></html>
