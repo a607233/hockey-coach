@@ -1481,6 +1481,7 @@ hc5842Render=function(){
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
 
 
+<!-- HOCKEY_COACH_V1_RC1: release candidate built from verified V5.8.45; no data migration or philosophy/cloud/tactical rewrite. -->
 <!-- HC_V5845_RELEASE_CHECK -->
 <style id="HC_V5845_RELEASE_CHECK_STYLE">
 .hc5845CheckResult{margin-top:12px;display:grid;gap:7px}.hc5845CheckRow{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #29434b;border-radius:12px;background:#0d1d22}.hc5845CheckRow b{font-size:12px}.hc5845CheckRow span{font-size:12px;font-weight:900}.hc5845Ok{color:#dfff52}.hc5845Warn{color:#ffd36b}.hc5845Summary{margin-top:4px;padding:12px;border-radius:14px;background:#10242b;border:1px solid #35535c;font-size:12px;line-height:1.65}
@@ -1504,7 +1505,7 @@ function hc5845RunCheck(){
  add('クラウド基盤',typeof hcCloudInit==='function'||typeof hcCloudRefresh==='function','接続機能');
  add('PLAYER VOICE',typeof hcRenderPlayerVoice==='function'||typeof hcPlayerVoiceRender==='function'||document.querySelector('[id*="playerVoice"],[id*="PlayerVoice"]'),'共有UI');
  const bad=rows.filter(x=>!x.ok).length;
- host.innerHTML=rows.map(x=>`<div class="hc5845CheckRow"><b>${esc(x.name)}</b><span class="${x.ok?'hc5845Ok':'hc5845Warn'}">${x.ok?'✓ OK':'△ 確認'}${x.note?'｜'+esc(x.note):''}</span></div>`).join('')+`<div class="hc5845Summary"><b>${bad?'確認が必要な項目があります':'この端末の基本チェックはすべてOKです'}</b><br>${bad?'「△ 確認」の項目だけ実機で確認してください。既存データは変更していません。':'次は2台で QR参加 → チーム共有 → PLAYER VOICE の実機確認を行えば、最終確認に進めます。'}<br><span class="muted">V5.8.45｜STEP 6 RELEASE CHECK</span></div>`;
+ host.innerHTML=rows.map(x=>`<div class="hc5845CheckRow"><b>${esc(x.name)}</b><span class="${x.ok?'hc5845Ok':'hc5845Warn'}">${x.ok?'✓ OK':'△ 確認'}${x.note?'｜'+esc(x.note):''}</span></div>`).join('')+`<div class="hc5845Summary"><b>${bad?'確認が必要な項目があります':'この端末の基本チェックはすべてOKです'}</b><br>${bad?'「△ 確認」の項目だけ実機で確認してください。既存データは変更していません。':'次は2台で QR参加 → チーム共有 → PLAYER VOICE の実機確認を行えば、最終確認に進めます。'}<br><span class="muted">HOCKEY COACH v1.0 RC1｜RELEASE CHECK</span></div>`;
 }
 </script>
 <!-- /HC_V5845_RELEASE_CHECK -->
