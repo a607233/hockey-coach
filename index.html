@@ -253,7 +253,7 @@ function defaultKpiOpportunityV5840(x){if(x?.kpiOpportunity)return x.kpiOpportun
 function defaultKpiSuccessV5840(x){if(x?.kpiSuccess)return x.kpiSuccess;if(x?.kpiHint){let t=String(x.kpiHint).split('/')[0].trim();return t||'今日の成功条件を満たした回数'}return x?.success||x?.judgment||'今日の成功条件を満たした回数'}
 function addPracticeToPlan(id){let x=practiceData().find(v=>v.id===id);if(!x)return;markPracticeRecent(id);plan.push({id:'v5-'+Date.now(),type:'練習',name:x.name,minutes:+x.minutes||15,purpose:x.purpose,constraint:x.constraint,question:x.question,judgment:x.judgment||'',kpiHint:x.kpiHint||'',kpiOpportunity:defaultKpiOpportunityV5840(x),kpiSuccess:defaultKpiSuccessV5840(x),memo:'',liveMemo:'',videoUrl:safeUrl(x.videoUrl),source:'library',practiceId:x.id,boardCustom:JSON.parse(JSON.stringify(x.boardCustom||[])),diagramImage:x.diagramImage||''});persist();renderPlan();closeModal()}
 function addBlank(){plan.push({id:'v5-'+Date.now(),type:'練習',name:'新しい練習',minutes:15,purpose:'',constraint:'',question:'',kpiOpportunity:'観察する局面が起きた回数',kpiSuccess:'成功条件を満たした回数',memo:'',videoUrl:''});persist();renderPlan();editItem(plan.length-1)}
-function planDiagramV100(x){let p=x.practiceId?practiceData().find(v=>v.id===x.practiceId):null,board=(Array.isArray(x.boardCustom)&&x.boardCustom.length)?x.boardCustom:(p?.boardCustom||[]),img=x.diagramImage||p?.diagramImage||'';if(Array.isArray(board)&&board.length)return `<div class="customBoard planBoardV100">${tbSvg(board)}</div>`;if(/^data:image\//.test(img)&&img.length>500)return `<img class="diagramImg" src="${img}" alt="${esc(x.name)}の練習図">`;return ''}
+function planDiagramV100(x){let p=x.practiceId?practiceData().find(v=>v.id===x.practiceId):null,board=(Array.isArray(x.boardCustom)&&x.boardCustom.length)?x.boardCustom:(p?.boardCustom||[]);if(Array.isArray(board)&&board.length)return `<div class="customBoard planBoardV100">${tbSvg(board)}</div>`;return ''}
 function renderPlan(){menuList.innerHTML=plan.length?plan.map((x,i)=>`<div class="menu"><div class="k">${esc(x.type||'練習')}｜${+x.minutes||0}分</div><h3>${esc(x.name||'')}</h3>${x.purpose?`<div class="meta">目的：${esc(x.purpose)}</div>`:''}${x.constraint?`<div class="meta">制約：${esc(x.constraint)}</div>`:''}${x.question?`<div class="meta">問い：${esc(x.question)}</div>`:''}${planDiagramV100(x)}<div class="kpiPlanHint"><b>今日見るKPI</b><br>機会：${esc(x.kpiOpportunity||defaultKpiOpportunityV5840(x))}<br>成功：${esc(x.kpiSuccess||defaultKpiSuccessV5840(x))}</div>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="editItem(${i})">編集</button><button onclick="moveItem(${i},-1)">↑</button><button onclick="moveItem(${i},1)">↓</button><button class="del" onclick="delItem(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだメニューがありません</div>`;let t=plan.reduce((a,x)=>a+(+x.minutes||0),0);totalMin.textContent=t;homeCount.textContent=plan.length;homeMin.textContent=t}
 function editItem(i){let x=plan[i];if(!x.kpiOpportunity)x.kpiOpportunity=defaultKpiOpportunityV5840(x);if(!x.kpiSuccess)x.kpiSuccess=defaultKpiSuccessV5840(x);openModal(`<div class="k">MENU EDIT</div><h2>練習を編集</h2><div class="field"><label>名称</label><input id="eName" class="input" value="${esc(x.name)}"></div><div class="field"><label>時間</label><input id="eMin" class="input" type="number" value="${+x.minutes||15}"></div><div class="field"><label>目的</label><textarea id="ePurpose" class="area">${esc(x.purpose||'')}</textarea></div><div class="field"><label>制約・ルール</label><textarea id="eConstraint" class="area">${esc(x.constraint||'')}</textarea></div><div class="field"><label>問い</label><textarea id="eQuestion" class="area">${esc(x.question||'')}</textarea></div><div class="field"><label>今日見るKPI｜機会 ＋1 の定義</label><textarea id="eKpiOpp" class="area" placeholder="例：ボールを失った回数">${esc(x.kpiOpportunity||'')}</textarea></div><div class="field"><label>今日見るKPI｜成功 ＋1 の定義</label><textarea id="eKpiSuccess" class="area" placeholder="例：4秒以内に前進を止めた回数">${esc(x.kpiSuccess||'')}</textarea><div class="kpiEditNote">おすすめ値です。今日の狙いに合わせて指導者が自由に変更できます。</div></div><div class="field"><label>動画URL（任意）</label><input id="eVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="saveEdit(${i})">保存</button>`)}
 function saveEdit(i){let x=plan[i];x.name=eName.value;x.minutes=+eMin.value||0;x.purpose=ePurpose.value;x.constraint=eConstraint.value;x.question=eQuestion.value;x.kpiOpportunity=eKpiOpp.value.trim();x.kpiSuccess=eKpiSuccess.value.trim();x.videoUrl=safeUrl(eVideo.value.trim());persist();renderPlan();closeModal()}
@@ -608,11 +608,26 @@ async function hcCloudInitialSync(){
     }
     const {data:fresh,error:e2}=await hcCloud.from('team_shared_state').select('data_key,payload').eq('team_id',hcCloudMembership.team_id); if(e2)throw e2;
     for(const r of fresh||[]){
-      if(r.data_key==='today_plan_by_profile') localStorage.setItem('hc_today_plan_by_profile_v586',JSON.stringify(r.payload||{}));
+      /* Today's plan is local-first for OWNER/STAFF. It is published only by the explicit
+         "チームに登録" action, so cloud init must never replace a locally saved plan. */
+      if(r.data_key==='today_plan_by_profile' && !hcIsStaff()){
+        const p=r.payload||{};
+        const profiles=(p.profiles&&typeof p.profiles==='object')?p.profiles:p;
+        localStorage.setItem('hc_today_plan_by_profile_v586',JSON.stringify(profiles||{}));
+      }
       if(r.data_key==='analysis_history') localStorage.setItem('hc_team_analysis_history_v577',JSON.stringify(r.payload||[]));
       if(r.data_key==='training_records') localStorage.setItem('hc_training_records',JSON.stringify(r.payload||[]));
     }
-    let buckets=jget('hc_today_plan_by_profile_v586',{}),pid=currentDataScopeV586();plan=JSON.parse(JSON.stringify(buckets[pid]||[]));localStorage.setItem('hc_today_plan',JSON.stringify(plan));
+    let pid=currentDataScopeV586(),buckets=jget('hc_today_plan_by_profile_v586',{});
+    if(hcIsStaff()){
+      /* hc_today_plan is the immediate autosave source of truth on the coach device. */
+      const saved=jget('hc_today_plan',[]);
+      if(Array.isArray(saved) && saved.length){plan=JSON.parse(JSON.stringify(saved));buckets[pid]=plan;localStorage.setItem('hc_today_plan_by_profile_v586',JSON.stringify(buckets))}
+      else plan=JSON.parse(JSON.stringify(buckets[pid]||[]));
+    }else{
+      plan=JSON.parse(JSON.stringify(buckets[pid]||[]));
+    }
+    localStorage.setItem('hc_today_plan',JSON.stringify(plan));
     renderPlan();renderHistory();renderTeamAnalysis();hcApplyRoleUI();
     hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・クラウド同期OK',true);
   }catch(e){console.error(e);hcCloudMsg('チーム接続OK・データ同期未完了：'+e.message)}finally{hcCloudSyncBusy=false}
@@ -1489,7 +1504,7 @@ hc5842Render=function(){
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
 
 
-<!-- HOCKEY_COACH_V1_RC5_DIAGRAM_POLISH: smaller arrowheads + clean hockey goal + remove stale white diagram area. -->
+<!-- HOCKEY_COACH_V1_RC6_TODAY_PERSIST: preserve OWNER/STAFF local today plan on reload + remove legacy white diagram image. -->
 <!-- HC_V5845_RELEASE_CHECK -->
 <style id="HC_V5845_RELEASE_CHECK_STYLE">
 .hc5845CheckResult{margin-top:12px;display:grid;gap:7px}.hc5845CheckRow{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #29434b;border-radius:12px;background:#0d1d22}.hc5845CheckRow b{font-size:12px}.hc5845CheckRow span{font-size:12px;font-weight:900}.hc5845Ok{color:#dfff52}.hc5845Warn{color:#ffd36b}.hc5845Summary{margin-top:4px;padding:12px;border-radius:14px;background:#10242b;border:1px solid #35535c;font-size:12px;line-height:1.65}
