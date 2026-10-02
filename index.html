@@ -1511,76 +1511,67 @@ function hc5845RunCheck(){
 <!-- /HC_V5845_RELEASE_CHECK -->
 
 
-<!-- HC_V1_RC2_AUTOLOGIN_FIX_ONLY -->
-<script id="HC_V1_RC2_AUTOLOGIN_FIX_ONLY_SCRIPT">
-/* Auto-login repair only. Keeps the existing anonymous Supabase identity/team membership. */
+<script>
+/* HC_V1_RC1_AUTH_RESTORE_DEFAULT_KEY_ONLY */
 (function(){
   const PROJECT_REF='ujwbmmiwdujowsxooiug';
-  const STORAGE_KEY='sb-'+PROJECT_REF+'-auth-token';
-  let initPromise=null;
-
-  function waitForSupabase(timeoutMs=12000){
+  let running=null;
+  function waitSupabase(ms=12000){
     return new Promise((resolve,reject)=>{
       const start=Date.now();
       (function tick(){
         if(window.supabase && typeof window.supabase.createClient==='function') return resolve();
-        if(Date.now()-start>=timeoutMs) return reject(new Error('Supabaseライブラリの読み込み待機がタイムアウトしました'));
-        setTimeout(tick,120);
+        if(Date.now()-start>ms) return reject(new Error('Supabaseライブラリを読み込めません'));
+        setTimeout(tick,100);
       })();
     });
   }
-
-  async function initCloudStable(){
-    if(initPromise) return initPromise;
-    initPromise=(async()=>{
-      const a=document.getElementById('cloudActions');
-      try{
-        await waitForSupabase();
-        if(!window.hcCloud){
-          window.hcCloud=window.supabase.createClient(window.HC_SUPABASE_URL||'https://ujwbmmiwdujowsxooiug.supabase.co',window.HC_SUPABASE_KEY||'sb_publishable_7pf-oFguV6axSOAwNdlE4Q_ekGuDApz',{
-            auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:STORAGE_KEY}
-          });
-        }
-        let r=await window.hcCloud.auth.getSession();
-        let session=r?.data?.session||null;
-        if(!session?.user){
-          const signed=await window.hcCloud.auth.signInAnonymously({options:{data:{app:'hockey-coach'}}});
-          if(signed.error) throw signed.error;
-          session=signed.data?.session||null;
-        }
-        window.hcCloudUser=session?.user || (await window.hcCloud.auth.getUser()).data?.user || null;
-        if(!window.hcCloudUser) throw new Error('ログイン状態を復元できませんでした');
-        window.hcCloudReady=true;
-        await window.hcLoadMembership();
-        await window.hcAcceptCloudInvite();
-        await window.hcLoadMembership();
-        const teamName=window.hcCloudMembership?.teams?.name||'';
-        window.hcCloudMsg(window.hcCloudMembership?(teamName+' に接続中'):'Supabase接続OK・チーム未参加',true);
-        if(a)a.innerHTML=window.hcCloudMembership?'':`<button onclick="hcCreateTeam()">クラウドチームを作成</button>`;
-        window.renderInvite();
-        if(typeof window.hcApplyRoleUI==='function') window.hcApplyRoleUI();
-        return true;
-      }catch(e){
-        window.hcCloudReady=false;
-        window.hcCloudMsg('クラウド接続未完了：'+(e?.message||e));
-        if(a)a.innerHTML='<button onclick="hcInitCloud()">再接続</button>';
-        try{window.renderInvite()}catch(_){}
-        throw e;
-      }finally{
-        initPromise=null;
-      }
-    })();
-    return initPromise;
+  async function restoreDefaultSession(){
+    await waitSupabase();
+    /* IMPORTANT: do not set storageKey. Supabase's original default key
+       sb-ujwbmmiwdujowsxooiug-auth-token contains the existing anonymous identity. */
+    const client=window.supabase.createClient(HC_SUPABASE_URL,HC_SUPABASE_KEY,{
+      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}
+    });
+    const got=await client.auth.getSession();
+    if(got.error) throw got.error;
+    let session=got.data?.session||null;
+    if(!session?.user){
+      const signed=await client.auth.signInAnonymously({options:{data:{app:'hockey-coach'}}});
+      if(signed.error) throw signed.error;
+      session=signed.data?.session||null;
+    }
+    hcCloud=client;
+    hcCloudUser=session?.user||null;
+    if(!hcCloudUser) throw new Error('ログイン状態を復元できませんでした');
+    hcCloudReady=true;
+    await hcLoadMembership();
+    await hcAcceptCloudInvite();
+    await hcLoadMembership();
+    const teamName=hcCloudMembership?.teams?.name||'';
+    hcCloudMsg(hcCloudMembership?(teamName+' に接続中'):'Supabase接続OK・チーム未参加',true);
+    const a=hcCloudEl('cloudActions');
+    if(a)a.innerHTML=hcCloudMembership?'':`<button onclick="hcCreateTeam()">クラウドチームを作成</button>`;
+    renderInvite();
+    if(typeof hcApplyRoleUI==='function')hcApplyRoleUI();
+    if(hcCloudMembership && typeof hcCloudInitialSync==='function')await hcCloudInitialSync();
+    if(typeof hcRenderTodayShare==='function')hcRenderTodayShare();
+    return hcCloudMembership;
   }
-
-  window.hcInitCloud=initCloudStable;
-  function boot(){ initCloudStable().catch(()=>{}); }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
+  window.hcInitCloud=function(){
+    if(running)return running;
+    running=restoreDefaultSession().catch(e=>{
+      hcCloudReady=false;
+      try{hcCloudMsg('クラウド接続未完了：'+(e?.message||e))}catch(_){}
+      throw e;
+    }).finally(()=>{running=null});
+    return running;
+  };
+  function boot(){window.hcInitCloud().catch(()=>{});}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,80),{once:true});
+  else setTimeout(boot,80);
   window.addEventListener('pageshow',boot);
   window.addEventListener('online',boot);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')boot()});
 })();
 </script>
-<!-- /HC_V1_RC2_AUTOLOGIN_FIX_ONLY -->
-
 </body></html>
