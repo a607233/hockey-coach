@@ -170,6 +170,35 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 <button class="nav" data-page="more"><b>•••</b>その他</button>
 </div></nav>
 
+<script>
+/* Data helpers shared by the application and regression tests. */
+(function(root){
+ 'use strict';
+ const keys=['hc_v5_state','hc_today_plan','hc_today_plan_by_profile_v586','hc_training_records','hc_team_analysis_history_v577','hc_team_analysis_items_v577','hc_season_profiles_v584','hc_team_settings_v52','hc_philosophy_items_v51','hc_team_vision_v5824','hc_team_methods_v52','hc_practice_library_v54','hc_practice_favorites_v584','hc_practice_recent_v584','hc_team_roles_v52','hc_review_draft_v582','hc_kpi_config_v53','hc_numeric_kpis_v53','hc_v586_season_migrated','hc_v56_seeded','hc_v5824_ph_seeded'];
+ function snapshot(storage){return Object.fromEntries(keys.filter(k=>storage.getItem(k)!==null).map(k=>[k,JSON.parse(storage.getItem(k))]));}
+ function restore(storage,data){
+  if(!data||!Array.isArray(data.practiceLibrary))throw new Error('バックアップ形式が違います');
+  const map=data.storage||{hc_today_plan:data.todayPlan||[],hc_today_plan_by_profile_v586:data.todayPlanByProfile||{},hc_training_records:data.trainingRecords||[],hc_philosophy_items_v51:data.philosophy||[],hc_team_methods_v52:data.methods||[],hc_practice_library_v54:data.practiceLibrary,hc_practice_favorites_v584:data.practiceFavorites||[],hc_practice_recent_v584:data.practiceRecent||[],hc_team_roles_v52:data.roles||[],hc_team_settings_v52:data.team||{},hc_season_profiles_v584:data.seasonProfiles||[],hc_team_analysis_items_v577:data.teamAnalysisItems||[],hc_team_analysis_history_v577:data.teamAnalysisHistory||[]};
+  const entries=Object.entries(map).filter(([k])=>keys.includes(k));
+  const arrays=new Set(['hc_today_plan','hc_training_records','hc_team_analysis_history_v577','hc_team_analysis_items_v577','hc_season_profiles_v584','hc_philosophy_items_v51','hc_team_methods_v52','hc_practice_library_v54','hc_practice_favorites_v584','hc_practice_recent_v584','hc_team_roles_v52','hc_kpi_config_v53','hc_numeric_kpis_v53']);
+  for(const [k,v] of entries){const flag=['hc_v586_season_migrated','hc_v56_seeded','hc_v5824_ph_seeded'].includes(k);if(flag){if(v!==1&&v!=='1')throw new Error('初期化状態の形式が違います');continue;}if(v===null||typeof v!=='object'||(arrays.has(k)?!Array.isArray(v):Array.isArray(v)))throw new Error('保存データの形式が違います：'+k);}
+  if(map.hc_today_plan_by_profile_v586&&Object.values(map.hc_today_plan_by_profile_v586).some(v=>!Array.isArray(v)))throw new Error('シーズン別メニューの形式が違います');
+  const before=entries.map(([k])=>[k,storage.getItem(k)]);
+  try{for(const [k,v] of entries)storage.setItem(k,JSON.stringify(v));}
+  catch(e){for(const [k,v] of before){if(v===null)storage.removeItem(k);else storage.setItem(k,v);}throw e;}
+ }
+ function mergeRecords(local,remote){
+  if(!Array.isArray(local)||!Array.isArray(remote))throw new Error('記録の形式が違います');
+  const result=new Map();
+  for(const item of [...remote,...local]){if(!item||typeof item!=='object'||Array.isArray(item))throw new Error('記録の形式が違います');const id=item.id||JSON.stringify(item);result.set(id,item);}
+  return [...result.values()].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+ }
+ function day(date=new Date()){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);}
+ root.HCReleaseData={keys,snapshot,restore,mergeRecords,day};
+ if(typeof module!=='undefined')module.exports=root.HCReleaseData;
+})(typeof window==='undefined'?globalThis:window);
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const PHASES=['攻撃','守備','攻→守','守→攻'];
@@ -204,7 +233,7 @@ function renderMethodBuilder(){
 }
 function mbPhase(p){window._mb={phase:p,key:'',leaf:'',judgment:''};renderMethodBuilder()}
 function mbLeaf(i){let o=methodOptionsV57(window._mb.phase)[i];if(!o)return;window._mb.key=o.key;window._mb.leaf=o.leaf;window._mb.judgment=o.judgment;renderMethodBuilder()}
-function mbAdd(id){let x=practiceData().find(v=>v.id===id);if(!x)return;state.phase=x.phase;state.principles=[window._mb.leaf];addPractice(x);closeModal();show('today')}
+function mbAdd(id){let x=practiceData().find(v=>v.id===id);if(!x)return;state.phase=x.phase;state.principles=[window._mb.leaf];addPracticeToPlan(x.id);closeModal();go('today')}
 
 function renderMethodMapV55(){let e=document.getElementById('methodMapV55');if(!e)return;e.className='methodMapV55';e.innerHTML=Object.entries(METHOD_V55).map(([phase,groups])=>`<details><summary>${phase}</summary>${groups.map(([main,subs])=>`<div class="methodLine"><b>${esc(main)}</b>${subs.map(([sub,j])=>`<div class="methodLine"><span class="tag">${esc(sub)}</span><div class="methodJudge">判断基準：${esc(j)}</div></div>`).join('')}</div>`).join('')}</details>`).join('')}
 
@@ -251,7 +280,7 @@ function renderRecommendationsModal(){let rs=recommendationCurrent(),groups=Math
 function swapRecommendation(i){let styles=['反復量重視','ゲーム性重視','全員参加重視'],ranked=recommendationRanked(styles[i]);if(ranked.length<2)return;recommendationSwapOffsets[i]=((recommendationSwapOffsets[i]||0)+1)%ranked.length;renderRecommendationsModal()}
 function defaultKpiOpportunityV5840(x){if(x?.kpiOpportunity)return x.kpiOpportunity;let p=x?.phase||'';if(p==='攻→守')return 'ボールを失った回数';if(p==='守→攻')return 'ボールを奪った回数';if(p==='守備')return '狙いとする守備局面が生まれた回数';return '狙いとする攻撃局面が生まれた回数'}
 function defaultKpiSuccessV5840(x){if(x?.kpiSuccess)return x.kpiSuccess;if(x?.kpiHint){let t=String(x.kpiHint).split('/')[0].trim();return t||'今日の成功条件を満たした回数'}return x?.success||x?.judgment||'今日の成功条件を満たした回数'}
-function addPracticeToPlan(id){let x=practiceData().find(v=>v.id===id);if(!x)return;markPracticeRecent(id);plan.push({id:'v5-'+Date.now(),type:'練習',name:x.name,minutes:+x.minutes||15,purpose:x.purpose,constraint:x.constraint,question:x.question,judgment:x.judgment||'',kpiHint:x.kpiHint||'',kpiOpportunity:defaultKpiOpportunityV5840(x),kpiSuccess:defaultKpiSuccessV5840(x),memo:'',liveMemo:'',videoUrl:safeUrl(x.videoUrl),source:'library',practiceId:x.id});persist();renderPlan();closeModal()}
+function addPracticeToPlan(id){let x=practiceData().find(v=>v.id===id);if(!x)return;markPracticeRecent(id);plan.push({id:'v5-'+Date.now(),type:'練習',name:x.name,minutes:+x.minutes||15,purpose:x.purpose,constraint:x.constraint,question:x.question,judgment:x.judgment||'',kpiHint:x.kpiHint||'',kpiOpportunity:defaultKpiOpportunityV5840(x),kpiSuccess:defaultKpiSuccessV5840(x),memo:'',liveMemo:'',videoUrl:safeUrl(x.videoUrl),source:'library',practiceId:x.id,principles:[...(x.principles||[])],analysisCodes:[...(x.analysisCodes||[])]});persist();renderPlan();closeModal()}
 function addBlank(){plan.push({id:'v5-'+Date.now(),type:'練習',name:'新しい練習',minutes:15,purpose:'',constraint:'',question:'',kpiOpportunity:'観察する局面が起きた回数',kpiSuccess:'成功条件を満たした回数',memo:'',videoUrl:''});persist();renderPlan();editItem(plan.length-1)}
 function renderPlan(){menuList.innerHTML=plan.length?plan.map((x,i)=>`<div class="menu"><div class="k">${esc(x.type||'練習')}｜${+x.minutes||0}分</div><h3>${esc(x.name||'')}</h3>${x.purpose?`<div class="meta">目的：${esc(x.purpose)}</div>`:''}${x.constraint?`<div class="meta">制約：${esc(x.constraint)}</div>`:''}${x.question?`<div class="meta">問い：${esc(x.question)}</div>`:''}<div class="kpiPlanHint"><b>今日見るKPI</b><br>機会：${esc(x.kpiOpportunity||defaultKpiOpportunityV5840(x))}<br>成功：${esc(x.kpiSuccess||defaultKpiSuccessV5840(x))}</div>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}<div class="actions"><button onclick="editItem(${i})">編集</button><button onclick="moveItem(${i},-1)">↑</button><button onclick="moveItem(${i},1)">↓</button><button class="del" onclick="delItem(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだメニューがありません</div>`;let t=plan.reduce((a,x)=>a+(+x.minutes||0),0);totalMin.textContent=t;homeCount.textContent=plan.length;homeMin.textContent=t}
 function editItem(i){let x=plan[i];if(!x.kpiOpportunity)x.kpiOpportunity=defaultKpiOpportunityV5840(x);if(!x.kpiSuccess)x.kpiSuccess=defaultKpiSuccessV5840(x);openModal(`<div class="k">MENU EDIT</div><h2>練習を編集</h2><div class="field"><label>名称</label><input id="eName" class="input" value="${esc(x.name)}"></div><div class="field"><label>時間</label><input id="eMin" class="input" type="number" value="${+x.minutes||15}"></div><div class="field"><label>目的</label><textarea id="ePurpose" class="area">${esc(x.purpose||'')}</textarea></div><div class="field"><label>制約・ルール</label><textarea id="eConstraint" class="area">${esc(x.constraint||'')}</textarea></div><div class="field"><label>問い</label><textarea id="eQuestion" class="area">${esc(x.question||'')}</textarea></div><div class="field"><label>今日見るKPI｜機会 ＋1 の定義</label><textarea id="eKpiOpp" class="area" placeholder="例：ボールを失った回数">${esc(x.kpiOpportunity||'')}</textarea></div><div class="field"><label>今日見るKPI｜成功 ＋1 の定義</label><textarea id="eKpiSuccess" class="area" placeholder="例：4秒以内に前進を止めた回数">${esc(x.kpiSuccess||'')}</textarea><div class="kpiEditNote">おすすめ値です。今日の狙いに合わせて指導者が自由に変更できます。</div></div><div class="field"><label>動画URL（任意）</label><input id="eVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="saveEdit(${i})">保存</button>`)}
@@ -485,7 +514,12 @@ function tbRender(){let e=document.getElementById('tbBoard');if(e)e.innerHTML=tb
 function tbSave(){window._practiceBoardCustom=JSON.parse(JSON.stringify(_tbItems));closeModal();setTimeout(()=>{let n=document.querySelector('.modal');},0);alert('作図を保持しました。練習編集画面の「保存」で確定します。')}
 function practiceDiagramV585(x){if(x.diagramImage)return `<div class="k">CUSTOM IMAGE</div><img class="diagramImg" src="${x.diagramImage}" alt="${esc(x.name)}の練習図">`;if(Array.isArray(x.boardCustom)&&x.boardCustom.length)return `<div class="k">TACTICAL BOARD</div><div class="customBoard">${tbSvg(x.boardCustom)}</div>`;return tacticalBoardV571(x)}
 function exportData(){let data={version:'5.8.5',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-async function restoreDataFromFile(input){let f=input.files?.[0];if(!f)return;let s=document.getElementById('restoreStatus');try{let d=JSON.parse(await f.text());if(!d||!Array.isArray(d.practiceLibrary))throw new Error('形式が違います');if(!confirm('現在のHOCKEY COACHデータをバックアップ内容で復元しますか？')){input.value='';return}let map=[['hc_today_plan',d.todayPlan||[]],['hc_training_records',d.trainingRecords||[]],['hc_philosophy_items_v51',d.philosophy||[]],['hc_team_methods_v52',d.methods||[]],['hc_practice_library_v54',d.practiceLibrary||[]],['hc_practice_favorites_v584',d.practiceFavorites||[]],['hc_practice_recent_v584',d.practiceRecent||[]],['hc_team_roles_v52',d.roles||[]],['hc_team_settings_v52',d.team||{}],['hc_season_profiles_v584',d.seasonProfiles||[]],['hc_team_analysis_items_v577',d.teamAnalysisItems||TEAM_ANALYSIS_DEFAULT_V577],['hc_team_analysis_history_v577',d.teamAnalysisHistory||[]]];map.forEach(([k,v])=>_lsSet(k,JSON.stringify(v)));if(s)s.textContent='✓ 復元しました。画面を再読み込みします。';setTimeout(()=>location.reload(),500)}catch(e){if(s)s.textContent='復元できませんでした：HOCKEY COACHのJSONバックアップを選んでください。'}finally{input.value=''}}
+async function restoreDataFromFile(input){
+ const f=input.files?.[0];if(!f)return;const status=document.getElementById('restoreStatus');
+ try{const data=JSON.parse(await f.text());if(!confirm('現在のデータをバックアップで復元しますか？'))return;
+ HCReleaseData.restore(localStorage,data);if(status)status.textContent='✓ 復元しました';setTimeout(()=>location.reload(),500);
+ }catch(e){if(status)status.textContent='復元できませんでした：'+e.message;}finally{input.value='';}
+}
 
 function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();renderInvite();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';renderSeasonProfiles()}
@@ -533,7 +567,7 @@ openTeamAnalysisHistory=function(){let pid=currentDataScopeV586(),h=jget('hc_tea
 analysisPracticeCandidatesV580=function(item){let all=practiceData().filter(x=>x.phase===item.phase);return all.map(x=>{let exact=(x.analysisCodes||[]).includes(item.code),tags=x.tags||[],keys=ANALYSIS_LINKS_V580[item.code]||[item.name],score=exact?100:0,reasons=exact?[item.code+' 個別リンク']:[];keys.forEach((k,i)=>{if(tags.some(t=>String(t).toLowerCase().includes(String(k).toLowerCase()))){score+=i===0?12:6;reasons.push(k)}});return{x,score,reasons}}).sort((a,b)=>b.score-a.score||String(a.x.name).localeCompare(String(b.x.name),'ja')).slice(0,3)}
 const _renderLibraryV586=renderLibrary;renderLibrary=function(){standardizePracticeTagsV586();_renderLibraryV586();document.querySelectorAll('#practiceLibraryList .menu').forEach((el,i)=>{});}
 const _commitPracticeV586=commitPractice;commitPractice=function(i){_commitPracticeV586(i);setTimeout(standardizePracticeTagsV586,0)}
-const _exportDataV586=exportData;exportData=function(){saveScopedPlanV586();let data={version:'5.8.15',schemaVersion:2,exportedAt:new Date().toISOString(),todayPlanByProfile:jget('hc_today_plan_by_profile_v586',{}),todayPlan:plan,trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+const _exportDataV586=exportData;exportData=function(){saveScopedPlanV586();let data={version:'5.8.15',schemaVersion:3,storage:HCReleaseData.snapshot(localStorage),exportedAt:new Date().toISOString(),todayPlanByProfile:jget('hc_today_plan_by_profile_v586',{}),todayPlan:plan,trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function initV586(){migrateSeasonDataV586();standardizePracticeTagsV586();renderPlan();renderHistory();renderTeamAnalysis();renderLibrary();renderSeasonProfiles()}
 initV586();
 </script>
@@ -564,7 +598,7 @@ setTimeout(hcInitCloud,50);
 
 <script>
 /* HC_V588_TEAM_CLOUD_SYNC */
-let hcCloudSyncBusy=false,hcCloudSyncTimer=null;
+let hcCloudSyncBusy=false,hcCloudSyncTimer=null,hcCloudPushRunning=false;const hcCloudPendingKeys=new Map();let hcCloudPushVersion=0;
 function hcIsStaff(){return String(hcCloudMembership?.role||'').toLowerCase()==='staff'}
 function hcApplyRoleUI(){
   const staff=hcIsStaff(), area=document.getElementById('roleAdminArea');
@@ -575,20 +609,41 @@ function hcApplyRoleUI(){
 }
 function hcCloudPayloads(){
   saveScopedPlanV586?.();
+  const pid=currentDataScopeV586();
+  // Only the active season is published. Other teams' local data stay on this device.
   return {
-    today_plan_by_profile:jget('hc_today_plan_by_profile_v586',{}),
-    analysis_history:jget('hc_team_analysis_history_v577',[]),
-    training_records:jget('hc_training_records',[])
+    today_plan_by_profile:{[pid]:JSON.parse(JSON.stringify(plan))},
+    analysis_history:jget('hc_team_analysis_history_v577',[]).filter(r=>r.profileId===pid),
+    training_records:jget('hc_training_records',[]).filter(r=>r.profileId===pid)
   };
 }
 async function hcCloudPushKey(key,value){
   if(!hcCloudReady||!hcCloudMembership||!hcIsStaff())return;
-  const row={team_id:hcCloudMembership.team_id,data_key:key,payload:value,updated_by:hcCloudUser.id,updated_at:new Date().toISOString()};
-  const {error}=await hcCloud.from('team_shared_state').upsert(row,{onConflict:'team_id,data_key'}); if(error)throw error;
+  const team=hcCloudMembership.team_id;
+  for(let attempt=0;attempt<3;attempt++){
+    const {data:previous,error:readError}=await hcCloud.from('team_shared_state').select('payload,updated_at').eq('team_id',team).eq('data_key',key).maybeSingle();
+    if(readError)throw readError;
+    const records=key==='analysis_history'||key==='training_records';
+    const payload=records?HCReleaseData.mergeRecords(value,previous?.payload||[]):value;
+    const row={team_id:team,data_key:key,payload,updated_by:hcCloudUser.id,updated_at:new Date().toISOString()};
+    if(previous){
+      const {data:saved,error}=await hcCloud.from('team_shared_state').update(row).eq('team_id',team).eq('data_key',key).eq('updated_at',previous.updated_at).select('data_key');
+      if(error)throw error;if(saved?.length)return;
+    }else{
+      const {error}=await hcCloud.from('team_shared_state').insert(row);
+      if(!error)return;if(error.code!=='23505')throw error;
+    }
+  }
+  throw new Error('別の端末が更新しました。再接続して同期してください。');
 }
 function hcScheduleCloudPush(keys){
-  if(!hcIsStaff())return; clearTimeout(hcCloudSyncTimer);
-  hcCloudSyncTimer=setTimeout(async()=>{try{const p=hcCloudPayloads();for(const k of keys)await hcCloudPushKey(k,p[k]);hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・同期済み',true)}catch(e){console.error(e);hcCloudMsg('接続中・同期エラー：'+e.message)}},500);
+  if(!hcIsStaff())return;keys.forEach(k=>hcCloudPendingKeys.set(k,++hcCloudPushVersion));clearTimeout(hcCloudSyncTimer);
+  hcCloudSyncTimer=setTimeout(async()=>{
+    if(hcCloudPushRunning)return;hcCloudPushRunning=true;let failed=false;
+    try{const p=hcCloudPayloads();for(const [k,version] of [...hcCloudPendingKeys]){await hcCloudPushKey(k,p[k]);if(hcCloudPendingKeys.get(k)===version)hcCloudPendingKeys.delete(k);}hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・同期済み',true);}
+    catch(e){failed=true;console.error(e);hcCloudMsg('接続中・同期エラー：'+e.message);}
+    finally{hcCloudPushRunning=false;if(!failed&&hcCloudPendingKeys.size)hcScheduleCloudPush([]);}
+  },500);
 }
 async function hcCloudInitialSync(){
   if(!hcCloudReady||!hcCloudMembership||hcCloudSyncBusy)return;hcCloudSyncBusy=true;
@@ -600,9 +655,9 @@ async function hcCloudInitialSync(){
     }
     const {data:fresh,error:e2}=await hcCloud.from('team_shared_state').select('data_key,payload').eq('team_id',hcCloudMembership.team_id); if(e2)throw e2;
     for(const r of fresh||[]){
-      if(r.data_key==='today_plan_by_profile') localStorage.setItem('hc_today_plan_by_profile_v586',JSON.stringify(r.payload||{}));
-      if(r.data_key==='analysis_history') localStorage.setItem('hc_team_analysis_history_v577',JSON.stringify(r.payload||[]));
-      if(r.data_key==='training_records') localStorage.setItem('hc_training_records',JSON.stringify(r.payload||[]));
+      // Shared menus are imported only through hcFetchTodayNow, with confirmation for STAFF.
+      if(r.data_key==='analysis_history') localStorage.setItem('hc_team_analysis_history_v577',JSON.stringify(HCReleaseData.mergeRecords(jget(r.data_key==='analysis_history'?'hc_team_analysis_history_v577':'hc_training_records',[]),r.payload||[])));
+      if(r.data_key==='training_records') localStorage.setItem('hc_training_records',JSON.stringify(HCReleaseData.mergeRecords(jget(r.data_key==='analysis_history'?'hc_team_analysis_history_v577':'hc_training_records',[]),r.payload||[])));
     }
     let buckets=jget('hc_today_plan_by_profile_v586',{}),pid=currentDataScopeV586();plan=JSON.parse(JSON.stringify(buckets[pid]||[]));localStorage.setItem('hc_today_plan',JSON.stringify(plan));
     renderPlan();renderHistory();renderTeamAnalysis();hcApplyRoleUI();
@@ -628,7 +683,7 @@ setTimeout(hcInitCloud,250);
 /* HC_V589_MANUAL_TEAM_SHARE */
 function hcSharedPlanEnvelope(){
   saveScopedPlanV586?.();
-  return {schemaVersion:1,profiles:jget('hc_today_plan_by_profile_v586',{}),sharedPlan:JSON.parse(JSON.stringify(plan||[])),sharedAt:new Date().toISOString(),sharedBy:hcCloudUser?.id||null};
+  return {schemaVersion:1,profiles:{[currentDataScopeV586()]:JSON.parse(JSON.stringify(plan||[]))},sharedPlan:JSON.parse(JSON.stringify(plan||[])),sharedAt:new Date().toISOString(),sharedBy:hcCloudUser?.id||null};
 }
 function hcRenderTodayShare(message,isError=false){
   const st=document.getElementById('teamTodayShareStatus'), ac=document.getElementById('teamTodayShareActions'), help=document.getElementById('teamTodayShareHelp');
@@ -669,8 +724,10 @@ async function hcFetchTodayNow(){
       const vals=Object.values(profiles||{}).filter(Array.isArray);
       shared=vals.length?vals[0]:[];
     }
+    if(hcIsStaff()&&JSON.stringify(plan)!==JSON.stringify(shared||[])&&!confirm('編集中のメニューをクラウドの内容に置き換えますか？')){hcRenderTodayShare('取得をキャンセルしました');return;}
     plan=JSON.parse(JSON.stringify(shared||[]));
     localStorage.setItem('hc_today_plan',JSON.stringify(plan));
+    saveScopedPlanV586();
     renderPlan();
     const tm=data.updated_at?new Date(data.updated_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}):'';
     hcRenderTodayShare(`✓ 最新メニュー取得済み${tm?' '+tm:''}｜${plan.length}件`);
@@ -717,7 +774,7 @@ setTimeout(()=>hcRenderTodayShare(),600);
 let hcVoiceSubmitting=false;
 function hcTodayShareId(){
   const names=(plan||[]).map(x=>String(x.id||x.name||'')).join('|');
-  let h=2166136261; const raw=(hcCloudMembership?.team_id||'')+'|'+names+'|'+(plan||[]).length;
+  let h=2166136261; const raw=(hcCloudMembership?.team_id||'')+'|'+HCReleaseData.day()+'|'+names+'|'+(plan||[]).length;
   for(let i=0;i<raw.length;i++){h^=raw.charCodeAt(i);h=Math.imul(h,16777619)}
   return 'today-'+(h>>>0).toString(16);
 }
@@ -1263,7 +1320,7 @@ function deltaLabelV5836(now,prev){if(!prev)return '';let d=now-prev;if(d>0)retu
 const _renderTeamAnalysisV5836=renderTeamAnalysis;
 renderTeamAnalysis=function(){_renderTeamAnalysisV5836();let list=teamAnalysisItems().filter(x=>x.phase===teamAnalysisPhase);document.querySelectorAll('#teamAnalysisItems .analysisItem').forEach((el,i)=>{let x=list[i];if(!x)return;let rb=el.querySelector('.ratingBlock');if(!rb)return;let now=+teamAnalysisDraft[x.id]||0,prev=previousScoredObservationV5836(x.id),pv=+prev?.scores?.[x.id]||0,ev=teamAnalysisEvidenceDraft[x.id]||'';let box=document.createElement('div');box.className='analysisEvidence';box.innerHTML=`<label>評価の根拠（短く）</label><textarea maxlength="180" placeholder="例：中央では正面から寄せ、逆を使われた">${esc(ev)}</textarea>${prev?`<div class="analysisCompare">${now?deltaLabelV5836(now,pv):`<b>前回 ${pv}点</b>`}<div class="evidenceMini">${esc(prev.evidence?.[x.id]||'前回は項目別メモなし')}</div></div>`:'<div class="evidenceMini">初回評価です。次回からここに比較が表示されます。</div>'}`;let ta=box.querySelector('textarea');ta.addEventListener('input',()=>{teamAnalysisEvidenceDraft[x.id]=ta.value});rb.appendChild(box)})};
 const _saveTeamObservationV5836=saveTeamObservation;
-saveTeamObservation=function(){let scored=Object.keys(teamAnalysisDraft).filter(k=>+teamAnalysisDraft[k]>0);if(!scored.length){alert('少なくとも1項目を評価してください');return}let h=jget('hc_team_analysis_history_v577',[]);let ev={};scored.forEach(id=>{let v=String(teamAnalysisEvidenceDraft[id]||'').trim();if(v)ev[id]=v});h.unshift({id:'obs-'+Date.now(),profileId:currentProfileIdV585(),date:teamObsDate.value||new Date().toISOString().slice(0,10),context:teamObsContext.value,memo:teamObsMemo.value.trim(),scores:{...teamAnalysisDraft},evidence:ev});localStorage.setItem('hc_team_analysis_history_v577',JSON.stringify(h));teamAnalysisDraft={};teamAnalysisEvidenceDraft={};teamObsMemo.value='';alert('自チーム分析を保存しました');renderTeamAnalysis()};
+saveTeamObservation=function(){let scored=Object.keys(teamAnalysisDraft).filter(k=>+teamAnalysisDraft[k]>0);if(!scored.length){alert('少なくとも1項目を評価してください');return}let h=jget('hc_team_analysis_history_v577',[]);let ev={};scored.forEach(id=>{let v=String(teamAnalysisEvidenceDraft[id]||'').trim();if(v)ev[id]=v});h.unshift({id:'obs-'+Date.now(),profileId:currentProfileIdV585(),date:teamObsDate.value||new Date().toISOString().slice(0,10),context:teamObsContext.value,memo:teamObsMemo.value.trim(),scores:{...teamAnalysisDraft},evidence:ev});localStorage.setItem('hc_team_analysis_history_v577',JSON.stringify(h));hcScheduleCloudPush(['analysis_history']);teamAnalysisDraft={};teamAnalysisEvidenceDraft={};teamObsMemo.value='';alert('自チーム分析を保存しました');renderTeamAnalysis()};
 const _openTeamAnalysisHistoryV5836=openTeamAnalysisHistory;
 openTeamAnalysisHistory=function(){let h=analysisHistoryV5836(),items=teamAnalysisItems();openModal(`<div class="k">TEAM ANALYSIS HISTORY</div><h2>観測履歴</h2>${h.length?h.map(r=>{let vals=Object.values(r.scores||{}).map(Number).filter(Boolean),avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;let ev=Object.entries(r.evidence||{}).map(([id,v])=>{let it=items.find(x=>x.id===id);return it&&v?`<div class="historyEvidence"><b>${esc(it.code)}｜${esc(it.name)}</b><br>${esc(v)}</div>`:''}).join('');return `<div class="menu"><div class="k">${esc(r.date)}｜${esc(r.context||'')}</div><h3>入力 ${vals.length}項目｜平均 ${avg.toFixed(1)}</h3><div class="meta">${esc(r.memo||'')}</div>${ev}<div class="actions"><button class="del" onclick="deleteTeamObservation('${r.id}')">削除</button></div></div>`}).join(''):'<div class="empty">履歴なし</div>'}`)};
 const _openAnalysisDiagnosticV5836=openAnalysisDiagnosticV5834;
@@ -1423,13 +1480,13 @@ function hc5842Records(){let pid=hc5842Scope();return jget('hc_training_records'
 function hc5842Avg(scores){let v=Object.values(scores||{}).map(Number).filter(n=>n>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
 function hc5842Delta(now,old){if(now==null||old==null)return '';let d=now-old,cls=d>0?'growthDeltaUp5842':d<0?'growthDeltaDown5842':'growthDeltaSame5842',arrow=d>0?'↑':d<0?'↓':'→';return `<span class="${cls}">${arrow} ${d>0?'+':''}${d.toFixed(1)}</span>`}
 function hc5842PhaseSummary(obs){let items=teamAnalysisItems(),phases=['攻撃','守備','攻→守','守→攻'];return phases.map(p=>{let its=items.filter(x=>x.phase===p),vals=its.map(x=>+obs?.scores?.[x.id]||0).filter(Boolean),avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;return {p,avg,n:vals.length,total:its.length}})}
-function hc5842Principles(records){let m={};records.forEach(r=>(r.plan||[]).forEach(x=>{let ps=[...(x.principles||[]),x.analysisPrinciple].filter(Boolean);ps.forEach(p=>m[p]=(m[p]||0)+(+x.minutes||15))}));return Object.entries(m).sort((a,b)=>b[1]-a[1])}
+function hc5842Principles(records){let m={};records.forEach(r=>(r.plan||[]).forEach(x=>{let ps=[...new Set([...(x.principles||[]),x.analysisPrinciple].filter(Boolean))];ps.forEach(p=>m[p]=(m[p]||0)+(+x.minutes||0))}));return Object.entries(m).sort((a,b)=>b[1]-a[1])}
 function hc5842Codes(records){let last={};records.forEach(r=>{let d=new Date(r.date).getTime();(r.plan||[]).forEach(x=>{let cs=[...(x.analysisCodes||[]),x.analysisCode].filter(Boolean);cs.forEach(c=>last[c]=Math.max(last[c]||0,d))})});return last}
 function hc5842Kpi(records){let out=[];records.slice(-8).reverse().forEach(r=>(r.plan||[]).forEach(x=>{let k=x.coachKpi||{},opp=+k.opp||0,suc=+k.success||0;if(opp)out.push({date:r.date,name:x.name||'練習',opp,suc,rate:Math.round(suc/opp*100),oppDef:x.kpiOpportunity||'',sucDef:x.kpiSuccess||''})}));return out.slice(0,6)}
-function hc5842Render(){let host=document.getElementById('growthDashboard5842');if(!host)return;let obs=hc5842Obs(),rec=hc5842Records(),first=obs[0],latest=obs[obs.length-1],a0=hc5842Avg(first?.scores),a1=hc5842Avg(latest?.scores),phaseNow=hc5842PhaseSummary(latest),phaseOld=hc5842PhaseSummary(first),principles=hc5842Principles(rec),mins=principles.reduce((s,x)=>s+x[1],0),lastCodes=hc5842Codes(rec),items=teamAnalysisItems(),now=Date.now();let untouched=items.map(x=>({x,t:lastCodes[x.code]||0})).sort((a,b)=>a.t-b.t).slice(0,6),kpis=hc5842Kpi(rec);
+function hc5842Render(){let host=document.getElementById('growthDashboard5842');if(!host)return;let obs=hc5842Obs(),rec=hc5842Records(),first=obs[0],latest=obs[obs.length-1],a0=hc5842Avg(first?.scores),a1=hc5842Avg(latest?.scores),phaseNow=hc5842PhaseSummary(latest),phaseOld=hc5842PhaseSummary(first),principles=hc5842Principles(rec),mins=rec.reduce((sum,r)=>sum+(r.plan||[]).reduce((n,x)=>n+(+x.minutes||0),0),0),lastCodes=hc5842Codes(rec),items=teamAnalysisItems(),now=Date.now();let untouched=items.map(x=>({x,t:lastCodes[x.code]||0})).sort((a,b)=>a.t-b.t).slice(0,6),kpis=hc5842Kpi(rec);
 let hero=latest?`<div class="growthHero5842"><div class="k">TEAM GROWTH｜${esc(latest.date||'')}</div><div class="big">最新平均 ${a1==null?'—':a1.toFixed(1)} / 5</div><div class="meta">${obs.length}回の分析を蓄積 ${a0!=null&&a1!=null?'｜ 初回 '+a0.toFixed(1)+' → 最新 '+a1.toFixed(1)+' '+hc5842Delta(a1,a0):''}</div></div>`:`<div class="growthEmpty5842">32項目分析を保存すると、チームの変化がここに表示されます。</div>`;
 let phases=latest?`<div class="card"><div class="k">32 ANALYSIS TREND</div><div class="title" style="font-size:19px">局面別の現在地</div><div class="growthGrid5842">${phaseNow.map((z,i)=>`<div class="growthStat5842"><span class="growthPhase5842">${z.p}</span><br><b>${z.avg==null?'—':z.avg.toFixed(1)}</b> / 5 ${phaseOld[i]?.avg!=null&&z.avg!=null?hc5842Delta(z.avg,phaseOld[i].avg):''}<div class="growthBar5842"><i style="width:${z.avg==null?0:Math.max(0,Math.min(100,z.avg/5*100))}%"></i></div><div class="growthNote5842">入力 ${z.n}/${z.total}項目</div></div>`).join('')}</div></div>`:'';
-let pr=`<div class="card"><div class="k">TRAINING EXPOSURE</div><div class="title" style="font-size:19px">原則別の取り組み量</div>${principles.length?principles.slice(0,8).map(([p,m])=>`<div class="growthRow5842"><div class="row"><b>${esc(p)}</b><span>${m}分</span></div><div class="growthBar5842"><i style="width:${Math.max(4,Math.round(m/(principles[0][1]||1)*100))}%"></i></div></div>`).join(''):`<div class="growthEmpty5842">練習記録を保存すると、扱った原則と時間が表示されます。</div>`}<div class="growthNote5842">記録済み練習時間の参考集計：${mins}分。練習に設定された原則をもとに集計します。</div></div>`;
+let pr=`<div class="card"><div class="k">TRAINING EXPOSURE</div><div class="title" style="font-size:19px">原則別の取り組み量</div>${principles.length?principles.slice(0,8).map(([p,m])=>`<div class="growthRow5842"><div class="row"><b>${esc(p)}</b><span>${m}分</span></div><div class="growthBar5842"><i style="width:${Math.max(4,Math.round(m/(principles[0][1]||1)*100))}%"></i></div></div>`).join(''):`<div class="growthEmpty5842">練習記録を保存すると、扱った原則と時間が表示されます。</div>`}<div class="growthNote5842">記録済み練習の合計：${mins}分。複数原則の練習は各原則に時間を計上するため、原則別の合計とは一致しません。</div></div>`;
 let gap=`<div class="card"><div class="k">RECENTLY UNTOUCHED</div><div class="title" style="font-size:19px">最近扱えていない32項目</div>${rec.length?untouched.map(o=>`<div class="growthRow5842"><b>${esc(o.x.code)}｜${esc(o.x.name)}</b><div class="meta">${o.t?'最終関連練習 '+new Date(o.t).toLocaleDateString('ja-JP'):'このシーズンの関連練習記録なし'}</div></div>`).join(''):`<div class="growthEmpty5842">練習記録が増えると、最近扱えていない項目を確認できます。</div>`}<div class="growthNote5842">「不足＝必ず練習すべき」という判定ではありません。次のテーマを考える材料として使います。</div></div>`;
 let kp=`<div class="card"><div class="k">PRACTICE KPI</div><div class="title" style="font-size:19px">最近の練習別KPI</div>${kpis.length?kpis.map(z=>`<div class="growthRow5842"><div class="row"><div><b>${esc(z.name)}</b><div class="meta">${new Date(z.date).toLocaleDateString('ja-JP')}｜機会 ${z.opp} / 成功 ${z.suc}</div></div><b style="color:#dfff52">${z.rate}%</b></div></div>`).join(''):`<div class="growthEmpty5842">Coach Modeで練習別KPIを計測すると、最近の結果が表示されます。</div>`}<div class="growthNote5842">KPI定義が異なる練習同士の成功率を単純比較しません。各練習の変化を見るための表示です。</div></div>`;
 host.innerHTML=`<div class="growth5842">${hero}${phases}${pr}${gap}${kp}</div>`}
@@ -1502,7 +1559,7 @@ function hc5845RunCheck(){
  add('作図エディタ',typeof openTacticalEditorFromPractice==='function','起動関数');
  add('バックアップ',typeof exportData==='function'&&typeof restoreDataFromFile==='function','書出し・復元');
  add('シーズン分離',typeof saveScopedPlanV586==='function'&&typeof useSeasonProfile==='function','保存領域');
- add('クラウド基盤',typeof hcCloudInit==='function'||typeof hcCloudRefresh==='function','接続機能');
+ add('クラウド基盤',typeof hcInitCloud==='function'&&hcCloudReady&&!!hcCloudMembership,'接続機能');
  add('PLAYER VOICE',typeof hcRenderPlayerVoice==='function'||typeof hcPlayerVoiceRender==='function'||document.querySelector('[id*="playerVoice"],[id*="PlayerVoice"]'),'共有UI');
  const bad=rows.filter(x=>!x.ok).length;
  host.innerHTML=rows.map(x=>`<div class="hc5845CheckRow"><b>${esc(x.name)}</b><span class="${x.ok?'hc5845Ok':'hc5845Warn'}">${x.ok?'✓ OK':'△ 確認'}${x.note?'｜'+esc(x.note):''}</span></div>`).join('')+`<div class="hc5845Summary"><b>${bad?'確認が必要な項目があります':'この端末の基本チェックはすべてOKです'}</b><br>${bad?'「△ 確認」の項目だけ実機で確認してください。既存データは変更していません。':'次は2台で QR参加 → チーム共有 → PLAYER VOICE の実機確認を行えば、最終確認に進めます。'}<br><span class="muted">HOCKEY COACH v1.0 RC1｜RELEASE CHECK</span></div>`;
