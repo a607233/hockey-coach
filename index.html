@@ -1511,33 +1511,76 @@ function hc5845RunCheck(){
 <!-- /HC_V5845_RELEASE_CHECK -->
 
 
-<!-- HC_V1_RC2_AUTO_LOGIN_ONLY -->
-<script id="HC_V1_RC2_AUTO_LOGIN_ONLY_SCRIPT">
-/* RC2: restore/reinforce automatic cloud login only. No user-data migration or feature changes. */
+<!-- HC_V1_RC2_AUTOLOGIN_FIX_ONLY -->
+<script id="HC_V1_RC2_AUTOLOGIN_FIX_ONLY_SCRIPT">
+/* Auto-login repair only. Keeps the existing anonymous Supabase identity/team membership. */
 (function(){
-  const previousInit = window.hcInitCloud;
-  if (typeof previousInit !== 'function') return;
-  let running = null;
-  window.hcInitCloud = function(){
-    if (running) return running;
-    running = Promise.resolve().then(()=>previousInit()).finally(()=>{ running=null; });
-    return running;
-  };
-  async function autoLogin(){
-    try{
-      await window.hcInitCloud();
-      if (window.hcCloud && window.hcCloudReady) {
-        const {data:{session}} = await window.hcCloud.auth.getSession();
-        if (!session?.user) await window.hcInitCloud();
-      }
-    }catch(e){ console.error('HOCKEY COACH auto login',e); }
+  const PROJECT_REF='ujwbmmiwdujowsxooiug';
+  const STORAGE_KEY='sb-'+PROJECT_REF+'-auth-token';
+  let initPromise=null;
+
+  function waitForSupabase(timeoutMs=12000){
+    return new Promise((resolve,reject)=>{
+      const start=Date.now();
+      (function tick(){
+        if(window.supabase && typeof window.supabase.createClient==='function') return resolve();
+        if(Date.now()-start>=timeoutMs) return reject(new Error('Supabaseライブラリの読み込み待機がタイムアウトしました'));
+        setTimeout(tick,120);
+      })();
+    });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(autoLogin,120));
-  else setTimeout(autoLogin,120);
-  window.addEventListener('pageshow',()=>setTimeout(autoLogin,80));
-  window.addEventListener('online',()=>setTimeout(autoLogin,80));
+
+  async function initCloudStable(){
+    if(initPromise) return initPromise;
+    initPromise=(async()=>{
+      const a=document.getElementById('cloudActions');
+      try{
+        await waitForSupabase();
+        if(!window.hcCloud){
+          window.hcCloud=window.supabase.createClient(window.HC_SUPABASE_URL||'https://ujwbmmiwdujowsxooiug.supabase.co',window.HC_SUPABASE_KEY||'sb_publishable_7pf-oFguV6axSOAwNdlE4Q_ekGuDApz',{
+            auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:STORAGE_KEY}
+          });
+        }
+        let r=await window.hcCloud.auth.getSession();
+        let session=r?.data?.session||null;
+        if(!session?.user){
+          const signed=await window.hcCloud.auth.signInAnonymously({options:{data:{app:'hockey-coach'}}});
+          if(signed.error) throw signed.error;
+          session=signed.data?.session||null;
+        }
+        window.hcCloudUser=session?.user || (await window.hcCloud.auth.getUser()).data?.user || null;
+        if(!window.hcCloudUser) throw new Error('ログイン状態を復元できませんでした');
+        window.hcCloudReady=true;
+        await window.hcLoadMembership();
+        await window.hcAcceptCloudInvite();
+        await window.hcLoadMembership();
+        const teamName=window.hcCloudMembership?.teams?.name||'';
+        window.hcCloudMsg(window.hcCloudMembership?(teamName+' に接続中'):'Supabase接続OK・チーム未参加',true);
+        if(a)a.innerHTML=window.hcCloudMembership?'':`<button onclick="hcCreateTeam()">クラウドチームを作成</button>`;
+        window.renderInvite();
+        if(typeof window.hcApplyRoleUI==='function') window.hcApplyRoleUI();
+        return true;
+      }catch(e){
+        window.hcCloudReady=false;
+        window.hcCloudMsg('クラウド接続未完了：'+(e?.message||e));
+        if(a)a.innerHTML='<button onclick="hcInitCloud()">再接続</button>';
+        try{window.renderInvite()}catch(_){}
+        throw e;
+      }finally{
+        initPromise=null;
+      }
+    })();
+    return initPromise;
+  }
+
+  window.hcInitCloud=initCloudStable;
+  function boot(){ initCloudStable().catch(()=>{}); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
+  window.addEventListener('pageshow',boot);
+  window.addEventListener('online',boot);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')boot()});
 })();
 </script>
-<!-- /HC_V1_RC2_AUTO_LOGIN_ONLY -->
+<!-- /HC_V1_RC2_AUTOLOGIN_FIX_ONLY -->
 
 </body></html>
