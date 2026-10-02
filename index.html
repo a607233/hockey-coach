@@ -1510,4 +1510,34 @@ function hc5845RunCheck(){
 </script>
 <!-- /HC_V5845_RELEASE_CHECK -->
 
+
+<!-- HC_V1_RC2_AUTO_LOGIN_ONLY -->
+<script id="HC_V1_RC2_AUTO_LOGIN_ONLY_SCRIPT">
+/* RC2: restore/reinforce automatic cloud login only. No user-data migration or feature changes. */
+(function(){
+  const previousInit = window.hcInitCloud;
+  if (typeof previousInit !== 'function') return;
+  let running = null;
+  window.hcInitCloud = function(){
+    if (running) return running;
+    running = Promise.resolve().then(()=>previousInit()).finally(()=>{ running=null; });
+    return running;
+  };
+  async function autoLogin(){
+    try{
+      await window.hcInitCloud();
+      if (window.hcCloud && window.hcCloudReady) {
+        const {data:{session}} = await window.hcCloud.auth.getSession();
+        if (!session?.user) await window.hcInitCloud();
+      }
+    }catch(e){ console.error('HOCKEY COACH auto login',e); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(autoLogin,120));
+  else setTimeout(autoLogin,120);
+  window.addEventListener('pageshow',()=>setTimeout(autoLogin,80));
+  window.addEventListener('online',()=>setTimeout(autoLogin,80));
+})();
+</script>
+<!-- /HC_V1_RC2_AUTO_LOGIN_ONLY -->
+
 </body></html>
