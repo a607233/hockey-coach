@@ -1096,7 +1096,7 @@ setTimeout(addButton,300);
 
 <style>
 /* HC_V5832_PRACTICE_POLISH_QUEUE */
-.pq32Hero{padding:14px;border:1px solid #d8e1e4;border-radius:16px;background:#f7fafb;margin:12px 0}.pq32Hero b{font-size:16px}.pq32Grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pq32Card{padding:11px;border:1px solid #45606a;border-radius:14px;background:#162a31;color:#f7fbfc}.pq32Card .n{font-size:18px;font-weight:900}.pq32Queue{margin-top:12px}.pq32Item{padding:12px 0;border-bottom:1px solid var(--line)}.pq32Item:last-child{border-bottom:0}.pq32Need{font-size:11px;line-height:1.55;color:var(--muted);margin:5px 0 8px}.pq32Code{font-size:10px;font-weight:900;letter-spacing:.06em;color:var(--muted)}.pq32Dup{padding:10px;border-radius:12px;background:#fff8e7;border:1px solid #f1dfae;margin:8px 0;font-size:12px;line-height:1.5}@media(max-width:520px){.pq32Grid{grid-template-columns:1fr 1fr}}
+.pq32Hero{padding:14px;border:1px solid #d8e1e4;border-radius:16px;background:#f7fafb;margin:12px 0}.pq32Hero b{font-size:16px}.pq32Grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pq32Card{padding:11px;border:1px solid #45606a;border-radius:14px;background:#162a31;color:#f7fbfc}.pq32Card .n{font-size:18px;font-weight:900}.pq32Queue{margin-top:12px}.pq32Item{padding:12px 0;border-bottom:1px solid var(--line)}.pq32Item:last-child{border-bottom:0}.pq32Need{font-size:11px;line-height:1.55;color:var(--muted);margin:5px 0 8px}.pq32Code{font-size:10px;font-weight:900;letter-spacing:.06em;color:var(--muted)}.pq32Dup{padding:10px;border-radius:12px;background:#162a31;border:1px solid #45606a;color:#eaf1f3;margin:8px 0;font-size:12px;line-height:1.5}@media(max-width:520px){.pq32Grid{grid-template-columns:1fr 1fr}}
 </style>
 <script id="HC_V5832_PRACTICE_POLISH_QUEUE_JS">
 (function(){
@@ -1184,6 +1184,61 @@ migrate();
 })();
 </script>
 
+
+
+<script id="HC_V1_RC9_MISSING_DIAGRAMS_JS">
+(function(){
+'use strict';
+/* Fill only practices that have no dedicated board/image. Never overwrite a coach-made diagram. */
+function hcRc9Board(p){
+  const ph=String(p.phase||''), name=String(p.name||''), codes=Array.isArray(p.analysisCodes)?p.analysisCodes.join(' '):'';
+  const bottom={type:'pitch',direction:'bottom'}, top={type:'pitch',direction:'top'};
+  const A=(x,y,label)=>({type:'attack',x,y,label}), D=(x,y,label)=>({type:'defense',x,y,label});
+  const B=(x,y)=>({type:'ball',x,y}), GK=(x,y)=>({type:'gk',x,y});
+  const M=(x,y)=>({type:'marker',x,y,color:'#ff9f43'});
+  const P=(x1,y1,x2,y2)=>({type:'pass',x1,y1,x2,y2,color:'#ffffff'});
+  const R=(x1,y1,x2,y2)=>({type:'run',x1,y1,x2,y2,color:'#ffffff'});
+  const DR=(x1,y1,x2,y2)=>({type:'dribble',x1,y1,x2,y2,color:'#d8ff38'});
+  const PR=(x1,y1,x2,y2)=>({type:'press',x1,y1,x2,y2,color:'#ff6464'});
+  const Z=(x1,y1,x2,y2,color='#d8ff38')=>({type:'zone',x1,y1,x2,y2,color});
+  const G=(x,y)=>({type:'goal',x,y});
+  let b=[bottom];
+
+  if(ph==='攻撃'){
+    b.push(A(25,45,'1'),A(43,38,'2'),A(61,45,'3'),A(50,25,'4'),D(39,28,'1'),D(58,31,'2'),B(25,45),P(25,45,43,38),R(50,25,70,18),DR(43,38,56,31),G(50,59));
+    if(/サークル|侵入|フィニッシュ|シュート/.test(name+codes)){b.push(G(50,59),Z(30,43,70,59,'#ffd54a'))}
+    if(/幅|サイド|外/.test(name+codes)){b.push(M(12,32),M(88,32))}
+  }else if(ph==='守備'){
+    b.push(A(28,24,'1'),A(50,20,'2'),A(70,29,'3'),D(34,37,'1'),D(50,39,'2'),D(65,39,'3'),B(28,24),P(28,24,50,20),PR(34,37,28,24),R(50,39,43,32),G(50,59),Z(36,31,64,48,'#ff6464'));
+    if(/2v2|2対2/.test(name)){b=[bottom,A(32,24,'1'),A(62,25,'2'),D(38,39,'1'),D(58,40,'2'),B(32,24),P(32,24,62,25),PR(38,39,32,24),R(58,40,50,34),M(20,18),M(80,18),G(50,59)]}
+    if(/カバー|ギャップ/.test(name+codes)){b.push(R(65,39,55,34))}
+  }else if(ph==='攻→守'){
+    b.push(A(28,23,'1'),A(47,20,'2'),A(67,27,'3'),D(35,42,'1'),D(55,43,'2'),D(72,39,'3'),B(47,20),P(47,20,67,27),PR(55,43,47,20),R(35,42,43,34),R(72,39,61,33),Z(38,27,64,44,'#ffd54a'),G(50,59));
+    if(/リスク|ロスト前/.test(name+codes)){b.push(A(50,50,'4'))}
+  }else{
+    b=[top,A(30,40,'1'),A(48,42,'2'),A(66,36,'3'),D(34,25,'1'),D(55,23,'2'),D(70,29,'3'),B(48,42),P(48,42,66,36),R(66,36,75,20),R(30,40,42,26),G(50,3),Z(25,15,75,33,'#d8ff38')];
+    if(/カウンター|数的優位|3対2|4対3/.test(name+codes)){b=[top,A(30,44,'1'),A(50,42,'2'),A(69,45,'3'),D(42,27,'1'),D(61,27,'2'),B(50,42),P(50,42,69,45),R(69,45,75,24),R(30,44,39,25),G(50,3),Z(25,15,78,49,'#d8ff38')]}
+  }
+  return b;
+}
+function hcRc9FillMissingBoards(){
+  try{
+    let a=practiceData(),changed=false,n=0;
+    a.forEach(p=>{
+      if(p.diagramImage||(Array.isArray(p.boardCustom)&&p.boardCustom.length))return;
+      p.boardCustom=hcRc9Board(p); changed=true; n++;
+    });
+    if(changed){
+      localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));
+      console.info('RC9 dedicated diagrams added:',n);
+    }
+  }catch(e){console.warn('RC9 diagram migration',e)}
+}
+const oldSeed=window.seedPracticeLibrary;
+if(typeof oldSeed==='function')window.seedPracticeLibrary=function(){let r=oldSeed.apply(this,arguments);setTimeout(hcRc9FillMissingBoards,0);return r};
+setTimeout(hcRc9FillMissingBoards,120);
+})();
+</script>
 
 <style id="HC_V5834_ANALYSIS_DIAGNOSTIC_STYLE">
 .analysisDiagnostic{margin-top:12px;padding:14px;border:1px solid #29434c;border-radius:16px;background:#0d1b20}.analysisDiagnostic .diagTitle{font-weight:900;color:#dfff52;margin-bottom:8px}.diagGrid{display:grid;gap:8px}.diagRow{padding:10px 12px;border-radius:12px;background:#13272e}.diagRow b{display:block;color:#fff;margin-bottom:3px}.diagRow span{color:#9db0b7;font-size:13px;line-height:1.55}.diagCause{display:inline-block;margin:4px 5px 0 0;padding:5px 8px;border:1px solid #36515a;border-radius:999px;color:#dce8ec;font-size:12px}.diagQuestion{margin-top:9px;padding:10px 12px;border-left:3px solid #dfff52;background:#102229;color:#eaf3f5;border-radius:8px}.analysisHead{cursor:pointer}.analysisHead:after{content:'詳細 ›';margin-left:auto;color:#dfff52;font-size:12px;font-weight:900}
@@ -1504,7 +1559,7 @@ hc5842Render=function(){
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
 
 
-<!-- HOCKEY_COACH_V1_RC8_AUDIT_CONTRAST: dark audit summary cards; all RC7 persistence/auth/diagram behavior unchanged. -->
+<!-- HOCKEY_COACH_V1_RC9_DIAGRAM_COMPLETION: fill only missing dedicated boards; preserve custom diagrams and all stable RC8 behavior. -->
 <!-- HC_V5845_RELEASE_CHECK -->
 <style id="HC_V5845_RELEASE_CHECK_STYLE">
 .hc5845CheckResult{margin-top:12px;display:grid;gap:7px}.hc5845CheckRow{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #29434b;border-radius:12px;background:#0d1d22}.hc5845CheckRow b{font-size:12px}.hc5845CheckRow span{font-size:12px;font-weight:900}.hc5845Ok{color:#dfff52}.hc5845Warn{color:#ffd36b}.hc5845Summary{margin-top:4px;padding:12px;border-radius:14px;background:#10242b;border:1px solid #35535c;font-size:12px;line-height:1.65}
