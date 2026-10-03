@@ -95,9 +95,9 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 <div id="saveState" class="saveState ok">✓ 保存済み</div>
 <main>
 <section id="home" class="page on">
- <div class="card"><div class="k">COACH COCKPIT</div><div class="title">今日を、シンプルに。</div><p class="muted">条件を整理し、チームで選び、実践し、振り返る。</p><button class="btn" onclick="go('today')">今日の練習をつくる</button></div>
+ <div class="card"><div class="k">COACH COCKPIT</div><div class="title">今日を、シンプルに。</div><p class="muted">条件を整理し、チームで選び、実践し、振り返る。</p><button id="homeTodayBtn" class="btn" onclick="go('today')">今日の練習をつくる</button></div>
  <div class="row"><div class="card"><div class="muted">今日のメニュー</div><div id="homeCount" class="stat">0</div></div><div class="card"><div class="muted">合計時間</div><div id="homeMin" class="stat">0</div></div></div>
- <div class="card" id="nextSessionCockpit"><div class="k">NEXT SESSION</div><div class="title" style="font-size:19px">分析から次の練習へ</div><div id="nextSessionCockpitBody" class="menu">最新の分析を確認中…</div></div>
+ <div class="card" id="nextSessionCockpit"><div id="homeNextKicker" class="k">NEXT SESSION</div><div id="homeNextTitle" class="title" style="font-size:19px">分析から次の練習へ</div><div id="nextSessionCockpitBody" class="menu">最新の分析を確認中…</div></div>
  <div class="card"><div class="k">FLOW</div><p class="muted">① 条件 → ② テーマ・原則 → ③ 3つの選択肢 → ④ 今日のメニュー → ⑤ コーチモード → ⑥ 振り返り</p></div>
 </section>
 
@@ -254,7 +254,7 @@ function defaultKpiSuccessV5840(x){if(x?.kpiSuccess)return x.kpiSuccess;if(x?.kp
 function addPracticeToPlan(id){if(hcCloudMembership&&!hcIsStaff()){alert('今日の練習の編集はスタッフのみ可能です');return;}let x=practiceData().find(v=>v.id===id);if(!x)return;markPracticeRecent(id);plan.push({id:'v5-'+Date.now(),type:'練習',name:x.name,minutes:+x.minutes||15,purpose:x.purpose,constraint:x.constraint,question:x.question,judgment:x.judgment||'',kpiHint:x.kpiHint||'',kpiOpportunity:defaultKpiOpportunityV5840(x),kpiSuccess:defaultKpiSuccessV5840(x),memo:'',liveMemo:'',videoUrl:safeUrl(x.videoUrl),source:'library',practiceId:x.id,boardCustom:JSON.parse(JSON.stringify(x.boardCustom||[])),diagramImage:x.diagramImage||''});persist();renderPlan();closeModal()}
 function addBlank(){if(hcCloudMembership&&!hcIsStaff()){alert('今日の練習の編集はスタッフのみ可能です');return;}plan.push({id:'v5-'+Date.now(),type:'練習',name:'新しい練習',minutes:15,purpose:'',constraint:'',question:'',kpiOpportunity:'観察する局面が起きた回数',kpiSuccess:'成功条件を満たした回数',memo:'',videoUrl:''});persist();renderPlan();editItem(plan.length-1)}
 function planDiagramV100(x){let p=x.practiceId?practiceData().find(v=>v.id===x.practiceId):null,board=(Array.isArray(x.boardCustom)&&x.boardCustom.length)?x.boardCustom:(p?.boardCustom||[]);if(Array.isArray(board)&&board.length)return `<div class="customBoard planBoardV100">${tbSvg(board)}</div>`;return ''}
-function renderPlan(){let canEdit=(!hcCloudMembership||hcIsStaff());menuList.innerHTML=plan.length?plan.map((x,i)=>`<div class="menu"><div class="k">${esc(x.type||'練習')}｜${+x.minutes||0}分</div><h3>${esc(x.name||'')}</h3>${x.purpose?`<div class="meta">目的：${esc(x.purpose)}</div>`:''}${x.constraint?`<div class="meta">制約：${esc(x.constraint)}</div>`:''}${x.question?`<div class="meta">問い：${esc(x.question)}</div>`:''}${planDiagramV100(x)}<div class="kpiPlanHint"><b>今日見るKPI</b><br>機会：${esc(x.kpiOpportunity||defaultKpiOpportunityV5840(x))}<br>成功：${esc(x.kpiSuccess||defaultKpiSuccessV5840(x))}</div>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}${canEdit?`<div class="actions"><button onclick="editItem(${i})">編集</button><button onclick="moveItem(${i},-1)">↑</button><button onclick="moveItem(${i},1)">↓</button><button class="del" onclick="delItem(${i})">削除</button></div>`:'<div class="tinyStatus">閲覧専用｜今日の練習はスタッフのみ編集できます</div>'}</div>`).join(''):`<div class="empty">まだメニューがありません</div>`;let t=plan.reduce((a,x)=>a+(+x.minutes||0),0);totalMin.textContent=t;homeCount.textContent=plan.length;homeMin.textContent=t}
+function renderPlan(){let canEdit=(!hcCloudMembership||hcIsStaff());menuList.innerHTML=plan.length?plan.map((x,i)=>`<div class="menu"><div class="k">${esc(x.type||'練習')}｜${+x.minutes||0}分</div><h3>${esc(x.name||'')}</h3>${x.purpose?`<div class="meta">目的：${esc(x.purpose)}</div>`:''}${x.constraint?`<div class="meta">制約：${esc(x.constraint)}</div>`:''}${x.question?`<div class="meta">問い：${esc(x.question)}</div>`:''}${planDiagramV100(x)}<div class="kpiPlanHint"><b>今日見るKPI</b><br>機会：${esc(x.kpiOpportunity||defaultKpiOpportunityV5840(x))}<br>成功：${esc(x.kpiSuccess||defaultKpiSuccessV5840(x))}</div>${safeUrl(x.videoUrl)?`<a class="videoLink" href="${esc(safeUrl(x.videoUrl))}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}${canEdit?`<div class="actions"><button onclick="editItem(${i})">編集</button><button onclick="moveItem(${i},-1)">↑</button><button onclick="moveItem(${i},1)">↓</button><button class="del" onclick="delItem(${i})">削除</button></div>`:'<div class="tinyStatus">閲覧専用｜今日の練習はスタッフのみ編集できます</div>'}</div>`).join(''):`<div class="empty">まだメニューがありません</div>`;let t=plan.reduce((a,x)=>a+(+x.minutes||0),0);totalMin.textContent=t;homeCount.textContent=plan.length;homeMin.textContent=t+'分';setTimeout(()=>{try{hc22RenderHome()}catch(e){}},0)}
 function editItem(i){if(hcCloudMembership&&!hcIsStaff()){alert('今日の練習の編集はスタッフのみ可能です');return;}let x=plan[i];if(!x.kpiOpportunity)x.kpiOpportunity=defaultKpiOpportunityV5840(x);if(!x.kpiSuccess)x.kpiSuccess=defaultKpiSuccessV5840(x);openModal(`<div class="k">MENU EDIT</div><h2>練習を編集</h2><div class="field"><label>名称</label><input id="eName" class="input" value="${esc(x.name)}"></div><div class="field"><label>時間</label><input id="eMin" class="input" type="number" value="${+x.minutes||15}"></div><div class="field"><label>目的</label><textarea id="ePurpose" class="area">${esc(x.purpose||'')}</textarea></div><div class="field"><label>制約・ルール</label><textarea id="eConstraint" class="area">${esc(x.constraint||'')}</textarea></div><div class="field"><label>問い</label><textarea id="eQuestion" class="area">${esc(x.question||'')}</textarea></div><div class="field"><label>今日見るKPI｜機会 ＋1 の定義</label><textarea id="eKpiOpp" class="area" placeholder="例：ボールを失った回数">${esc(x.kpiOpportunity||'')}</textarea></div><div class="field"><label>今日見るKPI｜成功 ＋1 の定義</label><textarea id="eKpiSuccess" class="area" placeholder="例：4秒以内に前進を止めた回数">${esc(x.kpiSuccess||'')}</textarea><div class="kpiEditNote">おすすめ値です。今日の狙いに合わせて指導者が自由に変更できます。</div></div><div class="field"><label>動画URL（任意）</label><input id="eVideo" class="input" type="url" value="${esc(x.videoUrl||'')}" placeholder="https://..."></div><button class="btn" onclick="saveEdit(${i})">保存</button>`)}
 function saveEdit(i){if(hcCloudMembership&&!hcIsStaff()){alert('今日の練習の編集はスタッフのみ可能です');return;}let x=plan[i];x.name=eName.value;x.minutes=+eMin.value||0;x.purpose=ePurpose.value;x.constraint=eConstraint.value;x.question=eQuestion.value;x.kpiOpportunity=eKpiOpp.value.trim();x.kpiSuccess=eKpiSuccess.value.trim();x.videoUrl=safeUrl(eVideo.value.trim());persist();renderPlan();closeModal()}
 function delItem(i){if(hcCloudMembership&&!hcIsStaff()){alert('今日の練習の編集はスタッフのみ可能です');return;}plan.splice(i,1);persist();renderPlan()} function moveItem(i,d){if(hcCloudMembership&&!hcIsStaff()){alert('今日の練習の編集はスタッフのみ可能です');return;}let j=i+d;if(j<0||j>=plan.length)return;[plan[i],plan[j]]=[plan[j],plan[i]];persist();renderPlan()}
@@ -854,13 +854,39 @@ function hc5813IssueCandidates(){
     return low.slice(0,3);
   }catch(e){return []}
 }
-function hc5813RenderCockpit(){
-  const box=document.getElementById('nextSessionCockpitBody'); if(!box)return;
+function hc5813RenderCockpit(){hc22RenderHome()}
+
+function hc22PlanThemes(){
+  const items=teamAnalysisItems(),seen=new Set(),out=[];
+  (Array.isArray(plan)?plan:[]).forEach(p=>{
+    let item=null;
+    if(p.analysisItemId)item=items.find(x=>x.id===p.analysisItemId);
+    if(!item&&p.analysisCode)item=items.find(x=>x.code===p.analysisCode);
+    if(item&&!seen.has(item.id)){seen.add(item.id);out.push(item)}
+  });
+  return out;
+}
+function hc22RenderHome(){
+  const box=document.getElementById('nextSessionCockpitBody');if(!box)return;
+  const btn=document.getElementById('homeTodayBtn'),kick=document.getElementById('homeNextKicker'),title=document.getElementById('homeNextTitle');
+  const hasPlan=Array.isArray(plan)&&plan.length>0;
+  if(btn)btn.textContent=hasPlan?'今日の練習を見る':'今日の練習をつくる';
+  const themes=hc22PlanThemes();
+  if(hasPlan&&themes.length){
+    const x=themes[0];
+    if(kick)kick.textContent="TODAY'S THEME";
+    if(title)title.textContent='今日取り組むテーマ';
+    box.innerHTML=`<div class="k">TODAY'S THEME</div><h3>${hc5813Esc(x.code)}｜${hc5813Esc(x.name)}</h3><div class="meta">今日の${plan.length}つの練習で、このテーマにつながるメニューに取り組みます。</div>${themes.length>1?`<div class="tinyStatus">ほか ${themes.slice(1,3).map(v=>hc5813Esc(v.code+'｜'+v.name)).join(' ／ ')}</div>`:''}<div class="actions" style="margin-top:10px"><button class="btn" onclick="go('today')">今日の練習を見る</button><button class="btn2" onclick="go('analysis')">分析を見る</button></div>`;
+    return;
+  }
+  if(kick)kick.textContent='NEXT SESSION';
+  if(title)title.textContent='分析から次の練習へ';
   const issues=hc5813IssueCandidates();
   if(!issues.length){box.innerHTML='<b>まず32項目分析を1回保存</b><div class="meta">保存すると、課題候補 → 原則 → 練習候補へすぐ進めます。</div><button class="btn2" style="margin-top:10px" onclick="go(\'analysis\')">32項目分析を開く</button>';return}
-  const top=issues[0], link=ANALYSIS_LINKS_V580[top.item.code]||[top.item.name];
+  const top=issues[0],link=ANALYSIS_LINKS_V580[top.item.code]||[top.item.name];
   box.innerHTML=`<div class="k">PRIORITY CANDIDATE</div><h3>${hc5813Esc(top.item.code)}｜${hc5813Esc(top.item.name)}</h3><div class="meta">最新評価 ${top.score} / 5　｜　関連原則：${hc5813Esc(link[0]||'')}</div><div class="actions" style="margin-top:10px"><button class="btn" onclick="openAnalysisPracticeFlow('${top.item.id}')">練習候補3つを見る</button><button class="btn2" onclick="go('analysis')">分析全体を見る</button></div><div class="tinyStatus">候補表示のみ。評価や練習内容は自動変更しません。</div>`;
 }
+
 // Keep 3 options meaningfully different where the library allows it.
 const _analysisPracticeCandidatesV5813=analysisPracticeCandidatesV580;
 analysisPracticeCandidatesV580=function(item){
@@ -1709,5 +1735,6 @@ hcRenderVoiceSummary=async function(box,sid){
 setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 </script>
 <!-- HOCKEY_COACH_V1_RC21_KPI_UNMEASURED_UX: PLAYER VOICE flow unchanged; STAFF Coach KPI shows 未計測 instead of 0/N before field measurement. -->
+<!-- HOCKEY_COACH_V1_RC22_HOME_UX: Home CTA follows plan state; linked Today analysis theme takes priority; minutes include unit. -->
 
 </body></html>
