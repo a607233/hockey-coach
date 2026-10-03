@@ -1671,7 +1671,7 @@ function hc20CoachKpiHtml(){
     return `<div class="growthRow5842"><div class="row"><div><b>${hcVoiceEsc(x.name||'練習')}</b><div class="meta">${hcVoiceEsc(x.kpiOpportunity||defaultKpiOpportunityV5840(x))}</div></div><b>${rate==null?'—':rate+'%'}</b></div></div>`;
   }).join('');
   const total=totalOpp?Math.round(totalSuccess/totalOpp*100):null;
-  return `<div class="voice20Kpi"><div class="k">COACH KPI｜今日の練習</div><div class="row"><b>${measured} / ${items.length} 練習を計測</b><span class="rate">${total==null?'—':total+'%'}</span></div>${rows}</div>`;
+  return `<div class="voice20Kpi"><div class="k">COACH KPI｜今日の練習</div><div class="row"><b>${measured?`${measured} / ${items.length} 練習を計測`:'KPI記録｜未計測'}</b><span class="rate">${total==null?'—':total+'%'}</span></div>${rows}</div>`;
 }
 function hc20NextMaterial(rows,avg){
   let good=rows.filter(x=>x.good).length,next=rows.filter(x=>x.next_try).length;
@@ -1708,6 +1708,6 @@ hcRenderVoiceSummary=async function(box,sid){
 };
 setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 </script>
-<!-- HOCKEY_COACH_V1_RC20_PLAYER_VOICE_REVIEW -->
+<!-- HOCKEY_COACH_V1_RC21_KPI_UNMEASURED_UX: PLAYER VOICE flow unchanged; STAFF Coach KPI shows 未計測 instead of 0/N before field measurement. -->
 
 </body></html>
