@@ -593,7 +593,17 @@ function hcApplyRoleUI(){
       b.classList.toggle('on',player&&mode==='growth');
     });
   }
+  if(!player){
+    const growthPane=document.getElementById('analysis-growth');
+    const intro=growthPane?.querySelector(':scope > .card');
+    if(intro)intro.style.display='';
+  }
   if(player){
+    const growthPane=document.getElementById('analysis-growth');
+    if(growthPane){
+      const intro=growthPane.querySelector(':scope > .card');
+      if(intro)intro.style.display='none';
+    }
     document.getElementById('analysis-team')?.classList.remove('on');
     document.getElementById('analysis-review')?.classList.remove('on');
     document.getElementById('analysis-growth')?.classList.add('on');
@@ -1532,6 +1542,7 @@ let gap=`<div class="card"><div class="k">RECENTLY UNTOUCHED</div><div class="ti
 let kp=`<div class="card"><div class="k">PRACTICE KPI</div><div class="title" style="font-size:19px">最近の練習別KPI</div>${kpis.length?kpis.map(z=>`<div class="growthRow5842"><div class="row"><div><b>${esc(z.name)}</b><div class="meta">${new Date(z.date).toLocaleDateString('ja-JP')}｜機会 ${z.opp} / 成功 ${z.suc}</div></div><b style="color:#dfff52">${z.rate}%</b></div></div>`).join(''):`<div class="growthEmpty5842">Coach Modeで練習別KPIを計測すると、最近の結果が表示されます。</div>`}<div class="growthNote5842">KPI定義が異なる練習同士の成功率を単純比較しません。各練習の変化を見るための表示です。</div></div>`;
 let isPlayer=!!(hcCloudMembership&&!hcIsStaff());
 if(isPlayer){
+  let playerIntro=`<div class="card"><div class="k">TEAM GROWTH</div><div class="title" style="font-size:22px">チームの成長</div><p class="muted">自分たちは今どこまでできている？ チームの現在地と変化を見てみよう。</p></div>`;
   let delta=(obs.length>1&&a0!=null&&a1!=null)?a1-a0:null;
   let allChanges=[];
   if(obs.length>1&&first&&latest){
@@ -1539,12 +1550,22 @@ if(isPlayer){
       .filter(z=>z.d!==null&&z.d>0).sort((a,b)=>b.d-a.d).slice(0,3);
   }
   let latestScores=latest?items.map(x=>({x,s:+latest?.scores?.[x.id]||0})).filter(z=>z.s>0).sort((a,b)=>a.s-b.s):[];
-  let next=latestScores.slice(0,3);
+  let todayThemes=[];
+  try{
+    let seen=new Set();
+    (Array.isArray(plan)?plan:[]).forEach(p=>{
+      let item=null;
+      if(p.analysisItemId)item=items.find(x=>x.id===p.analysisItemId);
+      if(!item&&p.analysisCode)item=items.find(x=>x.code===p.analysisCode);
+      if(item&&!seen.has(item.id)){seen.add(item.id);todayThemes.push({x:item,s:+latest?.scores?.[item.id]||0,fromToday:true})}
+    });
+  }catch(e){}
+  let next=todayThemes.length?todayThemes.slice(0,3):latestScores.slice(0,3);
   let pHero=latest?`<div class="growthHero5842"><div class="k">TEAM GROWTH｜${esc(latest.date||'')}</div><div class="big">チームの現在地 ${a1==null?'—':a1.toFixed(1)} / 5</div><div class="meta">${obs.length>1?`前回までの蓄積から ${delta==null?'変化を確認中':`${delta>=0?'+':''}${delta.toFixed(1)} の変化`}`:'初回分析｜ここからチームの変化を積み上げます'}</div></div>`:`<div class="growthEmpty5842">スタッフが分析を保存すると、チームの現在地と成長がここに表示されます。</div>`;
   let pPhases=latest?`<div class="card"><div class="k">WHERE WE ARE</div><div class="title" style="font-size:19px">局面別の現在地</div><div class="growthGrid5842">${phaseNow.map((z,i)=>`<div class="growthStat5842"><span class="growthPhase5842">${z.p}</span><br><b>${z.avg==null?'—':z.avg.toFixed(1)}</b> / 5 ${obs.length>1&&phaseOld[i]?.avg!=null&&z.avg!=null?hc5842Delta(z.avg,phaseOld[i].avg):''}<div class="growthBar5842"><i style="width:${z.avg==null?0:Math.max(0,Math.min(100,z.avg/5*100))}%"></i></div></div>`).join('')}</div></div>`:'';
   let improved=`<div class="card"><div class="k">OUR GROWTH</div><div class="title" style="font-size:19px">伸びていること</div>${obs.length<2?'<div class="growthEmpty5842">次回の分析から、前回と比べて伸びた項目がここに表示されます。</div>':allChanges.length?allChanges.map(z=>`<div class="growthRow5842"><div class="row"><b>${esc(z.x.code)}｜${esc(z.x.name)}</b><b style="color:#dfff52">+${z.d.toFixed(1)}</b></div></div>`).join(''):'<div class="growthEmpty5842">今回は大きな数値変化はありません。次の分析でまた確認しましょう。</div>'}</div>`;
-  let nextTheme=`<div class="card"><div class="k">NEXT THEME</div><div class="title" style="font-size:19px">次に取り組むテーマ</div>${next.length?next.map(z=>`<div class="growthRow5842"><b>${esc(z.x.code)}｜${esc(z.x.name)}</b><div class="meta">${esc(z.x.desc||'')}</div></div>`).join(''):'<div class="growthEmpty5842">分析が増えると、次に注目したいテーマがここに表示されます。</div>'}<div class="growthNote5842">スタッフの観測結果をもとにした現在地です。練習後はPLAYER VOICEで自分の実感も返してみよう。</div></div>`;
-  host.innerHTML=`<div class="growth5842">${pHero}${pPhases}${improved}${nextTheme}</div>`;
+  let nextTheme=`<div class="card"><div class="k">NEXT THEME</div><div class="title" style="font-size:19px">${todayThemes.length?'今日取り組むテーマ':'次に取り組むテーマ'}</div>${next.length?next.map(z=>`<div class="growthRow5842"><b>${esc(z.x.code)}｜${esc(z.x.name)}</b><div class="meta">${esc(z.x.desc||'')}</div>${z.fromToday?'<div class="tinyStatus">今日の練習につながっています</div>':''}</div>`).join(''):'<div class="growthEmpty5842">分析が増えると、次に注目したいテーマがここに表示されます。</div>'}<div class="growthNote5842">${todayThemes.length?'スタッフが選んだ今日の練習テーマです。':'スタッフの観測結果から、次に注目したい項目を表示しています。'} 練習後はPLAYER VOICEで自分の実感も返してみよう。</div></div>`;
+  host.innerHTML=`<div class="growth5842">${playerIntro}${pHero}${pPhases}${improved}${nextTheme}</div>`;
 }else{
   host.innerHTML=`<div class="growth5842">${hero}${phases}${pr}${gap}${kp}</div>`;
 }}
@@ -1596,7 +1617,7 @@ hc5842Render=function(){
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
 
 
-<!-- HOCKEY_COACH_V1_RC18_PLAYER_GROWTH_UX: PLAYER gets a concise growth-first dashboard with correct first-analysis messaging, growth highlights and next themes; staff dashboard unchanged. -->
+<!-- HOCKEY_COACH_V1_RC19_PLAYER_THEME_LINK: PLAYER growth wording is player-facing and NEXT THEME follows analysis-linked practices actually selected for Today's practice; staff dashboard unchanged. -->
 <!-- HC_V5845_RELEASE_CHECK -->
 <style id="HC_V5845_RELEASE_CHECK_STYLE">
 .hc5845CheckResult{margin-top:12px;display:grid;gap:7px}.hc5845CheckRow{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #29434b;border-radius:12px;background:#0d1d22}.hc5845CheckRow b{font-size:12px}.hc5845CheckRow span{font-size:12px;font-weight:900}.hc5845Ok{color:#dfff52}.hc5845Warn{color:#ffd36b}.hc5845Summary{margin-top:4px;padding:12px;border-radius:14px;background:#10242b;border:1px solid #35535c;font-size:12px;line-height:1.65}
