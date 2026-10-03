@@ -119,9 +119,9 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 </section>
 
 <section id="analysis" class="page">
- <div class="tabs" id="analysisModeTabs"><button class="tab on" data-amode="team">自チーム分析</button><button class="tab" data-amode="review">練習後レビュー</button></div>
+ <div class="tabs" id="analysisModeTabs"><button class="tab on" data-amode="team">現在地</button><button class="tab" data-amode="review">練習後の評価</button></div>
  <div id="playerAnalysisReadOnly" class="card" style="display:none"><div class="k">TEAM ANALYSIS｜PLAYER VIEW</div><div class="title" style="font-size:19px">チーム分析を見る</div><p class="muted">スタッフの分析結果から、チームの現在地・成長・次のテーマを確認できます。練習後の振り返りはPLAYER VOICEから自分の実感を返します。</p></div><div id="analysis-team" class="tabpane on staffEvaluationArea">
-  <div class="card"><div class="k">TEAM OBSERVATION｜32 STANDARD ITEMS</div><div class="title">自チームの現在地</div><p class="muted">攻撃・守備・攻→守・守→攻を定期観測。各項目を1〜5で評価し、日付ごとの変化を残します。項目は自由に追加・編集・削除・並び替えできます。</p><div class="analysis32Hero"><button class="btn2" onclick="hc5818Open32List()">☰ 標準32項目を一覧で見る</button><span>攻撃10｜守備10｜攻→守6｜守→攻6</span></div>
+  <div class="card"><div class="k">TEAM OBSERVATION｜32 STANDARD ITEMS</div><div class="title">自チームの現在地</div><p class="muted">32項目を1〜5で観測し、チームの現在地を残します。分析結果は原則と次の練習候補につながります。</p><div class="analysis32Hero"><button class="btn2" onclick="hc5818Open32List()">☰ 標準32項目を一覧で見る</button><span>攻撃10｜守備10｜攻→守6｜守→攻6</span></div>
    <div class="row"><div class="field"><label>観測日</label><input id="teamObsDate" class="input" type="date"></div><div class="field"><label>観測場面</label><select id="teamObsContext" class="input"><option>試合</option><option>練習</option><option>紅白戦</option><option>映像分析</option></select></div></div>
    <div id="teamPhaseTabs" class="tabs" style="margin-top:12px"></div><div id="teamAnalysisItems"></div>
    <div class="field"><label>全体メモ</label><textarea id="teamObsMemo" class="area" placeholder="今日見えた特徴・次に確認したいこと"></textarea></div>
@@ -601,7 +601,7 @@ function hcApplyRoleUI(){
     amt.querySelectorAll('[data-amode]').forEach(b=>{
       const mode=b.dataset.amode;
       b.style.display=player?(mode==='growth'?'':'none'):'';
-      if(mode==='growth')b.textContent=player?'チームの成長':'成長';
+      if(mode==='growth')b.textContent='チームの成長';
       b.classList.toggle('on',player&&mode==='growth');
     });
   }
@@ -1638,7 +1638,7 @@ if(isPlayer){
 }else{
   host.innerHTML=`<div class="growth5842">${hero}${phases}${pr}${gap}${kp}</div>`;
 }}
-function hc5842Install(){let tabs=document.getElementById('analysisModeTabs');if(!tabs)return;if(!tabs.querySelector('[data-amode="growth"]')){let b=document.createElement('button');b.className='tab';b.dataset.amode='growth';b.textContent='成長';tabs.appendChild(b)}let section=document.getElementById('analysis');if(!document.getElementById('analysis-growth')){let p=document.createElement('div');p.id='analysis-growth';p.className='tabpane';p.innerHTML='<div class="card"><div class="k">STEP 5｜TEAM GROWTH</div><div class="title">チーム成長ダッシュボード</div><p class="muted">32項目・原則・練習別KPIを、シーズンの「変化」として確認します。</p></div><div id="growthDashboard5842"></div>';section.appendChild(p)}tabs.querySelectorAll('[data-amode]').forEach(b=>{b.onclick=()=>{tabs.querySelectorAll('[data-amode]').forEach(x=>x.classList.toggle('on',x===b));['team','review','growth'].forEach(m=>document.getElementById('analysis-'+m)?.classList.toggle('on',m===b.dataset.amode));if(b.dataset.amode==='team')renderTeamAnalysis();if(b.dataset.amode==='growth')hc5842Render()}})}
+function hc5842Install(){let tabs=document.getElementById('analysisModeTabs');if(!tabs)return;if(!tabs.querySelector('[data-amode="growth"]')){let b=document.createElement('button');b.className='tab';b.dataset.amode='growth';b.textContent='チームの成長';tabs.appendChild(b)}let section=document.getElementById('analysis');if(!document.getElementById('analysis-growth')){let p=document.createElement('div');p.id='analysis-growth';p.className='tabpane';p.innerHTML='<div class="card"><div class="k">STEP 5｜TEAM GROWTH</div><div class="title">チーム成長ダッシュボード</div><p class="muted">32項目・原則・練習別KPIを、シーズンの「変化」として確認します。</p></div><div id="growthDashboard5842"></div>';section.appendChild(p)}tabs.querySelectorAll('[data-amode]').forEach(b=>{b.onclick=()=>{tabs.querySelectorAll('[data-amode]').forEach(x=>x.classList.toggle('on',x===b));['team','review','growth'].forEach(m=>document.getElementById('analysis-'+m)?.classList.toggle('on',m===b.dataset.amode));if(b.dataset.amode==='team')renderTeamAnalysis();if(b.dataset.amode==='growth')hc5842Render()}})}
 setTimeout(hc5842Install,0);
 </script>
 <!-- HC_V5842_TEAM_GROWTH_DASHBOARD -->
@@ -1782,5 +1782,6 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <!-- HOCKEY_COACH_V1_RC23_HOME_COPY: COACH COCKPIT copy is action-oriented: 今日の練習を始めよう. No logic/data changes. -->
 <!-- HOCKEY_COACH_V1_RC24_TODAY_SESSION_UX: When a plan exists, Today opens as session-first; conditions remain available via ＋練習を探す. No data/schema changes. -->
 <!-- HOCKEY_COACH_V1_RC25_COACH_MODE_UX: two-line practice title, 0/0=未計測, and one-step KPI undo. No schema/cloud changes. -->
+<!-- HOCKEY_COACH_V1_RC26_ANALYSIS_COPY_UX: Analysis tabs clarify 現在地 / 練習後の評価 / チームの成長; intro explains analysis-to-practice flow. No logic/data changes. -->
 
 </body></html>
