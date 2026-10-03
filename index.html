@@ -1647,4 +1647,67 @@ function hc5845RunCheck(){
 <!-- /HC_V5845_RELEASE_CHECK -->
 
 
+
+<style id="HC_RC20_PLAYER_VOICE_REVIEW_STYLE">
+.voice20Head{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.voice20Stat{padding:12px;border:1px solid #29434b;border-radius:14px;background:#10242b}
+.voice20Stat .v{font-size:22px;font-weight:950;color:#dfff52;margin-top:3px}
+.voice20Block{margin-top:12px;padding:12px;border:1px solid #29434b;border-radius:14px;background:#0d2026}
+.voice20Block h4{margin:0 0 8px;font-size:15px}
+.voice20Quote{padding:8px 10px;margin:6px 0;border-radius:11px;background:#132a31;font-size:12px;line-height:1.55}
+.voice20Kpi{margin-top:12px;padding:12px;border:1px solid #38515a;border-radius:14px;background:#10242b}
+.voice20Kpi .rate{font-size:20px;font-weight:950;color:#dfff52}
+</style>
+<script id="HC_RC20_PLAYER_VOICE_REVIEW">
+/* RC20 — STAFF review cockpit. Read-only aggregation of existing PLAYER VOICE + today's Coach KPI.
+   No schema, cloud table, philosophy, tactical board, analysis score or practice data changes. */
+function hc20CoachKpiHtml(){
+  const items=Array.isArray(plan)?plan:[];
+  if(!items.length)return '<div class="meta">今日の練習がありません</div>';
+  let measured=0,totalOpp=0,totalSuccess=0;
+  const rows=items.map(x=>{
+    const k=x.coachKpi||{},opp=+k.opp||0,suc=+k.success||0,rate=opp?Math.round(suc/opp*100):null;
+    if(opp){measured++;totalOpp+=opp;totalSuccess+=suc}
+    return `<div class="growthRow5842"><div class="row"><div><b>${hcVoiceEsc(x.name||'練習')}</b><div class="meta">${hcVoiceEsc(x.kpiOpportunity||defaultKpiOpportunityV5840(x))}</div></div><b>${rate==null?'—':rate+'%'}</b></div></div>`;
+  }).join('');
+  const total=totalOpp?Math.round(totalSuccess/totalOpp*100):null;
+  return `<div class="voice20Kpi"><div class="k">COACH KPI｜今日の練習</div><div class="row"><b>${measured} / ${items.length} 練習を計測</b><span class="rate">${total==null?'—':total+'%'}</span></div>${rows}</div>`;
+}
+function hc20NextMaterial(rows,avg){
+  let good=rows.filter(x=>x.good).length,next=rows.filter(x=>x.next_try).length;
+  let msg='回答が増えると、選手の実感とコーチの観測を一緒に次回へつなげられます。';
+  if(rows.length){
+    if(avg<2)msg='テーマ理解はまだ低めです。選手の「次に変えたいこと」とKPIを見ながら、同じテーマをもう一度確かめる材料にできます。';
+    else if(avg<2.5)msg='理解は進んでいます。GOODとNEXTの両方を見て、制約や問いを調整する材料にできます。';
+    else msg='テーマ理解は高めです。KPIと選手のNEXTを見ながら、難度を上げるか次の関連テーマへ進む材料にできます。';
+  }
+  return `<div class="learningTarget" style="margin-top:12px"><span class="loopBadge">COACH × PLAYER</span><h3>次回につなげる材料</h3><div class="source">${hcVoiceEsc(msg)}</div><div class="meta" style="margin-top:7px">GOOD ${good}件 ／ NEXT ${next}件</div><div class="tinyStatus">PLAYER VOICEは分析点を自動変更しません。観測・KPIと合わせてスタッフが次のテーマを判断します。</div></div>`;
+}
+hcRenderVoiceSummary=async function(box,sid){
+  try{
+    const {data,error}=await hcCloud.from('team_player_feedback').select('attendance,understanding,good,next_try,updated_at').eq('team_id',hcCloudMembership.team_id).eq('share_id',sid);
+    if(error)throw error;
+    const a=data||[],n=a.length,avg=n?(a.reduce((z,x)=>z+(+x.understanding||0),0)/n):0,att={参加:0,見学:0,欠席:0};
+    a.forEach(x=>{if(att[x.attendance]!=null)att[x.attendance]++});
+    if(!n){
+      box.innerHTML='<div class="k">PLAYER VOICE｜今日の振り返り</div><h3>まだ回答はありません</h3><div class="meta">回答が届くと、理解度・GOOD・NEXTをここでまとめて確認できます。</div>'+hc20CoachKpiHtml()+hc20NextMaterial([],0)+'<button class="btn2" style="margin-top:12px" onclick="hcLoadPlayerVoice()">↻ 回答を更新</button>';
+      return;
+    }
+    const goods=a.filter(x=>x.good),nexts=a.filter(x=>x.next_try);
+    box.innerHTML=`<div class="k">PLAYER VOICE｜今日の振り返り</div>
+      <div class="voice20Head">
+        <div class="voice20Stat"><div class="k">RESPONSE</div><div class="v">${n}人</div><div class="meta">参加 ${att['参加']} ／ 見学 ${att['見学']} ／ 欠席 ${att['欠席']}</div></div>
+        <div class="voice20Stat"><div class="k">UNDERSTANDING</div><div class="v">${avg.toFixed(1)} / 3</div><div class="meta">テーマの理解度</div></div>
+      </div>
+      <div class="voice20Block"><h4>選手が感じたGOOD</h4>${goods.length?goods.map(x=>`<div class="voice20Quote">${hcVoiceEsc(x.good)}</div>`).join(''):'<div class="meta">まだありません</div>'}</div>
+      <div class="voice20Block"><h4>選手が感じたNEXT</h4>${nexts.length?nexts.map(x=>`<div class="voice20Quote">${hcVoiceEsc(x.next_try)}</div>`).join(''):'<div class="meta">まだありません</div>'}</div>
+      ${hc20CoachKpiHtml()}
+      ${hc20NextMaterial(a,avg)}
+      <button class="btn2" style="margin-top:12px" onclick="hcLoadPlayerVoice()">↻ 回答を更新</button>`;
+  }catch(e){box.innerHTML='<b>回答を読み込めません</b><div class="meta">'+hcVoiceEsc(e.message)+'</div>'}
+};
+setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
+</script>
+<!-- HOCKEY_COACH_V1_RC20_PLAYER_VOICE_REVIEW -->
+
 </body></html>
