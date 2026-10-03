@@ -582,13 +582,14 @@ function hcApplyRoleUI(){
   });
   const player=(!staff&&hcCloudMembership);
   document.querySelectorAll('.staffEvaluationArea').forEach(el=>{el.style.display=player?'none':''});
-  const pav=document.getElementById('playerAnalysisReadOnly');if(pav)pav.style.display=player?'block':'none';
+  const pav=document.getElementById('playerAnalysisReadOnly');if(pav)pav.style.display='none';
   const amt=document.getElementById('analysisModeTabs');
   if(amt){
     amt.style.display='flex';
     amt.querySelectorAll('[data-amode]').forEach(b=>{
       const mode=b.dataset.amode;
       b.style.display=player?(mode==='growth'?'':'none'):'';
+      if(mode==='growth')b.textContent=player?'チームの成長':'成長';
       b.classList.toggle('on',player&&mode==='growth');
     });
   }
@@ -1529,7 +1530,24 @@ let phases=latest?`<div class="card"><div class="k">32 ANALYSIS TREND</div><div 
 let pr=`<div class="card"><div class="k">TRAINING EXPOSURE</div><div class="title" style="font-size:19px">原則別の取り組み量</div>${principles.length?principles.slice(0,8).map(([p,m])=>`<div class="growthRow5842"><div class="row"><b>${esc(p)}</b><span>${m}分</span></div><div class="growthBar5842"><i style="width:${Math.max(4,Math.round(m/(principles[0][1]||1)*100))}%"></i></div></div>`).join(''):`<div class="growthEmpty5842">練習記録を保存すると、扱った原則と時間が表示されます。</div>`}<div class="growthNote5842">記録済み練習時間の参考集計：${mins}分。練習に設定された原則をもとに集計します。</div></div>`;
 let gap=`<div class="card"><div class="k">RECENTLY UNTOUCHED</div><div class="title" style="font-size:19px">最近扱えていない32項目</div>${rec.length?untouched.map(o=>`<div class="growthRow5842"><b>${esc(o.x.code)}｜${esc(o.x.name)}</b><div class="meta">${o.t?'最終関連練習 '+new Date(o.t).toLocaleDateString('ja-JP'):'このシーズンの関連練習記録なし'}</div></div>`).join(''):`<div class="growthEmpty5842">練習記録が増えると、最近扱えていない項目を確認できます。</div>`}<div class="growthNote5842">「不足＝必ず練習すべき」という判定ではありません。次のテーマを考える材料として使います。</div></div>`;
 let kp=`<div class="card"><div class="k">PRACTICE KPI</div><div class="title" style="font-size:19px">最近の練習別KPI</div>${kpis.length?kpis.map(z=>`<div class="growthRow5842"><div class="row"><div><b>${esc(z.name)}</b><div class="meta">${new Date(z.date).toLocaleDateString('ja-JP')}｜機会 ${z.opp} / 成功 ${z.suc}</div></div><b style="color:#dfff52">${z.rate}%</b></div></div>`).join(''):`<div class="growthEmpty5842">Coach Modeで練習別KPIを計測すると、最近の結果が表示されます。</div>`}<div class="growthNote5842">KPI定義が異なる練習同士の成功率を単純比較しません。各練習の変化を見るための表示です。</div></div>`;
-host.innerHTML=`<div class="growth5842">${hero}${phases}${pr}${gap}${kp}</div>`}
+let isPlayer=!!(hcCloudMembership&&!hcIsStaff());
+if(isPlayer){
+  let delta=(obs.length>1&&a0!=null&&a1!=null)?a1-a0:null;
+  let allChanges=[];
+  if(obs.length>1&&first&&latest){
+    allChanges=items.map(x=>{let before=+first?.scores?.[x.id]||0,after=+latest?.scores?.[x.id]||0;return {x,before,after,d:(before&&after)?after-before:null}})
+      .filter(z=>z.d!==null&&z.d>0).sort((a,b)=>b.d-a.d).slice(0,3);
+  }
+  let latestScores=latest?items.map(x=>({x,s:+latest?.scores?.[x.id]||0})).filter(z=>z.s>0).sort((a,b)=>a.s-b.s):[];
+  let next=latestScores.slice(0,3);
+  let pHero=latest?`<div class="growthHero5842"><div class="k">TEAM GROWTH｜${esc(latest.date||'')}</div><div class="big">チームの現在地 ${a1==null?'—':a1.toFixed(1)} / 5</div><div class="meta">${obs.length>1?`前回までの蓄積から ${delta==null?'変化を確認中':`${delta>=0?'+':''}${delta.toFixed(1)} の変化`}`:'初回分析｜ここからチームの変化を積み上げます'}</div></div>`:`<div class="growthEmpty5842">スタッフが分析を保存すると、チームの現在地と成長がここに表示されます。</div>`;
+  let pPhases=latest?`<div class="card"><div class="k">WHERE WE ARE</div><div class="title" style="font-size:19px">局面別の現在地</div><div class="growthGrid5842">${phaseNow.map((z,i)=>`<div class="growthStat5842"><span class="growthPhase5842">${z.p}</span><br><b>${z.avg==null?'—':z.avg.toFixed(1)}</b> / 5 ${obs.length>1&&phaseOld[i]?.avg!=null&&z.avg!=null?hc5842Delta(z.avg,phaseOld[i].avg):''}<div class="growthBar5842"><i style="width:${z.avg==null?0:Math.max(0,Math.min(100,z.avg/5*100))}%"></i></div></div>`).join('')}</div></div>`:'';
+  let improved=`<div class="card"><div class="k">OUR GROWTH</div><div class="title" style="font-size:19px">伸びていること</div>${obs.length<2?'<div class="growthEmpty5842">次回の分析から、前回と比べて伸びた項目がここに表示されます。</div>':allChanges.length?allChanges.map(z=>`<div class="growthRow5842"><div class="row"><b>${esc(z.x.code)}｜${esc(z.x.name)}</b><b style="color:#dfff52">+${z.d.toFixed(1)}</b></div></div>`).join(''):'<div class="growthEmpty5842">今回は大きな数値変化はありません。次の分析でまた確認しましょう。</div>'}</div>`;
+  let nextTheme=`<div class="card"><div class="k">NEXT THEME</div><div class="title" style="font-size:19px">次に取り組むテーマ</div>${next.length?next.map(z=>`<div class="growthRow5842"><b>${esc(z.x.code)}｜${esc(z.x.name)}</b><div class="meta">${esc(z.x.desc||'')}</div></div>`).join(''):'<div class="growthEmpty5842">分析が増えると、次に注目したいテーマがここに表示されます。</div>'}<div class="growthNote5842">スタッフの観測結果をもとにした現在地です。練習後はPLAYER VOICEで自分の実感も返してみよう。</div></div>`;
+  host.innerHTML=`<div class="growth5842">${pHero}${pPhases}${improved}${nextTheme}</div>`;
+}else{
+  host.innerHTML=`<div class="growth5842">${hero}${phases}${pr}${gap}${kp}</div>`;
+}}
 function hc5842Install(){let tabs=document.getElementById('analysisModeTabs');if(!tabs)return;if(!tabs.querySelector('[data-amode="growth"]')){let b=document.createElement('button');b.className='tab';b.dataset.amode='growth';b.textContent='成長';tabs.appendChild(b)}let section=document.getElementById('analysis');if(!document.getElementById('analysis-growth')){let p=document.createElement('div');p.id='analysis-growth';p.className='tabpane';p.innerHTML='<div class="card"><div class="k">STEP 5｜TEAM GROWTH</div><div class="title">チーム成長ダッシュボード</div><p class="muted">32項目・原則・練習別KPIを、シーズンの「変化」として確認します。</p></div><div id="growthDashboard5842"></div>';section.appendChild(p)}tabs.querySelectorAll('[data-amode]').forEach(b=>{b.onclick=()=>{tabs.querySelectorAll('[data-amode]').forEach(x=>x.classList.toggle('on',x===b));['team','review','growth'].forEach(m=>document.getElementById('analysis-'+m)?.classList.toggle('on',m===b.dataset.amode));if(b.dataset.amode==='team')renderTeamAnalysis();if(b.dataset.amode==='growth')hc5842Render()}})}
 setTimeout(hc5842Install,0);
 </script>
@@ -1578,7 +1596,7 @@ hc5842Render=function(){
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
 
 
-<!-- HOCKEY_COACH_V1_RC17_PLAYER_GROWTH_VIEW: PLAYER Analysis opens read-only Growth/results; staff Review remains staff-only; PLAYER reflection stays in PLAYER VOICE. -->
+<!-- HOCKEY_COACH_V1_RC18_PLAYER_GROWTH_UX: PLAYER gets a concise growth-first dashboard with correct first-analysis messaging, growth highlights and next themes; staff dashboard unchanged. -->
 <!-- HC_V5845_RELEASE_CHECK -->
 <style id="HC_V5845_RELEASE_CHECK_STYLE">
 .hc5845CheckResult{margin-top:12px;display:grid;gap:7px}.hc5845CheckRow{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #29434b;border-radius:12px;background:#0d1d22}.hc5845CheckRow b{font-size:12px}.hc5845CheckRow span{font-size:12px;font-weight:900}.hc5845Ok{color:#dfff52}.hc5845Warn{color:#ffd36b}.hc5845Summary{margin-top:4px;padding:12px;border-radius:14px;background:#10242b;border:1px solid #35535c;font-size:12px;line-height:1.65}
