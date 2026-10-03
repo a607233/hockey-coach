@@ -132,12 +132,12 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
   <div class="card"><div class="k">TREND</div><div class="title" style="font-size:19px">定期観測の推移</div><div id="teamAnalysisTrend"></div></div>
  </div>
  <div id="analysis-review" class="tabpane staffEvaluationArea">
- <div class="card"><div class="k">BOTTOM-UP REVIEW</div><div class="title">練習後の振り返り</div><p class="muted">全部を数える必要はありません。今日は「何を確かめたいか」に合わせて、使うKPIだけ選びます。</p>
+ <div class="card"><div class="k">BOTTOM-UP REVIEW</div><div class="title">練習後の評価</div><p class="muted">今日取り組んだテーマが、練習を通してどう変化したかを確認します。練習別KPIはCoach Modeの結果として残ります。</p>
  <div id="learningLoopReview"></div>
- <div class="tabs" id="kpiTabs"><button class="tab on" data-kpi="simple">かんたん評価</button><button class="tab" data-kpi="counter">カウンター</button><button class="tab" data-kpi="number">数値KPI</button></div>
+ <button id="reviewLegacyToggle27" class="btn2" style="width:100%;margin-top:12px" onclick="hc27ToggleLegacyKpi()">詳細KPIを確認・入力</button><div id="reviewLegacyKpi27" style="display:none"><div class="tabs" id="kpiTabs"><button class="tab on" data-kpi="simple">かんたん評価</button><button class="tab" data-kpi="counter">カウンター</button><button class="tab" data-kpi="number">数値KPI</button></div>
  <div id="kpi-simple" class="tabpane on"><div class="field"><label>今日のテーマはどのくらいできた？</label><div class="score3" id="simpleScore"><button data-score="1">まだ</button><button data-score="2">まあまあ</button><button data-score="3">できた</button></div></div></div>
  <div id="kpi-counter" class="tabpane"><div id="reviewCounters"></div><p class="muted">成功数 ÷ 機会数は自動計算します。</p></div>
- <div id="kpi-number" class="tabpane"><div id="numericKpis"></div><button class="btn2" onclick="addNumericKpi()">＋ 数値KPIを追加</button></div>
+ <div id="kpi-number" class="tabpane"><div id="numericKpis"></div><button class="btn2" onclick="addNumericKpi()">＋ 数値KPIを追加</button></div></div>
  <hr><div class="field"><label>選手から見て、うまくいったこと</label><textarea id="playerGood" class="area" placeholder="選手の言葉を残す"></textarea></div>
  <div class="field"><label>選手から見て、次に変えたいこと</label><textarea id="playerNext" class="area" placeholder="次回やってみたいこと・変えたいルール"></textarea></div>
  <div class="field"><label>コーチの気づき</label><textarea id="reflection" class="area" placeholder="答えではなく、次の問いにつながる気づき"></textarea></div>
@@ -295,7 +295,19 @@ function renderNumeric(){numericKpis.innerHTML=numericList.length?numericList.ma
 function addNumericKpi(){if(hcCloudMembership&&!hcIsStaff()){alert('分析・評価の入力はスタッフのみ可能です');return;}numericList.push({name:'',value:''});saveNumeric()} function saveNumeric(){localStorage.setItem('hc_numeric_kpis_v53',JSON.stringify(numericList));renderNumeric()}
 let learningResult='';
 function analysisPlanTargetsV581(){return plan.filter(x=>x.source==='analysis'&&x.analysisItemId).map(x=>({id:x.analysisItemId,code:x.analysisCode||'',name:x.analysisName||'',score:x.analysisScore||0,practice:x.name,question:x.question||'',principle:x.analysisPrinciple||''}))}
-function renderLearningLoopReview(){let e=document.getElementById('learningLoopReview');if(!e)return;let t=analysisPlanTargetsV581();if(!t.length){e.innerHTML='<div class="learningTarget"><span class="loopBadge">PRACTICE → REFLECT</span><div class="source">分析から追加した練習があると、ここに「何を確かめるか」が自動表示されます。</div></div>';return}e.innerHTML='<div class="learningTarget"><span class="loopBadge">LEARNING LOOP</span><h3>今日、何を確かめた？</h3>'+t.map(x=>`<div class="loopLink"><b>${esc(x.code)}｜${esc(x.name)}</b>${x.score?` <span class="tag">分析 ${x.score}/5</span>`:''}<div class="source">練習：${esc(x.practice)}${x.question?'<br>問い：'+esc(x.question):''}</div></div>`).join('')+'<div class="field" style="margin-top:14px"><label>練習後の変化</label><div class="score3" id="learningResult"><button data-lr="1">まだ</button><button data-lr="2">変化あり</button><button data-lr="3">できた</button></div></div></div>';e.querySelectorAll('[data-lr]').forEach(b=>b.onclick=()=>{learningResult=+b.dataset.lr;e.querySelectorAll('[data-lr]').forEach(q=>q.classList.toggle('on',q===b))})}
+function hc27GroupedTargets(){
+  let raw=analysisPlanTargetsV581(),m=new Map();
+  raw.forEach(x=>{
+    let key=x.id||x.code||x.name;
+    if(!m.has(key))m.set(key,{...x,practices:[],questions:[]});
+    let g=m.get(key);
+    if(x.practice&&!g.practices.includes(x.practice))g.practices.push(x.practice);
+    if(x.question&&!g.questions.includes(x.question))g.questions.push(x.question);
+  });
+  return [...m.values()];
+}
+function hc27ToggleLegacyKpi(){let e=document.getElementById('reviewLegacyKpi27'),b=document.getElementById('reviewLegacyToggle27');if(!e)return;let open=e.style.display==='none';e.style.display=open?'':'none';if(b)b.textContent=open?'詳細KPIを閉じる':'詳細KPIを確認・入力'}
+function renderLearningLoopReview(){let e=document.getElementById('learningLoopReview');if(!e)return;let t=hc27GroupedTargets();if(!t.length){e.innerHTML='<div class="learningTarget"><span class="loopBadge">PRACTICE → REFLECT</span><div class="source">分析から追加した練習があると、ここに「何を確かめるか」が自動表示されます。</div></div>';return}e.innerHTML='<div class="learningTarget"><span class="loopBadge">LEARNING LOOP</span><h3>今日、何を確かめた？</h3>'+t.map(x=>`<div class="loopLink"><b>${esc(x.code)}｜${esc(x.name)}</b>${x.score?` <span class="tag">分析 ${x.score}/5</span>`:''}<div class="source"><b>今日の練習</b><br>${x.practices.map(p=>'・'+esc(p)).join('<br>')}${x.questions.length?'<br><span class="meta">問い：'+x.questions.map(q=>esc(q)).join(' ／ ')+'</span>':''}</div></div>`).join('')+'<div class="field" style="margin-top:14px"><label>このテーマは練習後どうだった？</label><div class="score3" id="learningResult"><button data-lr="1">まだ</button><button data-lr="2">変化あり</button><button data-lr="3">できた</button></div></div></div>';e.querySelectorAll('[data-lr]').forEach(b=>b.onclick=()=>{learningResult=+b.dataset.lr;e.querySelectorAll('[data-lr]').forEach(q=>q.classList.toggle('on',q===b))})}
 function saveRecord(){if(hcCloudMembership&&!hcIsStaff()){alert('分析・評価の入力はスタッフのみ可能です');return;}let c=kpiConfig(),opp=c.find(x=>x.id==='opp'),success=c.find(x=>x.id==='success'),rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):null;let rec=jget('hc_training_records',[]);rec.unshift({id:'r-'+Date.now(),profileId:currentProfileIdV585(),date:new Date().toISOString(),theme:state.theme,phase:state.phase,principles:state.principles,players:state.players,gk:state.gk,duration:state.duration,plan:JSON.parse(JSON.stringify(plan)),simpleKpi,counters:c,counterRate:rate,numericKpis:numericList,playerGood:playerGood.value,playerNext:playerNext.value,reflection:reflection.value,learningTargets:analysisPlanTargetsV581(),learningResult,nextQuestion:(document.getElementById('nextQuestion')?.value||'').trim()});localStorage.setItem('hc_training_records',JSON.stringify(rec));alert('練習記録を保存しました');go('history')}
 function renderHistory(){let pid=currentProfileIdV585();let rec=jget('hc_training_records',[]).filter(r=>!pid||!r.profileId||r.profileId===pid);historyList.innerHTML=rec.length?rec.map(r=>`<div class="menu"><div class="k">${new Date(r.date).toLocaleDateString('ja-JP')}｜${esc(r.phase||'')}</div><h3>${esc(r.theme||'練習記録')}</h3><div class="meta">${r.simpleKpi?`かんたん評価：${['','まだ','まあまあ','できた'][r.simpleKpi]}<br>`:''}${r.counterRate!=null?`カウンター成功率：${r.counterRate}%<br>`:''}${r.playerNext?`次に変えたいこと：${esc(r.playerNext)}`:(r.kpi?esc(r.kpi):'')}${r.learningTargets?.length?`<div class="loopLink"><b>検証：</b>${r.learningTargets.map(x=>esc(x.code+' '+x.name)).join(' ／ ')}${r.learningResult?'<br>結果：'+['','まだ','変化あり','できた'][r.learningResult]:''}${r.nextQuestion?'<br>次の問い：'+esc(r.nextQuestion):''}</div>`:''}</div></div>`).join(''):`<div class="empty">まだ記録がありません</div>`}
 function safeUrl(u){u=String(u||'').trim();return /^https?:\/\//i.test(u)?u:''}
@@ -1783,5 +1795,6 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <!-- HOCKEY_COACH_V1_RC24_TODAY_SESSION_UX: When a plan exists, Today opens as session-first; conditions remain available via ＋練習を探す. No data/schema changes. -->
 <!-- HOCKEY_COACH_V1_RC25_COACH_MODE_UX: two-line practice title, 0/0=未計測, and one-step KPI undo. No schema/cloud changes. -->
 <!-- HOCKEY_COACH_V1_RC26_ANALYSIS_COPY_UX: Analysis tabs clarify 現在地 / 練習後の評価 / チームの成長; intro explains analysis-to-practice flow. No logic/data changes. -->
+<!-- HOCKEY_COACH_V1_RC27_THEME_REVIEW_UX: Review groups multiple practices under one analysis theme and evaluates that theme once; legacy KPI inputs remain available collapsed for compatibility. -->
 
 </body></html>
