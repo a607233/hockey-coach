@@ -899,7 +899,7 @@ setTimeout(hc5814RenderTodayResult,1000);
 <script>
 /* HC_V5817_SMART_COVERAGE
    Safe library/recommendation upgrade. No DB/schema/storage migration. */
-function hc5817AllCodes(){return teamAnalysisItems().filter(x=>/^(A|D|T)\\d+$/.test(x.code||''))}
+function hc5817AllCodes(){return teamAnalysisItems().filter(x=>/^(A|D|T)\d+$/.test(x.code||''))}
 function hc5817Coverage(){
   const ps=practiceData(), map={}; hc5817AllCodes().forEach(i=>map[i.code]=[]);
   ps.forEach(p=>(p.analysisCodes||[]).forEach(c=>{if(map[c])map[c].push(p)}));
@@ -1559,7 +1559,7 @@ hc5842Render=function(){
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
 
 
-<!-- HOCKEY_COACH_V1_RC12_ANALYSIS_SAVE_SYNC_FIX: observation history uses active season scope and pushes directly to cloud to prevent stale pull overwrite. -->
+<!-- HOCKEY_COACH_V1_RC13_COVERAGE_REGEX_FIX: fix analysis-code matcher so A1-D10-T12 populate the 32-item practice coverage; no data migration. -->
 <!-- HC_V5845_RELEASE_CHECK -->
 <style id="HC_V5845_RELEASE_CHECK_STYLE">
 .hc5845CheckResult{margin-top:12px;display:grid;gap:7px}.hc5845CheckRow{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #29434b;border-radius:12px;background:#0d1d22}.hc5845CheckRow b{font-size:12px}.hc5845CheckRow span{font-size:12px;font-weight:900}.hc5845Ok{color:#dfff52}.hc5845Warn{color:#ffd36b}.hc5845Summary{margin-top:4px;padding:12px;border-radius:14px;background:#10242b;border:1px solid #35535c;font-size:12px;line-height:1.65}
