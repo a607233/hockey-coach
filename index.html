@@ -1061,7 +1061,7 @@ function hc5817OpenCoverage(){
   const strong=items.filter(i=>(map[i.code]||[]).length>=2).length;
   const phases=['攻撃','守備','攻→守','守→攻'];
   let html=`<div class="k">32 ANALYSIS × PRACTICE</div><h2>練習カバレッジ</h2><div class="coverageSummary"><b>${covered}/32項目に専用リンク</b><div class="meta">うち ${strong}項目は候補2つ以上。0〜1件の項目を優先して補強します。</div></div>`;
-  phases.forEach(ph=>{const a=items.filter(i=>i.phase===ph);html+=`<div class="coveragePhase">${esc(ph)}｜${a.filter(i=>(map[i.code]||[]).length>0).length}/${a.length}</div><div class="coverageGrid">`+a.map(i=>{const n=(map[i.code]||[]).length;return `<div class="coverageItem"><b>${esc(i.code)}｜${esc(i.name)}</b><span class="${n>=2?'coverageOk':'coverageWeak'}">${n>=2?'✓':n===1?'△':'!'} 練習候補 ${n}件</span><div class="meta">${esc(i.desc||'')}</div>${n?`<button class="btn2" style="margin-top:7px" onclick="closeModal();setTimeout(()=>openAnalysisPracticeFlow('${i.id}'),30)">候補を見る</button>`:''}</div>`}).join('')+'</div>'});
+  phases.forEach(ph=>{const a=items.filter(i=>i.phase===ph);html+=`<div class="coveragePhase">${esc(ph)}｜${a.filter(i=>(map[i.code]||[]).length>0).length}/${a.length}</div><div class="coverageGrid">`+a.map(i=>{const n=(map[i.code]||[]).length;return `<div class="coverageItem"><b>${esc(i.code)}｜${esc(i.name)}</b><span class="${n>=2?'coverageOk':'coverageWeak'}">${n>=2?'✓':n===1?'△':'!'} 練習候補 ${n}件</span><div class="meta">${esc(i.desc||'')}</div>${n?`<button class="btn2" style="margin-top:7px" onclick="closeModal();setTimeout(()=>hcRC40OpenAllCoverageCandidates('${i.id}'),30)">候補を見る</button>`:''}</div>`}).join('')+'</div>'});
   html+='<div class="tinyStatus">既存データは変更しません。カバレッジは練習ライブラリの analysisCodes から自動集計しています。</div><button class="ghost" onclick="closeModal()">閉じる</button>';openModal(html)
 }
 function hc5817InstallCoverageButton(){
@@ -1920,144 +1920,17 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 </script>
 <!-- HC_RC40_ANALYSIS_PERSISTENCE_FIX: prevents a newly saved analysis from being erased by stale cloud data on reload. -->
 
-
-<script id="HC_RECORD_AND_REVIEW_FIX">
-/* Minimal fix:
-   1) Review/KPI choice buttons use one reliable direct document handler.
-   2) Training records always use the same season scope as History.
-   No changes to auth, Philosophy, More tabs, Home, practice library or analysis data. */
-(function(){
-  document.addEventListener('click',function(e){
-    const score=e.target.closest('#simpleScore [data-score]');
-    if(score){
-      simpleKpi=Number(score.dataset.score)||0;
-      document.querySelectorAll('#simpleScore [data-score]').forEach(x=>x.classList.toggle('on',x===score));
-      return;
-    }
-    const lr=e.target.closest('#learningResult [data-lr]');
-    if(lr){
-      learningResult=Number(lr.dataset.lr)||0;
-      document.querySelectorAll('#learningResult [data-lr]').forEach(x=>x.classList.toggle('on',x===lr));
-      return;
-    }
-    const tab=e.target.closest('#kpiTabs [data-kpi]');
-    if(tab){
-      document.querySelectorAll('#kpiTabs [data-kpi]').forEach(x=>x.classList.toggle('on',x===tab));
-      document.querySelectorAll('#reviewLegacyKpi27 [id^="kpi-"]').forEach(x=>x.classList.toggle('on',x.id==='kpi-'+tab.dataset.kpi));
-    }
-  },true);
-
-  saveRecord=function(){
-    if(hcCloudMembership&&!hcIsStaff()){
-      alert('分析・評価の入力はスタッフのみ可能です');
-      return;
-    }
-    const c=kpiConfig(),
-          opp=c.find(x=>x.id==='opp'),
-          success=c.find(x=>x.id==='success'),
-          rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):null,
-          rec=jget('hc_training_records',[]),
-          scope=(typeof currentDataScopeV586==='function'?currentDataScopeV586():(currentProfileIdV585()||'default'));
-
-    rec.unshift({
-      id:'r-'+Date.now(),
-      profileId:scope,
-      date:new Date().toISOString(),
-      theme:state.theme,phase:state.phase,principles:state.principles,
-      players:state.players,gk:state.gk,duration:state.duration,
-      plan:JSON.parse(JSON.stringify(plan)),
-      simpleKpi,counters:c,counterRate:rate,numericKpis:numericList,
-      playerGood:playerGood.value,playerNext:playerNext.value,
-      reflection:reflection.value,
-      learningTargets:analysisPlanTargetsV581(),
-      learningResult,
-      nextQuestion:(document.getElementById('nextQuestion')?.value||'').trim()
-    });
-
-    localStorage.setItem('hc_training_records',JSON.stringify(rec));
-    if(typeof hcScheduleCloudPush==='function') hcScheduleCloudPush(['training_records']);
-    alert('練習記録を保存しました');
-    go('history');
-  };
-})();
+\n<script id="HC_RC40_COVERAGE_ALL_CANDIDATES">
+/* RC40: Coverage modal only. Show every practice explicitly linked to the selected analysis code.
+   The normal Analysis -> Practice flow remains capped at 3 candidates. No storage/auth/schema changes. */
+function hcRC40OpenAllCoverageCandidates(itemId){
+  const item=teamAnalysisItems().find(x=>x.id===itemId);
+  if(!item)return;
+  const all=practiceData().filter(p=>(p.analysisCodes||[]).includes(item.code));
+  const keys=ANALYSIS_LINKS_V580[item.code]||[item.name];
+  const latest=latestTeamObservation(), score=+latest?.scores?.[item.id]||0;
+  const cards=all.map(x=>`<div class="rec"><b>${esc(x.name)}</b> <span class="tag">${esc(x.style||'')}</span><div class="muted">${esc(x.purpose||'')}${x.question?'<br>問い：'+esc(x.question):''}${x.kpiHint?'<br>KPI：'+esc(x.kpiHint):''}</div><div class="matchReason">専用リンク：${esc(item.code)}</div><div class="actions"><button onclick="openPracticeDetailV571('${x.id}')">図と進め方</button><button onclick="addAnalysisPracticeToToday('${x.id}','${item.id}')">今日へ追加</button></div></div>`).join('');
+  openModal(`<div class="k">32 ANALYSIS × PRACTICE</div><h2>${esc(item.code)}｜${esc(item.name)}</h2><div class="issueCard"><div class="row"><b>最新評価</b><div class="issueScore">${score}</div></div><div class="meta">${esc(item.desc||'')}</div></div><div class="k">RELATED PRINCIPLE</div><h3>${esc(keys[0]||item.name)}</h3><p class="muted">この項目に専用リンクされた練習をすべて表示しています。</p><h3>練習候補 ${all.length}件</h3>${cards||'<div class="analysisEmpty">専用リンクされた練習候補はありません。</div>'}<button class="ghost" onclick="closeModal()">閉じる</button>`);
+}
 </script>
-<!-- HC_RECORD_AND_REVIEW_FIX: review taps + season-scoped training record persistence only. -->
-
-
-<script id="HC_RECORD_PERSISTENCE_LOCAL_FIRST">
-/* Training-record persistence fix only.
-   A just-saved coach record is kept in a local pending store and merged into History.
-   Cloud sync receives the exact merged record set; stale cloud reads cannot make the
-   record disappear from the coach device. */
-(function(){
-  const KEY='hc_training_records';
-  const PENDING='hc_training_records_pending_v1';
-
-  function arr(k){try{const v=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(v)?v:[]}catch(e){return []}}
-  function merge(a,b){
-    const m=new Map();
-    [...a,...b].forEach(r=>{if(r&&r.id&&!m.has(r.id))m.set(r.id,r)});
-    return [...m.values()].sort((x,y)=>new Date(y.date||0)-new Date(x.date||0));
-  }
-  function restorePending(){
-    const p=arr(PENDING); if(!p.length)return arr(KEY);
-    const all=merge(p,arr(KEY));
-    localStorage.setItem(KEY,JSON.stringify(all));
-    return all;
-  }
-
-  const baseRender=window.renderHistory;
-  window.renderHistory=function(){
-    restorePending();
-    return baseRender.apply(this,arguments);
-  };
-
-  window.saveRecord=function(){
-    if(hcCloudMembership&&!hcIsStaff()){
-      alert('分析・評価の入力はスタッフのみ可能です'); return;
-    }
-    const c=kpiConfig(),
-      opp=c.find(x=>x.id==='opp'), success=c.find(x=>x.id==='success'),
-      rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):null,
-      scope=currentDataScopeV586(),
-      record={
-        id:'r-'+Date.now(), profileId:scope, date:new Date().toISOString(),
-        theme:state.theme,phase:state.phase,principles:state.principles,
-        players:state.players,gk:state.gk,duration:state.duration,
-        plan:JSON.parse(JSON.stringify(plan)),
-        simpleKpi,counters:c,counterRate:rate,numericKpis:numericList,
-        playerGood:playerGood.value,playerNext:playerNext.value,
-        reflection:reflection.value,learningTargets:analysisPlanTargetsV581(),
-        learningResult,nextQuestion:(document.getElementById('nextQuestion')?.value||'').trim()
-      };
-
-    const all=merge([record],restorePending());
-    localStorage.setItem(KEY,JSON.stringify(all));
-    localStorage.setItem(PENDING,JSON.stringify(merge([record],arr(PENDING))));
-
-    go('history');
-    renderHistory();
-    alert('練習記録を保存しました');
-
-    if(hcCloudReady&&hcCloudMembership&&hcIsStaff()){
-      Promise.resolve()
-        .then(()=>hcCloudPushKey('training_records',all))
-        .then(()=>{
-          const p=arr(PENDING).filter(x=>x.id!==record.id);
-          if(p.length)localStorage.setItem(PENDING,JSON.stringify(p));
-          else localStorage.removeItem(PENDING);
-          hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・同期済み',true);
-        })
-        .catch(e=>{
-          console.error('training_records push',e);
-          hcCloudMsg('記録は端末に保存済み・クラウド同期待ち',true);
-        });
-    }
-  };
-
-  restorePending();
-})();
-</script>
-<!-- HC_RECORD_PERSISTENCE_LOCAL_FIRST -->
-
-</body></html>
+<!-- HC_RC40_COVERAGE_ALL_CANDIDATES: coverage count and displayed candidates now match; normal 3-candidate recommendation flow unchanged. -->\n</body></html>
