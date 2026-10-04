@@ -176,7 +176,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 
 <section id="more" class="page">
  <div class="tabs" id="moreTabs">
-  <button class="tab on" data-more="ph">Philosophy</button><button class="tab" data-more="method">原則・メソッド</button><button class="tab" data-more="library">練習ライブラリ</button><button class="tab" data-more="team">チーム</button><button class="tab" data-more="invite">招待</button><button class="tab" data-more="settings">設定</button>
+  <button class="tab on" data-more="ph" onclick="return hc34OpenMore('ph',this)">Philosophy</button><button class="tab" data-more="method" onclick="return hc34OpenMore('method',this)">原則・メソッド</button><button class="tab" data-more="library" onclick="return hc34OpenMore('library',this)">練習ライブラリ</button><button class="tab" data-more="team" onclick="return hc34OpenMore('team',this)">チーム</button><button class="tab" data-more="invite" onclick="return hc34OpenMore('invite',this)">招待</button><button class="tab" data-more="settings" onclick="return hc34OpenMore('settings',this)">設定</button>
  </div>
  <div id="more-ph" class="tabpane on"><div class="card"><div id="teamVisionHero"></div><div class="philosophyIntro"><div><div class="k">6 PHILOSOPHIES</div><div class="title">私たちが大切にする6つ</div></div><div class="count">選手と一緒に育てる言葉</div></div><div class="row"><p class="muted" style="margin:0;flex:1">日々のプレーと行動に落とし込む、チームの共通基準です。</p><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><div id="philosophyList"></div><button class="btn2" style="margin-top:12px" onclick="hc34ShowPhRecovery()">以前のPhilosophyを確認</button></div></div>
  <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodMapV55"></div><hr><div class="k">TEAM CUSTOM</div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
@@ -551,10 +551,7 @@ function hc34OpenMore(name,btn){
  root.querySelectorAll(':scope > .tabpane').forEach(x=>x.classList.toggle('on',x===pane));
  return false;
 }
-function setupMoreTabs(){
- const tabs=document.getElementById('moreTabs');if(!tabs)return;
- tabs.querySelectorAll('[data-more]').forEach(b=>{b.onclick=function(e){if(e)e.preventDefault();return hc34OpenMore(this.dataset.more,this)}});
-}
+function setupMoreTabs(){/* direct inline handlers on More tabs: stable on iPhone/Safari */}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();renderInvite();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';renderSeasonProfiles()}
 bindAutosaveFields();acceptInviteFromUrl();renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupAnalysisModeTabs();renderTeamAnalysis();
 </script>
