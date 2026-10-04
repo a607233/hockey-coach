@@ -1843,4 +1843,81 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 
 <!-- HC_RC38_PHILOSOPHY_SAFE_PERSISTENCE: edited Philosophy and Team Vision are mirrored to stable local safety keys; backup includes Team Vision. No cloud/schema/tab changes. -->
 <!-- HC_RC39_MORE_DIRECT_BUTTONS: More tabs use one direct handler per button; delegated handler disabled to avoid iPhone/Safari missed taps and duplicate handling. RC38 Philosophy persistence retained. -->
+
+<script id="HC_RC40_ANALYSIS_PERSISTENCE_FIX">
+/* RC40 — analysis persistence only.
+   Keeps a tiny pending copy of newly saved observations until cloud sync succeeds.
+   On reload, a pending observation is restored after cloud initial sync so stale cloud
+   data cannot erase a just-saved local analysis. No auth/tabs/philosophy/practice changes. */
+(function(){
+  const PENDING_KEY='hc_analysis_pending_rc40';
+
+  function readPending(){
+    try{
+      const a=JSON.parse(localStorage.getItem(PENDING_KEY)||'[]');
+      return Array.isArray(a)?a:[];
+    }catch(e){ return []; }
+  }
+  function writePending(a){
+    if(a&&a.length) localStorage.setItem(PENDING_KEY,JSON.stringify(a));
+    else localStorage.removeItem(PENDING_KEY);
+  }
+  function mergeObs(a,b){
+    const m=new Map();
+    [...(Array.isArray(a)?a:[]),...(Array.isArray(b)?b:[])].forEach(x=>{
+      if(x&&x.id&&!m.has(x.id))m.set(x.id,x);
+    });
+    return [...m.values()].sort((x,y)=>{
+      const xi=Number(String(x.id||'').replace(/\D/g,''))||0;
+      const yi=Number(String(y.id||'').replace(/\D/g,''))||0;
+      return yi-xi;
+    });
+  }
+
+  const baseSave=window.saveTeamObservation;
+  window.saveTeamObservation=function(){
+    const before=jget('hc_team_analysis_history_v577',[]);
+    const beforeIds=new Set((Array.isArray(before)?before:[]).map(x=>x&&x.id));
+    const ok=baseSave.apply(this,arguments);
+    if(!ok)return ok;
+
+    const after=jget('hc_team_analysis_history_v577',[]);
+    const added=(Array.isArray(after)?after:[]).filter(x=>x&&x.id&&!beforeIds.has(x.id));
+    if(added.length){
+      writePending(mergeObs(added,readPending()));
+      if(window.hcCloudReady&&window.hcCloudMembership&&hcIsStaff()){
+        Promise.resolve()
+          .then(()=>hcCloudPushKey('analysis_history',after))
+          .then(()=>writePending([]))
+          .catch(e=>console.error('analysis_history RC40 push',e));
+      }
+    }
+    return ok;
+  };
+
+  const baseInitial=window.hcCloudInitialSync;
+  window.hcCloudInitialSync=async function(){
+    await baseInitial.apply(this,arguments);
+    const pending=readPending();
+    if(!pending.length)return;
+
+    const current=jget('hc_team_analysis_history_v577',[]);
+    const merged=mergeObs(pending,current);
+    localStorage.setItem('hc_team_analysis_history_v577',JSON.stringify(merged));
+    try{renderTeamAnalysis()}catch(e){}
+
+    if(window.hcCloudReady&&window.hcCloudMembership&&hcIsStaff()){
+      try{
+        await hcCloudPushKey('analysis_history',merged);
+        writePending([]);
+        hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・同期済み',true);
+      }catch(e){
+        console.error('analysis_history RC40 recovery push',e);
+      }
+    }
+  };
+})();
+</script>
+<!-- HC_RC40_ANALYSIS_PERSISTENCE_FIX: prevents a newly saved analysis from being erased by stale cloud data on reload. -->
+
 </body></html>
