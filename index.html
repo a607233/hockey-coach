@@ -1970,13 +1970,15 @@ try{if(document.getElementById('historyList'))hcRC41RenderHistory()}catch(e){}
 <!-- HC_RC41_HISTORY_DETAIL: history cards open their own saved record details; accidental literal newline text removed. -->
 
 <script id="HC_RC42_SAME_SESSION_UPSERT">
-/* RC42 — Same-session save = update, not duplicate.
-   Match key: profile + local calendar date + phase + theme. Existing exact duplicates are compacted safely.
+/* RC42.1 — Same-day duplicate cleanup + same-session upsert.
+   Legacy records without profileId are treated as belonging to the current season scope.
    No auth/schema/philosophy/practice-library changes. */
 (function(){
   const KEY='hc_training_records';
+  function scopeId(){try{return currentDataScopeV586()}catch(e){try{return currentProfileIdV585()}catch(_){return ''}}}
   function dayKey(v){try{return new Date(v).toLocaleDateString('en-CA')}catch(e){return ''}}
-  function recKey(r){return [r?.profileId||'',dayKey(r?.date),r?.phase||'',r?.theme||''].join('|')}
+  function normalizedProfile(r){return r?.profileId||scopeId()||''}
+  function recKey(r){return [normalizedProfile(r),dayKey(r?.date),r?.phase||'',r?.theme||''].join('|')}
   function richness(r){
     let n=0;
     ['learningResult','playerGood','playerNext','reflection','nextQuestion','simpleKpi','counterRate'].forEach(k=>{if(r?.[k]!==undefined&&r?.[k]!==null&&r?.[k]!=='')n++});
@@ -1985,41 +1987,58 @@ try{if(document.getElementById('historyList'))hcRC41RenderHistory()}catch(e){}
     return n;
   }
   function compactExisting(list){
-    const groups=new Map(), out=[];
-    (Array.isArray(list)?list:[]).forEach((r,i)=>{
-      const k=recKey(r);
-      if(!groups.has(k)){groups.set(k,{r,i});return}
-      const old=groups.get(k), a=richness(old.r), b=richness(r);
-      if(b>a || (b===a && new Date(r.date||0)>new Date(old.r.date||0))) groups.set(k,{r,i});
+    const groups=new Map();
+    (Array.isArray(list)?list:[]).forEach(r=>{
+      if(!r)return;
+      const k=recKey(r), old=groups.get(k);
+      if(!old){groups.set(k,r);return}
+      const a=richness(old), b=richness(r);
+      if(b>a || (b===a && new Date(r.date||0)>new Date(old.date||0))) groups.set(k,r);
     });
-    [...groups.values()].sort((a,b)=>new Date(b.r.date||0)-new Date(a.r.date||0)).forEach(x=>out.push(x.r));
-    return out;
+    return [...groups.values()].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
   }
   function saveList(list){localStorage.setItem(KEY,JSON.stringify(list));try{hcScheduleCloudPush(['training_records'])}catch(e){}}
-
-  // Clean only exact same-session duplicates already created during testing; keep the richer/newer record.
-  try{
+  function compactNow(){
     const before=jget(KEY,[]), after=compactExisting(before);
-    if(after.length<before.length)saveList(after);
-  }catch(e){}
+    if(after.length<before.length){saveList(after);return true}
+    return false;
+  }
 
-  const base=window.saveRecord;
+  // Clean legacy duplicates immediately. This now also catches old records with no profileId.
+  try{compactNow()}catch(e){}
+
+  // Re-check whenever HISTORY renders, including after cloud sync restores data.
+  const baseRender=window.renderHistory;
+  window.renderHistory=function(){
+    try{compactNow()}catch(e){}
+    return baseRender.apply(this,arguments);
+  };
+
+  // Re-saving the same session replaces the old same-day/session card instead of adding another.
+  const baseSave=window.saveRecord;
   window.saveRecord=function(){
     const before=jget(KEY,[]), beforeIds=new Set(before.map(r=>r&&r.id));
-    const ret=base.apply(this,arguments);
+    const ret=baseSave.apply(this,arguments);
     try{
       let all=jget(KEY,[]);
       const newest=all.find(r=>r&&r.id&&!beforeIds.has(r.id));
       if(newest){
         const k=recKey(newest);
-        all=all.filter(r=>r===newest||recKey(r)!==k);
-        saveList(all);
-        try{renderHistory()}catch(e){}
+        const same=all.filter(r=>recKey(r)===k);
+        let keep=newest;
+        same.forEach(r=>{if(richness(r)>richness(keep))keep=r});
+        // Preserve the newest timestamp/id while keeping richer saved details when an older duplicate has them.
+        if(keep!==newest) keep={...keep,id:newest.id,date:newest.date,profileId:newest.profileId||keep.profileId||scopeId()};
+        all=[keep,...all.filter(r=>recKey(r)!==k)];
+        saveList(compactExisting(all));
+        try{baseRender()}catch(e){}
       }
-    }catch(e){console.error('RC42 same-session upsert',e)}
+    }catch(e){console.error('RC42.1 same-session upsert',e)}
     return ret;
   };
+
+  try{window.renderHistory()}catch(e){}
 })();
 </script>
-<!-- HC_RC42_SAME_SESSION_UPSERT: re-saving the same profile/date/phase/theme updates one history entry instead of adding duplicates. -->
+<!-- HC_RC42_SAME_SESSION_UPSERT: missing-profile legacy duplicates are normalized to current scope; history re-compacts after cloud sync/render. -->
 </body></html>
