@@ -20,7 +20,7 @@ main{max-width:760px;margin:auto;padding:14px}.page{display:none}.page.on{displa
 hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 @media(max-width:390px){.grid3{grid-template-columns:1fr 1fr}.grid3 .field:last-child{grid-column:1/-1}}
 
-.tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 11px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 11px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}#moreTabs{position:relative;z-index:30;isolation:isolate;touch-action:pan-x;background:var(--bg)}#moreTabs .tab{position:relative;z-index:31;flex:0 0 auto;pointer-events:auto;touch-action:manipulation}
 .tab{flex:0 0 auto;border:1px solid #30464e;background:#0d1a20;color:#a9bac0;border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px}.tab.on{background:var(--lime);border-color:var(--lime);color:#071014}
 .tabpane{display:none}.tabpane.on{display:block}.kpirow{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid #203139}.counter{min-width:48px;text-align:center;font-size:25px;font-weight:950}.smallbtn{border:1px solid #344b54;background:#14242b;color:#fff;border-radius:11px;padding:9px 12px;font-weight:950}.score3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.score3 button{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:11px;padding:11px 5px;font-weight:900}.score3 button.on{background:var(--lime);color:#071014;border-color:var(--lime)}
 .videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}.tag{display:inline-block;border:1px solid #31464e;border-radius:999px;padding:4px 7px;margin:3px 3px 0 0;font-size:10px;color:#b9c8cd}.libraryTools{display:grid;grid-template-columns:1fr auto;gap:7px;margin:10px 0}.libraryTools .btn2{width:auto}
@@ -512,7 +512,22 @@ function practiceDiagramV585(x){if(x.diagramImage)return `<div class="k">CUSTOM 
 function exportData(){let data={version:'5.8.5',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function restoreDataFromFile(input){let f=input.files?.[0];if(!f)return;let s=document.getElementById('restoreStatus');try{let d=JSON.parse(await f.text());if(!d||!Array.isArray(d.practiceLibrary))throw new Error('形式が違います');if(!confirm('現在のHOCKEY COACHデータをバックアップ内容で復元しますか？')){input.value='';return}let map=[['hc_today_plan',d.todayPlan||[]],['hc_training_records',d.trainingRecords||[]],['hc_philosophy_items_v51',d.philosophy||[]],['hc_team_methods_v52',d.methods||[]],['hc_practice_library_v54',d.practiceLibrary||[]],['hc_practice_favorites_v584',d.practiceFavorites||[]],['hc_practice_recent_v584',d.practiceRecent||[]],['hc_team_roles_v52',d.roles||[]],['hc_team_settings_v52',d.team||{}],['hc_season_profiles_v584',d.seasonProfiles||[]],['hc_team_analysis_items_v577',d.teamAnalysisItems||TEAM_ANALYSIS_DEFAULT_V577],['hc_team_analysis_history_v577',d.teamAnalysisHistory||[]]];map.forEach(([k,v])=>_lsSet(k,JSON.stringify(v)));if(s)s.textContent='✓ 復元しました。画面を再読み込みします。';setTimeout(()=>location.reload(),500)}catch(e){if(s)s.textContent='復元できませんでした：HOCKEY COACHのJSONバックアップを選んでください。'}finally{input.value=''}}
 
-function setupMoreTabs(){document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-more]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('[id^="more-"]').forEach(x=>x.classList.toggle('on',x.id==='more-'+b.dataset.more))})}
+function openMoreTab(name){
+  const tabs=document.getElementById('moreTabs'),pane=document.getElementById('more-'+name);
+  if(!tabs||!pane)return;
+  tabs.querySelectorAll('[data-more]').forEach(b=>b.classList.toggle('on',b.dataset.more===name));
+  document.querySelectorAll('#more > [id^="more-"]').forEach(x=>x.classList.toggle('on',x===pane));
+  const active=tabs.querySelector('[data-more="'+name+'"]');
+  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function setupMoreTabs(){
+  const tabs=document.getElementById('moreTabs');if(!tabs)return;
+  tabs.querySelectorAll('[data-more]').forEach(b=>{
+    b.onclick=null;
+    b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openMoreTab(b.dataset.more)},{passive:false});
+    b.addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();openMoreTab(b.dataset.more)},{passive:false});
+  });
+}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();renderInvite();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';renderSeasonProfiles()}
 bindAutosaveFields();acceptInviteFromUrl();renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupAnalysisModeTabs();renderTeamAnalysis();
 </script>
@@ -1806,5 +1821,6 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <!-- HOCKEY_COACH_V1_RC27_THEME_REVIEW_UX: Review groups multiple practices under one analysis theme and evaluates that theme once; legacy KPI inputs remain available collapsed for compatibility. -->
 <!-- HOCKEY_COACH_V1_RC28_FIRST_GROWTH_STATE: First analysis shows baseline wording and no fake 0.0 delta; deltas appear only from analysis #2 onward. No data/cloud changes. -->
 <!-- HOCKEY_COACH_V1_RC29_TODAY_RESULT_STATE: Record screen distinguishes today's incomplete/complete session; developer-only read-only copy removed. No storage/schema changes. -->
+<!-- HOCKEY_COACH_V1_RC30_MORE_TAB_TOUCH_FIX: More tabs get isolated tap layer and explicit openMoreTab switching for iPhone; content/data untouched. -->
 
 </body></html>
