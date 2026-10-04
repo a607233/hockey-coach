@@ -1939,4 +1939,27 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 })();
 </script>
 <!-- HC_REVIEW_SAVED_STATE_V1: saved-today review CTA becomes record link; no record/storage/cloud changes. -->
+\n<script id="HC_HISTORY_TARGET_DEDUPE_V1">
+/* Display-only: remove duplicate learning targets in HISTORY. No record/storage/cloud changes. */
+(function(){
+  function uniqueTargets(list){
+    const seen=new Set();
+    return (Array.isArray(list)?list:[]).filter(x=>{
+      const key=String(x?.code||'')+'|'+String(x?.name||'');
+      if(seen.has(key))return false;
+      seen.add(key);return true;
+    });
+  }
+  window.renderHistory=function(){
+    const pid=currentDataScopeV586();
+    const rec=jget('hc_training_records',[]).filter(r=>r.profileId===pid);
+    historyList.innerHTML=rec.length?rec.map(r=>{
+      const targets=uniqueTargets(r.learningTargets);
+      return `<div class="menu"><div class="k">${new Date(r.date).toLocaleDateString('ja-JP')}｜${esc(r.phase||'')}</div><h3>${esc(r.theme||'練習記録')}</h3><div class="meta">${r.simpleKpi?`かんたん評価：${['','まだ','まあまあ','できた'][r.simpleKpi]}<br>`:''}${r.counterRate!=null?`カウンター成功率：${r.counterRate}%<br>`:''}${r.playerNext?`次に変えたいこと：${esc(r.playerNext)}`:(r.kpi?esc(r.kpi):'')}${targets.length?`<div class="loopLink"><b>検証：</b>${targets.map(x=>esc(x.code+' '+x.name)).join(' ／ ')}${r.learningResult?'<br>結果：'+['','まだ','変化あり','できた'][r.learningResult]:''}${r.nextQuestion?'<br>次の問い：'+esc(r.nextQuestion):''}</div>`:''}</div></div>`;
+    }).join(''):`<div class="empty">このシーズンにはまだ記録がありません</div>`;
+    if(typeof hc5814RenderTodayResult==='function')hc5814RenderTodayResult();
+  };
+})();
+</script>
+<!-- HC_HISTORY_TARGET_DEDUPE_V1: HISTORY display dedupes identical analysis targets only; stored records unchanged. -->
 </body></html>
