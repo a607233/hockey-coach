@@ -1920,4 +1920,67 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 </script>
 <!-- HC_RC40_ANALYSIS_PERSISTENCE_FIX: prevents a newly saved analysis from being erased by stale cloud data on reload. -->
 
+
+<script id="HC_RECORD_AND_REVIEW_FIX">
+/* Minimal fix:
+   1) Review/KPI choice buttons use one reliable direct document handler.
+   2) Training records always use the same season scope as History.
+   No changes to auth, Philosophy, More tabs, Home, practice library or analysis data. */
+(function(){
+  document.addEventListener('click',function(e){
+    const score=e.target.closest('#simpleScore [data-score]');
+    if(score){
+      simpleKpi=Number(score.dataset.score)||0;
+      document.querySelectorAll('#simpleScore [data-score]').forEach(x=>x.classList.toggle('on',x===score));
+      return;
+    }
+    const lr=e.target.closest('#learningResult [data-lr]');
+    if(lr){
+      learningResult=Number(lr.dataset.lr)||0;
+      document.querySelectorAll('#learningResult [data-lr]').forEach(x=>x.classList.toggle('on',x===lr));
+      return;
+    }
+    const tab=e.target.closest('#kpiTabs [data-kpi]');
+    if(tab){
+      document.querySelectorAll('#kpiTabs [data-kpi]').forEach(x=>x.classList.toggle('on',x===tab));
+      document.querySelectorAll('#reviewLegacyKpi27 [id^="kpi-"]').forEach(x=>x.classList.toggle('on',x.id==='kpi-'+tab.dataset.kpi));
+    }
+  },true);
+
+  saveRecord=function(){
+    if(hcCloudMembership&&!hcIsStaff()){
+      alert('分析・評価の入力はスタッフのみ可能です');
+      return;
+    }
+    const c=kpiConfig(),
+          opp=c.find(x=>x.id==='opp'),
+          success=c.find(x=>x.id==='success'),
+          rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):null,
+          rec=jget('hc_training_records',[]),
+          scope=(typeof currentDataScopeV586==='function'?currentDataScopeV586():(currentProfileIdV585()||'default'));
+
+    rec.unshift({
+      id:'r-'+Date.now(),
+      profileId:scope,
+      date:new Date().toISOString(),
+      theme:state.theme,phase:state.phase,principles:state.principles,
+      players:state.players,gk:state.gk,duration:state.duration,
+      plan:JSON.parse(JSON.stringify(plan)),
+      simpleKpi,counters:c,counterRate:rate,numericKpis:numericList,
+      playerGood:playerGood.value,playerNext:playerNext.value,
+      reflection:reflection.value,
+      learningTargets:analysisPlanTargetsV581(),
+      learningResult,
+      nextQuestion:(document.getElementById('nextQuestion')?.value||'').trim()
+    });
+
+    localStorage.setItem('hc_training_records',JSON.stringify(rec));
+    if(typeof hcScheduleCloudPush==='function') hcScheduleCloudPush(['training_records']);
+    alert('練習記録を保存しました');
+    go('history');
+  };
+})();
+</script>
+<!-- HC_RECORD_AND_REVIEW_FIX: review taps + season-scoped training record persistence only. -->
+
 </body></html>
