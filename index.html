@@ -1959,4 +1959,26 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 })();
 </script>
 <!-- HC_HISTORY_TARGET_DEDUPE_V1: HISTORY display dedupes identical analysis targets only; stored records unchanged. -->
+
+<script id="HC_COVERAGE_ALL_CANDIDATES_FIX">
+/* Coverage modal only: show every practice explicitly linked to the selected analysis code.
+   Normal analysis recommendation flow remains limited to 3 candidates. */
+function hcCoverageAllCandidates(itemId){
+  const item=teamAnalysisItems().find(x=>x.id===itemId);
+  if(!item)return;
+  const cand=practiceData().filter(p=>Array.isArray(p.analysisCodes)&&p.analysisCodes.includes(item.code));
+  const link=ANALYSIS_LINKS_V580[item.code]||[item.name];
+  openModal(`<div class="k">32 ANALYSIS × PRACTICE</div><h2>${esc(item.code)}｜${esc(item.name)}</h2><div class="issueCard"><b>練習候補 ${cand.length}件</b><div class="meta">${esc(item.desc||'')}</div></div><div class="k">RELATED PRINCIPLE</div><h3>${esc(link[0]||item.name)}</h3><p class="muted">判断の手掛かり：${link.slice(1).map(esc).join(' ／ ')||esc(item.desc||'')}</p><h3>練習候補</h3>${cand.length?cand.map(x=>`<div class="rec"><b>${esc(x.name)}</b> <span class="tag">${esc(x.style||'')}</span><div class="muted">${esc(x.purpose||'')}<br>問い：${esc(x.question||'')}${x.kpiHint?'<br>KPI：'+esc(x.kpiHint):''}</div><div class="matchReason">関連度：${esc(item.code)} 専用</div><div class="actions"><button onclick="openPracticeDetailV571('${x.id}')">図と進め方</button><button onclick="addAnalysisPracticeToToday('${x.id}','${item.id}')">今日へ追加</button></div></div>`).join(''):'<div class="analysisEmpty">この項目に専用リンクされた練習はありません。</div>'}<button class="ghost" onclick="closeModal()">閉じる</button>`);
+}
+function hc5817OpenCoverage(){
+  const items=hc5817AllCodes(), map=hc5817Coverage();
+  const covered=items.filter(i=>(map[i.code]||[]).length>0).length;
+  const strong=items.filter(i=>(map[i.code]||[]).length>=2).length;
+  const phases=['攻撃','守備','攻→守','守→攻'];
+  let html=`<div class="k">32 ANALYSIS × PRACTICE</div><h2>練習カバレッジ</h2><div class="coverageSummary"><b>${covered}/32項目に専用リンク</b><div class="meta">うち ${strong}項目は候補2つ以上。0〜1件の項目を優先して補強します。</div></div>`;
+  phases.forEach(ph=>{const a=items.filter(i=>i.phase===ph);html+=`<div class="coveragePhase">${esc(ph)}｜${a.filter(i=>(map[i.code]||[]).length>0).length}/${a.length}</div><div class="coverageGrid">`+a.map(i=>{const n=(map[i.code]||[]).length;return `<div class="coverageItem"><b>${esc(i.code)}｜${esc(i.name)}</b><span class="${n>=2?'coverageOk':'coverageWeak'}">${n>=2?'✓':n===1?'△':'!'} 練習候補 ${n}件</span><div class="meta">${esc(i.desc||'')}</div>${n?`<button class="btn2" style="margin-top:7px" onclick="closeModal();setTimeout(()=>hcCoverageAllCandidates('${i.id}'),30)">候補を見る</button>`:''}</div>`}).join('')+'</div>'});
+  html+='<div class="tinyStatus">既存データは変更しません。カバレッジは練習ライブラリの analysisCodes から自動集計しています。</div><button class="ghost" onclick="closeModal()">閉じる</button>';
+  openModal(html);
+}
+</script>
 </body></html>
