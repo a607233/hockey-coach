@@ -1983,4 +1983,81 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 </script>
 <!-- HC_RECORD_AND_REVIEW_FIX: review taps + season-scoped training record persistence only. -->
 
+
+<script id="HC_RECORD_PERSISTENCE_LOCAL_FIRST">
+/* Training-record persistence fix only.
+   A just-saved coach record is kept in a local pending store and merged into History.
+   Cloud sync receives the exact merged record set; stale cloud reads cannot make the
+   record disappear from the coach device. */
+(function(){
+  const KEY='hc_training_records';
+  const PENDING='hc_training_records_pending_v1';
+
+  function arr(k){try{const v=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(v)?v:[]}catch(e){return []}}
+  function merge(a,b){
+    const m=new Map();
+    [...a,...b].forEach(r=>{if(r&&r.id&&!m.has(r.id))m.set(r.id,r)});
+    return [...m.values()].sort((x,y)=>new Date(y.date||0)-new Date(x.date||0));
+  }
+  function restorePending(){
+    const p=arr(PENDING); if(!p.length)return arr(KEY);
+    const all=merge(p,arr(KEY));
+    localStorage.setItem(KEY,JSON.stringify(all));
+    return all;
+  }
+
+  const baseRender=window.renderHistory;
+  window.renderHistory=function(){
+    restorePending();
+    return baseRender.apply(this,arguments);
+  };
+
+  window.saveRecord=function(){
+    if(hcCloudMembership&&!hcIsStaff()){
+      alert('分析・評価の入力はスタッフのみ可能です'); return;
+    }
+    const c=kpiConfig(),
+      opp=c.find(x=>x.id==='opp'), success=c.find(x=>x.id==='success'),
+      rate=opp&&+opp.value?Math.round((success?+success.value:0)/+opp.value*100):null,
+      scope=currentDataScopeV586(),
+      record={
+        id:'r-'+Date.now(), profileId:scope, date:new Date().toISOString(),
+        theme:state.theme,phase:state.phase,principles:state.principles,
+        players:state.players,gk:state.gk,duration:state.duration,
+        plan:JSON.parse(JSON.stringify(plan)),
+        simpleKpi,counters:c,counterRate:rate,numericKpis:numericList,
+        playerGood:playerGood.value,playerNext:playerNext.value,
+        reflection:reflection.value,learningTargets:analysisPlanTargetsV581(),
+        learningResult,nextQuestion:(document.getElementById('nextQuestion')?.value||'').trim()
+      };
+
+    const all=merge([record],restorePending());
+    localStorage.setItem(KEY,JSON.stringify(all));
+    localStorage.setItem(PENDING,JSON.stringify(merge([record],arr(PENDING))));
+
+    go('history');
+    renderHistory();
+    alert('練習記録を保存しました');
+
+    if(hcCloudReady&&hcCloudMembership&&hcIsStaff()){
+      Promise.resolve()
+        .then(()=>hcCloudPushKey('training_records',all))
+        .then(()=>{
+          const p=arr(PENDING).filter(x=>x.id!==record.id);
+          if(p.length)localStorage.setItem(PENDING,JSON.stringify(p));
+          else localStorage.removeItem(PENDING);
+          hcCloudMsg((hcCloudMembership?.teams?.name||'チーム')+' に接続中・同期済み',true);
+        })
+        .catch(e=>{
+          console.error('training_records push',e);
+          hcCloudMsg('記録は端末に保存済み・クラウド同期待ち',true);
+        });
+    }
+  };
+
+  restorePending();
+})();
+</script>
+<!-- HC_RECORD_PERSISTENCE_LOCAL_FIRST -->
+
 </body></html>
