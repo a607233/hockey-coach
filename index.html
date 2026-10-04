@@ -1981,4 +1981,23 @@ function hc5817OpenCoverage(){
   openModal(html);
 }
 </script>
+
+<script id="HC_PRACTICE_EDIT_PERSIST_FIX_20261005">
+/* Preserve coach edits in Practice Library. Standard seeds may add missing items, but must never overwrite existing edited items. */
+(function(){
+  window.ensurePrototypeV571=function(){
+    try{
+      let a=jget('hc_practice_library_v54',null);
+      if(!Array.isArray(a)) return;
+      let changed=false;
+      const seeds=[...(window.STANDARD_PRACTICES_V573||[]),...(window.PHOTO_ADAPT_BATCH1_V575||[]),...(window.PHOTO_ADAPT_BATCH2_V576||[]),...(window.PRACTICE_EXPANSION_V583||[]),...(window.PRACTICE_COVERAGE_V5816||[])];
+      const ids=new Set(a.map(x=>x.id));
+      seeds.forEach(item=>{
+        if(!ids.has(item.id)){ a.unshift(JSON.parse(JSON.stringify(item))); ids.add(item.id); changed=true; }
+      });
+      if(changed) localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));
+    }catch(e){ console.warn('practice seed preserve',e); }
+  };
+})();
+</script>
 </body></html>
