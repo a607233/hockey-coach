@@ -1908,4 +1908,35 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 })();
 </script>
 <!-- HC_HOME_SESSION_STATE_V1: home CTA uses existing plan/KPI/today-record state; no new storage or schema. -->
+
+<script id="HC_REVIEW_SAVED_STATE_V1">
+/* Review save CTA reflects today's existing record. UI only; no storage/schema changes. */
+(function(){
+  function todayRecord(){
+    try{return typeof hc5814LatestRecord==='function'?hc5814LatestRecord():null}catch(e){return null}
+  }
+  function renderReviewSaveState(){
+    const btn=document.querySelector('#analysis button[onclick="saveRecord()"]');
+    if(!btn)return;
+    const saved=!!todayRecord();
+    if(saved){
+      btn.textContent='✓ 今日の記録は保存済み｜記録を見る';
+      btn.setAttribute('onclick',"go('history')");
+      btn.setAttribute('data-review-saved','1');
+    }else{
+      btn.textContent='今日の記録を保存';
+      btn.setAttribute('onclick','saveRecord()');
+      btn.removeAttribute('data-review-saved');
+    }
+  }
+  window.hcRenderReviewSaveState=renderReviewSaveState;
+  const baseLoop=window.renderLearningLoopReview;
+  if(typeof baseLoop==='function')window.renderLearningLoopReview=function(){const r=baseLoop.apply(this,arguments);setTimeout(renderReviewSaveState,0);return r};
+  const baseGo=window.go;
+  if(typeof baseGo==='function')window.go=function(id){const r=baseGo.apply(this,arguments);if(id==='analysis')setTimeout(renderReviewSaveState,0);return r};
+  document.addEventListener('click',function(e){if(e.target.closest?.('#analysisModeTabs [data-amode="review"]'))setTimeout(renderReviewSaveState,0)},true);
+  setTimeout(renderReviewSaveState,700);
+})();
+</script>
+<!-- HC_REVIEW_SAVED_STATE_V1: saved-today review CTA becomes record link; no record/storage/cloud changes. -->
 </body></html>
