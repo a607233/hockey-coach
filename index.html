@@ -20,7 +20,7 @@ main{max-width:760px;margin:auto;padding:14px}.page{display:none}.page.on{displa
 hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 @media(max-width:390px){.grid3{grid-template-columns:1fr 1fr}.grid3 .field:last-child{grid-column:1/-1}}
 
-.tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 11px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}#moreTabs{position:relative;z-index:30;isolation:isolate;touch-action:pan-x;background:var(--bg)}#moreTabs .tab{position:relative;z-index:31;flex:0 0 auto;pointer-events:auto;touch-action:manipulation}
+.tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 11px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;border:1px solid #30464e;background:#0d1a20;color:#a9bac0;border-radius:999px;padding:9px 12px;font-weight:900;font-size:12px}.tab.on{background:var(--lime);border-color:var(--lime);color:#071014}
 .tabpane{display:none}.tabpane.on{display:block}.kpirow{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid #203139}.counter{min-width:48px;text-align:center;font-size:25px;font-weight:950}.smallbtn{border:1px solid #344b54;background:#14242b;color:#fff;border-radius:11px;padding:9px 12px;font-weight:950}.score3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.score3 button{border:1px solid #344b54;background:#112027;color:#cbd6da;border-radius:11px;padding:11px 5px;font-weight:900}.score3 button.on{background:var(--lime);color:#071014;border-color:var(--lime)}
 .videoLink{display:inline-block;margin-top:7px;color:var(--lime);font-weight:900;text-decoration:none}.tag{display:inline-block;border:1px solid #31464e;border-radius:999px;padding:4px 7px;margin:3px 3px 0 0;font-size:10px;color:#b9c8cd}.libraryTools{display:grid;grid-template-columns:1fr auto;gap:7px;margin:10px 0}.libraryTools .btn2{width:auto}
@@ -153,7 +153,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 
 <section id="more" class="page">
  <div class="tabs" id="moreTabs">
-  <button class="tab on" data-more="ph">Philosophy</button><button class="tab" data-more="method">原則・メソッド</button><button class="tab" data-more="library">練習ライブラリ</button><button class="tab" data-more="team">チーム</button><button class="tab" data-more="invite">招待</button><button class="tab" data-more="settings">設定</button>
+  <button class="tab on" data-more="ph" onclick="openMorePane('ph',this)">Philosophy</button><button class="tab" data-more="method" onclick="openMorePane('method',this)">原則・メソッド</button><button class="tab" data-more="library" onclick="openMorePane('library',this)">練習ライブラリ</button><button class="tab" data-more="team" onclick="openMorePane('team',this)">チーム</button><button class="tab" data-more="invite" onclick="openMorePane('invite',this)">招待</button><button class="tab" data-more="settings" onclick="openMorePane('settings',this)">設定</button>
  </div>
  <div id="more-ph" class="tabpane on"><div class="card"><div id="teamVisionHero"></div><div class="philosophyIntro"><div><div class="k">6 PHILOSOPHIES</div><div class="title">私たちが大切にする6つ</div></div><div class="count">選手と一緒に育てる言葉</div></div><div class="row"><p class="muted" style="margin:0;flex:1">日々のプレーと行動に落とし込む、チームの共通基準です。</p><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><div id="philosophyList"></div></div></div>
  <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodMapV55"></div><hr><div class="k">TEAM CUSTOM</div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
@@ -337,7 +337,11 @@ function teamVisionData(){
  let v=jget('hc_team_vision_v5824',null);
  return v&&typeof v==='object'?v:{title:'自分たちが、未来の憧れになる',body:'自分たちの姿を見た誰かが、「こんなチームになりたい」「こんな選手になりたい」と思える存在へ。\n勝つことだけではなく、挑戦する姿勢、仲間との関わり、プレーする姿そのものを通して、次の世代の憧れをつくる。'}
 }
-function saveTeamVision(v){localStorage.setItem('hc_team_vision_v5824',JSON.stringify(v));renderTeamVision();markSaved?.()}
+function saveTeamVision(v){
+ const k='hc_team_vision_v5824',old=localStorage.getItem(k);
+ if(old) localStorage.setItem('hc_team_vision_backup_v31',old);
+ localStorage.setItem(k,JSON.stringify(v));renderTeamVision();markSaved?.()
+}
 function renderTeamVision(){let e=document.getElementById('teamVisionHero');if(!e)return;let v=teamVisionData();e.innerHTML=`<div class="visionHero"><div class="visionLabel">TEAM VISION</div><h2>${esc(v.title)}</h2><p>${esc(v.body)}</p><button class="btn2 visionEdit" onclick="editTeamVision()">VISIONを編集</button></div>`}
 function editTeamVision(){let v=teamVisionData();openModal(`<div class="k">TEAM VISION</div><h2>大題目を編集</h2><div class="field"><label>大題目</label><input id="visionTitle" class="input" value="${esc(v.title)}"></div><div class="field"><label>説明</label><textarea id="visionBody" class="area" style="min-height:150px">${esc(v.body)}</textarea></div><button class="btn" onclick="commitTeamVision()">保存</button>`)}
 function commitTeamVision(){saveTeamVision({title:visionTitle.value.trim()||'自分たちが、未来の憧れになる',body:visionBody.value.trim()});closeModal()}
@@ -350,19 +354,20 @@ function philosophyDefaults5824(){return [
  {id:'ph-6',title:'憧れられる行動をする',body:'挨拶、準備、片付け、仲間への声、最後まで走る姿勢。誰も見ていないところでも、「このチーム、かっこいい」と思われる行動を積み重ねる。'}
 ]}
 function philosophyData(){
- let a=jget('hc_philosophy_items_v51',null),defs=philosophyDefaults5824();
- if(Array.isArray(a)){
-  if(!localStorage.getItem('hc_v5824_ph_seeded')){
-   let ids=new Set(a.map(x=>x.id)); defs.slice(3).forEach(x=>{if(!ids.has(x.id))a.push(JSON.parse(JSON.stringify(x)))});
-   localStorage.setItem('hc_philosophy_items_v51',JSON.stringify(a));localStorage.setItem('hc_v5824_ph_seeded','1');
-  }
-  return a;
+ let a=jget('hc_philosophy_items_v51',null);
+ if(Array.isArray(a)) return a; // ユーザー保存内容を最優先。自動追記・自動上書きしない。
+ const legacyKeys=['hc_philosophy_v5','hc_philosophy'];
+ for(const k of legacyKeys){
+   const legacy=localStorage.getItem(k);
+   if(legacy&&legacy.trim()) return [{id:'legacy-'+k,title:'TEAM PHILOSOPHY',body:legacy}];
  }
- let legacy=localStorage.getItem('hc_philosophy_v5')||localStorage.getItem('hc_philosophy')||'';
- a=legacy?[{id:'ph-'+Date.now(),title:'TEAM PHILOSOPHY',body:legacy},...defs.slice(3)]:defs;
- localStorage.setItem('hc_philosophy_items_v51',JSON.stringify(a));localStorage.setItem('hc_v5824_ph_seeded','1');return a;
+ return philosophyDefaults5824(); // 表示のみ。保存ボタンを押すまでlocalStorageへ書かない。
 }
-function savePhData(a){localStorage.setItem('hc_philosophy_items_v51',JSON.stringify(a));renderPhilosophy()}
+function savePhData(a){
+ const k='hc_philosophy_items_v51',old=localStorage.getItem(k);
+ if(old) localStorage.setItem('hc_philosophy_items_backup_v31',old);
+ localStorage.setItem(k,JSON.stringify(a));renderPhilosophy()
+}
 function renderPhilosophy(){renderTeamVision();let a=philosophyData();philosophyList.innerHTML=a.length?a.map((x,i)=>`<div class="menu"><div class="k">PHILOSOPHY ${i+1}</div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.body||'')}</div><div class="actions"><button onclick="editPhilosophy(${i})">編集</button><button onclick="movePhilosophy(${i},-1)">↑</button><button onclick="movePhilosophy(${i},1)">↓</button><button class="del" onclick="deletePhilosophy(${i})">削除</button></div></div>`).join(''):`<div class="empty">まだPhilosophyがありません。＋追加から作れます。</div>`}
 function addPhilosophy(){editPhilosophy(-1)}
 function editPhilosophy(i){let a=philosophyData(),x=i>=0?a[i]:{title:'',body:''};openModal(`<div class="k">TEAM IDENTITY</div><h2>${i>=0?'Philosophyを編集':'Philosophyを追加'}</h2><div class="field"><label>タイトル</label><input id="phTitle" class="input" value="${esc(x.title)}" placeholder="例：ワクワクを選ぶ"></div><div class="field"><label>説明</label><textarea id="phBody" class="area" placeholder="チームで大切にしたい行動・考え方">${esc(x.body)}</textarea></div><button class="btn" onclick="commitPhilosophy(${i})">保存</button>`)}
@@ -512,22 +517,16 @@ function practiceDiagramV585(x){if(x.diagramImage)return `<div class="k">CUSTOM 
 function exportData(){let data={version:'5.8.5',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function restoreDataFromFile(input){let f=input.files?.[0];if(!f)return;let s=document.getElementById('restoreStatus');try{let d=JSON.parse(await f.text());if(!d||!Array.isArray(d.practiceLibrary))throw new Error('形式が違います');if(!confirm('現在のHOCKEY COACHデータをバックアップ内容で復元しますか？')){input.value='';return}let map=[['hc_today_plan',d.todayPlan||[]],['hc_training_records',d.trainingRecords||[]],['hc_philosophy_items_v51',d.philosophy||[]],['hc_team_methods_v52',d.methods||[]],['hc_practice_library_v54',d.practiceLibrary||[]],['hc_practice_favorites_v584',d.practiceFavorites||[]],['hc_practice_recent_v584',d.practiceRecent||[]],['hc_team_roles_v52',d.roles||[]],['hc_team_settings_v52',d.team||{}],['hc_season_profiles_v584',d.seasonProfiles||[]],['hc_team_analysis_items_v577',d.teamAnalysisItems||TEAM_ANALYSIS_DEFAULT_V577],['hc_team_analysis_history_v577',d.teamAnalysisHistory||[]]];map.forEach(([k,v])=>_lsSet(k,JSON.stringify(v)));if(s)s.textContent='✓ 復元しました。画面を再読み込みします。';setTimeout(()=>location.reload(),500)}catch(e){if(s)s.textContent='復元できませんでした：HOCKEY COACHのJSONバックアップを選んでください。'}finally{input.value=''}}
 
-function openMoreTab(name){
-  const tabs=document.getElementById('moreTabs'),pane=document.getElementById('more-'+name);
-  if(!tabs||!pane)return;
-  tabs.querySelectorAll('[data-more]').forEach(b=>b.classList.toggle('on',b.dataset.more===name));
-  document.querySelectorAll('#more > [id^="more-"]').forEach(x=>x.classList.toggle('on',x===pane));
-  const active=tabs.querySelector('[data-more="'+name+'"]');
-  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-}
-function setupMoreTabs(){
-  const tabs=document.getElementById('moreTabs');if(!tabs)return;
-  tabs.querySelectorAll('[data-more]').forEach(b=>{
-    b.onclick=null;
-    b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openMoreTab(b.dataset.more)},{passive:false});
-    b.addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();openMoreTab(b.dataset.more)},{passive:false});
+function openMorePane(name,btn){
+  const pane=document.getElementById('more-'+name);
+  if(!pane)return false;
+  document.querySelectorAll('#moreTabs [data-more]').forEach(x=>x.classList.toggle('on',x===btn||x.dataset.more===name));
+  ['ph','method','library','team','invite','settings'].forEach(k=>{
+    const el=document.getElementById('more-'+k);if(el)el.classList.toggle('on',k===name);
   });
+  return false;
 }
+function setupMoreTabs(){/* RC31: buttons use direct onclick; no event rebinding */}
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();renderInvite();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';renderSeasonProfiles()}
 bindAutosaveFields();acceptInviteFromUrl();renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupAnalysisModeTabs();renderTeamAnalysis();
 </script>
@@ -1821,6 +1820,6 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <!-- HOCKEY_COACH_V1_RC27_THEME_REVIEW_UX: Review groups multiple practices under one analysis theme and evaluates that theme once; legacy KPI inputs remain available collapsed for compatibility. -->
 <!-- HOCKEY_COACH_V1_RC28_FIRST_GROWTH_STATE: First analysis shows baseline wording and no fake 0.0 delta; deltas appear only from analysis #2 onward. No data/cloud changes. -->
 <!-- HOCKEY_COACH_V1_RC29_TODAY_RESULT_STATE: Record screen distinguishes today's incomplete/complete session; developer-only read-only copy removed. No storage/schema changes. -->
-<!-- HOCKEY_COACH_V1_RC30_MORE_TAB_TOUCH_FIX: More tabs get isolated tap layer and explicit openMoreTab switching for iPhone; content/data untouched. -->
+<!-- HOCKEY_COACH_V1_RC31_MORE_SAFE_REPAIR: rebuilt More tab switching from RC29 baseline; Philosophy no longer auto-seeds/overwrites existing user content; edit snapshots added. -->
 
 </body></html>
