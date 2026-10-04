@@ -89,28 +89,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 .analysisEvidence{margin-top:10px;padding:10px 11px;border-radius:12px;background:#102229;border:1px solid #29434c}.analysisEvidence label{display:block;color:#dfff52;font-size:11px;font-weight:900;margin-bottom:6px}.analysisEvidence textarea{width:100%;min-height:58px;box-sizing:border-box;background:#09171c;color:#eef6f7;border:1px solid #36515a;border-radius:10px;padding:9px 10px;font-size:13px;line-height:1.45}.analysisCompare{margin-top:8px;padding:9px 10px;border-radius:10px;background:#13272e;color:#dce8ec;font-size:12px;line-height:1.5}.analysisCompare b{color:#fff}.deltaUp{color:#dfff52;font-weight:900}.deltaDown{color:#ff8f8f;font-weight:900}.deltaSame{color:#b8c8ce;font-weight:900}.evidenceMini{margin-top:5px;color:#9db0b7;font-size:11px;line-height:1.45}.historyEvidence{margin-top:8px;padding:8px 10px;border-left:3px solid #dfff52;background:#102229;border-radius:8px;font-size:12px;color:#dce8ec}
 </style>
 <!-- HC_V5840_PRACTICE_SPECIFIC_KPI -->
-<style id="HC_RC34_MORE_HITAREA_FIX">
-/* iPhone: keep More navigation above decorative/header layers so taps reach buttons */
-#moreTabs{
- position:relative!important;
- z-index:60!important;
- pointer-events:auto!important;
-}
-#moreTabs .tab{
- position:relative!important;
- z-index:61!important;
- pointer-events:auto!important;
- touch-action:manipulation!important;
- -webkit-user-select:none;
-}
-#moreTabs::before{
- content:"";
- position:absolute;
- inset:-8px -4px;
- z-index:-1;
- pointer-events:none;
-}
-</style>
+
 </head>
 <body>
 <header><div class="brand">🏑 HOCKEY COACH <small>PERFORMANCE</small></div><div class="sub">TEAM DEVELOPMENT SYSTEM</div></header>
@@ -175,7 +154,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 
 <section id="more" class="page">
  <div class="tabs" id="moreTabs">
-  <button type="button" class="tab on" data-more="ph" onclick="var r=document.getElementById('more');if(!r)return false;document.querySelectorAll('#moreTabs [data-more]').forEach(function(x){x.classList.remove('on')});r.querySelectorAll('.tabpane').forEach(function(x){if(x.id.indexOf('more-')===0)x.classList.remove('on')});this.classList.add('on');var p=document.getElementById('more-ph');if(p)p.classList.add('on');return false;">Philosophy</button><button type="button" class="tab" data-more="method" onclick="var r=document.getElementById('more');if(!r)return false;document.querySelectorAll('#moreTabs [data-more]').forEach(function(x){x.classList.remove('on')});r.querySelectorAll('.tabpane').forEach(function(x){if(x.id.indexOf('more-')===0)x.classList.remove('on')});this.classList.add('on');var p=document.getElementById('more-method');if(p)p.classList.add('on');return false;">原則・メソッド</button><button type="button" class="tab" data-more="library" onclick="var r=document.getElementById('more');if(!r)return false;document.querySelectorAll('#moreTabs [data-more]').forEach(function(x){x.classList.remove('on')});r.querySelectorAll('.tabpane').forEach(function(x){if(x.id.indexOf('more-')===0)x.classList.remove('on')});this.classList.add('on');var p=document.getElementById('more-library');if(p)p.classList.add('on');return false;">練習ライブラリ</button><button type="button" class="tab" data-more="team" onclick="var r=document.getElementById('more');if(!r)return false;document.querySelectorAll('#moreTabs [data-more]').forEach(function(x){x.classList.remove('on')});r.querySelectorAll('.tabpane').forEach(function(x){if(x.id.indexOf('more-')===0)x.classList.remove('on')});this.classList.add('on');var p=document.getElementById('more-team');if(p)p.classList.add('on');return false;">チーム</button><button type="button" class="tab" data-more="invite" onclick="var r=document.getElementById('more');if(!r)return false;document.querySelectorAll('#moreTabs [data-more]').forEach(function(x){x.classList.remove('on')});r.querySelectorAll('.tabpane').forEach(function(x){if(x.id.indexOf('more-')===0)x.classList.remove('on')});this.classList.add('on');var p=document.getElementById('more-invite');if(p)p.classList.add('on');return false;">招待</button><button type="button" class="tab" data-more="settings" onclick="var r=document.getElementById('more');if(!r)return false;document.querySelectorAll('#moreTabs [data-more]').forEach(function(x){x.classList.remove('on')});r.querySelectorAll('.tabpane').forEach(function(x){if(x.id.indexOf('more-')===0)x.classList.remove('on')});this.classList.add('on');var p=document.getElementById('more-settings');if(p)p.classList.add('on');return false;">設定</button>
+  <button type="button" class="tab on" data-more="ph">Philosophy</button><button type="button" class="tab" data-more="method">原則・メソッド</button><button type="button" class="tab" data-more="library">練習ライブラリ</button><button type="button" class="tab" data-more="team">チーム</button><button type="button" class="tab" data-more="invite">招待</button><button type="button" class="tab" data-more="settings">設定</button>
  </div>
  <div id="more-ph" class="tabpane on"><div class="card"><div id="teamVisionHero"></div><div class="philosophyIntro"><div><div class="k">6 PHILOSOPHIES</div><div class="title">私たちが大切にする6つ</div></div><div class="count">選手と一緒に育てる言葉</div></div><div class="row"><p class="muted" style="margin:0;flex:1">日々のプレーと行動に落とし込む、チームの共通基準です。</p><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><div id="philosophyList"></div><button class="btn2" style="margin-top:12px" onclick="hc34ShowPhRecovery()">以前のPhilosophyを確認</button></div></div>
  <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodMapV55"></div><hr><div class="k">TEAM CUSTOM</div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
@@ -543,16 +522,26 @@ function practiceDiagramV585(x){if(x.diagramImage)return `<div class="k">CUSTOM 
 function exportData(){let data={version:'5.8.5',exportedAt:new Date().toISOString(),todayPlan:jget('hc_today_plan',[]),trainingRecords:jget('hc_training_records',[]),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 async function restoreDataFromFile(input){let f=input.files?.[0];if(!f)return;let s=document.getElementById('restoreStatus');try{let d=JSON.parse(await f.text());if(!d||!Array.isArray(d.practiceLibrary))throw new Error('形式が違います');if(!confirm('現在のHOCKEY COACHデータをバックアップ内容で復元しますか？')){input.value='';return}let map=[['hc_today_plan',d.todayPlan||[]],['hc_training_records',d.trainingRecords||[]],['hc_philosophy_items_v51',d.philosophy||[]],['hc_team_methods_v52',d.methods||[]],['hc_practice_library_v54',d.practiceLibrary||[]],['hc_practice_favorites_v584',d.practiceFavorites||[]],['hc_practice_recent_v584',d.practiceRecent||[]],['hc_team_roles_v52',d.roles||[]],['hc_team_settings_v52',d.team||{}],['hc_season_profiles_v584',d.seasonProfiles||[]],['hc_team_analysis_items_v577',d.teamAnalysisItems||TEAM_ANALYSIS_DEFAULT_V577],['hc_team_analysis_history_v577',d.teamAnalysisHistory||[]]];map.forEach(([k,v])=>_lsSet(k,JSON.stringify(v)));if(s)s.textContent='✓ 復元しました。画面を再読み込みします。';setTimeout(()=>location.reload(),500)}catch(e){if(s)s.textContent='復元できませんでした：HOCKEY COACHのJSONバックアップを選んでください。'}finally{input.value=''}}
 
-function hc34OpenMore(name,btn){
- const root=document.getElementById('more'),tabs=document.getElementById('moreTabs'),pane=document.getElementById('more-'+name);
- if(!root||!tabs||!pane)return false;
- tabs.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===btn));
- root.querySelectorAll(':scope > .tabpane').forEach(x=>x.classList.toggle('on',x===pane));
- return false;
+function hcOpenMoreTab(name,btn){
+ const root=document.getElementById('more');
+ const tabs=document.getElementById('moreTabs');
+ const pane=document.getElementById('more-'+name);
+ if(!root||!tabs||!pane)return;
+ tabs.querySelectorAll('[data-more]').forEach(x=>x.classList.remove('on'));
+ Array.from(root.children).forEach(x=>{if(x.classList&&x.classList.contains('tabpane'))x.classList.remove('on')});
+ btn.classList.add('on');
+ pane.classList.add('on');
 }
 function setupMoreTabs(){
- const tabs=document.getElementById('moreTabs');if(!tabs)return;
- tabs.querySelectorAll('[data-more]').forEach(b=>{b.onclick=function(e){if(e)e.preventDefault();return hc34OpenMore(this.dataset.more,this)}});
+ const tabs=document.getElementById('moreTabs');
+ if(!tabs||tabs.dataset.bound==='1')return;
+ tabs.dataset.bound='1';
+ tabs.addEventListener('click',function(e){
+   const btn=e.target.closest('[data-more]');
+   if(!btn||!tabs.contains(btn))return;
+   e.preventDefault();
+   hcOpenMoreTab(btn.dataset.more,btn);
+ });
 }
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();renderInvite();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';renderSeasonProfiles()}
 bindAutosaveFields();acceptInviteFromUrl();renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupAnalysisModeTabs();renderTeamAnalysis();
@@ -1847,7 +1836,7 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <!-- HOCKEY_COACH_V1_RC27_THEME_REVIEW_UX: Review groups multiple practices under one analysis theme and evaluates that theme once; legacy KPI inputs remain available collapsed for compatibility. -->
 <!-- HOCKEY_COACH_V1_RC28_FIRST_GROWTH_STATE: First analysis shows baseline wording and no fake 0.0 delta; deltas appear only from analysis #2 onward. No data/cloud changes. -->
 <!-- HOCKEY_COACH_V1_RC29_TODAY_RESULT_STATE: Record screen distinguishes today's incomplete/complete session; developer-only read-only copy removed. No storage/schema changes. -->
-<!-- HOCKEY_COACH_V1_RC34_MORE_HITAREA_FIX: RC29 baseline; More tab hit area raised above header/decorative layers; direct click switching; Philosophy recovery read-only. -->
 
-<!-- HC_RC36_MORE_STANDALONE_TABS: More tabs switch independently of app initialization; no auth/cloud/data/schema changes. -->
+
+<!-- HC_RC37_MORE_CLEAN_RESET: removed RC34 extreme z-index and RC36 duplicate inline handlers; one delegated More-tab handler only. No auth/cloud/data/schema changes. -->
 </body></html>
