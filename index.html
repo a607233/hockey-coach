@@ -1920,7 +1920,7 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 </script>
 <!-- HC_RC40_ANALYSIS_PERSISTENCE_FIX: prevents a newly saved analysis from being erased by stale cloud data on reload. -->
 
-\n<script id="HC_RC40_COVERAGE_ALL_CANDIDATES">
+<script id="HC_RC40_COVERAGE_ALL_CANDIDATES">
 /* RC40: Coverage modal only. Show every practice explicitly linked to the selected analysis code.
    The normal Analysis -> Practice flow remains capped at 3 candidates. No storage/auth/schema changes. */
 function hcRC40OpenAllCoverageCandidates(itemId){
@@ -1933,4 +1933,39 @@ function hcRC40OpenAllCoverageCandidates(itemId){
   openModal(`<div class="k">32 ANALYSIS × PRACTICE</div><h2>${esc(item.code)}｜${esc(item.name)}</h2><div class="issueCard"><div class="row"><b>最新評価</b><div class="issueScore">${score}</div></div><div class="meta">${esc(item.desc||'')}</div></div><div class="k">RELATED PRINCIPLE</div><h3>${esc(keys[0]||item.name)}</h3><p class="muted">この項目に専用リンクされた練習をすべて表示しています。</p><h3>練習候補 ${all.length}件</h3>${cards||'<div class="analysisEmpty">専用リンクされた練習候補はありません。</div>'}<button class="ghost" onclick="closeModal()">閉じる</button>`);
 }
 </script>
-<!-- HC_RC40_COVERAGE_ALL_CANDIDATES: coverage count and displayed candidates now match; normal 3-candidate recommendation flow unchanged. -->\n</body></html>
+<!-- HC_RC40_COVERAGE_ALL_CANDIDATES: coverage count and displayed candidates now match; normal 3-candidate recommendation flow unchanged. -->
+
+<style id="HC_RC41_HISTORY_DETAIL_STYLE">
+#historyList .hcHistoryOpen{cursor:pointer}.hcHistoryHint{margin-top:8px;font-size:11px;color:#9fb0b5}.hcHistoryDetailBlock{margin-top:12px;padding:12px;border:1px solid #29434b;border-radius:14px;background:#10242b}.hcHistoryDetailBlock h3{margin:0 0 7px}.hcHistoryDetailBlock .meta{line-height:1.65}
+</style>
+<script id="HC_RC41_HISTORY_DETAIL">
+/* RC41 — History detail navigation only. Uses data already stored in each training record.
+   No auth/cloud/schema/philosophy/practice-library changes. */
+function hcRC41RecordById(id){
+  const pid=currentProfileIdV585();
+  return jget('hc_training_records',[]).find(r=>r&&r.id===id&&(!pid||!r.profileId||r.profileId===pid))||null;
+}
+function hcRC41OpenHistoryRecord(id){
+  const r=hcRC41RecordById(id); if(!r)return;
+  const items=Array.isArray(r.plan)?r.plan:[];
+  const targets=Array.isArray(r.learningTargets)?r.learningTargets:[];
+  const result=['','まだ','変化あり','できた'][+r.learningResult]||'';
+  const notes=[
+    r.playerGood?`<div class="hcHistoryDetailBlock"><h3>GOOD</h3><div class="meta">${esc(r.playerGood)}</div></div>`:'',
+    r.playerNext?`<div class="hcHistoryDetailBlock"><h3>NEXT</h3><div class="meta">${esc(r.playerNext)}</div></div>`:'',
+    r.reflection?`<div class="hcHistoryDetailBlock"><h3>コーチの振り返り</h3><div class="meta">${esc(r.reflection)}</div></div>`:'',
+    r.nextQuestion?`<div class="hcHistoryDetailBlock"><h3>次に確かめたい問い</h3><div class="meta">${esc(r.nextQuestion)}</div></div>`:''
+  ].join('');
+  const verify=targets.length?`<div class="hcHistoryDetailBlock"><h3>検証したテーマ</h3><div class="meta">${targets.map(x=>esc((x.code||'')+' '+(x.name||''))).join(' ／ ')}${result?'<br><b>結果：</b>'+esc(result):''}</div></div>`:'';
+  openModal(`<div class="k">TRAINING HISTORY</div><h2>${new Date(r.date).toLocaleDateString('ja-JP')}｜${esc(r.theme||'練習記録')}</h2><div class="meta">${esc(r.phase||'')}${r.duration?'｜'+esc(r.duration)+'分':''}${r.players?'｜'+esc(r.players)+'人':''}</div>${items.length?`<h3 style="margin-top:18px">練習別KPI結果</h3>${hc5841PracticeResultsHtml(items)}`:'<div class="empty" style="margin-top:14px">この記録には練習別KPIの保存データがありません。</div>'}${verify}${notes}<button class="ghost" onclick="closeModal()">閉じる</button>`);
+}
+function hcRC41RenderHistory(){
+  const pid=currentProfileIdV585();
+  const rec=jget('hc_training_records',[]).filter(r=>!pid||!r.profileId||r.profileId===pid);
+  historyList.innerHTML=rec.length?rec.map(r=>`<div class="menu hcHistoryOpen" role="button" tabindex="0" onclick="hcRC41OpenHistoryRecord('${r.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();hcRC41OpenHistoryRecord('${r.id}')}" aria-label="${esc(new Date(r.date).toLocaleDateString('ja-JP'))}の練習記録を詳しく見る"><div class="k">${new Date(r.date).toLocaleDateString('ja-JP')}｜${esc(r.phase||'')}</div><h3>${esc(r.theme||'練習記録')}</h3><div class="meta">${r.simpleKpi?`かんたん評価：${['','まだ','まあまあ','できた'][r.simpleKpi]}<br>`:''}${r.counterRate!=null?`カウンター成功率：${r.counterRate}%<br>`:''}${r.playerNext?`次に変えたいこと：${esc(r.playerNext)}`:(r.kpi?esc(r.kpi):'')}${r.learningTargets?.length?`<div class="loopLink"><b>検証：</b>${r.learningTargets.map(x=>esc(x.code+' '+x.name)).join(' ／ ')}${r.learningResult?'<br>結果：'+['','まだ','変化あり','できた'][r.learningResult]:''}${r.nextQuestion?'<br>次の問い：'+esc(r.nextQuestion):''}</div>`:''}</div><div class="hcHistoryHint">タップして詳細を見る →</div></div>`).join(''):`<div class="empty">まだ記録がありません</div>`;
+}
+renderHistory=hcRC41RenderHistory;
+try{if(document.getElementById('historyList'))hcRC41RenderHistory()}catch(e){}
+</script>
+<!-- HC_RC41_HISTORY_DETAIL: history cards open their own saved record details; accidental literal newline text removed. -->
+</body></html>
