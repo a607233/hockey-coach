@@ -154,7 +154,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 
 <section id="more" class="page">
  <div class="tabs" id="moreTabs">
-  <button type="button" class="tab on" data-more="ph">Philosophy</button><button type="button" class="tab" data-more="method">原則・メソッド</button><button type="button" class="tab" data-more="library">練習ライブラリ</button><button type="button" class="tab" data-more="team">チーム</button><button type="button" class="tab" data-more="invite">招待</button><button type="button" class="tab" data-more="settings">設定</button>
+  <button type="button" class="tab on" data-more="ph" onclick="hcOpenMoreTab('ph',this);return false">Philosophy</button><button type="button" class="tab" data-more="method" onclick="hcOpenMoreTab('method',this);return false">原則・メソッド</button><button type="button" class="tab" data-more="library" onclick="hcOpenMoreTab('library',this);return false">練習ライブラリ</button><button type="button" class="tab" data-more="team" onclick="hcOpenMoreTab('team',this);return false">チーム</button><button type="button" class="tab" data-more="invite" onclick="hcOpenMoreTab('invite',this);return false">招待</button><button type="button" class="tab" data-more="settings" onclick="hcOpenMoreTab('settings',this);return false">設定</button>
  </div>
  <div id="more-ph" class="tabpane on"><div class="card"><div id="teamVisionHero"></div><div class="philosophyIntro"><div><div class="k">6 PHILOSOPHIES</div><div class="title">私たちが大切にする6つ</div></div><div class="count">選手と一緒に育てる言葉</div></div><div class="row"><p class="muted" style="margin:0;flex:1">日々のプレーと行動に落とし込む、チームの共通基準です。</p><button class="btn2" onclick="addPhilosophy()">＋ 追加</button></div><div id="philosophyList"></div><button class="btn2" style="margin-top:12px" onclick="hc34ShowPhRecovery()">以前のPhilosophyを確認</button></div></div>
  <div id="more-method" class="tabpane"><div class="card"><div class="k">TEAM METHOD</div><div class="title">原則・メソッド</div><p class="muted">「正解集」ではなく、選手の判断を助ける共通言語として管理します。</p><div id="methodMapV55"></div><hr><div class="k">TEAM CUSTOM</div><div id="methodList"></div><button class="btn2" onclick="addMethod()">＋ 原則を追加</button></div></div>
@@ -541,15 +541,8 @@ function hcOpenMoreTab(name,btn){
  pane.classList.add('on');
 }
 function setupMoreTabs(){
- const tabs=document.getElementById('moreTabs');
- if(!tabs||tabs.dataset.bound==='1')return;
- tabs.dataset.bound='1';
- tabs.addEventListener('click',function(e){
-   const btn=e.target.closest('[data-more]');
-   if(!btn||!tabs.contains(btn))return;
-   e.preventDefault();
-   hcOpenMoreTab(btn.dataset.more,btn);
- });
+ // RC39: More tabs use direct button handlers for iPhone/Safari reliability.
+ // Kept as a no-op for startup compatibility; avoids duplicate click handling.
 }
 function renderMore(){renderPhilosophy();renderMethodMapV55();renderMethods();renderLibrary();renderRoles();renderInvite();let t=jget('hc_team_settings_v52',{});teamName.value=t.name||'';seasonName.value=t.season||'';renderSeasonProfiles()}
 bindAutosaveFields();acceptInviteFromUrl();renderDesign();renderPlan();setupKpiTabs();renderReviewCounters();renderNumeric();setupMoreTabs();setupAnalysisModeTabs();renderTeamAnalysis();
@@ -1849,4 +1842,5 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <!-- HC_RC37_MORE_CLEAN_RESET: removed RC34 extreme z-index and RC36 duplicate inline handlers; one delegated More-tab handler only. No auth/cloud/data/schema changes. -->
 
 <!-- HC_RC38_PHILOSOPHY_SAFE_PERSISTENCE: edited Philosophy and Team Vision are mirrored to stable local safety keys; backup includes Team Vision. No cloud/schema/tab changes. -->
+<!-- HC_RC39_MORE_DIRECT_BUTTONS: More tabs use one direct handler per button; delegated handler disabled to avoid iPhone/Safari missed taps and duplicate handling. RC38 Philosophy persistence retained. -->
 </body></html>
