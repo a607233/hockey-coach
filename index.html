@@ -1999,4 +1999,20 @@ function hc5817OpenCoverage(){
 </script>
 
 
+
+<style id="HC_MATCH_SAVE_UX_V1_STYLE">
+#hcMatchSavedToast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10020;background:#d7ff39;color:#071014;padding:12px 18px;border-radius:999px;font-weight:950;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.35);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s}
+#hcMatchSavedToast.on{opacity:1}
+@media(max-width:520px){#moreTabs{position:relative!important;z-index:10!important}#moreTabs .tab{z-index:11!important}}
+</style>
+<script id="HC_MATCH_SAVE_UX_V1">
+/* Match UX only. No storage/schema/cloud/practice/philosophy changes. */
+(function(){
+ function toast(){let e=document.getElementById('hcMatchSavedToast');if(!e){e=document.createElement('div');e.id='hcMatchSavedToast';e.textContent='✓ 試合記録を保存しました';document.body.appendChild(e)}e.classList.add('on');clearTimeout(window._hcMatchToastTimer);window._hcMatchToastTimer=setTimeout(()=>e.classList.remove('on'),2400)}
+ function wrap(){if(typeof window.commitMatchRecord!=='function'||window.commitMatchRecord._hcMatchUx)return;const base=window.commitMatchRecord;function wrapped(){const r=base.apply(this,arguments);setTimeout(()=>{toast();try{const b=[...document.querySelectorAll('#moreTabs .tab')].find(x=>x.textContent.includes('試合'));if(b&&typeof hc34OpenMore==='function')hc34OpenMore('match',b)}catch(e){}},60);return r}wrapped._hcMatchUx=true;window.commitMatchRecord=wrapped}
+ wrap();setTimeout(wrap,600);
+})();
+</script>
+<!-- HC_MATCH_SAVE_UX_V1 -->
+
 </body></html>
