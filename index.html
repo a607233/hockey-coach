@@ -1082,19 +1082,22 @@ function hc5817InstallCoverageButton(){
 const _analysisPracticeCandidatesV5817=analysisPracticeCandidatesV580;
 analysisPracticeCandidatesV580=function(item){
   try{
-    const players=+(state?.players||0),gk=+(state?.gk||0), keys=ANALYSIS_LINKS_V580[item.code]||[item.name];
-    let ranked=practiceData().filter(x=>x.phase===item.phase).map(x=>{
-      const exact=(x.analysisCodes||[]).includes(item.code);let score=exact?1000:0,reasons=exact?[item.code+' 専用']:[];
+    const players=+(state?.players||0),gk=+(state?.gk||0),keys=ANALYSIS_LINKS_V580[item.code]||[item.name];
+    const ranked=practiceData().filter(x=>x.phase===item.phase).map(x=>{
+      const exact=(x.analysisCodes||[]).includes(item.code);
+      let score=0,reasons=[];
+      if(exact){score+=1000;reasons.push(item.code+' 専用')}
       const hay=[x.name,x.purpose,x.judgment,x.question,...(x.principles||[]),...(x.tags||[])].join(' ').toLowerCase();
       keys.forEach((k,i)=>{if(hay.includes(String(k).toLowerCase())){score+=i===0?40:18;if(!reasons.includes(k))reasons.push(k)}});
       if(players&&players>=+(x.minPlayers||1)&&players<=+(x.maxPlayers||99)){score+=25;reasons.push('人数適合')}
-      if(x.gkRequired&&gk<1)score-=120; else if(x.gkRequired&&gk>0){score+=15;reasons.push('GK適合')}
-      return{x,score,reasons};
+      if(x.gkRequired&&gk<1)score-=120;else if(x.gkRequired&&gk>0){score+=15;reasons.push('GK適合')}
+      return{x,score,reasons,exact};
     }).sort((a,b)=>b.score-a.score||String(a.x.name).localeCompare(String(b.x.name),'ja'));
-    const picked=[],styles=new Set();
-    for(const r of ranked){const st=String(r.x.style||'標準');if(!styles.has(st)){picked.push(r);styles.add(st)}if(picked.length===3)break}
-    for(const r of ranked){if(picked.length===3)break;if(!picked.some(p=>p.x.id===r.x.id))picked.push(r)}
-    return picked.slice(0,3)
+    const exact=ranked.filter(r=>r.exact),fallback=ranked.filter(r=>!r.exact),picked=[],styles=new Set();
+    const take=(pool)=>{for(const r of pool){const st=String(r.x.style||'標準');if(!styles.has(st)){picked.push(r);styles.add(st)}if(picked.length===3)return}for(const r of pool){if(picked.length===3)return;if(!picked.some(p=>p.x.id===r.x.id))picked.push(r)}};
+    take(exact);
+    if(picked.length<3)take(fallback);
+    return picked.slice(0,3).map(({x,score,reasons})=>({x,score,reasons}));
   }catch(e){return _analysisPracticeCandidatesV5817(item)}
 };
 const _renderLibraryV5817=renderLibrary;
