@@ -1111,12 +1111,7 @@ analysisPracticeCandidatesV580=function(item){
     return picked.slice(0,3).map(({x,score,reasons})=>({x,score,reasons}));
   }catch(e){return _analysisPracticeCandidatesV5817(item)}
 };
-const _renderLibraryV5817=renderLibrary;
-renderLibrary=function(){
-  standardizePracticeTagsV586();
-  _renderLibraryV5817();
-  hc5817InstallCoverageButton()
-};
+
 setTimeout(()=>{hc5817InstallCoverageButton();try{renderLibrary()}catch(e){}},900);
 </script>
 <!-- HC_V5817_SMART_COVERAGE -->
@@ -1216,7 +1211,9 @@ const _renderLibrary5821=renderLibrary;
 renderLibrary=function(){
   hc5821Seed();
   hc5820SeedQuality();
+  standardizePracticeTagsV586();
   _renderLibrary5821();
+  hc5817InstallCoverageButton();
   hc5819RenderCoverageHome();
   try{hcApplyRoleUI()}catch(e){}
   hc5819RenderCoverageHome();
