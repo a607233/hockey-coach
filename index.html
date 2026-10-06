@@ -2132,4 +2132,21 @@ function hc5817OpenCoverage(){
 </script>
 <!-- HC_REVIEW_BUTTON_CLICK_FIX_V1 -->
 
+
+<script id="HC_REVIEW_KPI_TAB_CLICK_FIX_V1">
+/* KPI tabs: delegated binding survives later review re-renders. */
+(function(){
+  document.addEventListener('click',function(e){
+    const tab=e.target.closest?.('#analysis [data-kpi]');
+    if(!tab)return;
+    const key=tab.dataset.kpi;
+    document.querySelectorAll('#analysis [data-kpi]').forEach(x=>x.classList.toggle('on',x===tab));
+    document.querySelectorAll('#analysis [id^="kpi-"]').forEach(x=>x.classList.toggle('on',x.id==='kpi-'+key));
+    if(key==='counter' && typeof renderReviewCounters==='function')renderReviewCounters();
+    if(key==='number' && typeof renderNumeric==='function')renderNumeric();
+  },true);
+})();
+</script>
+<!-- HC_REVIEW_KPI_TAB_CLICK_FIX_V1 -->
+
 </body></html>
