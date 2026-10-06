@@ -1938,8 +1938,6 @@ function hcTodayRecordShared(){
   if(typeof baseFinish==='function')window.finishCoachV5815=function(){coachActive=false;const r=baseFinish.apply(this,arguments);setTimeout(renderSessionHomeState,0);return r};
   const baseSave=window.saveRecord;
   if(typeof baseSave==='function')window.saveRecord=function(){coachActive=false;const r=baseSave.apply(this,arguments);setTimeout(renderSessionHomeState,0);return r};
-  const baseGo=window.go;
-  if(typeof baseGo==='function')window.go=function(id){const r=baseGo.apply(this,arguments);if(id==='home')setTimeout(renderSessionHomeState,0);return r};
   window.hcRenderHomeSessionState=renderSessionHomeState;
   setTimeout(renderSessionHomeState,800);
 })();
@@ -1967,7 +1965,12 @@ function hcTodayRecordShared(){
   const baseLoop=window.renderLearningLoopReview;
   if(typeof baseLoop==='function')window.renderLearningLoopReview=function(){const r=baseLoop.apply(this,arguments);setTimeout(renderReviewSaveState,0);return r};
   const baseGo=window.go;
-  if(typeof baseGo==='function')window.go=function(id){const r=baseGo.apply(this,arguments);if(id==='analysis')setTimeout(renderReviewSaveState,0);return r};
+  if(typeof baseGo==='function')window.go=function(id){
+    const r=baseGo.apply(this,arguments);
+    if(id==='home' && typeof window.hcRenderHomeSessionState==='function')setTimeout(window.hcRenderHomeSessionState,0);
+    if(id==='analysis')setTimeout(renderReviewSaveState,0);
+    return r;
+  };
   document.addEventListener('click',function(e){if(e.target.closest?.('#analysisModeTabs [data-amode="review"]'))setTimeout(renderReviewSaveState,0)},true);
   setTimeout(renderReviewSaveState,700);
 })();
