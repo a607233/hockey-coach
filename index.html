@@ -1076,15 +1076,7 @@ function hc5817Coverage(){
   ps.forEach(p=>(p.analysisCodes||[]).forEach(c=>{if(map[c])map[c].push(p)}));
   return map;
 }
-function hc5817OpenCoverage(){
-  const items=hc5817AllCodes(), map=hc5817Coverage();
-  const covered=items.filter(i=>(map[i.code]||[]).length>0).length;
-  const strong=items.filter(i=>(map[i.code]||[]).length>=2).length;
-  const phases=['攻撃','守備','攻→守','守→攻'];
-  let html=`<div class="k">32 ANALYSIS × PRACTICE</div><h2>練習カバレッジ</h2><div class="coverageSummary"><b>${covered}/32項目に専用リンク</b><div class="meta">うち ${strong}項目は候補2つ以上。0〜1件の項目を優先して補強します。</div></div>`;
-  phases.forEach(ph=>{const a=items.filter(i=>i.phase===ph);html+=`<div class="coveragePhase">${esc(ph)}｜${a.filter(i=>(map[i.code]||[]).length>0).length}/${a.length}</div><div class="coverageGrid">`+a.map(i=>{const n=(map[i.code]||[]).length;return `<div class="coverageItem"><b>${esc(i.code)}｜${esc(i.name)}</b><span class="${n>=2?'coverageOk':'coverageWeak'}">${n>=2?'✓':n===1?'△':'!'} 練習候補 ${n}件</span><div class="meta">${esc(i.desc||'')}</div>${n?`<button class="btn2" style="margin-top:7px" onclick="closeModal();setTimeout(()=>openAnalysisPracticeFlow('${i.id}'),30)">候補を見る</button>`:''}</div>`}).join('')+'</div>'});
-  html+='<div class="tinyStatus">既存データは変更しません。カバレッジは練習ライブラリの analysisCodes から自動集計しています。</div><button class="ghost" onclick="closeModal()">閉じる</button>';openModal(html)
-}
+
 function hc5817InstallCoverageButton(){
   const q=document.querySelector('#more-library .libraryQuick');if(!q||document.getElementById('coverageBtn5817'))return;
   const b=document.createElement('button');b.className='btn2';b.id='coverageBtn5817';b.textContent='◎ 32項目カバレッジ';b.onclick=hc5817OpenCoverage;q.appendChild(b)
