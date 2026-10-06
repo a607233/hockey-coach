@@ -608,7 +608,7 @@ renderHistory=function(){let pid=currentDataScopeV586();let rec=jget('hc_trainin
 renderTeamAnalysisTrend=function(){let e=document.getElementById('teamAnalysisTrend');if(!e)return;let pid=currentDataScopeV586(),h=jget('hc_team_analysis_history_v577',[]).filter(r=>r.profileId===pid),items=teamAnalysisItems();if(!h.length){e.innerHTML='<div class="empty">このシーズンにはまだ定期観測がありません</div>';return}let latest=h[0],prev=h[1];function pav(rec,p){if(!rec)return null;let ids=items.filter(x=>x.phase===p).map(x=>x.id),v=ids.map(id=>+rec.scores?.[id]||0).filter(Boolean);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}e.innerHTML=`<div class="meta">最新：${esc(latest.date)}｜${esc(latest.context||'')} ${latest.memo?`｜${esc(latest.memo)}`:''}</div>`+PHASES.map(p=>{let n=pav(latest,p),b=pav(prev,p),delta=n!=null&&b!=null?n-b:null;return `<div class="trendRow"><div class="row"><b>${p}</b><span>${n==null?'—':n.toFixed(1)+' / 5'} ${delta==null?'':`<small>(${delta>=0?'+':''}${delta.toFixed(1)})</small>`}</span></div><div class="trendBar"><div class="trendFill" style="width:${n==null?0:n/5*100}%"></div></div></div>`}).join('')+`<div class="actions"><button onclick="openTeamAnalysisHistory()">観測履歴を見る</button></div>`}
 openTeamAnalysisHistory=function(){let pid=currentDataScopeV586(),h=jget('hc_team_analysis_history_v577',[]).filter(r=>r.profileId===pid);openModal(`<div class="k">TEAM ANALYSIS HISTORY</div><h2>観測履歴</h2>${h.length?h.map(r=>{let vals=Object.values(r.scores||{}).map(Number).filter(Boolean),avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;return `<div class="menu"><div class="k">${esc(r.date)}｜${esc(r.context||'')}</div><h3>入力 ${vals.length}項目｜平均 ${avg.toFixed(1)}</h3><div class="meta">${esc(r.memo||'')}</div><div class="actions"><button class="del" onclick="deleteTeamObservation('${r.id}')">削除</button></div></div>`}).join(''):'<div class="empty">このシーズンには履歴がありません</div>'}`)}
 analysisPracticeCandidatesV580=function(item){let all=practiceData().filter(x=>x.phase===item.phase);return all.map(x=>{let exact=(x.analysisCodes||[]).includes(item.code),tags=x.tags||[],keys=ANALYSIS_LINKS_V580[item.code]||[item.name],score=exact?100:0,reasons=exact?[item.code+' 個別リンク']:[];keys.forEach((k,i)=>{if(tags.some(t=>String(t).toLowerCase().includes(String(k).toLowerCase()))){score+=i===0?12:6;reasons.push(k)}});return{x,score,reasons}}).sort((a,b)=>b.score-a.score||String(a.x.name).localeCompare(String(b.x.name),'ja')).slice(0,3)}
-const _renderLibraryV586=renderLibrary;renderLibrary=function(){standardizePracticeTagsV586();_renderLibraryV586();document.querySelectorAll('#practiceLibraryList .menu').forEach((el,i)=>{});}
+const _renderLibraryV586=renderLibrary;renderLibrary=function(){standardizePracticeTagsV586();_renderLibraryV586();}
 const _commitPracticeV586=commitPractice;commitPractice=function(i){_commitPracticeV586(i);setTimeout(standardizePracticeTagsV586,0)}
 const _exportDataV586=exportData;exportData=function(){saveScopedPlanV586();let data={version:'5.8.15',schemaVersion:2,exportedAt:new Date().toISOString(),todayPlanByProfile:jget('hc_today_plan_by_profile_v586',{}),todayPlan:plan,trainingRecords:jget('hc_training_records',[]),matchRecords:matchRecords(),philosophy:philosophyData(),methods:methodData(),practiceLibrary:practiceData(),practiceFavorites:practiceFavs(),practiceRecent:practiceRecent(),roles:roleData(),team:jget('hc_team_settings_v52',{}),seasonProfiles:seasonProfilesData(),teamAnalysisItems:teamAnalysisItems(),teamAnalysisHistory:jget('hc_team_analysis_history_v577',[])};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hockey-coach-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function initV586(){migrateSeasonDataV586();standardizePracticeTagsV586();renderPlan();renderHistory();renderTeamAnalysis();renderLibrary();renderSeasonProfiles()}
@@ -1887,12 +1887,13 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <!-- HOCKEY_COACH_V1_RC34_MORE_HITAREA_FIX: RC29 baseline; More tab hit area raised above header/decorative layers; direct click switching; Philosophy recovery read-only. -->
 
 <script id="HC_HOME_SESSION_STATE_V1">
+function hcTodayRecordShared(){
+  try{return typeof hc5814LatestRecord==='function'?hc5814LatestRecord():null}catch(e){return null}
+}
+
 /* Home CTA follows the existing session state only. No new storage/schema keys. */
 (function(){
   let coachActive=false;
-  function todayRecord(){
-    try{return typeof hc5814LatestRecord==='function'?hc5814LatestRecord():null}catch(e){return null}
-  }
   function hasMeasuredKpi(){
     try{return Array.isArray(plan)&&plan.some(x=>{const k=x&&x.coachKpi;return k&&((+k.opp||0)>0||(+k.success||0)>0)})}catch(e){return false}
   }
@@ -1948,13 +1949,10 @@ setTimeout(()=>{if(hcCloudMembership&&hcIsStaff())hcLoadPlayerVoice()},900);
 <script id="HC_REVIEW_SAVED_STATE_V1">
 /* Review save CTA reflects today's existing record. UI only; no storage/schema changes. */
 (function(){
-  function todayRecord(){
-    try{return typeof hc5814LatestRecord==='function'?hc5814LatestRecord():null}catch(e){return null}
-  }
   function renderReviewSaveState(){
     const btn=document.querySelector('#analysis button[onclick="saveRecord()"]');
     if(!btn)return;
-    const saved=!!todayRecord();
+    const saved=!!hcTodayRecordShared();
     if(saved){
       btn.textContent='✓ 今日の記録は保存済み｜記録を見る';
       btn.setAttribute('onclick',"go('history')");
