@@ -121,7 +121,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
  <div class="card"><div class="k">COACH COCKPIT</div><div class="title">今日の練習を始めよう</div><p class="muted">今日のテーマとメニューを確認して、トレーニングへ。</p><button id="homeTodayBtn" class="btn" onclick="go('today')">今日の練習をつくる</button></div>
  <div class="row"><div class="card"><div class="muted">今日のメニュー</div><div id="homeCount" class="stat">0</div></div><div class="card"><div class="muted">合計時間</div><div id="homeMin" class="stat">0</div></div></div>
  <div class="card" id="nextSessionCockpit"><div id="homeNextKicker" class="k">NEXT SESSION</div><div id="homeNextTitle" class="title" style="font-size:19px">分析から次の練習へ</div><div id="nextSessionCockpitBody" class="menu">最新の分析を確認中…</div></div>
- <div class="card"><div class="k">FLOW</div><p class="muted">① 条件 → ② テーマ・原則 → ③ 3つの選択肢 → ④ 今日のメニュー → ⑤ コーチモード → ⑥ 振り返り</p></div>
+ <div class="card"><div class="k">COACHING FLOW</div><div class="title" style="font-size:19px">迷ったらここから</div><p class="muted">分析で現在地を確認 → 練習を選ぶ → 実施・評価 → 練習記録を振り返る。</p><div class="actions"><button class="btn2" onclick="go('analysis')">◎ 分析を見る</button><button class="btn2" onclick="go('today')">● 今日の練習</button><button class="btn2" onclick="go('history')">▤ 練習記録</button></div></div>
 </section>
 
 <section id="today" class="page">
@@ -191,7 +191,7 @@ hr{border:0;border-top:1px solid #22343c;margin:14px 0}
 <button class="nav on" data-page="home"><b>⌂</b>ホーム</button>
 <button class="nav" data-page="today"><b>●</b>今日の練習</button>
 <button class="nav" data-page="analysis"><b>◎</b>分析</button>
-<button class="nav" data-page="history"><b>▤</b>記録</button>
+<button class="nav" data-page="history"><b>▤</b>練習記録</button>
 <button class="nav" data-page="more"><b>•••</b>その他</button>
 </div></nav>
 
