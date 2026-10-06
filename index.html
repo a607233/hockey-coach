@@ -1162,8 +1162,7 @@ function hc5819RenderCoverageHome(){
  const big=document.getElementById('hc5819CoverageBig');if(big)big.textContent=covered+' / '+items.length;
  const p=document.getElementById('hc5819CoveragePhases');if(p)p.innerHTML=phases.map(ph=>{const a=items.filter(i=>i.phase===ph),n=a.filter(i=>(map[i.code]||[]).length>0).length;return '<span>'+esc(ph)+' '+n+'/'+a.length+'</span>'}).join('');
 }
-const _renderLibrary5819=renderLibrary;
-renderLibrary=function(){_renderLibrary5819();hc5819RenderCoverageHome();try{hcApplyRoleUI()}catch(e){}};
+
 setTimeout(hc5819RenderCoverageHome,250);
 </script>
 <!-- HC_V5819_LIBRARY_COVERAGE_UX -->
@@ -1186,8 +1185,7 @@ const PRACTICE_QUALITY_V5820=[
 {id:'v5820-t5',prototype:true,name:'4v4＋中央ゲート｜危険地帯を先に守る',phase:'攻→守',style:'全員参加重視',principles:['WIN・DELAY・RECOVER'],purpose:'ロスト後にボールへ殺到せず、中央・ゴール方向の危険地帯を優先する。',minPlayers:8,maxPlayers:16,gkRequired:false,minutes:15,space:'30m×24m',constraint:'奪った側は中央ゲート突破2点、外ゲート1点。ロスト側は中央を最優先で閉じる。',question:'ボールとゴールの間で、最初に埋めるべき場所はどこ？',judgment:'即時奪回できなければ中央の最短ルートを閉じ、外側へ時間を稼ぐ。',kpiHint:'ロスト後の中央突破を防いだ割合',analysisCodes:['T5'],tags:['T5','攻→守','危険地帯','中央','DELAY'],boardCustom:[{type:'attack',x:32,y:18},{type:'attack',x:32,y:46},{type:'attack',x:48,y:28},{type:'attack',x:48,y:40},{type:'defense',x:58,y:18},{type:'defense',x:58,y:46},{type:'defense',x:72,y:28},{type:'defense',x:72,y:40},{type:'ball',x:50,y:34},{type:'arrow',x1:32,y1:18,x2:50,y2:27},{type:'arrow',x1:32,y1:46,x2:50,y2:41}],setup:'30m×24m。中央に危険ゲート、左右に外ゲート。4対4。',flow:'①4対4 → ②ロスト → ③中央を閉じる → ④奪えるならWIN、無理ならDELAY/RECOVER。',success:'ロスト後の最初の前進を中央へ通さず、守備組織を回復。',progression:'難：中央ゲートを広げる。易：中央ゲートを狭める。',steps:['ロスト直後に中央を見る。','奪えるかを判断する。','無理なら中央を閉じながら戻る。']}
 ];
 function hc5820SeedQuality(){try{let a=practiceData(),ids=new Set(a.map(x=>x.id)),changed=false;PRACTICE_QUALITY_V5820.forEach(x=>{if(!ids.has(x.id)){a.push(JSON.parse(JSON.stringify(x)));changed=true}});if(changed)localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));return changed}catch(e){return false}}
-const _renderLibrary5820=renderLibrary;
-renderLibrary=function(){hc5820SeedQuality();_renderLibrary5820();hc5819RenderCoverageHome()};
+
 setTimeout(()=>{if(hc5820SeedQuality())try{renderLibrary()}catch(e){}},300);
 </script>
 <!-- HC_V5820_COVERAGE_QUALITY_BATCH -->
@@ -1211,7 +1209,15 @@ const PRACTICE_FULL_COVERAGE_V5821=[
 function hc5821Seed(){try{let a=practiceData(),ids=new Set(a.map(x=>x.id)),changed=false;PRACTICE_FULL_COVERAGE_V5821.forEach(x=>{if(!ids.has(x.id)){a.push(JSON.parse(JSON.stringify(x)));changed=true}});if(changed)localStorage.setItem('hc_practice_library_v54',JSON.stringify(a));return changed}catch(e){return false}}
 function hc5821CoverageQuality(){try{const map=hc5817Coverage(),items=hc5817AllCodes(),two=items.filter(i=>(map[i.code]||[]).length>=2).length,zero=items.filter(i=>(map[i.code]||[]).length===0).length;const home=document.getElementById('hc5819CoverageHome');if(home){let n=home.querySelector('.coverageQualityNote');if(!n){n=document.createElement('div');n.className='coverageQualityNote';home.appendChild(n)}n.textContent=zero===0&&two===32?'✓ 32項目すべてに練習候補2件以上':'候補2件以上 '+two+'/32｜0件 '+zero+'項目'}}catch(e){}}
 const _renderLibrary5821=renderLibrary;
-renderLibrary=function(){hc5821Seed();_renderLibrary5821();hc5819RenderCoverageHome();hc5821CoverageQuality()};
+renderLibrary=function(){
+  hc5821Seed();
+  hc5820SeedQuality();
+  _renderLibrary5821();
+  hc5819RenderCoverageHome();
+  try{hcApplyRoleUI()}catch(e){}
+  hc5819RenderCoverageHome();
+  hc5821CoverageQuality()
+};
 setTimeout(()=>{hc5821Seed();try{renderLibrary();hc5821CoverageQuality()}catch(e){}},350);
 </script>
 <!-- HC_V5821_FULL_COVERAGE -->
