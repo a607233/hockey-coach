@@ -2111,4 +2111,25 @@ function hc5817OpenCoverage(){
 })();
 </script>
 <!-- HC_RECORD_PERSISTENCE_LOCAL_FIRST -->
+
+<script id="HC_REVIEW_BUTTON_CLICK_FIX_V1">
+/* Review score buttons: delegated binding survives later review re-renders. */
+(function(){
+  document.addEventListener('click',function(e){
+    const score=e.target.closest?.('#simpleScore [data-score]');
+    if(score){
+      simpleKpi=Number(score.dataset.score)||0;
+      document.querySelectorAll('#simpleScore [data-score]').forEach(x=>x.classList.toggle('on',x===score));
+      return;
+    }
+    const lr=e.target.closest?.('#learningResult [data-lr]');
+    if(lr){
+      learningResult=Number(lr.dataset.lr)||0;
+      document.querySelectorAll('#learningResult [data-lr]').forEach(x=>x.classList.toggle('on',x===lr));
+    }
+  },true);
+})();
+</script>
+<!-- HC_REVIEW_BUTTON_CLICK_FIX_V1 -->
+
 </body></html>
