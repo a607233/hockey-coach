@@ -1053,7 +1053,8 @@ async function hc5814RenderTodayResult(){
   box.innerHTML=status+`<div class="row"><div><div class="k">COACH KPI</div><b>${hc5814KpiText(r)}</b></div><div><div class="k">PLAYER VOICE</div><b>${voice}</b></div></div>${r?.learningResult?`<div class="loopLink"><b>テーマ評価</b><div class="source">${['','まだ','変化あり','できた'][r.learningResult]||''}</div></div>`:''}${r?.reflection?`<div class="loopLink"><b>コーチの気づき</b><div class="source">${hc5813Esc(r.reflection)}</div></div>`:''}${r?.nextQuestion?`<div class="loopLink"><b>次に確かめたい問い</b><div class="source">${hc5813Esc(r.nextQuestion)}</div></div>`:''}${issue?`<div class="learningTarget"><span class="loopBadge">NEXT</span><b>${hc5813Esc(issue.item.code)}｜${hc5813Esc(issue.item.name)}</b><div class="source">最新評価 ${issue.score}/5</div><div class="actions" style="margin-top:8px"><button class="btn2" onclick="openAnalysisPracticeFlow('${issue.item.id}')">練習候補3つを見る</button><button class="btn2" onclick="go('analysis')">32項目分析</button></div></div>`:''}`;
 }
 
-
+const _saveRecord5814=saveRecord;
+saveRecord=function(){_saveRecord5814();setTimeout(hc5814RenderTodayResult,100)};
 const _hcSubmitPlayerVoice5814=hcSubmitPlayerVoice;
 hcSubmitPlayerVoice=async function(){await _hcSubmitPlayerVoice5814();setTimeout(hc5814RenderTodayResult,100)};
 setTimeout(hc5814RenderTodayResult,1000);
@@ -1944,13 +1945,7 @@ function hcTodayRecordShared(){
   const baseFinish=window.finishCoachV5815;
   if(typeof baseFinish==='function')window.finishCoachV5815=function(){coachActive=false;const r=baseFinish.apply(this,arguments);setTimeout(renderSessionHomeState,0);return r};
   const baseSave=window.saveRecord;
-  if(typeof baseSave==='function')window.saveRecord=function(){
-    coachActive=false;
-    const r=baseSave.apply(this,arguments);
-    setTimeout(renderSessionHomeState,0);
-    setTimeout(hc5814RenderTodayResult,100);
-    return r
-  };
+  if(typeof baseSave==='function')window.saveRecord=function(){coachActive=false;const r=baseSave.apply(this,arguments);setTimeout(renderSessionHomeState,0);return r};
   window.hcRenderHomeSessionState=renderSessionHomeState;
   setTimeout(renderSessionHomeState,800);
 })();
