@@ -1353,7 +1353,6 @@ const POLISH={
  progression:'易：奪取後2秒は相手1人のみ追撃可。難：GO判断を6秒以内にする。発展：HOLD後の再前進まで連続して評価する。'}
 };
 function migrate(){try{let a=practiceData(),changed=false;a.forEach(p=>{let f=POLISH[p.id];if(!f)return;['setup','flow','success','progression'].forEach(k=>{if(!String(p[k]||'').trim()){p[k]=f[k];changed=true}})});if(changed)savePractices(a)}catch(e){console.warn('V5833 polish migration',e)}}
-const oldSeed=window.seedPracticeLibrary; if(typeof oldSeed==='function')window.seedPracticeLibrary=function(){let r=oldSeed.apply(this,arguments);setTimeout(migrate,0);return r};
 migrate();
 })();
 </script>
@@ -1409,7 +1408,12 @@ function hcRc9FillMissingBoards(){
   }catch(e){console.warn('RC9 diagram migration',e)}
 }
 const oldSeed=window.seedPracticeLibrary;
-if(typeof oldSeed==='function')window.seedPracticeLibrary=function(){let r=oldSeed.apply(this,arguments);setTimeout(hcRc9FillMissingBoards,0);return r};
+if(typeof oldSeed==='function')window.seedPracticeLibrary=function(){
+  let r=oldSeed.apply(this,arguments);
+  setTimeout(migrate,0);
+  setTimeout(hcRc9FillMissingBoards,0);
+  return r
+};
 setTimeout(hcRc9FillMissingBoards,120);
 })();
 </script>
