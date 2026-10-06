@@ -1779,6 +1779,13 @@ hc5842Render=function(){
     let rows=kpiCards[0].querySelectorAll('.growthRow5842');let kpis=hc5842Kpi(hc5842Records());
     rows.forEach((row,i)=>{let z=kpis[i];if(!z)return;if((z.oppDef||z.sucDef)&&!row.querySelector('.growthKpiDef5844')){let d=document.createElement('div');d.className='growthKpiDef5844';d.innerHTML=`${z.oppDef?'機会：'+esc(z.oppDef):''}${z.oppDef&&z.sucDef?'<br>':''}${z.sucDef?'成功：'+esc(z.sucDef):''}`;row.appendChild(d)}})
   }
+  /* Keep PRACTICE → ANALYSIS visible even if an older growth renderer is active. */
+  if(!root.querySelector('[data-growth-review="1"]')){
+    let records=hc5842Records(),reviews=records.slice(-6).reverse().filter(r=>r.learningResult||r.reflection||r.nextQuestion);
+    let card=document.createElement('div');card.className='card';card.dataset.growthReview='1';
+    card.innerHTML=`<div class="k">PRACTICE → ANALYSIS</div><div class="title" style="font-size:19px">練習後のテーマ評価</div>${reviews.length?reviews.map(r=>{let targets=(r.learningTargets||[]).map(x=>`${x.code}｜${x.name}`).join(' ／ '),result=['','まだ','変化あり','できた'][+r.learningResult||0]||'評価なし';return `<div class="growthRow5842"><div class="row"><div><b>${targets?esc(targets):esc(r.theme||'練習テーマ')}</b><div class="meta">${new Date(r.date).toLocaleDateString('ja-JP')}</div></div>${r.learningResult?`<b style="color:#dfff52">${esc(result)}</b>`:''}</div>${r.nextQuestion?`<div class="meta">次の問い：${esc(r.nextQuestion)}</div>`:''}</div>`}).join(''):`<div class="growthEmpty5842">「練習後の評価」を保存すると、テーマの手応えがここに戻ってきます。</div>`}<div class="growthNote5842">練習後の評価は32項目の点数を自動変更しません。KPIと合わせて、次の観察・分析の材料にします。</div>`;
+    let kpi=kpiCards[0]; if(kpi&&kpi.parentNode)kpi.parentNode.insertBefore(card,kpi);
+  }
 }
 </script>
 <!-- /HC_V5844_GROWTH_INSIGHTS -->
